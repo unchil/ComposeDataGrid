@@ -5,6 +5,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
+
 val  findIndexFromDividerPositions: (
     currentDp:Dp,
     dividerPositions: MutableList<Dp>,
@@ -59,14 +60,6 @@ val makeColInfo: (columnNames: List<String>, data: List<List<Any?>>) -> List<Col
         columnNames, data ->
 
     val isContainNull = columnNames.map { false }.toMutableList()
-
-    data.forEach{
-        it.forEachIndexed {  index, any ->
-            if(!isContainNull[index].equals(null)){
-                isContainNull[index] = (any == null)
-            }
-        }
-    }
 
     val columnInfo = mutableListOf<ColumnInfo>()
 
