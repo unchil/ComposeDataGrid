@@ -60,13 +60,18 @@ val makeColInfo: (columnNames: List<String>, data: List<List<Any?>>) -> List<Col
         columnNames, data ->
 
     val isContainNull = columnNames.map { false }.toMutableList()
-
     val columnInfo = mutableListOf<ColumnInfo>()
 
-    columnNames.forEachIndexed{ columnIndex, columnName ->
+    columnNames.forEachIndexed { columnIndex, columnName ->
 
-        val columnType = data.first {
-            it[columnIndex] != null
+        data.forEach {  list ->
+            if(!isContainNull[columnIndex]){
+                isContainNull[columnIndex] = list.elementAt(columnIndex) == null
+            }
+        }
+
+        val columnType = data.first { list ->
+            list.elementAt(columnIndex) != null
         }[columnIndex]?.let {
             it::class.simpleName.toString()
         } ?: "NULL"
@@ -82,6 +87,8 @@ val makeColInfo: (columnNames: List<String>, data: List<List<Any?>>) -> List<Col
                 isContainNull[columnIndex]
             )
         )
+
     }
+
     columnInfo
 }
