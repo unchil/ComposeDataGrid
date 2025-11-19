@@ -19,11 +19,10 @@ val state = WindowState(
 
 fun main() = application {
 
-    val url = "http://localhost:7788/mof/swi/mof_oneday"
+    val url = "http://localhost:7788/nifs/seawaterinfo/current"
     val data = DataFrame.readJson(url)
-    val columns = listOf("rtmWqWtchDtlDt", "rtmWqWtchStaName", "rtmWtchWtem", "rtmWqDoxn", "lon", "lat")
-    val gridData = data.select { "rtmWqWtchDtlDt" and "rtmWqWtchStaName" and "rtmWtchWtem" and "rtmWqDoxn" and "lon" and "lat" }.rows().map { it.values() }
-    val isContainNull = columns.map { data[it].hasNulls() }.toList()
+    val columns = listOf("obs_datetime", "gru_nam", "sta_nam_kor", "obs_lay","wtr_tmp" ,"lon", "lat")
+    val gridData = data.select { "obs_datetime" and "gru_nam" and "sta_nam_kor" and "obs_lay" and "wtr_tmp" and "lon" and "lat" }.rows().map { it.values() }
 
     Window(
         onCloseRequest = ::exitApplication,
