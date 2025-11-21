@@ -21,10 +21,10 @@ data class SeaWaterInformation(
 fun SeaWaterInformation.toList(): List<Any?> {
     val convertList = mutableListOf<Any?>()
     convertList.add(this.rtmWqWtchDtlDt)
-    convertList.add(this.rtmWqWtchStaCd)
+  //  convertList.add(this.rtmWqWtchStaCd)
     convertList.add(this.rtmWqWtchStaName)
     convertList.add(this.rtmWtchWtem)
-    convertList.add(this.rtmWqCndctv)
+  //  convertList.add(this.rtmWqCndctv)
     convertList.add(this.ph)
     convertList.add(this.rtmWqDoxn)
     convertList.add(this.rtmWqTu)

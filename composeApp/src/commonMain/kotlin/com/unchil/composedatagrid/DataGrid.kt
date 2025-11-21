@@ -23,6 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.unchil.composedatagrid.theme.AppTheme
 import com.unchil.composedatagrid.viewmodel.MofSeaWaterInfoViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -40,30 +41,32 @@ fun DataGrid( columns: List<String>,  gridData:List<List<Any?>> ){
         }
     }
 
-    Column(
-        modifier = Modifier.fillMaxSize()
-            .background(Color.White)
-            .verticalScroll(rememberScrollState()),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
+    AppTheme{
+        Column(
+            modifier = Modifier.fillMaxSize()
+                .background(Color.White)
+                .verticalScroll(rememberScrollState()),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
 
-        Text(
-            "Kotlin Compose Multiplatform Data Grid",
-            modifier = Modifier.padding(20.dp),
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold
-        )
-
-        if(isVisible){
-            ComposeDataGrid(
-                modifier =  Modifier.fillMaxWidth(0.9f).height(600.dp ).padding(20.dp),
-                columnNames = columns,
-                data = gridData,
-                reloadData = reloadData
+            Text(
+                "Kotlin Compose Multiplatform Data Grid",
+                modifier = Modifier.padding(20.dp),
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold
             )
-        }
 
+            if(isVisible){
+                ComposeDataGrid(
+                    modifier =  Modifier.fillMaxWidth(0.9f).height(600.dp ).padding(20.dp),
+                    columnNames = columns,
+                    data = gridData,
+                    reloadData = reloadData
+                )
+            }
+        }
     }
+
 }
 
 @Composable
@@ -84,7 +87,6 @@ fun DataGridWithViewModel(  ){
         }
     }
 
-
     val data = remember { mutableStateOf(emptyList<List<Any?>>()) }
     var isVisible by remember { mutableStateOf(false) }
 
@@ -97,33 +99,45 @@ fun DataGridWithViewModel(  ){
     }
 
 
-    val columns = listOf("rtmWqWtchDtlDt", "rtmWqWtchStaCd", "rtmWqWtchStaName",
-        "rtmWtchWtem","rtmWqCndctv" , "rtmWqDoxn", "rtmWqTu", "rtmWqChpla", "rtmWqSlnty" )
+    val columns = listOf(
+        "수집시간",
+        //"지점코드",
+        "지점명",
+        "수온",
+        //"전기전도도",
+        "수소이온농도",
+        "용존산소량",
+        "탁도",
+        "엽록소",
+        "염분"
+    )
 
+    AppTheme{
+        Column(
+            modifier = Modifier.fillMaxSize()
+                .background(Color.White)
+                .verticalScroll(rememberScrollState()),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
 
-    Column(
-        modifier = Modifier.fillMaxSize()
-            .background(Color.White)
-            .verticalScroll(rememberScrollState()),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-
-        Text(
-            "Kotlin Compose Multiplatform Data Grid",
-            modifier = Modifier.padding(20.dp),
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold
-        )
-
-        if(isVisible){
-            ComposeDataGrid(
-                modifier =  Modifier.fillMaxWidth(0.9f).height(600.dp ).padding(20.dp),
-                columnNames = columns,
-                data = data.value,
-                reloadData = reloadData
+            Text(
+                "Kotlin Compose Multiplatform Data Grid",
+                modifier = Modifier.padding(20.dp),
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold
             )
 
-        }
+            if(isVisible){
+                ComposeDataGrid(
+                    modifier =  Modifier.fillMaxWidth(0.9f).height(600.dp ).padding(20.dp),
+                    columnNames = columns,
+                    data = data.value,
+                    reloadData = reloadData
+                )
 
+            }
+
+        }
     }
+
 }
