@@ -23,11 +23,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.unchil.composedatagrid.theme.AppTheme
 import com.unchil.composedatagrid.viewmodel.MofSeaWaterInfoViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-
 
 @Composable
 fun DataGrid( columns: List<String>,  gridData:List<List<Any?>> ){
@@ -70,12 +69,7 @@ fun DataGrid( columns: List<String>,  gridData:List<List<Any?>> ){
 }
 
 @Composable
-fun DataGridWithViewModel(  ){
-
-
-    val viewModel = remember { MofSeaWaterInfoViewModel() }
-    val seaWaterInfo = viewModel._seaWaterInfo.collectAsState()
-
+fun DataGridWithViewModel( viewModel: MofSeaWaterInfoViewModel = viewModel { MofSeaWaterInfoViewModel() } ){
     LaunchedEffect(key1 = viewModel){
         viewModel.onEvent(MofSeaWaterInfoViewModel.Event.Refresh)
     }
@@ -86,7 +80,7 @@ fun DataGridWithViewModel(  ){
             viewModel.onEvent(MofSeaWaterInfoViewModel.Event.Refresh)
         }
     }
-
+    val seaWaterInfo = viewModel._seaWaterInfo.collectAsState()
     val data = remember { mutableStateOf(emptyList<List<Any?>>()) }
     var isVisible by remember { mutableStateOf(false) }
 

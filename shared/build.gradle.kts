@@ -18,10 +18,7 @@ kotlin {
     iosSimulatorArm64()
     
     jvm()
-    
-    js {
-        browser()
-    }
+
     
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
@@ -39,6 +36,24 @@ kotlin {
 
             implementation(libs.kotlinx.datetime)
         }
+
+        androidMain.dependencies {
+            implementation(libs.ktor.client.cio)
+        }
+
+        jvmMain.dependencies {
+            implementation(libs.ktor.client.cio)
+        }
+
+        wasmJsMain.dependencies {
+         //   implementation(libs.ktor.client.cio)
+        }
+
+        iosMain.dependencies {
+            implementation(libs.ktor.client.darwin)
+        }
+
+
         commonTest.dependencies {
             implementation(libs.kotlin.test)
         }

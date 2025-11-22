@@ -1,4 +1,4 @@
-DataGrid that can be used in Kotlin Compose MultiPlatform : [composeApp/src/commonMain/kotlin/org/example/ktor/ComposeDataGrid.kt](https://github.com/unchil/full-stack-task-manager/blob/main/composeApp/src/commonMain/kotlin/org/example/ktor/ComposeDataGrid.kt)
+DataGrid that can be used in Kotlin Compose MultiPlatform 
 * Multi Column Sorted
   - ascending, descending
 * Column Data Filtering

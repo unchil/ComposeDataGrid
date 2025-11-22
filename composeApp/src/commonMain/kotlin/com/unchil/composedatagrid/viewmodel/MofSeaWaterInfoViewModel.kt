@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.unchil.composedatagrid.Repository
 import com.unchil.composedatagrid.SeaWaterInformation
+import com.unchil.composedatagrid.getPlatform
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -31,7 +32,8 @@ class MofSeaWaterInfoViewModel: ViewModel() {
     }
 
     suspend fun getSeaWaterInfo(){
-        repository.getSeaWaterInfo("http://localhost:7788/mof/swi/mof_oneday")
+        val endPoint = "http://${if( getPlatform().name.contains("Android") ) "10.0.2.2" else "localhost"}:7788"
+        repository.getSeaWaterInfo("${endPoint}/mof/swi/mof_oneday")
     }
 
 
