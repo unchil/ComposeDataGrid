@@ -12,12 +12,11 @@ DataGrid that can be used in Kotlin Compose MultiPlatform
 * Accepted data types:<Any?>
   - String, Int, Long, Float, Double
 * Screen Shot
-
   - iOS
-![Alt text](https://github.com/unchil/ComposeDataGrid/blob/main/composeApp/src/webMain/resources/ios.png)
+  ![Alt text](https://github.com/unchil/ComposeDataGrid/blob/main/composeApp/src/webMain/resources/ios.png)
   - Android
-![Alt text](https://github.com/unchil/ComposeDataGrid/blob/main/composeApp/src/webMain/resources/android.png)
-  - Web
-![Alt text](https://github.com/unchil/ComposeDataGrid/blob/main/composeApp/src/webMain/resources/web.png)
-  - Mac
-![Alt text](https://github.com/unchil/ComposeDataGrid/blob/main/composeApp/src/webMain/resources/mac.png)
+  ![Alt text](https://github.com/unchil/ComposeDataGrid/blob/main/composeApp/src/webMain/resources/android.png)
+    - Web
+  ![Alt text](https://github.com/unchil/ComposeDataGrid/blob/main/composeApp/src/webMain/resources/web.png)
+    - Mac
+  ![Alt text](https://github.com/unchil/ComposeDataGrid/blob/main/composeApp/src/webMain/resources/mac.png)
