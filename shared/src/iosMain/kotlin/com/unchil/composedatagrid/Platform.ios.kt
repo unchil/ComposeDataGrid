@@ -13,8 +13,9 @@ import io.ktor.client.plugins.logging.EMPTY
 import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
 
-class IOSPlatform: Platform {
+class IOSPlatform() : Platform {
     override val name: String = UIDevice.currentDevice.systemName() + " " + UIDevice.currentDevice.systemVersion
+    override val alias: PlatformAlias = PlatformAlias.IOS
 }
 
 actual fun getPlatform(): Platform = IOSPlatform()

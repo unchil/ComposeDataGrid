@@ -11,8 +11,9 @@ import io.ktor.network.tls.CIOCipherSuites
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 
-class JVMPlatform: Platform {
+class JVMPlatform() : Platform {
     override val name: String = "Java ${System.getProperty("java.version")}"
+    override val alias: PlatformAlias = PlatformAlias.JVM
 }
 
 actual fun getPlatform(): Platform = JVMPlatform()

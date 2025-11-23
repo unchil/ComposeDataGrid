@@ -38,6 +38,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun ComposeDataGrid(
     modifier:Modifier = Modifier,
+    usablePagingGrid: Boolean = true,
     columnNames:List<String>,
     data:List<List<Any?>>,
     reloadData :()->Unit){
@@ -425,7 +426,9 @@ fun ComposeDataGrid(
                                     90.dp
                                 } else {
                                     40.dp
-                                }
+                                },
+                                start = 8.dp,
+                                end = 8.dp
                             ),
                         lazyListState = lazyListState,
                         dataCnt = if (enablePagingGrid.value) {
@@ -435,7 +438,8 @@ fun ComposeDataGrid(
                         },
                         enablePagingGrid = enablePagingGrid,
                         enableDarkMode = enableDarkMode,
-                        onRefresh = onRefresh
+                        onRefresh = onRefresh,
+                        usablePagingGrid = usablePagingGrid
                     )
                 }
 

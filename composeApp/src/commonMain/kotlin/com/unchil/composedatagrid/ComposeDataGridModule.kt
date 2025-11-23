@@ -113,7 +113,8 @@ fun ComposeDataGridFooter(
     dataCnt: Int,
     enablePagingGrid:MutableState<Boolean>,
     enableDarkMode:MutableState<Boolean>,
-    onRefresh:(()->Unit)? = null, ) {
+    onRefresh:(()->Unit)? = null,
+    usablePagingGrid: Boolean) {
 
     val coroutineScope = rememberCoroutineScope()
 
@@ -145,14 +146,14 @@ fun ComposeDataGridFooter(
         ) {  Icon(Icons.Default.Refresh, contentDescription = "Refresh")  }
 
 
-
-        Checkbox(
-            modifier = Modifier.scale(0.8f),
-            checked = enablePagingGrid.value,
-            onCheckedChange = { enablePagingGrid.value = it }
-        )
-
-        Text( "Pagination")
+        if(usablePagingGrid){
+            Checkbox(
+                modifier = Modifier.scale(0.8f),
+                checked = enablePagingGrid.value,
+                onCheckedChange = { enablePagingGrid.value = it }
+            )
+            Text( "Pagination")
+        }
 
         Checkbox(
             modifier = Modifier.scale(0.8f),
@@ -173,6 +174,7 @@ fun ComposeDataGridFooter(
 ) {
 
     var expanded by remember { mutableStateOf(false) }
+
 
     val lastPage =  remember { mutableStateOf(
         value = if( dataCount <= pageSize.value ) {

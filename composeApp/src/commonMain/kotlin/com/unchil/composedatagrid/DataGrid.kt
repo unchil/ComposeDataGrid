@@ -69,7 +69,10 @@ fun DataGrid( columns: List<String>,  gridData:List<List<Any?>> ){
 }
 
 @Composable
-fun DataGridWithViewModel( viewModel: MofSeaWaterInfoViewModel = viewModel { MofSeaWaterInfoViewModel() } ){
+fun DataGridWithViewModel(
+    viewModel: MofSeaWaterInfoViewModel = viewModel { MofSeaWaterInfoViewModel() }
+){
+
     LaunchedEffect(key1 = viewModel){
         viewModel.onEvent(MofSeaWaterInfoViewModel.Event.Refresh)
     }
@@ -81,30 +84,39 @@ fun DataGridWithViewModel( viewModel: MofSeaWaterInfoViewModel = viewModel { Mof
         }
     }
     val seaWaterInfo = viewModel._seaWaterInfo.collectAsState()
-    val data = remember { mutableStateOf(emptyList<List<Any?>>()) }
+
     var isVisible by remember { mutableStateOf(false) }
 
-    LaunchedEffect(seaWaterInfo.value){
-        isVisible = seaWaterInfo.value.isNotEmpty()
+    val platform = remember {  getPlatform() }
 
+    val columnNames = remember { mutableStateOf(emptyList<String>() ) }
+    val data = remember { mutableStateOf(emptyList<List<Any?>>()) }
+
+    LaunchedEffect(seaWaterInfo.value){
+
+        isVisible = seaWaterInfo.value.isNotEmpty()
         if(isVisible){
-            data.value = seaWaterInfo.value.map { it.toList() }
+            columnNames.value = makeGridColumns(platform.alias)
+            data.value = seaWaterInfo.value.map {
+                it.toGridData(platform.alias)
+            }
         }
     }
 
-
-    val columns = listOf(
-        "수집시간",
-        //"지점코드",
-        "지점명",
-        "수온",
-        //"전기전도도",
-        "수소이온농도",
-        "용존산소량",
-        "탁도",
-        "엽록소",
-        "염분"
-    )
+    val modifier = when(platform.alias){
+        PlatformAlias.ANDROID -> {
+            Modifier.fillMaxWidth(0.95f).height(700.dp ).padding(0.dp)
+        }
+        PlatformAlias.IOS -> {
+            Modifier.fillMaxWidth(0.95f).height(700.dp ).padding(0.dp)
+        }
+        PlatformAlias.JVM -> {
+            Modifier.fillMaxWidth(0.95f).height(540.dp ).padding(0.dp)
+        }
+        PlatformAlias.WASM -> {
+            Modifier.fillMaxWidth(0.95f).height(540.dp ).padding(0.dp)
+        }
+    }
 
     AppTheme{
         Column(
@@ -123,8 +135,10 @@ fun DataGridWithViewModel( viewModel: MofSeaWaterInfoViewModel = viewModel { Mof
 
             if(isVisible){
                 ComposeDataGrid(
-                    modifier =  Modifier.fillMaxWidth(0.9f).height(600.dp ).padding(20.dp),
-                    columnNames = columns,
+                    modifier =  modifier,
+                    usablePagingGrid = platform.alias.equals(PlatformAlias.JVM)
+                            || platform.alias.equals(PlatformAlias.WASM),
+                    columnNames = columnNames.value,
                     data = data.value,
                     reloadData = reloadData
                 )

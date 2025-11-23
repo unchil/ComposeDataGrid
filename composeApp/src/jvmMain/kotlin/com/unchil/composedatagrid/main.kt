@@ -15,7 +15,7 @@ import org.jetbrains.kotlinx.dataframe.api.select
 import org.jetbrains.kotlinx.dataframe.io.readJson
 
 val state = WindowState(
-    size = DpSize(1400.dp, 1000.dp),
+    size = DpSize(1400.dp, 700.dp),
     position = WindowPosition(Alignment.Center)
 )
 
@@ -47,7 +47,8 @@ fun main() = application {
         title = "ComposeDataGrid",
         state = state,
     ) {
-        DataGrid(data.first, data.second )
+       // DataGrid(data.first, data.second )
+        DataGridWithViewModel()
     }
 
 

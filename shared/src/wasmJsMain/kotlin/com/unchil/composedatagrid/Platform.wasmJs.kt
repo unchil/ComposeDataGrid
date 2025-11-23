@@ -11,6 +11,7 @@ import kotlinx.serialization.json.Json
 
 class WasmPlatform: Platform {
     override val name: String = "Web with Kotlin/Wasm"
+    override val alias: PlatformAlias = PlatformAlias.WASM
 }
 
 actual fun getPlatform(): Platform = WasmPlatform()
