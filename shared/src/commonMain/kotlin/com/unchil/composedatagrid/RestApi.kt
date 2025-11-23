@@ -7,7 +7,7 @@ import io.ktor.util.logging.KtorSimpleLogger
 
 class LocalRestApi {
 
-    val LOGGER = KtorSimpleLogger( "[${getPlatform().name}][${LocalRestApi::class.simpleName}]")
+    val LOGGER = KtorSimpleLogger( "[${getPlatform().alias.name}][${LocalRestApi::class.simpleName}]")
     val httpClient = getRestClient()
 
     suspend inline fun <reified T> get(url: String): T? {

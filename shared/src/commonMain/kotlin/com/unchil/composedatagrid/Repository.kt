@@ -8,7 +8,7 @@ class Repository {
     suspend fun getSeaWaterInfo(url:String){
         api.get<List<SeaWaterInformation>>(url)?.let { it ->
             _seaWaterInfoMof.value = it
-            println("[${getPlatform().name}][${::getSeaWaterInfo::class.simpleName}] ReceiveCount[${it.count()}]")
+            println("[${getPlatform().name}][${getPlatform().alias.name}] ReceiveCount[${it.count()}]")
         }
     }
 
