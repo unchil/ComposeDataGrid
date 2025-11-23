@@ -1,11 +1,14 @@
 package com.unchil.composedatagrid
 
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.window.ComposeViewport
 
 @OptIn(ExperimentalComposeUiApi::class)
 fun main() {
     ComposeViewport {
-        DataGridWithViewModel()
+        CompositionLocalProvider( LocalPlatform provides getPlatform() ) {
+            DataGridWithViewModel()
+        }
     }
 }

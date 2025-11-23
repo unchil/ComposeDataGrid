@@ -12,6 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -27,6 +28,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.unchil.composedatagrid.theme.AppTheme
 import com.unchil.composedatagrid.viewmodel.MofSeaWaterInfoViewModel
 import kotlinx.coroutines.launch
+
+
+val LocalPlatform = compositionLocalOf<Platform> { error("No Platform found!") }
 
 @Composable
 fun DataGrid( columns: List<String>,  gridData:List<List<Any?>> ){
@@ -73,6 +77,8 @@ fun DataGridWithViewModel(
     viewModel: MofSeaWaterInfoViewModel = viewModel { MofSeaWaterInfoViewModel() }
 ){
 
+    val platform = LocalPlatform.current
+
     LaunchedEffect(key1 = viewModel){
         viewModel.onEvent(MofSeaWaterInfoViewModel.Event.Refresh)
     }
@@ -87,7 +93,7 @@ fun DataGridWithViewModel(
 
     var isVisible by remember { mutableStateOf(false) }
 
-    val platform = remember {  getPlatform() }
+
 
     val columnNames = remember { mutableStateOf(emptyList<String>() ) }
     val data = remember { mutableStateOf(emptyList<List<Any?>>()) }

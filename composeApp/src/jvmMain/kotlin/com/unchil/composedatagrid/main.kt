@@ -1,5 +1,6 @@
 package com.unchil.composedatagrid
 
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
@@ -48,7 +49,9 @@ fun main() = application {
         state = state,
     ) {
        // DataGrid(data.first, data.second )
-        DataGridWithViewModel()
+        CompositionLocalProvider( LocalPlatform provides getPlatform() ) {
+            DataGridWithViewModel()
+        }
     }
 
 
