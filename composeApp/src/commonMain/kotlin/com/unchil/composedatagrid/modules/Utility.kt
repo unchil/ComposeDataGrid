@@ -1,4 +1,4 @@
-package com.unchil.composedatagrid
+package com.unchil.composedatagrid.modules
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.vector.ImageVector

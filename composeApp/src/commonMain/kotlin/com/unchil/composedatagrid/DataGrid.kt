@@ -25,6 +25,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.unchil.composedatagrid.modules.ComposeDataGrid
 import com.unchil.composedatagrid.theme.AppTheme
 import com.unchil.composedatagrid.viewmodel.MofSeaWaterInfoViewModel
 import kotlinx.coroutines.launch
@@ -61,7 +62,7 @@ fun DataGrid( columns: List<String>,  gridData:List<List<Any?>> ){
 
             if(isVisible){
                 ComposeDataGrid(
-                    modifier =  Modifier.fillMaxWidth(0.9f).height(600.dp ).padding(20.dp),
+                    modifier = Modifier.fillMaxWidth(0.9f).height(600.dp).padding(20.dp),
                     columnNames = columns,
                     data = gridData,
                     reloadData = reloadData
@@ -141,7 +142,7 @@ fun DataGridWithViewModel(
 
             if(isVisible){
                 ComposeDataGrid(
-                    modifier =  modifier,
+                    modifier = modifier,
                     usablePagingGrid = platform.alias.equals(PlatformAlias.JVM)
                             || platform.alias.equals(PlatformAlias.WASM),
                     columnNames = columnNames.value,

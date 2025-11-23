@@ -1,4 +1,4 @@
-package com.unchil.composedatagrid
+package com.unchil.composedatagrid.modules
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background

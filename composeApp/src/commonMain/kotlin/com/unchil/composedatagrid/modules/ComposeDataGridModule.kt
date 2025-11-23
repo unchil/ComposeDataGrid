@@ -1,4 +1,4 @@
-package com.unchil.composedatagrid
+package com.unchil.composedatagrid.modules
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.BorderStroke
@@ -462,7 +462,8 @@ fun ComposeColumnRow(
                 val currentDp = (( offsetList[index].value.x + boxSizePx[index].value.width / 2 + appendBoxSize ) / density).dp
 
 
-                val targetColumnIndex = findIndexFromDividerPositions(currentDp, dividerPositions, index, density)
+                val targetColumnIndex =
+                    findIndexFromDividerPositions(currentDp, dividerPositions, index, density)
                 val currentList = columnInfoList.value.toMutableList()
                 val draggedColumn = currentList.removeAt(index)
                 currentList.add(targetColumnIndex, draggedColumn)
