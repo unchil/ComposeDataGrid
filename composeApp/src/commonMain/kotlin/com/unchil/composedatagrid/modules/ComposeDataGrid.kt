@@ -420,7 +420,7 @@ fun ComposeDataGrid(
                 ) {
                     ComposeDataGridFooter(
                         modifier = Modifier
-                            .width(500.dp)
+                            .width(460.dp)
                             .padding(
                                 bottom = if (enablePagingGrid.value) {
                                     90.dp

@@ -24,8 +24,22 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.VerticalDivider
@@ -39,8 +53,16 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.Modifier.Companion.then
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.input.key.type
 import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -51,26 +73,6 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import kotlin.math.max
 import kotlin.math.roundToInt
-
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.ui.Modifier.Companion.then
-import androidx.compose.ui.draw.scale
-import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.key.Key
-import androidx.compose.ui.input.key.KeyEventType
-import androidx.compose.ui.input.key.key
-import androidx.compose.ui.input.key.onKeyEvent
-import androidx.compose.ui.input.key.type
 
 
 @Composable
@@ -118,51 +120,62 @@ fun ComposeDataGridFooter(
 
     val coroutineScope = rememberCoroutineScope()
 
-    Row (
-        modifier = then(modifier)
-            .fillMaxWidth().height(46.dp)
-            .border( BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.onTertiaryContainer), shape = RoundedCornerShape(2.dp))
-            .background(color  =MaterialTheme.colorScheme.tertiaryContainer),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center
+    Box(modifier = then(modifier)
+        .fillMaxWidth().height(46.dp)
+        .border( BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.onTertiaryContainer), shape = RoundedCornerShape(2.dp)),
     ){
 
-        IconButton(
-            modifier = Modifier,
-            enabled =  lazyListState.firstVisibleItemIndex != 0,
-            onClick = { coroutineScope.launch { lazyListState.animateScrollToItem(0)  }  }
-        ) {  Icon(Icons.Default.KeyboardArrowUp, contentDescription = "Goto First Page") }
+        Row (
+            modifier = Modifier.fillMaxSize().background(color=MaterialTheme.colorScheme.tertiaryContainer),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(0.dp, Alignment.CenterHorizontally)
+        ){
+            IconButton(
+                modifier = Modifier,
+                enabled =  lazyListState.firstVisibleItemIndex != 0,
+                onClick = { coroutineScope.launch { lazyListState.animateScrollToItem(0)  }  }
+            ) {  Icon(Icons.Default.KeyboardArrowUp, contentDescription = "Goto First Page") }
 
-        Text ( "Count : $dataCnt" )
+            Text ( "Count : $dataCnt" )
 
-        IconButton(
-            modifier = Modifier,
-            enabled = lazyListState.canScrollForward,
-            onClick = {  coroutineScope.launch { lazyListState.animateScrollToItem(dataCnt-1) } }
-        ) { Icon(Icons.Default.KeyboardArrowDown, contentDescription = "Goto Last Page") }
+            IconButton(
+                modifier = Modifier,
+                enabled = lazyListState.canScrollForward,
+                onClick = {  coroutineScope.launch { lazyListState.animateScrollToItem(dataCnt-1) } }
+            ) { Icon(Icons.Default.KeyboardArrowDown, contentDescription = "Goto Last Page") }
 
-        IconButton(
-            onClick = { coroutineScope.launch { onRefresh?.invoke() } }
-        ) {  Icon(Icons.Default.Refresh, contentDescription = "Refresh")  }
+            IconButton(
+                onClick = { coroutineScope.launch { onRefresh?.invoke() } }
+            ) {  Icon(Icons.Default.Refresh, contentDescription = "Refresh")  }
+
+            TextButton(
+                onClick ={ enableDarkMode.value = !enableDarkMode.value },
+                modifier = Modifier,
+                shape = ButtonDefaults.textShape,
+                colors = ButtonDefaults.textButtonColors()
+            ){
+                Text(if(enableDarkMode.value){"LightMode"}else{"DarkMode"}, color= if(enableDarkMode.value){Color.White}else{Color.Black})
+            }
+
+            if(usablePagingGrid){
+                TextButton(
+                    onClick ={ enablePagingGrid.value = !enablePagingGrid.value },
+                    modifier = Modifier,
+                    shape = ButtonDefaults.textShape,
+                    colors = ButtonDefaults.textButtonColors()
+                ){
+                    Text( if(enablePagingGrid.value){"Pagination Col"}else{"Pagination Exp"} , color= if(enableDarkMode.value){Color.White}else{Color.Black})
+                }
+
+            }
 
 
-        if(usablePagingGrid){
-            Checkbox(
-                modifier = Modifier.scale(0.8f),
-                checked = enablePagingGrid.value,
-                onCheckedChange = { enablePagingGrid.value = it }
-            )
-            Text( "Pagination")
+
         }
 
-        Checkbox(
-            modifier = Modifier.scale(0.8f),
-            checked = enableDarkMode.value,
-            onCheckedChange = { enableDarkMode.value = it }
-        )
-        Text( "DarkMode")
 
     }
+
 }
 
 @Composable
@@ -229,7 +242,7 @@ fun ComposeDataGridFooter(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(48.dp)
+            .height(70.dp)
             .background(color  =MaterialTheme.colorScheme.secondaryContainer)
             .border( BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.onSecondaryContainer),
                 RoundedCornerShape(2.dp) ),
@@ -242,14 +255,9 @@ fun ComposeDataGridFooter(
             horizontalArrangement = Arrangement.End
         ) {
 
-            Text(
-                "Page Size:",
-                modifier = Modifier.padding(horizontal = 10.dp)
-            )
-
             Box(
                 modifier = Modifier
-                    .width(110.dp).scale(0.8f),
+                    .width(110.dp),
                 contentAlignment = Alignment.Center,
             ){
 
@@ -257,7 +265,7 @@ fun ComposeDataGridFooter(
                 val pageSizes = listOf("20", "100", "1000")
 
                 OutlinedTextField(
-                    modifier = Modifier.padding(horizontal = 0.dp),
+                    modifier = Modifier,
                     value = selectedOptionText,
                     readOnly = true,
                     onValueChange = { selectedOptionText = it },
@@ -268,16 +276,24 @@ fun ComposeDataGridFooter(
                         }
                     },
                     singleLine = true,
+                    label = {
+                        Text(
+                            "Page Size"
+                        )
+                    }
                 )
 
                 DropdownMenu(
                     expanded = expanded,
                     onDismissRequest = { expanded = false },
-                    modifier = Modifier.width(100.dp).background(color  =MaterialTheme.colorScheme.surface),
+                    modifier = Modifier.background(color=MaterialTheme.colorScheme.tertiaryContainer),
+                    border = BorderStroke(1.dp, color=Color.Black)
                 ) {
                     pageSizes.forEach { option ->
                         DropdownMenuItem(
-                            text = { Text(option) },
+                            text = {
+                                Text(option)
+                            },
                             onClick = {
                                 selectedOptionText = option
                                 onChangePageSize(selectedOptionText.toInt())
