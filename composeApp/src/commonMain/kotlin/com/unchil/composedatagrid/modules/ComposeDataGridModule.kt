@@ -109,7 +109,7 @@ fun ComposeDataGridHeader(
 
 
 @Composable
-fun ComposeDataGridFooter(
+fun ComposeDataGridFloatingBox(
     modifier: Modifier = Modifier,
     lazyListState: LazyListState,
     dataCnt: Int,
@@ -186,9 +186,6 @@ fun ComposeDataGridFooter(
     onPageChange:((Int, Int)->Unit)?=null
 ) {
 
-    var expanded by remember { mutableStateOf(false) }
-
-
     val lastPage =  remember { mutableStateOf(
         value = if( dataCount <= pageSize.value ) {
             1
@@ -214,7 +211,6 @@ fun ComposeDataGridFooter(
     val onChangePageSize:(Int)->Unit = {
         pageSize.value = it
         currentPage.value = 1
-        expanded = false
     }
 
     LaunchedEffect(key1 = currentPage.value, key2 = pageSize.value){
@@ -242,7 +238,7 @@ fun ComposeDataGridFooter(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(56.dp)
+            .height(70.dp)
             .background(color  =MaterialTheme.colorScheme.secondaryContainer)
             .border( BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.onSecondaryContainer),
                 RoundedCornerShape(2.dp) ),
@@ -254,67 +250,6 @@ fun ComposeDataGridFooter(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.End
         ) {
-
-            Box(
-                modifier = Modifier
-                    .width(110.dp),
-                contentAlignment = Alignment.Center,
-            ){
-
-                var selectedOptionText by remember { mutableStateOf("20") }
-                val pageSizes = listOf("20", "100", "1000")
-
-                OutlinedTextField(
-                    modifier = Modifier,
-                    value = selectedOptionText,
-                    readOnly = true,
-                    onValueChange = { selectedOptionText = it },
-                    trailingIcon = {
-                        IconButton( onClick = { expanded = !expanded}, ){
-                            Icon(Icons.Default.ArrowDropDown,
-                                contentDescription = "Page Size", )
-                        }
-                    },
-                    singleLine = true,
-                    label = {
-                        Text(
-                            "Page Size"
-                        )
-                    }
-                )
-
-                DropdownMenu(
-                    expanded = expanded,
-                    onDismissRequest = { expanded = false },
-                    modifier = Modifier.background(color=MaterialTheme.colorScheme.tertiaryContainer)
-                        .width(110.dp).height(60.dp),
-                    border = BorderStroke(1.dp, color=Color.Black)
-                ) {
-                    pageSizes.forEach { option ->
-
-                        DropdownMenuItem(
-                            text = {
-                                Text(option)
-                            },
-                            onClick = {
-                                selectedOptionText = option
-                                onChangePageSize(selectedOptionText.toInt())
-                            }
-                        )
-                    }
-                }
-
-            }
-
-            Text(
-                text = "${ if(dataCount == 0){
-                    0
-                } else{
-                    ( startRowIndex.value + 1 )
-                }}  to  ${ endRowIndex.value } of  ${dataCount}" ,
-                modifier = Modifier.padding(horizontal = 10.dp)
-            )
-
             IconButton(
                 enabled = currentPage.value > 1,
                 onClick = { currentPage.value = currentPage.value - 1}
@@ -333,6 +268,15 @@ fun ComposeDataGridFooter(
             ) {
                 Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = "Next Page")
             }
+
+            PageSizePicker(
+                listOf("10", "20", "50", "100", "200", "500", "1000", "5000", "10000"),
+                60.dp,
+                20.dp,
+                3,
+                onChangePageSize
+            )
+
 
         }
     }

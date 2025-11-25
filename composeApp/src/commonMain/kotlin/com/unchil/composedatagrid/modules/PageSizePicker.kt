@@ -37,7 +37,7 @@ fun PageSizePicker(
     pickerWidth: Dp,
     itemHeight: Dp,
     itemViewCount:Int,
-    onSelectedHandler:()-> Unit ){
+    onChangePageSize:(Int)-> Unit ){
 
     val pagerState  =   rememberPagerState(
         initialPage = 0,
@@ -45,12 +45,12 @@ fun PageSizePicker(
         pageCount = {  dataList.size } )
 
     LaunchedEffect(key1 = dataList ){
-        pagerState.scrollToPage(0)
+        pagerState.scrollToPage(1)
     }
 
     LaunchedEffect(key1 = pagerState.isScrollInProgress){
         if (!pagerState.isScrollInProgress){
-            onSelectedHandler()
+            onChangePageSize(dataList[pagerState.currentPage].toString().toInt())
         }
     }
 
@@ -83,7 +83,7 @@ fun PageSizePicker(
                 Brush.verticalGradient(
                     listOf(
                         MaterialTheme.colorScheme.outlineVariant,
-                        MaterialTheme.colorScheme.surface,
+                        MaterialTheme.colorScheme.tertiaryContainer,
                         MaterialTheme.colorScheme.outlineVariant
                     )
                 )

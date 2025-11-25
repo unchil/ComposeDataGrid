@@ -418,7 +418,7 @@ fun ComposeDataGrid(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.BottomCenter
                 ) {
-                    ComposeDataGridFooter(
+                    ComposeDataGridFloatingBox(
                         modifier = Modifier
                             .width(460.dp)
                             .padding(
