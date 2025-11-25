@@ -134,8 +134,8 @@ fun DataGridWithViewModel(
         ) {
 
             Text(
-                "Kotlin Compose Multiplatform Data Grid",
-                modifier = Modifier.padding(20.dp),
+                "Compose Multiplatform DataGrid",
+                modifier = Modifier.padding(top = 60.dp, bottom = 20.dp),
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold
             )

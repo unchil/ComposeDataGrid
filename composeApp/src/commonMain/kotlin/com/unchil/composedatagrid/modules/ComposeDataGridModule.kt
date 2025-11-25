@@ -86,7 +86,7 @@ fun ComposeDataGridHeader(
     Row (
         modifier =  then(modifier)
             .fillMaxWidth()
-            .height(46.dp)
+            .height(56.dp)
             .border(
                 border = BorderStroke(width = 1.dp, color =  MaterialTheme.colorScheme.onSecondaryContainer),
                 shape = RoundedCornerShape(2.dp) )
@@ -136,7 +136,7 @@ fun ComposeDataGridFooter(
                 onClick = { coroutineScope.launch { lazyListState.animateScrollToItem(0)  }  }
             ) {  Icon(Icons.Default.KeyboardArrowUp, contentDescription = "Goto First Page") }
 
-            Text ( "Count : $dataCnt" )
+            Text ( "${dataCnt} rows" )
 
             IconButton(
                 modifier = Modifier,
@@ -242,7 +242,7 @@ fun ComposeDataGridFooter(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(70.dp)
+            .height(56.dp)
             .background(color  =MaterialTheme.colorScheme.secondaryContainer)
             .border( BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.onSecondaryContainer),
                 RoundedCornerShape(2.dp) ),
@@ -286,10 +286,12 @@ fun ComposeDataGridFooter(
                 DropdownMenu(
                     expanded = expanded,
                     onDismissRequest = { expanded = false },
-                    modifier = Modifier.background(color=MaterialTheme.colorScheme.tertiaryContainer),
+                    modifier = Modifier.background(color=MaterialTheme.colorScheme.tertiaryContainer)
+                        .width(110.dp).height(60.dp),
                     border = BorderStroke(1.dp, color=Color.Black)
                 ) {
                     pageSizes.forEach { option ->
+
                         DropdownMenuItem(
                             text = {
                                 Text(option)
@@ -617,7 +619,9 @@ fun SearchMenu(
                 expanded = false
                 filterText.value = ""
             },
-            modifier = Modifier.width(180.dp).background(color =MaterialTheme.colorScheme.tertiaryContainer),
+            modifier = Modifier.width(180.dp)
+                .background(color =MaterialTheme.colorScheme.tertiaryContainer),
+            border = BorderStroke(1.dp, color=Color.Black)
         ) {
 
             Column() {
@@ -641,7 +645,9 @@ fun SearchMenu(
                         expanded = expandedOperator,
                         onDismissRequest = { expandedOperator = false },
                         scrollState = scrollState,
-                        modifier = Modifier.width(200.dp).height(160.dp).background(color  =MaterialTheme.colorScheme.tertiaryContainer),
+                        modifier = Modifier.width(200.dp).height(160.dp)
+                            .background(color  =MaterialTheme.colorScheme.tertiaryContainer),
+                        border = BorderStroke(1.dp, color=Color.Black)
                     ) {
                         OperatorMenu.Operators.forEach { operator ->
                             HorizontalDivider()
