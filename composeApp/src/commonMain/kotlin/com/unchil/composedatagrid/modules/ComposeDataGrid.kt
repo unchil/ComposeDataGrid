@@ -83,19 +83,20 @@ fun ComposeDataGrid(
         columnInfo.value.forEach { it.sortOrder.value = 0 }
     }
 
-
-    val lastPage =  remember { mutableStateOf(
-        value = if( pagingData.size <= pageSize.value ) {
-            1
+    fun getLastPage(totPage:Int):Int{
+        if( totPage <= pageSize.value ) {
+            return 1
         } else {
-            if( pagingData.size % pageSize.value == 0 ){
-                pagingData.size/pageSize.value
+            if( totPage % pageSize.value == 0 ){
+                return totPage/pageSize.value
             } else {
-                (pagingData.size/pageSize.value) + 1
+                return  (totPage/pageSize.value) + 1
             }
         }
-    )}
+    }
 
+
+    val lastPage =  remember { mutableStateOf( value = getLastPage(presentData.size)  )}
 
     val startRowIndex = remember { mutableStateOf( (currentPage-1) * pageSize.value) }
 
@@ -108,6 +109,40 @@ fun ComposeDataGrid(
     )}
 
 
+    val onPageChange:(Int, Int)->Unit = {
+            startIndex, endIndex->
+        startRowNum = startIndex
+        val currentPageData = mutableListOf<List<Any?>>()
+        for ( i in startIndex  until endIndex){
+            currentPageData.add( presentData[i] as List<Any?>)
+        }
+        pagingData = currentPageData.toList()
+        coroutineScope.launch {
+            lazyListState.animateScrollToItem(0)
+        }
+    }
+
+
+
+    val updateCurrentPage:(PageNav)->Unit = { it
+        when(it) {
+            PageNav.Prev -> {currentPage = currentPage - 1 }
+            PageNav.Next -> { currentPage = currentPage + 1 }
+            PageNav.First -> {currentPage = 1}
+            PageNav.Last -> {currentPage = lastPage.value}
+        }
+
+        startRowIndex.value = (currentPage-1)*pageSize.value
+        endRowIndex.value =  if(currentPage == lastPage.value){
+            presentData.size
+        } else{
+            pageSize.value * currentPage
+        }
+
+        onPageChange(startRowIndex.value, endRowIndex.value)
+
+    }
+
     val initPageData:()->Unit = {
 
         val currentPageData = mutableListOf<List<Any?>>()
@@ -117,6 +152,8 @@ fun ComposeDataGrid(
         }
 
         pagingData = currentPageData
+
+        lastPage.value = getLastPage(presentData.size)
 
         coroutineScope.launch {
             lazyListState.animateScrollToItem(0)
@@ -239,6 +276,7 @@ fun ComposeDataGrid(
 
         initPageData()
 
+
     }
 
     val onFilter:(columnName:String, searchText:String, operator:String) -> Unit = { columnName, searchText, operator  ->
@@ -305,39 +343,9 @@ fun ComposeDataGrid(
 
         initPageData()
 
-    }
-
-    val onPageChange:(Int, Int)->Unit = {
-            startIndex, endIndex->
-        startRowNum = startIndex
-        val currentPageData = mutableListOf<List<Any?>>()
-        for ( i in startIndex  until endIndex){
-            currentPageData.add( presentData[i] as List<Any?>)
-        }
-        pagingData = currentPageData.toList()
-        coroutineScope.launch {
-            lazyListState.animateScrollToItem(0)
-        }
-    }
-
-    val updateCurrentPage:(PageNav)->Unit = { it
-        when(it) {
-            PageNav.Prev -> {currentPage = currentPage - 1 }
-            PageNav.Next -> { currentPage = currentPage + 1 }
-            PageNav.First -> {currentPage = 1}
-            PageNav.Last -> {currentPage = lastPage.value}
-        }
-
-        startRowIndex.value = (currentPage-1)*pageSize.value
-        endRowIndex.value =  if(currentPage == lastPage.value){
-            presentData.size
-        } else{
-            pageSize.value * currentPage
-        }
-
-        onPageChange(startRowIndex.value, endRowIndex.value)
 
     }
+
 
 
     val onRefresh:()-> Unit = {
@@ -386,10 +394,6 @@ fun ComposeDataGrid(
         onPageChange(startRowIndex.value, endRowIndex.value)
     }
 
-
-
-
-    initPageData()
 
     AppTheme(enableDarkMode = enableDarkMode.value) {
 
