@@ -46,12 +46,8 @@ fun ComposeDataGrid(
     val lazyListState = rememberLazyListState(initialFirstVisibleItemIndex = 0)
     val columnInfo = remember { mutableStateOf(makeColInfo(columnNames, data)) }
 
-
-// No Remember
-    var presentData by mutableStateOf<List<Any?>>(data)
-    var pagingData by  mutableStateOf<List<Any?>>(data)
-
-//
+    var presentData by remember{mutableStateOf<List<Any?>>(data) }
+    var pagingData by  remember{ mutableStateOf<List<Any?>>(data) }
 
     var sortedIndexList = remember { mutableListOf<Int>() }
     var startRowNum by remember {  mutableStateOf(0)}
@@ -138,7 +134,6 @@ fun ComposeDataGrid(
     }
 
     val initPageData:()->Unit = {
-
         val currentPageData = mutableListOf<List<Any?>>()
 
         for ( i in startRowIndex.value until endRowIndex.value){
@@ -150,25 +145,14 @@ fun ComposeDataGrid(
         lastPage.value = getLastPage(presentData.size)
 
         coroutineScope.launch {
-           lazyListState.animateScrollToItem(0)
+                lazyListState.animateScrollToItem(0)
         }
     }
 
-    val updateOriginalColumnIndex:(MutableState<List<ColumnInfo>>) -> Unit = {
-            newColumnInfoList ->
-        val tempSortedIndexList =  mutableListOf<Int>()
-        newColumnInfoList.value.forEach {
-            if(sortedIndexList.contains(it.originalColumnIndex)){
-                tempSortedIndexList.add(it.columnIndex)
-            }
-            it.originalColumnIndex = it.columnIndex
-        }
-        sortedIndexList = tempSortedIndexList
-    }
 
-    val updateDataColumnOrder:(MutableState<List<ColumnInfo>>) -> Unit = {
-            newColumnInfoList ->
-        val newData = presentData.map { row ->
+    val updateDataColumnOrder:(MutableState<List<ColumnInfo>>) -> Unit = { newColumnInfoList ->
+
+        presentData = presentData.map { row ->
             val oldRow = row as List<Any?>
             val newRow = mutableListOf<Any?>().apply { repeat(oldRow.size) { add(null) } }
 
@@ -178,12 +162,18 @@ fun ComposeDataGrid(
             newRow
         }
 
-        presentData = newData
 
-        updateOriginalColumnIndex(newColumnInfoList)
+
+        val tempSortedIndexList =  mutableListOf<Int>()
+        newColumnInfoList.value.forEach {
+            if(sortedIndexList.contains(it.originalColumnIndex)){
+                tempSortedIndexList.add(it.columnIndex)
+            }
+            it.originalColumnIndex = it.columnIndex
+        }
+        sortedIndexList = tempSortedIndexList
 
         initPageData()
-
     }
 
     val updateSortedIndexList:(colInfo: ColumnInfo)->Unit = {
@@ -336,12 +326,16 @@ fun ComposeDataGrid(
 
         }
 
-        initPageData()
+        if(presentData.size == 0){
+            // snackbar message
+        } else {
+            initPageData()
+        }
+
+
 
 
     }
-
-
 
     val onRefresh:()-> Unit = {
         reloadData()
@@ -415,10 +409,6 @@ fun ComposeDataGrid(
             contentColor = contentColorFor(MaterialTheme.colorScheme.surface),
         ) {
 
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.TopCenter
-            ) {
 
                 LazyColumn(
                     modifier = Modifier
@@ -486,7 +476,7 @@ fun ComposeDataGrid(
         }
 
 
-    }
+
 
 
 }
