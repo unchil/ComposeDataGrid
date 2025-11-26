@@ -118,10 +118,10 @@ fun DataGridWithViewModel(
             Modifier.fillMaxWidth(0.95f).height(700.dp ).padding(0.dp)
         }
         PlatformAlias.JVM -> {
-            Modifier.fillMaxWidth(0.95f).height(540.dp ).padding(0.dp)
+            Modifier.fillMaxWidth(0.95f).height(600.dp ).padding(0.dp)
         }
         PlatformAlias.WASM -> {
-            Modifier.fillMaxWidth(0.95f).height(540.dp ).padding(0.dp)
+            Modifier.fillMaxWidth(0.95f).height(600.dp ).padding(0.dp)
         }
     }
 
