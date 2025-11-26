@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.unchil.composedatagrid.modules.ComposeDataGrid
+import com.unchil.composedatagrid.modules.ComposeDataGrid2
 import com.unchil.composedatagrid.theme.AppTheme
 import com.unchil.composedatagrid.viewmodel.MofSeaWaterInfoViewModel
 import kotlinx.coroutines.launch
@@ -141,10 +142,8 @@ fun DataGridWithViewModel(
             )
 
             if(isVisible){
-                ComposeDataGrid(
+                ComposeDataGrid2(
                     modifier = modifier,
-                    usablePagingGrid = platform.alias.equals(PlatformAlias.JVM)
-                            || platform.alias.equals(PlatformAlias.WASM),
                     columnNames = columnNames.value,
                     data = data.value,
                     reloadData = reloadData
