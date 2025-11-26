@@ -2,6 +2,12 @@ package com.unchil.composedatagrid.modules
 
 import androidx.compose.runtime.MutableState
 
+
+enum class PageNav {
+    Prev, Next, First, Last
+}
+
+
 data class ColumnInfo(
     val columnName:String,
     var columnIndex:Int,          // 현재 컬럼의 index

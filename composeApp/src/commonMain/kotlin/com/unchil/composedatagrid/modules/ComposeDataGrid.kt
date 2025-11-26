@@ -3,19 +3,36 @@ package com.unchil.composedatagrid.modules
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.KeyboardDoubleArrowDown
+import androidx.compose.material.icons.filled.KeyboardDoubleArrowLeft
+import androidx.compose.material.icons.filled.KeyboardDoubleArrowRight
+import androidx.compose.material.icons.filled.KeyboardDoubleArrowUp
+import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -38,7 +55,6 @@ import kotlinx.coroutines.launch
 @Composable
 fun ComposeDataGrid(
     modifier:Modifier = Modifier,
-    usablePagingGrid: Boolean = true,
     columnNames:List<String>,
     data:List<List<Any?>>,
     reloadData :()->Unit){
@@ -46,17 +62,19 @@ fun ComposeDataGrid(
     val coroutineScope = rememberCoroutineScope()
     val lazyListState = rememberLazyListState(initialFirstVisibleItemIndex = 0)
     val columnInfo = remember { mutableStateOf(makeColInfo(columnNames, data)) }
-    val enablePagingGrid = remember { mutableStateOf(false) }
+
 
 // No Remember
     var presentData by mutableStateOf<List<Any?>>(data)
     var pagingData by  mutableStateOf<List<Any?>>(data)
+
 //
 
     var sortedIndexList = remember { mutableListOf<Int>() }
     var startRowNum by remember {  mutableStateOf(0)}
-    val currentPage = remember {  mutableStateOf(1)}
+
     val pageSize = remember {  mutableStateOf(20)}
+    var currentPage by remember {   mutableStateOf(1)}
 
     val enableDarkMode = remember { mutableStateOf(false) }
 
@@ -65,28 +83,36 @@ fun ComposeDataGrid(
         columnInfo.value.forEach { it.sortOrder.value = 0 }
     }
 
-    val initPageData:()->Unit = {
-        currentPage.value = 1
 
-        val lastPage = if( presentData.size <= pageSize.value ){
+    val lastPage =  remember { mutableStateOf(
+        value = if( pagingData.size <= pageSize.value ) {
             1
         } else {
-            if( presentData.size % pageSize.value == 0 ){
-                presentData.size/pageSize.value
+            if( pagingData.size % pageSize.value == 0 ){
+                pagingData.size/pageSize.value
             } else {
-                (presentData.size/pageSize.value) + 1
+                (pagingData.size/pageSize.value) + 1
             }
         }
+    )}
 
-        val endIndex = if( currentPage.value == lastPage){
-            presentData.size
+
+    val startRowIndex = remember { mutableStateOf( (currentPage-1) * pageSize.value) }
+
+    val endRowIndex = remember { mutableStateOf(
+        value = if( currentPage == lastPage.value){
+            pagingData.size
         } else{
-            pageSize.value * currentPage.value
+            (pageSize.value * currentPage)
         }
+    )}
+
+
+    val initPageData:()->Unit = {
 
         val currentPageData = mutableListOf<List<Any?>>()
 
-        for ( i in 0  until endIndex){
+        for ( i in startRowIndex.value until endRowIndex.value){
             currentPageData.add( presentData[i] as List<Any?>)
         }
 
@@ -123,9 +149,9 @@ fun ComposeDataGrid(
 
         presentData = newData
         updateOrginalColumnIndex(newColumnInfoList)
-        if(enablePagingGrid.value) {
-            initPageData()
-        }
+
+        initPageData()
+
     }
 
     val updateSortedIndexList:(colInfo: ColumnInfo)->Unit = {
@@ -210,9 +236,9 @@ fun ComposeDataGrid(
             presentData = data.sortedWith(comparator)
         }
 
-        if(enablePagingGrid.value) {
-            initPageData()
-        }
+
+        initPageData()
+
     }
 
     val onFilter:(columnName:String, searchText:String, operator:String) -> Unit = { columnName, searchText, operator  ->
@@ -277,25 +303,8 @@ fun ComposeDataGrid(
 
         }
 
+        initPageData()
 
-
-        if(enablePagingGrid.value) {
-            initPageData()
-        }
-    }
-
-    val onRefresh:()-> Unit = {
-        reloadData()
-        presentData = data
-        currentPage.value = 1
-        columnInfo.value = makeColInfo(columnNames, data)
-        initSortOrder()
-        if(enablePagingGrid.value) {
-            initPageData()
-        }
-        coroutineScope.launch {
-            lazyListState.animateScrollToItem(0)
-        }
     }
 
     val onPageChange:(Int, Int)->Unit = {
@@ -311,19 +320,78 @@ fun ComposeDataGrid(
         }
     }
 
-    LaunchedEffect(enablePagingGrid.value) {
-        if(enablePagingGrid.value){
-            currentPage.value = 1
-            pageSize.value = 20
+    val updateCurrentPage:(PageNav)->Unit = { it
+        when(it) {
+            PageNav.Prev -> {currentPage = currentPage - 1 }
+            PageNav.Next -> { currentPage = currentPage + 1 }
+            PageNav.First -> {currentPage = 1}
+            PageNav.Last -> {currentPage = lastPage.value}
         }
+
+        startRowIndex.value = (currentPage-1)*pageSize.value
+        endRowIndex.value =  if(currentPage == lastPage.value){
+            presentData.size
+        } else{
+            pageSize.value * currentPage
+        }
+
+        onPageChange(startRowIndex.value, endRowIndex.value)
+
+    }
+
+
+    val onRefresh:()-> Unit = {
+        reloadData()
+        presentData = data
+        currentPage = 1
+        columnInfo.value = makeColInfo(columnNames, data)
+        initSortOrder()
+        initPageData()
+        updateCurrentPage(PageNav.First)
+
         coroutineScope.launch {
             lazyListState.animateScrollToItem(0)
         }
     }
 
+
+
+    val onChangePageSize:(Int)->Unit = {
+        pageSize.value = it
+        currentPage = 1
+    }
+
+
+
+
+    LaunchedEffect(key1 = pageSize.value){
+
+        lastPage.value = if( presentData.size <= pageSize.value ){
+            1
+        }else {
+            if( presentData.size % pageSize.value == 0 ){
+                presentData.size/pageSize.value
+            } else {
+                (presentData.size/pageSize.value) + 1
+            }
+        }
+
+        startRowIndex.value = (currentPage-1)*pageSize.value
+        endRowIndex.value =  if(currentPage == lastPage.value){
+            presentData.size
+        } else{
+            pageSize.value * currentPage
+        }
+
+        onPageChange(startRowIndex.value, endRowIndex.value)
+    }
+
+
+
+
+    initPageData()
+
     AppTheme(enableDarkMode = enableDarkMode.value) {
-
-
 
         Scaffold(
             modifier = then(modifier)
@@ -342,14 +410,7 @@ fun ComposeDataGrid(
                 )
             },
             bottomBar = {
-                if (enablePagingGrid.value) {
-                    ComposeDataGridFooter(
-                        currentPage,
-                        pageSize,
-                        presentData.size,
-                        onPageChange,
-                    )
-                }
+
             },
             containerColor = MaterialTheme.colorScheme.surface,
             contentColor = contentColorFor(MaterialTheme.colorScheme.surface),
@@ -370,11 +431,8 @@ fun ComposeDataGrid(
                 ) {
 
                     items(
-                        count = if (enablePagingGrid.value) {
-                            pagingData.size
-                        } else {
-                            presentData.size
-                        }
+                     pagingData.size
+
                     ) { index ->
 
                         Row(
@@ -392,22 +450,14 @@ fun ComposeDataGrid(
 
                             // row number
                             Text(
-                                text = if (enablePagingGrid.value) {
-                                    (startRowNum + index + 1).toString()
-                                } else {
-                                    (index + 1).toString()
-                                },
+                                text =  (startRowNum + index + 1).toString() ,
                                 modifier = Modifier.width(40.dp),
                                 textAlign = TextAlign.Center
                             )
 
                             ComposeDataGridRow(
                                 columnInfo.value,
-                                data = if (enablePagingGrid.value) {
-                                    pagingData[index] as List<Any?>
-                                } else {
-                                    presentData[index] as List<Any?>
-                                }
+                                data = pagingData[index] as List<Any?>
                             )
                         }
 
@@ -421,25 +471,15 @@ fun ComposeDataGrid(
                     ComposeDataGridFloatingBox(
                         modifier = Modifier
                             .width(460.dp)
-                            .padding(
-                                bottom = if (enablePagingGrid.value) {
-                                    90.dp
-                                } else {
-                                    40.dp
-                                },
-                                start = 8.dp,
-                                end = 8.dp
-                            ),
+                            .padding( bottom = 40.dp ),
                         lazyListState = lazyListState,
-                        dataCnt = if (enablePagingGrid.value) {
-                            pagingData.size
-                        } else {
-                            presentData.size
-                        },
-                        enablePagingGrid = enablePagingGrid,
+                        dataCnt = pagingData.size,
                         enableDarkMode = enableDarkMode,
                         onRefresh = onRefresh,
-                        usablePagingGrid = usablePagingGrid
+                        onChangePageSize,
+                        currentPage != 1,
+                        currentPage != lastPage.value,
+                        updateCurrentPage
                     )
                 }
 
@@ -451,3 +491,5 @@ fun ComposeDataGrid(
 
 
 }
+
+

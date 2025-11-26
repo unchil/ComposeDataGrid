@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -30,6 +31,10 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.KeyboardDoubleArrowDown
+import androidx.compose.material.icons.filled.KeyboardDoubleArrowLeft
+import androidx.compose.material.icons.filled.KeyboardDoubleArrowRight
+import androidx.compose.material.icons.filled.KeyboardDoubleArrowUp
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ButtonDefaults
@@ -113,16 +118,21 @@ fun ComposeDataGridFloatingBox(
     modifier: Modifier = Modifier,
     lazyListState: LazyListState,
     dataCnt: Int,
-    enablePagingGrid:MutableState<Boolean>,
     enableDarkMode:MutableState<Boolean>,
     onRefresh:(()->Unit)? = null,
-    usablePagingGrid: Boolean) {
+    onChangePageSize:(Int)->Unit,
+    enablePrev: Boolean,
+    enableNext: Boolean,
+    updateCurrentPage:(PageNav)->Unit
+){
 
     val coroutineScope = rememberCoroutineScope()
 
-    Box(modifier = then(modifier)
-        .fillMaxWidth().height(46.dp)
-        .border( BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.onTertiaryContainer), shape = RoundedCornerShape(2.dp)),
+    Box(
+        modifier = then(modifier).fillMaxWidth().height(100.dp).border(
+            BorderStroke(width=1.dp, color=MaterialTheme.colorScheme.onTertiaryContainer),
+            shape = RoundedCornerShape(2.dp)
+        )
     ){
 
         Row (
@@ -130,23 +140,99 @@ fun ComposeDataGridFloatingBox(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(0.dp, Alignment.CenterHorizontally)
         ){
-            IconButton(
-                modifier = Modifier,
-                enabled =  lazyListState.firstVisibleItemIndex != 0,
-                onClick = { coroutineScope.launch { lazyListState.animateScrollToItem(0)  }  }
-            ) {  Icon(Icons.Default.KeyboardArrowUp, contentDescription = "Goto First Page") }
 
-            Text ( "${dataCnt} rows" )
 
-            IconButton(
-                modifier = Modifier,
-                enabled = lazyListState.canScrollForward,
-                onClick = {  coroutineScope.launch { lazyListState.animateScrollToItem(dataCnt-1) } }
-            ) { Icon(Icons.Default.KeyboardArrowDown, contentDescription = "Goto Last Page") }
+            Box(
+                modifier= Modifier.fillMaxHeight().width( 200.dp),
+                contentAlignment = Alignment.Center
 
-            IconButton(
-                onClick = { coroutineScope.launch { onRefresh?.invoke() } }
-            ) {  Icon(Icons.Default.Refresh, contentDescription = "Refresh")  }
+            ){
+
+                IconButton(
+                    modifier = Modifier.align(Alignment.TopCenter),
+                    enabled =  lazyListState.firstVisibleItemIndex != 0,
+                    onClick = { coroutineScope.launch { lazyListState.animateScrollToItem(0)  }  }
+                ) {  Icon(Icons.Default.KeyboardDoubleArrowUp, contentDescription = "Goto First Row") }
+
+                Row (modifier = Modifier.width(80.dp).align(Alignment.CenterStart),){
+
+                    IconButton(
+                        modifier = Modifier,
+                        enabled = enablePrev,
+                        onClick = {
+                            updateCurrentPage(PageNav.First)
+                        }
+                    ) {
+                        Icon(Icons.Filled.KeyboardDoubleArrowLeft, contentDescription = "First Page")
+                    }
+
+                    IconButton(
+                        modifier = Modifier,
+                        enabled = enablePrev,
+                        onClick = {
+                            updateCurrentPage(PageNav.Prev)
+                        }
+                    ) {
+                        Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, contentDescription = "Prev Page")
+                    }
+                }
+
+
+
+
+                IconButton(
+                    modifier = Modifier.align(Alignment.Center).padding(20.dp),
+                    onClick = { coroutineScope.launch { onRefresh?.invoke() } }
+                ) {  Icon(Icons.Default.Refresh, contentDescription = "Refresh")  }
+
+
+
+                Row (modifier = Modifier.width(80.dp).align(Alignment.CenterEnd),){
+                    IconButton(
+                        modifier = Modifier,
+                        enabled = enableNext,
+                        onClick = {
+                            updateCurrentPage(PageNav.Next)
+                        }
+                    ) {
+                        Icon( Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = "Next Page")
+                    }
+
+                    IconButton(
+                        modifier = Modifier,
+                        enabled = enableNext,
+                        onClick = {
+                            updateCurrentPage(PageNav.Last)
+                        }
+                    ) {
+                        Icon(Icons.Filled.KeyboardDoubleArrowRight, contentDescription = "Last Page")
+                    }
+                }
+
+
+
+
+
+
+                IconButton(
+                    modifier = Modifier.align(Alignment.BottomCenter),
+                    enabled = lazyListState.canScrollForward,
+                    onClick = {  coroutineScope.launch { lazyListState.animateScrollToItem(dataCnt-1) } }
+                ) { Icon(Icons.Default.KeyboardDoubleArrowDown, contentDescription = "Goto Last Row") }
+
+
+
+            }
+
+            PageSizePicker(
+                listOf( "10", "20", "50", "100", "200", "500", "1000", "5000", "10000"),
+                60.dp,
+                20.dp,
+                3,
+                onChangePageSize
+            )
+
+
 
             TextButton(
                 onClick ={ enableDarkMode.value = !enableDarkMode.value },
@@ -157,17 +243,6 @@ fun ComposeDataGridFloatingBox(
                 Text(if(enableDarkMode.value){"LightMode"}else{"DarkMode"}, color= if(enableDarkMode.value){Color.White}else{Color.Black})
             }
 
-            if(usablePagingGrid){
-                TextButton(
-                    onClick ={ enablePagingGrid.value = !enablePagingGrid.value },
-                    modifier = Modifier,
-                    shape = ButtonDefaults.textShape,
-                    colors = ButtonDefaults.textButtonColors()
-                ){
-                    Text( if(enablePagingGrid.value){"Pagination Col"}else{"Pagination Exp"} , color= if(enableDarkMode.value){Color.White}else{Color.Black})
-                }
-
-            }
 
 
 
@@ -177,111 +252,6 @@ fun ComposeDataGridFloatingBox(
     }
 
 }
-
-@Composable
-fun ComposeDataGridFooter(
-    currentPage: MutableState<Int> = mutableStateOf(1) ,
-    pageSize: MutableState<Int>,
-    dataCount:Int,
-    onPageChange:((Int, Int)->Unit)?=null
-) {
-
-    val lastPage =  remember { mutableStateOf(
-        value = if( dataCount <= pageSize.value ) {
-            1
-        } else {
-            if( dataCount % pageSize.value == 0 ){
-                dataCount/pageSize.value
-            } else {
-                (dataCount/pageSize.value) + 1
-            }
-        }
-    )}
-
-    val startRowIndex = remember { mutableStateOf( (currentPage.value-1) * pageSize.value) }
-
-    val endRowIndex = remember { mutableStateOf(
-        value = if( currentPage.value == lastPage.value){
-            dataCount
-        } else{
-            (pageSize.value * currentPage.value)
-        }
-    )}
-
-    val onChangePageSize:(Int)->Unit = {
-        pageSize.value = it
-        currentPage.value = 1
-    }
-
-    LaunchedEffect(key1 = currentPage.value, key2 = pageSize.value){
-        lastPage.value = if( dataCount <= pageSize.value ){
-            1
-        }else {
-            if( dataCount % pageSize.value == 0 ){
-                dataCount/pageSize.value
-            } else {
-                (dataCount/pageSize.value) + 1
-            }
-        }
-        startRowIndex.value = (currentPage.value-1)*pageSize.value
-        endRowIndex.value =  if(currentPage.value == lastPage.value){
-            dataCount
-        } else{
-            pageSize.value * currentPage.value
-        }
-
-        onPageChange?.let {
-            it(startRowIndex.value, endRowIndex.value)
-        }
-    }
-
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(70.dp)
-            .background(color  =MaterialTheme.colorScheme.secondaryContainer)
-            .border( BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.onSecondaryContainer),
-                RoundedCornerShape(2.dp) ),
-        contentAlignment = Alignment.Center
-    ){
-
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(end = 20.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.End
-        ) {
-            IconButton(
-                enabled = currentPage.value > 1,
-                onClick = { currentPage.value = currentPage.value - 1}
-            ) {
-                Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, contentDescription = "Prev Page")
-            }
-
-            Text(
-                text = "Page ${currentPage.value} of ${ lastPage.value }" ,
-                modifier = Modifier.padding(horizontal = 0.dp)
-            )
-
-            IconButton(
-                enabled = currentPage.value < lastPage.value  ,
-                onClick = { currentPage.value = currentPage.value + 1  }
-            ) {
-                Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = "Next Page")
-            }
-
-            PageSizePicker(
-                listOf("10", "20", "50", "100", "200", "500", "1000", "5000", "10000"),
-                60.dp,
-                20.dp,
-                3,
-                onChangePageSize
-            )
-
-
-        }
-    }
-}
-
 
 
 @Composable
