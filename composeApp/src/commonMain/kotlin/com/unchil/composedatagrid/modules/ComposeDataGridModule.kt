@@ -141,7 +141,7 @@ fun ComposeDataGridFloatingBox(
     ){
 
         Row (
-            modifier = Modifier.fillMaxSize().background(color=MaterialTheme.colorScheme.tertiaryContainer),
+            modifier = Modifier.fillMaxSize().background(color=MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.95f)),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(0.dp, Alignment.CenterHorizontally)
         ){
