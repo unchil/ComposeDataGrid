@@ -29,12 +29,16 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.CloseFullscreen
+import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.KeyboardDoubleArrowDown
 import androidx.compose.material.icons.filled.KeyboardDoubleArrowLeft
 import androidx.compose.material.icons.filled.KeyboardDoubleArrowRight
 import androidx.compose.material.icons.filled.KeyboardDoubleArrowUp
+import androidx.compose.material.icons.filled.LightMode
+import androidx.compose.material.icons.filled.OpenWith
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ButtonDefaults
@@ -45,6 +49,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.VerticalDivider
@@ -234,16 +239,23 @@ fun ComposeDataGridFloatingBox(
 
 
 
-            TextButton(
-                onClick ={ enableDarkMode.value = !enableDarkMode.value },
-                modifier = Modifier,
-                shape = ButtonDefaults.textShape,
-                colors = ButtonDefaults.textButtonColors()
-            ){
-                Text(if(enableDarkMode.value){"LightMode"}else{"DarkMode"}, color= if(enableDarkMode.value){Color.White}else{Color.Black})
+            IconButton( onClick = {  enableDarkMode.value = !enableDarkMode.value   }) {
+                SegmentedButtonDefaults.Icon(
+                    active = !enableDarkMode.value,
+                    activeContent = {
+                        Icon(
+                            Icons.Default.DarkMode,
+                            contentDescription = "DarkMode"
+                        )
+                    },
+                    inactiveContent = {
+                        Icon(
+                            Icons.Default.LightMode,
+                            contentDescription = "LightMode"
+                        )
+                    }
+                )
             }
-
-
 
 
         }

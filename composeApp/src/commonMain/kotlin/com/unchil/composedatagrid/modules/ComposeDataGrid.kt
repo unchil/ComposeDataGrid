@@ -1,9 +1,12 @@
 package com.unchil.composedatagrid.modules
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,8 +16,26 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Anchor
+import androidx.compose.material.icons.filled.Archive
+import androidx.compose.material.icons.filled.ArrowCircleDown
+import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.ArrowOutward
+import androidx.compose.material.icons.filled.Block
+import androidx.compose.material.icons.filled.ClearAll
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.CloseFullscreen
+import androidx.compose.material.icons.filled.KeyboardDoubleArrowLeft
+import androidx.compose.material.icons.filled.OpenWith
+import androidx.compose.material.icons.filled.SwipeDown
+import androidx.compose.material.icons.outlined.Api
+import androidx.compose.material.icons.outlined.OpenWith
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SegmentedButtonDefaults.ActiveIcon
+import androidx.compose.material3.SegmentedButtonDefaults.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
@@ -24,10 +45,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.Modifier.Companion.then
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -359,7 +382,9 @@ fun ComposeDataGrid(
     }
 
 
-
+    val isVisibleMenu = rememberSaveable {
+        mutableStateOf(false)
+    }
 
     LaunchedEffect(key1 = pageSize.value){
 
@@ -453,24 +478,60 @@ fun ComposeDataGrid(
                     }
                 }
 
+
+
                 Box(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.BottomCenter
                 ) {
-                    ComposeDataGridFloatingBox(
-                        modifier = Modifier
-                            .width(460.dp)
-                            .padding( bottom = 40.dp ),
-                        lazyListState = lazyListState,
-                        dataCnt = pagingData.size,
-                        enableDarkMode = enableDarkMode,
-                        onRefresh = onRefresh,
-                        onChangePageSize,
-                        currentPage != 1,
-                        currentPage != lastPage.value,
-                        updateCurrentPage
-                    )
+
+                    Column (
+                        modifier= Modifier,
+                        verticalArrangement = Arrangement.Top,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ){
+                        IconButton( onClick = { isVisibleMenu.value = !isVisibleMenu.value  }) {
+                            Icon(
+                                active = !isVisibleMenu.value,
+                                activeContent = {
+                                    androidx.compose.material3.Icon(
+                                        Icons.Default.OpenWith,
+                                        contentDescription = "OpenBox")},
+                                inactiveContent = {
+                                    androidx.compose.material3.Icon(
+                                        Icons.Default.ArrowCircleDown,
+                                        contentDescription = "CloseBox" )}
+                            )
+                        }
+
+                        AnimatedVisibility(
+                            visible = isVisibleMenu.value,
+                        ) {
+
+                            ComposeDataGridFloatingBox(
+                                modifier = Modifier
+                                    .width(300.dp)
+                                    .padding( bottom = 40.dp ),
+                                lazyListState = lazyListState,
+                                dataCnt = pagingData.size,
+                                enableDarkMode = enableDarkMode,
+                                onRefresh = onRefresh,
+                                onChangePageSize,
+                                currentPage != 1,
+                                currentPage != lastPage.value,
+                                updateCurrentPage
+                            )
+                        }
+
+
+                    }
+
+
                 }
+
+
+
+
 
             }
         }
