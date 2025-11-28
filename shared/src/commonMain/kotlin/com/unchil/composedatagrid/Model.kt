@@ -25,11 +25,7 @@ data class SeaWaterInformation(
 fun makeGridColumns(type: PlatformAlias):List<String>{
     val columns = mutableListOf<String>()
     when(type){
-        PlatformAlias.ANDROID, PlatformAlias.IOS -> {
-            columns.add("수집시간")
-            columns.add("관측지점")
-            columns.add("수온")
-        }
+        PlatformAlias.ANDROID, PlatformAlias.IOS,
         PlatformAlias.JVM, PlatformAlias.WASM -> {
             columns.add("수집시간")
             columns.add("관측지점")
@@ -46,11 +42,7 @@ fun makeGridColumns(type: PlatformAlias):List<String>{
 fun SeaWaterInformation.toGridData(type: PlatformAlias):List<Any?>{
     val data = mutableListOf<Any?>()
     when(type){
-        PlatformAlias.ANDROID, PlatformAlias.IOS -> {
-            data.add(this.rtmWqWtchDtlDt)
-            data.add(this.rtmWqWtchStaName)
-            data.add(this.rtmWtchWtem)
-        }
+        PlatformAlias.ANDROID, PlatformAlias.IOS ,
         PlatformAlias.JVM, PlatformAlias.WASM -> {
             data.add(this.rtmWqWtchDtlDt)
             data.add(this.rtmWqWtchStaName)

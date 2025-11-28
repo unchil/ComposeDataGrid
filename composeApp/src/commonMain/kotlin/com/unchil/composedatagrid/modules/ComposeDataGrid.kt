@@ -59,12 +59,6 @@ fun ComposeDataGrid(
     var presentData by remember{mutableStateOf<List<Any?>>(data) }
     var pagingData by  remember{ mutableStateOf<List<Any?>>(data) }
 
-    val updateColumnList:( List<MutableState<Boolean>>)->Unit = { selectedColumns ->
-        selectedColumns.forEachIndexed { index, state ->
-
-        }
-    }
-
 
 
     var sortedIndexList = remember { mutableListOf<Int>() }
@@ -151,7 +145,28 @@ fun ComposeDataGrid(
     }
 
 
+    val updateColumnList:( List<MutableState<Boolean>>)->Unit = { updateList ->
+        val selectedColumns = mutableListOf<String>()
+        val selectedData = mutableListOf<List<Any?>>()
 
+        val indexList = updateList.mapIndexedNotNull { index, state ->
+            if(state.value) index else null
+        }
+
+        indexList.forEach {  selectedIndex ->
+            selectedColumns.add(columnNames.elementAt(selectedIndex))
+        }
+
+        data.forEach { row ->
+            selectedData.add(row.filterIndexed { index, _ -> index in  indexList})
+        }
+
+        columnInfo.value = makeColInfo(selectedColumns, selectedData)
+        presentData = selectedData
+        pagingData = selectedData
+
+        updateCurrentPage(PageNav.First)
+    }
 
 
     val initPageData:()->Unit = {
@@ -490,7 +505,7 @@ fun ComposeDataGrid(
                                 ) {
                                     ComposeDataGridFloatingBox(
                                         modifier = Modifier
-                                            .width(400.dp)
+                                            .width(360.dp)
                                             .padding(bottom = 40.dp),
                                         lazyListState = lazyListState,
                                         dataCnt = pagingData.size,

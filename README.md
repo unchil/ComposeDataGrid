@@ -1,5 +1,7 @@
 # ComposeDataGrid
 ### ComposeDataGrid that can be used in Kotlin Compose MultiPlatform 
+
+* Select Columns to Display
 * Multi Column Sorted
   - ascending, descending
 * Column Data Filtering
