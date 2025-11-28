@@ -53,10 +53,19 @@ fun ComposeDataGrid(
 
     val coroutineScope = rememberCoroutineScope()
     val lazyListState = rememberLazyListState(initialFirstVisibleItemIndex = 0)
-    val columnInfo = remember { mutableStateOf(makeColInfo(columnNames, data)) }
 
+
+    val columnInfo = remember { mutableStateOf(makeColInfo(columnNames, data)) }
     var presentData by remember{mutableStateOf<List<Any?>>(data) }
     var pagingData by  remember{ mutableStateOf<List<Any?>>(data) }
+
+    val updateColumnList:( List<MutableState<Boolean>>)->Unit = { selectedColumns ->
+        selectedColumns.forEachIndexed { index, state ->
+
+        }
+    }
+
+
 
     var sortedIndexList = remember { mutableListOf<Int>() }
     var startRowNum by remember {  mutableStateOf(0)}
@@ -481,7 +490,7 @@ fun ComposeDataGrid(
                                 ) {
                                     ComposeDataGridFloatingBox(
                                         modifier = Modifier
-                                            .width(300.dp)
+                                            .width(400.dp)
                                             .padding(bottom = 40.dp),
                                         lazyListState = lazyListState,
                                         dataCnt = pagingData.size,
@@ -490,7 +499,9 @@ fun ComposeDataGrid(
                                         onChangePageSize,
                                         currentPage != 1,
                                         currentPage != lastPage.value,
-                                        updateCurrentPage
+                                        updateCurrentPage,
+                                        columnNames,
+                                        updateColumnList
                                     )
                                 }
                             }

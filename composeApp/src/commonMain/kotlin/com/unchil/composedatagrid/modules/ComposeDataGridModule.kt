@@ -29,6 +29,14 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.Bookmark
+import androidx.compose.material.icons.filled.Cases
+import androidx.compose.material.icons.filled.Category
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Checklist
+import androidx.compose.material.icons.filled.ChecklistRtl
+import androidx.compose.material.icons.filled.Collections
+import androidx.compose.material.icons.filled.Crib
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
@@ -39,6 +47,10 @@ import androidx.compose.material.icons.filled.KeyboardDoubleArrowUp
 import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.SelectAll
+import androidx.compose.material.icons.filled.SettingsInputComposite
+import androidx.compose.material.icons.filled.ToggleOff
+import androidx.compose.material.icons.filled.ToggleOn
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
@@ -125,10 +137,19 @@ fun ComposeDataGridFloatingBox(
     onChangePageSize:(Int)->Unit,
     enablePrev: Boolean,
     enableNext: Boolean,
-    updateCurrentPage:(PageNav)->Unit
+    updateCurrentPage:(PageNav)->Unit,
+    columnNames:List<String>,
+    updateColumnList:( List<MutableState<Boolean>>)->Unit
 ){
 
     val coroutineScope = rememberCoroutineScope()
+
+    val enableSelectColumn = remember { mutableStateOf(false) }
+
+    val scrollState = remember { ScrollState(0) }
+
+    val selectedColumnList = remember {  columnNames.map { mutableStateOf(true) }.toList() }
+
 
     Box(
         modifier = then(modifier).fillMaxWidth().height(100.dp).border(
@@ -253,6 +274,80 @@ fun ComposeDataGridFloatingBox(
                     }
                 )
             }
+
+
+
+            IconButton(
+                onClick = {
+                    enableSelectColumn.value = !enableSelectColumn.value
+                }
+            ) {
+                SegmentedButtonDefaults.Icon(
+                    active = enableSelectColumn.value,
+                    activeContent = {
+                        Icon(
+                            Icons.Default.Check,
+                            contentDescription = "Open DropDownMenu"
+                        )
+                    },
+                    inactiveContent = {
+                        Icon(
+                            Icons.Default.ChecklistRtl,
+                            contentDescription = "Close DropDownMenu"
+                        )
+                    }
+                )
+            }
+
+
+            DropdownMenu(
+                expanded = enableSelectColumn.value,
+                onDismissRequest = {
+                    enableSelectColumn.value = false
+                    updateColumnList(selectedColumnList)
+                },
+                scrollState = scrollState,
+                modifier = Modifier.width(180.dp).height(200.dp).background(color =MaterialTheme.colorScheme.tertiaryContainer),
+            ) {
+
+
+                columnNames.forEachIndexed { index, columnName ->
+
+
+
+                   // HorizontalDivider()
+                    DropdownMenuItem(
+                        text = { Text(columnName) },
+                        trailingIcon = {
+                            IconButton( onClick = {   selectedColumnList[index].value =  !selectedColumnList[index].value  }) {
+                                SegmentedButtonDefaults.Icon(
+                                    active = selectedColumnList[index].value,
+                                    activeContent = {
+                                        Icon(
+                                            Icons.Default.ToggleOn,
+                                            contentDescription = "Selected Column"
+                                        )
+                                    },
+                                    inactiveContent = {
+                                        Icon(
+                                            Icons.Default.ToggleOff,
+                                            contentDescription = "Unselected Column"
+                                        )
+                                    }
+                                )
+                            }
+
+
+                        },
+                        onClick = {
+                            selectedColumnList[index].value = !selectedColumnList[index].value
+                        }
+                    )
+                }
+
+
+            }
+
 
 
         }
