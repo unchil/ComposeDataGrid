@@ -29,7 +29,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.filled.CloseFullscreen
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
@@ -38,10 +37,8 @@ import androidx.compose.material.icons.filled.KeyboardDoubleArrowLeft
 import androidx.compose.material.icons.filled.KeyboardDoubleArrowRight
 import androidx.compose.material.icons.filled.KeyboardDoubleArrowUp
 import androidx.compose.material.icons.filled.LightMode
-import androidx.compose.material.icons.filled.OpenWith
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
@@ -244,14 +241,14 @@ fun ComposeDataGridFloatingBox(
                     active = !enableDarkMode.value,
                     activeContent = {
                         Icon(
-                            Icons.Default.DarkMode,
-                            contentDescription = "DarkMode"
+                            Icons.Default.LightMode,
+                            contentDescription = "LightMode"
                         )
                     },
                     inactiveContent = {
                         Icon(
-                            Icons.Default.LightMode,
-                            contentDescription = "LightMode"
+                            Icons.Default.DarkMode,
+                            contentDescription = "DarkMode"
                         )
                     }
                 )

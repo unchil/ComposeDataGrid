@@ -49,7 +49,8 @@ fun PageSizePicker(
     }
 
     LaunchedEffect(key1 = pagerState.isScrollInProgress){
-        if (!pagerState.isScrollInProgress){
+
+        if (!pagerState.isScrollInProgress && (pagerState.lastScrolledForward || pagerState.lastScrolledBackward)){
             onChangePageSize(dataList[pagerState.currentPage].toString().toInt())
         }
     }

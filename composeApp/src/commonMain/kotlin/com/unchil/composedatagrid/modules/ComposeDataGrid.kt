@@ -15,31 +15,18 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Anchor
-import androidx.compose.material.icons.filled.Archive
 import androidx.compose.material.icons.filled.ArrowCircleDown
-import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.filled.ArrowOutward
-import androidx.compose.material.icons.filled.Block
-import androidx.compose.material.icons.filled.ClearAll
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.CloseFullscreen
-import androidx.compose.material.icons.filled.KeyboardDoubleArrowLeft
 import androidx.compose.material.icons.filled.OpenWith
-import androidx.compose.material.icons.filled.SwipeDown
-import androidx.compose.material.icons.outlined.Api
-import androidx.compose.material.icons.outlined.OpenWith
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SegmentedButtonDefaults.ActiveIcon
 import androidx.compose.material3.SegmentedButtonDefaults.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -50,7 +37,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.Modifier.Companion.then
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -85,20 +71,22 @@ fun ComposeDataGrid(
         columnInfo.value.forEach { it.sortOrder.value = 0 }
     }
 
-    fun getLastPage(totPage:Int):Int{
-        if( totPage <= pageSize.value ) {
-            return 1
-        } else {
-            if( totPage % pageSize.value == 0 ){
-                return totPage/pageSize.value
+    val getLastPage:(Int, Int)-> Int = { totCnt, pageSize ->
+        if (totCnt <= pageSize) 1
+        else {
+            if( totCnt % pageSize == 0 ){
+                totCnt/pageSize
             } else {
-                return  (totPage/pageSize.value) + 1
+                (totCnt/pageSize) + 1
             }
         }
     }
 
+    val lastPage =  remember { mutableStateOf( value = getLastPage(presentData.size, pageSize.value)  )}
 
-    val lastPage =  remember { mutableStateOf( value = getLastPage(presentData.size)  )}
+    val pagerState = rememberPagerState(pageCount = {
+        lastPage.value
+    })
 
     val startRowIndex = remember { mutableStateOf( (currentPage-1) * pageSize.value) }
 
@@ -109,7 +97,6 @@ fun ComposeDataGrid(
             (pageSize.value * currentPage)
         }
     )}
-
 
     val onPageChange:(Int, Int)->Unit = {
             startIndex, endIndex->
@@ -123,8 +110,6 @@ fun ComposeDataGrid(
             lazyListState.animateScrollToItem(0)
         }
     }
-
-
 
     val updateCurrentPage:(PageNav)->Unit = { it
         currentPage = when(it) {
@@ -156,6 +141,10 @@ fun ComposeDataGrid(
 
     }
 
+
+
+
+
     val initPageData:()->Unit = {
         val currentPageData = mutableListOf<List<Any?>>()
 
@@ -165,13 +154,12 @@ fun ComposeDataGrid(
 
         pagingData = currentPageData
 
-        lastPage.value = getLastPage(presentData.size)
+        lastPage.value = getLastPage(presentData.size, pageSize.value)
 
         coroutineScope.launch {
                 lazyListState.animateScrollToItem(0)
         }
     }
-
 
     val updateDataColumnOrder:(MutableState<List<ColumnInfo>>) -> Unit = { newColumnInfoList ->
 
@@ -363,7 +351,6 @@ fun ComposeDataGrid(
     val onRefresh:()-> Unit = {
         reloadData()
         presentData = data
-        currentPage = 1
         columnInfo.value = makeColInfo(columnNames, data)
         initSortOrder()
         initPageData()
@@ -374,19 +361,8 @@ fun ComposeDataGrid(
         }
     }
 
-
-
     val onChangePageSize:(Int)->Unit = {
         pageSize.value = it
-        currentPage = 1
-    }
-
-
-    val isVisibleMenu = rememberSaveable {
-        mutableStateOf(false)
-    }
-
-    LaunchedEffect(key1 = pageSize.value){
 
         lastPage.value = if( presentData.size <= pageSize.value ){
             1
@@ -398,14 +374,11 @@ fun ComposeDataGrid(
             }
         }
 
-        startRowIndex.value = (currentPage-1)*pageSize.value
-        endRowIndex.value =  if(currentPage == lastPage.value){
-            presentData.size
-        } else{
-            pageSize.value * currentPage
-        }
+        updateCurrentPage(PageNav.First)
+    }
 
-        onPageChange(startRowIndex.value, endRowIndex.value)
+    val isVisibleMenu = rememberSaveable {
+        mutableStateOf(false)
     }
 
 
@@ -435,99 +408,99 @@ fun ComposeDataGrid(
         ) {
 
 
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(it),
-                    state = lazyListState,
-                    contentPadding = PaddingValues(1.dp),
-                    userScrollEnabled = true,
-                ) {
 
-                    items(
-                     pagingData.size
+                    Box() {
 
-                    ) { index ->
 
-                        Row(
+                        LazyColumn(
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .background(MaterialTheme.colorScheme.surfaceContainerLowest )
-                                .border(
-                                    BorderStroke(
-                                        width = 1.dp,
-                                        color = Color.LightGray.copy(alpha = 0.2f)
+                                .fillMaxSize()
+                                .padding(it),
+                            state = lazyListState,
+                            contentPadding = PaddingValues(1.dp),
+                            userScrollEnabled = true,
+                        ) {
+                            items(pagingData.size) { index ->
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .background(MaterialTheme.colorScheme.surfaceContainerLowest)
+                                        .border(
+                                            BorderStroke(
+                                                width = 1.dp,
+                                                color = Color.LightGray.copy(alpha = 0.2f)
+                                            )
+                                        ),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                ) {
+                                    // row number
+                                    Text(
+                                        text = (startRowNum + index + 1).toString(),
+                                        modifier = Modifier.width(40.dp),
+                                        textAlign = TextAlign.Center
                                     )
-                                ),
-                            verticalAlignment = Alignment.CenterVertically,
+                                    ComposeDataGridRow(
+                                        columnInfo.value,
+                                        data = pagingData[index] as List<Any?>
+                                    )
+                                }
+                            }
+                        }
+
+
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.BottomCenter
                         ) {
+                            Column(
+                                modifier = Modifier,
+                                verticalArrangement = Arrangement.Top,
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                IconButton(onClick = {
+                                    isVisibleMenu.value = !isVisibleMenu.value
+                                }) {
+                                    Icon(
+                                        active = !isVisibleMenu.value,
+                                        activeContent = {
+                                            androidx.compose.material3.Icon(
+                                                Icons.Default.OpenWith,
+                                                contentDescription = "OpenBox"
+                                            )
+                                        },
+                                        inactiveContent = {
+                                            androidx.compose.material3.Icon(
+                                                Icons.Default.ArrowCircleDown,
+                                                contentDescription = "CloseBox"
+                                            )
+                                        }
+                                    )
+                                }
+                                AnimatedVisibility(
+                                    visible = isVisibleMenu.value,
+                                ) {
+                                    ComposeDataGridFloatingBox(
+                                        modifier = Modifier
+                                            .width(300.dp)
+                                            .padding(bottom = 40.dp),
+                                        lazyListState = lazyListState,
+                                        dataCnt = pagingData.size,
+                                        enableDarkMode = enableDarkMode,
+                                        onRefresh = onRefresh,
+                                        onChangePageSize,
+                                        currentPage != 1,
+                                        currentPage != lastPage.value,
+                                        updateCurrentPage
+                                    )
+                                }
+                            }
 
-                            // row number
-                            Text(
-                                text =  (startRowNum + index + 1).toString() ,
-                                modifier = Modifier.width(40.dp),
-                                textAlign = TextAlign.Center
-                            )
-
-                            ComposeDataGridRow(
-                                columnInfo.value,
-                                data = pagingData[index] as List<Any?>
-                            )
                         }
-
-                    }
-                }
-
-
-
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.BottomCenter
-                ) {
-
-                    Column (
-                        modifier= Modifier,
-                        verticalArrangement = Arrangement.Top,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ){
-                        IconButton( onClick = { isVisibleMenu.value = !isVisibleMenu.value  }) {
-                            Icon(
-                                active = !isVisibleMenu.value,
-                                activeContent = {
-                                    androidx.compose.material3.Icon(
-                                        Icons.Default.OpenWith,
-                                        contentDescription = "OpenBox")},
-                                inactiveContent = {
-                                    androidx.compose.material3.Icon(
-                                        Icons.Default.ArrowCircleDown,
-                                        contentDescription = "CloseBox" )}
-                            )
-                        }
-
-                        AnimatedVisibility(
-                            visible = isVisibleMenu.value,
-                        ) {
-
-                            ComposeDataGridFloatingBox(
-                                modifier = Modifier
-                                    .width(300.dp)
-                                    .padding( bottom = 40.dp ),
-                                lazyListState = lazyListState,
-                                dataCnt = pagingData.size,
-                                enableDarkMode = enableDarkMode,
-                                onRefresh = onRefresh,
-                                onChangePageSize,
-                                currentPage != 1,
-                                currentPage != lastPage.value,
-                                updateCurrentPage
-                            )
-                        }
-
-
                     }
 
 
-                }
+
+
 
 
 
@@ -535,7 +508,6 @@ fun ComposeDataGrid(
 
             }
         }
-
 
 
 
