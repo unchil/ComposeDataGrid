@@ -304,7 +304,18 @@ fun ComposeDataGridFloatingBox(
                 expanded = enableSelectColumn.value,
                 onDismissRequest = {
                     enableSelectColumn.value = false
-                    updateColumnList(selectedColumnList)
+
+                    if(selectedColumnList.filter {  state ->
+                        state.value
+                    }.size >= 2){
+                        updateColumnList(selectedColumnList)
+                    }else{
+
+                        //SnackBar Message
+
+                        selectedColumnList.map { it.value = true }
+                    }
+
                 },
                 scrollState = scrollState,
                 modifier = Modifier.width(180.dp).height(200.dp).background(color =MaterialTheme.colorScheme.tertiaryContainer),
