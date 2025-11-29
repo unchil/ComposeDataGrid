@@ -387,17 +387,7 @@ fun ComposeDataGrid(
 
     val onChangePageSize:(Int)->Unit = {
         pageSize.value = it
-
-        lastPage.value = if( presentData.size <= pageSize.value ){
-            1
-        }else {
-            if( presentData.size % pageSize.value == 0 ){
-                presentData.size/pageSize.value
-            } else {
-                (presentData.size/pageSize.value) + 1
-            }
-        }
-
+        lastPage.value = getLastPage(presentData.size, pageSize.value)
         updateCurrentPage(PageNav.First)
     }
 
