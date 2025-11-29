@@ -29,14 +29,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.filled.Bookmark
-import androidx.compose.material.icons.filled.Cases
-import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Checklist
 import androidx.compose.material.icons.filled.ChecklistRtl
-import androidx.compose.material.icons.filled.Collections
-import androidx.compose.material.icons.filled.Crib
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
@@ -47,8 +41,6 @@ import androidx.compose.material.icons.filled.KeyboardDoubleArrowUp
 import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.SelectAll
-import androidx.compose.material.icons.filled.SettingsInputComposite
 import androidx.compose.material.icons.filled.ToggleOff
 import androidx.compose.material.icons.filled.ToggleOn
 import androidx.compose.material3.DropdownMenu

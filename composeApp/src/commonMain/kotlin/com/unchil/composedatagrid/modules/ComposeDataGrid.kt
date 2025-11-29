@@ -108,11 +108,31 @@ fun ComposeDataGrid(
         for ( i in startIndex  until endIndex){
             currentPageData.add( presentData[i] as List<Any?>)
         }
-        pagingData = currentPageData.toList()
+        pagingData = currentPageData
+
+        lastPage.value = getLastPage(presentData.size, pageSize.value)
+
         coroutineScope.launch {
             lazyListState.animateScrollToItem(0)
         }
     }
+
+    val initPageData:()->Unit = {
+        val currentPageData = mutableListOf<List<Any?>>()
+
+        for ( i in startRowIndex.value until endRowIndex.value){
+            currentPageData.add( presentData[i] as List<Any?>)
+        }
+
+        pagingData = currentPageData
+
+        lastPage.value = getLastPage(presentData.size, pageSize.value)
+
+        coroutineScope.launch {
+            lazyListState.animateScrollToItem(0)
+        }
+    }
+
 
     val updateCurrentPage:(PageNav)->Unit = { it
         currentPage = when(it) {
@@ -169,21 +189,6 @@ fun ComposeDataGrid(
     }
 
 
-    val initPageData:()->Unit = {
-        val currentPageData = mutableListOf<List<Any?>>()
-
-        for ( i in startRowIndex.value until endRowIndex.value){
-            currentPageData.add( presentData[i] as List<Any?>)
-        }
-
-        pagingData = currentPageData
-
-        lastPage.value = getLastPage(presentData.size, pageSize.value)
-
-        coroutineScope.launch {
-                lazyListState.animateScrollToItem(0)
-        }
-    }
 
     val updateDataColumnOrder:(MutableState<List<ColumnInfo>>) -> Unit = { newColumnInfoList ->
 
@@ -208,7 +213,7 @@ fun ComposeDataGrid(
         }
         sortedIndexList = tempSortedIndexList
 
-        initPageData()
+        updateCurrentPage(PageNav.First)
     }
 
     val updateSortedIndexList:(colInfo: ColumnInfo)->Unit = {
@@ -293,9 +298,7 @@ fun ComposeDataGrid(
             presentData = data.sortedWith(comparator)
         }
 
-
-        initPageData()
-
+        updateCurrentPage(PageNav.First)
 
     }
 
@@ -375,7 +378,6 @@ fun ComposeDataGrid(
         presentData = data
         columnInfo.value = makeColInfo(columnNames, data)
         initSortOrder()
-        initPageData()
         updateCurrentPage(PageNav.First)
 
         coroutineScope.launch {
