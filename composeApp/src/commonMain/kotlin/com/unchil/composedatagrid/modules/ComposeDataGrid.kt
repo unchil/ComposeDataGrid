@@ -364,7 +364,7 @@ fun ComposeDataGrid(
         if(presentData.size == 0){
             // snackbar message
         } else {
-            initPageData()
+            updateCurrentPage(PageNav.First)
         }
 
 
