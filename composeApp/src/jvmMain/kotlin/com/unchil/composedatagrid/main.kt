@@ -49,8 +49,7 @@ fun main() = application {
         state = state,
     ) {
         CompositionLocalProvider( LocalPlatform provides getPlatform() ) {
-           // DataGridWithViewModel()
-            DataGrid(data.first, data.second )
+            DataGridWithViewModel()
         }
     }
 

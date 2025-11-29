@@ -276,86 +276,89 @@ fun ComposeDataGridFloatingBox(
             }
 
 
+            Box {
 
-            IconButton(
-                onClick = {
-                    enableSelectColumn.value = !enableSelectColumn.value
-                }
-            ) {
-                SegmentedButtonDefaults.Icon(
-                    active = enableSelectColumn.value,
-                    activeContent = {
-                        Icon(
-                            Icons.Default.Check,
-                            contentDescription = "Open DropDownMenu"
-                        )
-                    },
-                    inactiveContent = {
-                        Icon(
-                            Icons.Default.ChecklistRtl,
-                            contentDescription = "Close DropDownMenu"
-                        )
+                IconButton(
+                    onClick = {
+                        enableSelectColumn.value = !enableSelectColumn.value
                     }
-                )
-            }
-
-
-            DropdownMenu(
-                expanded = enableSelectColumn.value,
-                onDismissRequest = {
-                    enableSelectColumn.value = false
-
-                    if(selectedColumnList.filter {  state ->
-                        state.value
-                    }.size >= 2){
-                        updateColumnList(selectedColumnList)
-                    }else{
-
-                        //SnackBar Message
-
-                        selectedColumnList.map { it.value = true }
-                    }
-
-                },
-                scrollState = scrollState,
-                modifier = Modifier.width(180.dp).height(200.dp).background(color =MaterialTheme.colorScheme.tertiaryContainer),
-            ) {
-
-
-                columnNames.forEachIndexed { index, columnName ->
-
-
-
-                   // HorizontalDivider()
-                    DropdownMenuItem(
-                        text = { Text(columnName) },
-                        trailingIcon = {
-                            IconButton( onClick = {   selectedColumnList[index].value =  !selectedColumnList[index].value  }) {
-                                SegmentedButtonDefaults.Icon(
-                                    active = selectedColumnList[index].value,
-                                    activeContent = {
-                                        Icon(
-                                            Icons.Default.ToggleOn,
-                                            contentDescription = "Selected Column"
-                                        )
-                                    },
-                                    inactiveContent = {
-                                        Icon(
-                                            Icons.Default.ToggleOff,
-                                            contentDescription = "Unselected Column"
-                                        )
-                                    }
-                                )
-                            }
-
-
+                ) {
+                    SegmentedButtonDefaults.Icon(
+                        active = enableSelectColumn.value,
+                        activeContent = {
+                            Icon(
+                                Icons.Default.Check,
+                                contentDescription = "Open DropDownMenu"
+                            )
                         },
-                        onClick = {
-                            selectedColumnList[index].value = !selectedColumnList[index].value
+                        inactiveContent = {
+                            Icon(
+                                Icons.Default.ChecklistRtl,
+                                contentDescription = "Close DropDownMenu"
+                            )
                         }
                     )
                 }
 
+
+                DropdownMenu(
+                    expanded = enableSelectColumn.value,
+                    onDismissRequest = {
+                        enableSelectColumn.value = false
+
+                        if (selectedColumnList.filter { state ->
+                                state.value
+                            }.size >= 2) {
+                            updateColumnList(selectedColumnList)
+                        } else {
+
+                            //SnackBar Message
+
+                            selectedColumnList.map { it.value = true }
+                        }
+
+                    },
+                    scrollState = scrollState,
+                    modifier = Modifier.width(180.dp).height(200.dp)
+                        .background(color = MaterialTheme.colorScheme.tertiaryContainer),
+                ) {
+
+                    columnNames.forEachIndexed { index, columnName ->
+
+                        // HorizontalDivider()
+                        DropdownMenuItem(
+                            text = { Text(columnName) },
+                            trailingIcon = {
+                                IconButton(onClick = {
+                                    selectedColumnList[index].value =
+                                        !selectedColumnList[index].value
+                                }) {
+                                    SegmentedButtonDefaults.Icon(
+                                        active = selectedColumnList[index].value,
+                                        activeContent = {
+                                            Icon(
+                                                Icons.Default.ToggleOn,
+                                                contentDescription = "Selected Column"
+                                            )
+                                        },
+                                        inactiveContent = {
+                                            Icon(
+                                                Icons.Default.ToggleOff,
+                                                contentDescription = "Unselected Column"
+                                            )
+                                        }
+                                    )
+                                }
+
+
+                            },
+                            onClick = {
+                                selectedColumnList[index].value = !selectedColumnList[index].value
+                            }
+                        )
+                    }
+
+                }
 
             }
 

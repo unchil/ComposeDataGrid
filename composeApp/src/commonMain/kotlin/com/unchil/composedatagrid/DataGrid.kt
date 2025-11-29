@@ -28,6 +28,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.unchil.composedatagrid.modules.ComposeDataGrid
 import com.unchil.composedatagrid.theme.AppTheme
 import com.unchil.composedatagrid.viewmodel.MofSeaWaterInfoViewModel
+import com.unchil.composedatagrid.viewmodel.NifsSeaWaterInfoViewModel
 import kotlinx.coroutines.launch
 
 
@@ -94,19 +95,19 @@ fun DataGrid( columns: List<String>,  gridData:List<List<Any?>> ){
 
 @Composable
 fun DataGridWithViewModel(
-    viewModel: MofSeaWaterInfoViewModel = viewModel { MofSeaWaterInfoViewModel() }
+    viewModel: NifsSeaWaterInfoViewModel = viewModel { NifsSeaWaterInfoViewModel() }
 ){
 
     val platform = LocalPlatform.current
 
     LaunchedEffect(key1 = viewModel){
-        viewModel.onEvent(MofSeaWaterInfoViewModel.Event.Refresh)
+        viewModel.onEvent(NifsSeaWaterInfoViewModel.Event.Refresh)
     }
 
     val coroutineScope = rememberCoroutineScope()
     val reloadData :()->Unit = {
         coroutineScope.launch{
-            viewModel.onEvent(MofSeaWaterInfoViewModel.Event.Refresh)
+            viewModel.onEvent(NifsSeaWaterInfoViewModel.Event.Refresh)
         }
     }
     val seaWaterInfo = viewModel._seaWaterInfo.collectAsState()
@@ -122,9 +123,9 @@ fun DataGridWithViewModel(
 
         isVisible = seaWaterInfo.value.isNotEmpty()
         if(isVisible){
-            columnNames.value = makeGridColumns(platform.alias)
+            columnNames.value = seaWaterInfo.value.first().makeGridColumns()
             data.value = seaWaterInfo.value.map {
-                it.toGridData(platform.alias)
+                it.toGridData()
             }
         }
     }
