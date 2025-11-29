@@ -36,6 +36,8 @@ val LocalPlatform = compositionLocalOf<Platform> { error("No Platform found!") }
 @Composable
 fun DataGrid( columns: List<String>,  gridData:List<List<Any?>> ){
 
+    val platform = LocalPlatform.current
+
     val coroutineScope = rememberCoroutineScope()
     var isVisible by remember { mutableStateOf(gridData.isNotEmpty()) }
 
@@ -44,6 +46,23 @@ fun DataGrid( columns: List<String>,  gridData:List<List<Any?>> ){
 
         }
     }
+
+
+    val modifier = when(platform.alias){
+        PlatformAlias.ANDROID -> {
+            Modifier.fillMaxWidth(0.95f).height(700.dp ).padding(0.dp)
+        }
+        PlatformAlias.IOS -> {
+            Modifier.fillMaxWidth(0.95f).height(700.dp ).padding(0.dp)
+        }
+        PlatformAlias.JVM -> {
+            Modifier.fillMaxWidth(0.95f).height(600.dp ).padding(0.dp)
+        }
+        PlatformAlias.WASM -> {
+            Modifier.fillMaxWidth(0.95f).height(600.dp ).padding(0.dp)
+        }
+    }
+
 
     AppTheme{
         Column(
@@ -62,7 +81,7 @@ fun DataGrid( columns: List<String>,  gridData:List<List<Any?>> ){
 
             if(isVisible){
                 ComposeDataGrid(
-                    modifier = Modifier.fillMaxWidth(0.9f).height(600.dp).padding(20.dp),
+                    modifier = modifier,
                     columnNames = columns,
                     data = gridData,
                     reloadData = reloadData

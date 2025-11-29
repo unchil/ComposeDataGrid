@@ -64,7 +64,7 @@ fun ComposeDataGrid(
     var sortedIndexList = remember { mutableListOf<Int>() }
     var startRowNum by remember {  mutableStateOf(0)}
 
-    val pageSize = remember {  mutableStateOf(20)}
+    val pageSize = remember {  mutableStateOf(presentData.size)}
     var currentPage by remember {   mutableStateOf(1)}
 
     val enableDarkMode = remember { mutableStateOf(false) }
@@ -483,6 +483,7 @@ fun ComposeDataGrid(
                             ) {
                                 IconButton(onClick = {
                                     isVisibleMenu.value = !isVisibleMenu.value
+                                    onChangePageSize( if(isVisibleMenu.value) 20 else presentData.size )
                                 }) {
                                     Icon(
                                         active = !isVisibleMenu.value,
