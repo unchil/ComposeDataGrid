@@ -302,7 +302,7 @@ fun ComposeDataGrid(
     val onFilter:(columnName:String, searchText:String, operator:String) -> Unit = { columnName, searchText, operator  ->
 
         columnInfo.value.find { it.columnName == columnName }?.let {columInfo ->
-            presentData = when(operator){
+            val result: List<Any?> = when(operator){
                 OperatorMenu.Operator.Contains.toString() ->
                     presentData.filter {
                         it as List<*>
@@ -358,19 +358,17 @@ fun ComposeDataGrid(
                 }
             }
 
+            if(result.size == 0){
+                // snackbar message
+            } else {
+                presentData = result
+                updateCurrentPage(PageNav.First)
+            }
 
         }
-
-        if(presentData.size == 0){
-            // snackbar message
-        } else {
-            updateCurrentPage(PageNav.First)
-        }
-
-
-
-
     }
+
+
 
     val onRefresh:()-> Unit = {
         reloadData()
