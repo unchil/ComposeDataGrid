@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -24,9 +25,15 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SegmentedButtonDefaults.Icon
+import androidx.compose.material3.ShapeDefaults
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -41,6 +48,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.unchil.composedatagrid.theme.AppTheme
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
 
@@ -51,8 +60,79 @@ fun ComposeDataGrid(
     data:List<List<Any?>>,
     reloadData :()->Unit){
 
+
+
+    //----------
+    // SnackBar Setting
+    val channel = remember { Channel<Int>(Channel.CONFLATED) }
+    val snackBarHostState = remember { SnackbarHostState() }
+    var onFilterResultCnt by remember {  mutableStateOf(0)}
+
+    LaunchedEffect(channel) {
+        channel.receiveAsFlow().collect { index ->
+            val channelData = snackBarChannelList.first {
+                it.channel == index
+            }
+
+
+            //----------
+            val message:String = when (channelData.channelType) {
+                SnackBarChannelType.SEARCH_RESULT -> {
+                    if (onFilterResultCnt == 0) {
+                        "No data was found."
+                    } else {
+                        "Data ${onFilterResultCnt} items were found."
+                    }
+                }
+                else -> {
+                    channelData.message
+                }
+            }
+
+
+
+            val actionLabel = if (channelData.channelType == SnackBarChannelType.SEARCH_RESULT ) {
+                ""
+            } else {
+                channelData.actionLabel
+            }
+
+
+
+
+            val result = snackBarHostState.showSnackbar(
+                message = message,
+                actionLabel = actionLabel,
+                withDismissAction = channelData.withDismissAction,
+                duration = channelData.duration
+            )
+            when (result) {
+                SnackbarResult.ActionPerformed -> {
+                    //----------
+                    when (channelData.channelType) {
+                        SnackBarChannelType.SEARCH_RESULT -> {
+
+                        }
+                        else -> {
+
+                        }
+                    }
+                    //----------
+                }
+
+                SnackbarResult.Dismissed -> {
+
+                }
+            }
+
+
+        }
+    }
+
+
     val coroutineScope = rememberCoroutineScope()
     val lazyListState = rememberLazyListState(initialFirstVisibleItemIndex = 0)
+
 
 
     val columnInfo = remember { mutableStateOf(makeColInfo(columnNames, data)) }
@@ -343,12 +423,16 @@ fun ComposeDataGrid(
                 }
             }
 
-            if(result.size == 0){
-                // snackbar message
-            } else {
+            onFilterResultCnt = result.size
+
+            if(result.size > 0){
                 presentData = result
                 updateCurrentPage(PageNav.First)
             }
+
+            channel.trySend(snackBarChannelList.first { item ->
+                item.channelType == SnackBarChannelType.SEARCH_RESULT
+            }.channel)
 
         }
     }
@@ -363,6 +447,10 @@ fun ComposeDataGrid(
         coroutineScope.launch {
             lazyListState.animateScrollToItem(0)
         }
+
+        channel.trySend(snackBarChannelList.first { item ->
+            item.channelType == SnackBarChannelType.RELOAD
+        }.channel)
     }
 
     val onChangePageSize:(Int)->Unit = {
@@ -372,6 +460,19 @@ fun ComposeDataGrid(
 
     val isVisibleMenu = rememberSaveable {
         mutableStateOf(false)
+    }
+
+    val snackBarHost = @androidx.compose.runtime.Composable {
+        SnackbarHost(hostState = snackBarHostState) {
+            Snackbar(
+                snackbarData = it,
+                modifier = Modifier,
+                shape = ShapeDefaults.ExtraSmall,
+                containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                dismissActionContentColor = MaterialTheme.colorScheme.tertiary
+            )
+        }
     }
 
 
@@ -393,18 +494,12 @@ fun ComposeDataGrid(
                     updateDataColumnOrder = updateDataColumnOrder,
                 )
             },
-            bottomBar = {
-
-            },
+            snackbarHost = snackBarHost,
             containerColor = MaterialTheme.colorScheme.surface,
             contentColor = contentColorFor(MaterialTheme.colorScheme.surface),
         ) {
 
-
-
                     Box() {
-
-
                         LazyColumn(
                             modifier = Modifier
                                 .fillMaxSize()
@@ -486,12 +581,17 @@ fun ComposeDataGrid(
                                         currentPage != lastPage.value,
                                         updateCurrentPage,
                                         columnNames,
-                                        updateColumnList
+                                        updateColumnList,
+                                        channel
                                     )
                                 }
                             }
 
                         }
+
+
+
+
                     }
 
 

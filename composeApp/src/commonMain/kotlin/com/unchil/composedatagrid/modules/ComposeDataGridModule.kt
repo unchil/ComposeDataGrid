@@ -84,7 +84,7 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import kotlin.math.max
 import kotlin.math.roundToInt
-
+import kotlinx.coroutines.channels.Channel
 
 @Composable
 fun ComposeDataGridHeader(
@@ -131,7 +131,8 @@ fun ComposeDataGridFloatingBox(
     enableNext: Boolean,
     updateCurrentPage:(PageNav)->Unit,
     columnNames:List<String>,
-    updateColumnList:( List<MutableState<Boolean>>)->Unit
+    updateColumnList:( List<MutableState<Boolean>>)->Unit,
+    channel: Channel<Int>
 ){
 
     val coroutineScope = rememberCoroutineScope()
@@ -303,9 +304,9 @@ fun ComposeDataGridFloatingBox(
                             }.size >= 2) {
                             updateColumnList(selectedColumnList)
                         } else {
-
-                            //SnackBar Message
-
+                            channel.trySend(snackBarChannelList.first { item ->
+                                item.channelType == SnackBarChannelType.MIN_SELECT_COLUMN
+                            }.channel)
                             selectedColumnList.map { it.value = true }
                         }
 
