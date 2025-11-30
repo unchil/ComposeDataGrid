@@ -2,9 +2,9 @@ package com.unchil.composedatagrid.modules
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -15,15 +15,28 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowCircleDown
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.ChecklistRtl
+import androidx.compose.material.icons.filled.DarkMode
+import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.OpenWith
+import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.ToggleOff
+import androidx.compose.material.icons.filled.ToggleOn
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.FabPosition
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SegmentedButtonDefaults.Icon
 import androidx.compose.material3.ShapeDefaults
 import androidx.compose.material3.Snackbar
@@ -31,7 +44,6 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
-import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -61,13 +73,52 @@ fun ComposeDataGrid(
     reloadData :()->Unit){
 
 
+    var presentData by remember{mutableStateOf<List<Any?>>(data) }
+    val pageSize = remember {  mutableStateOf(20)}
+    var pagingData by  remember{ mutableStateOf<List<Any?>>(data) }
+    val getLastPage:(Int, Int)-> Int = { totCnt, pageSize ->
+        if (totCnt <= pageSize) 1
+        else {
+            if( totCnt % pageSize == 0 ){
+                totCnt/pageSize
+            } else {
+                (totCnt/pageSize) + 1
+            }
+        }
+    }
+    val lastPage =  remember { mutableStateOf( value = getLastPage(presentData.size, pageSize.value)  )}
+
+    var currentPage by remember {   mutableStateOf(1)}
+    val startRowIndex = remember { mutableStateOf( (currentPage-1) * pageSize.value) }
+    val endRowIndex = remember { mutableStateOf(
+        value = if( currentPage == lastPage.value){
+            pagingData.size
+        } else{
+            (pageSize.value * currentPage)
+        }
+    )}
+    var startRowNum by remember {  mutableStateOf(0)}
+    val coroutineScope = rememberCoroutineScope()
+
+    val makePagingData:(Int, Int, LazyListState?)->Unit = {
+            startIndex, endIndex, state->
+        startRowNum = startIndex
+        val currentPageData = mutableListOf<List<Any?>>()
+        for ( i in startIndex  until endIndex){
+            currentPageData.add( presentData[i] as List<Any?>)
+        }
+        pagingData = currentPageData
+
+        coroutineScope.launch { state?.animateScrollToItem(0) }
+    }
+
+    val enableDarkMode = remember { mutableStateOf(false) }
 
     //----------
     // SnackBar Setting
     val channel = remember { Channel<Int>(Channel.CONFLATED) }
     val snackBarHostState = remember { SnackbarHostState() }
     var onFilterResultCnt by remember {  mutableStateOf(0)}
-
     LaunchedEffect(channel) {
         channel.receiveAsFlow().collect { index ->
             val channelData = snackBarChannelList.first {
@@ -128,92 +179,22 @@ fun ComposeDataGrid(
 
         }
     }
-
-
-    val coroutineScope = rememberCoroutineScope()
-    val lazyListState = rememberLazyListState(initialFirstVisibleItemIndex = 0)
-
-
-
+    //----------
     val columnInfo = remember { mutableStateOf(makeColInfo(columnNames, data)) }
-    var presentData by remember{mutableStateOf<List<Any?>>(data) }
-    var pagingData by  remember{ mutableStateOf<List<Any?>>(data) }
-
-
-
     var sortedIndexList = remember { mutableListOf<Int>() }
-    var startRowNum by remember {  mutableStateOf(0)}
-
-    val pageSize = remember {  mutableStateOf(presentData.size)}
-    var currentPage by remember {   mutableStateOf(1)}
-
-    val enableDarkMode = remember { mutableStateOf(false) }
-
     val initSortOrder:()->Unit = {
         sortedIndexList.clear()
         columnInfo.value.forEach { it.sortOrder.value = 0 }
     }
 
-    val getLastPage:(Int, Int)-> Int = { totCnt, pageSize ->
-        if (totCnt <= pageSize) 1
-        else {
-            if( totCnt % pageSize == 0 ){
-                totCnt/pageSize
-            } else {
-                (totCnt/pageSize) + 1
-            }
-        }
-    }
-
-    val lastPage =  remember { mutableStateOf( value = getLastPage(presentData.size, pageSize.value)  )}
-
-    val pagerState = rememberPagerState(pageCount = {
-        lastPage.value
-    })
-
-    val startRowIndex = remember { mutableStateOf( (currentPage-1) * pageSize.value) }
-
-    val endRowIndex = remember { mutableStateOf(
-        value = if( currentPage == lastPage.value){
-            pagingData.size
-        } else{
-            (pageSize.value * currentPage)
-        }
-    )}
-
-    val onPageChange:(Int, Int)->Unit = {
-            startIndex, endIndex->
-        startRowNum = startIndex
-        val currentPageData = mutableListOf<List<Any?>>()
-        for ( i in startIndex  until endIndex){
-            currentPageData.add( presentData[i] as List<Any?>)
-        }
-        pagingData = currentPageData
-
-        coroutineScope.launch {
-            lazyListState.animateScrollToItem(0)
-        }
-    }
-
-
     val updateCurrentPage:(PageNav)->Unit = { it
         currentPage = when(it) {
-            PageNav.Prev -> {
-                currentPage - 1
-            }
-
-            PageNav.Next -> {
-                currentPage + 1
-            }
-
-            PageNav.First -> {
-                1
-            }
-
-            PageNav.Last -> {
-                lastPage.value
-            }
+            PageNav.Prev ->  currentPage - 1
+            PageNav.Next -> currentPage + 1
+            PageNav.First -> 1
+            PageNav.Last -> lastPage.value
         }
+
 
         lastPage.value = getLastPage(presentData.size, pageSize.value)
 
@@ -224,10 +205,22 @@ fun ComposeDataGrid(
             pageSize.value * currentPage
         }
 
-        onPageChange(startRowIndex.value, endRowIndex.value)
+        makePagingData(startRowIndex.value, endRowIndex.value, null)
 
     }
 
+    val updateCurrentPage2:(Int,  LazyListState)->Unit = { page, state ->
+        currentPage = page
+
+        lastPage.value = getLastPage(presentData.size, pageSize.value)
+        startRowIndex.value = (currentPage-1)*pageSize.value
+        endRowIndex.value =  if(currentPage == lastPage.value){
+            presentData.size
+        } else{
+            pageSize.value * currentPage
+        }
+        makePagingData(startRowIndex.value, endRowIndex.value, state)
+    }
 
     val updateColumnList:( List<MutableState<Boolean>>)->Unit = { updateList ->
         val selectedColumns = mutableListOf<String>()
@@ -251,7 +244,6 @@ fun ComposeDataGrid(
 
         updateCurrentPage(PageNav.First)
     }
-
     val updateDataColumnOrder:(MutableState<List<ColumnInfo>>) -> Unit = { newColumnInfoList ->
 
         presentData = presentData.map { row ->
@@ -277,7 +269,6 @@ fun ComposeDataGrid(
 
         updateCurrentPage(PageNav.First)
     }
-
     val updateSortedIndexList:(colInfo: ColumnInfo)->Unit = {
         if(sortedIndexList.isEmpty() ){
             sortedIndexList.add(it.columnIndex)
@@ -295,7 +286,6 @@ fun ComposeDataGrid(
             }
         }
     }
-
     val onMultiSortedOrder:(colInfo: ColumnInfo)->Unit = {
             colInfo ->
 
@@ -363,7 +353,6 @@ fun ComposeDataGrid(
         updateCurrentPage(PageNav.First)
 
     }
-
     val onFilter:(columnName:String, searchText:String, operator:String) -> Unit = { columnName, searchText, operator  ->
 
         columnInfo.value.find { it.columnName == columnName }?.let {columInfo ->
@@ -436,33 +425,23 @@ fun ComposeDataGrid(
 
         }
     }
-
     val onRefresh:()-> Unit = {
         reloadData()
         presentData = data
         columnInfo.value = makeColInfo(columnNames, data)
         initSortOrder()
         updateCurrentPage(PageNav.First)
-
-        coroutineScope.launch {
-            lazyListState.animateScrollToItem(0)
-        }
-
         channel.trySend(snackBarChannelList.first { item ->
             item.channelType == SnackBarChannelType.RELOAD
         }.channel)
     }
-
     val onChangePageSize:(Int)->Unit = {
         pageSize.value = it
         updateCurrentPage(PageNav.First)
     }
+    val isVisibleTopBar = rememberSaveable {mutableStateOf(true) }
 
-    val isVisibleMenu = rememberSaveable {
-        mutableStateOf(false)
-    }
-
-    val snackBarHost = @androidx.compose.runtime.Composable {
+    val snackBarHost = @Composable {
         SnackbarHost(hostState = snackBarHostState) {
             Snackbar(
                 snackbarData = it,
@@ -474,140 +453,268 @@ fun ComposeDataGrid(
             )
         }
     }
+    val floatingActionButton = @Composable{
+        val isExpandFloatingActionButton = rememberSaveable {mutableStateOf(false) }
+        Column (horizontalAlignment = Alignment.CenterHorizontally) {
+
+            IconButton(onClick = {
+                isExpandFloatingActionButton.value = !isExpandFloatingActionButton.value
+            }) {
+
+                Icon(
+                    active = !isExpandFloatingActionButton.value,
+                    activeContent = {
+                        androidx.compose.material3.Icon(
+                            Icons.Default.OpenWith,
+                            contentDescription = "OpenBox"
+                        )
+                    },
+                    inactiveContent = {
+                        androidx.compose.material3.Icon(
+                            Icons.Default.ArrowCircleDown,
+                            contentDescription = "CloseBox"
+                        )
+                    }
+                )
+            }
+
+            AnimatedVisibility(
+                visible = isExpandFloatingActionButton.value,
+            ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+
+
+                    IconButton(
+                        onClick = { coroutineScope.launch { onRefresh.invoke() } }
+                    ) {
+                        androidx.compose.material3.Icon(
+                            Icons.Default.Refresh,
+                            contentDescription = "Refresh"
+                        )
+                    }
+
+
+
+
+                    IconButton(onClick = { enableDarkMode.value = !enableDarkMode.value }) {
+                        SegmentedButtonDefaults.Icon(
+                            active = !enableDarkMode.value,
+                            activeContent = {
+                                androidx.compose.material3.Icon(
+                                    Icons.Default.LightMode,
+                                    contentDescription = "LightMode"
+                                )
+                            },
+                            inactiveContent = {
+                                androidx.compose.material3.Icon(
+                                    Icons.Default.DarkMode,
+                                    contentDescription = "DarkMode"
+                                )
+                            }
+                        )
+                    }
+
+
+                    Box {
+
+                        val enableSelectColumn = remember { mutableStateOf(false) }
+
+                        val scrollState = remember { ScrollState(0) }
+
+                        val selectedColumnList =
+                            remember { columnNames.map { mutableStateOf(true) }.toList() }
+
+
+
+
+
+                        IconButton(
+                            onClick = {
+                                enableSelectColumn.value = !enableSelectColumn.value
+                            }
+                        ) {
+                            SegmentedButtonDefaults.Icon(
+                                active = enableSelectColumn.value,
+                                activeContent = {
+                                    androidx.compose.material3.Icon(
+                                        Icons.Default.Check,
+                                        contentDescription = "Open DropDownMenu"
+                                    )
+                                },
+                                inactiveContent = {
+                                    androidx.compose.material3.Icon(
+                                        Icons.Default.ChecklistRtl,
+                                        contentDescription = "Close DropDownMenu"
+                                    )
+                                }
+                            )
+                        }
+
+
+                        DropdownMenu(
+                            expanded = enableSelectColumn.value,
+                            onDismissRequest = {
+                                enableSelectColumn.value = false
+
+                                if (selectedColumnList.filter { state ->
+                                        state.value
+                                    }.size >= 2) {
+                                    updateColumnList(selectedColumnList)
+                                } else {
+                                    channel.trySend(snackBarChannelList.first { item ->
+                                        item.channelType == SnackBarChannelType.MIN_SELECT_COLUMN
+                                    }.channel)
+                                    selectedColumnList.map { it.value = true }
+                                }
+
+                            },
+                            scrollState = scrollState,
+                            modifier = Modifier.width(180.dp).height(200.dp)
+                                .background(color = MaterialTheme.colorScheme.tertiaryContainer),
+                        ) {
+
+                            columnNames.forEachIndexed { index, columnName ->
+
+                                // HorizontalDivider()
+                                DropdownMenuItem(
+                                    text = { Text(columnName) },
+                                    trailingIcon = {
+                                        IconButton(onClick = {
+                                            selectedColumnList[index].value =
+                                                !selectedColumnList[index].value
+                                        }) {
+                                            SegmentedButtonDefaults.Icon(
+                                                active = selectedColumnList[index].value,
+                                                activeContent = {
+                                                    androidx.compose.material3.Icon(
+                                                        Icons.Default.ToggleOn,
+                                                        contentDescription = "Selected Column"
+                                                    )
+                                                },
+                                                inactiveContent = {
+                                                    androidx.compose.material3.Icon(
+                                                        Icons.Default.ToggleOff,
+                                                        contentDescription = "Unselected Column"
+                                                    )
+                                                }
+                                            )
+                                        }
+
+
+                                    },
+                                    onClick = {
+                                        selectedColumnList[index].value =
+                                            !selectedColumnList[index].value
+                                    }
+                                )
+                            }
+
+                        }
+
+                    }
+
+
+
+                    PageSizePicker(
+                        listOf("10", "20", "50", "100", "200", "500", "1000", "5000", "10000"),
+                        40.dp,
+                        20.dp,
+                        3,
+                        onChangePageSize
+                    )
+
+
+                }
+            }
+
+
+
+        }
+    }
 
 
     AppTheme(enableDarkMode = enableDarkMode.value) {
 
         Scaffold(
-            modifier = then(modifier)
-                .fillMaxSize()
-                .border(
-                    BorderStroke(width = 1.dp, color = Color.Black),
-                    RoundedCornerShape(2.dp)
-                ),
+            modifier = then(modifier).fillMaxSize().border(
+                BorderStroke(width = 1.dp, color = Color.Black),
+                RoundedCornerShape(2.dp)
+            ),
             topBar = {
-                ComposeDataGridHeader(
-                    modifier = Modifier.fillMaxWidth(),
-                    columnInfo = columnInfo,
-                    onSortOrder = onMultiSortedOrder,
-                    onFilter = onFilter,
-                    updateDataColumnOrder = updateDataColumnOrder,
-                )
+                AnimatedVisibility(
+                    visible = isVisibleTopBar.value,
+                ) {
+                    ComposeDataGridHeader(
+                        modifier = Modifier.fillMaxWidth(),
+                        columnInfo = columnInfo,
+                        onSortOrder = onMultiSortedOrder,
+                        onFilter = onFilter,
+                        updateDataColumnOrder = updateDataColumnOrder,
+                    )
+                }
             },
-            snackbarHost = snackBarHost,
-            containerColor = MaterialTheme.colorScheme.surface,
-            contentColor = contentColorFor(MaterialTheme.colorScheme.surface),
-        ) {
+            floatingActionButton = floatingActionButton,
+            floatingActionButtonPosition = FabPosition.End,
+            snackbarHost = snackBarHost
+        ){
 
-                    Box() {
-                        LazyColumn(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(it),
-                            state = lazyListState,
-                            contentPadding = PaddingValues(1.dp),
-                            userScrollEnabled = true,
-                        ) {
-                            items(pagingData.size) { index ->
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .background(MaterialTheme.colorScheme.surfaceContainerLowest)
-                                        .border(
-                                            BorderStroke(
-                                                width = 1.dp,
-                                                color = Color.LightGray.copy(alpha = 0.2f)
-                                            )
-                                        ),
-                                    verticalAlignment = Alignment.CenterVertically,
-                                ) {
-                                    // row number
-                                    Text(
-                                        text = (startRowNum + index + 1).toString(),
-                                        modifier = Modifier.width(40.dp),
-                                        textAlign = TextAlign.Center
-                                    )
-                                    ComposeDataGridRow(
-                                        columnInfo.value,
-                                        data = pagingData[index] as List<Any?>
-                                    )
-                                }
-                            }
-                        }
+            val pagerState = rememberPagerState(pageCount = { lastPage.value })
+
+            HorizontalPager(state = pagerState) { page ->
+
+                val lazyListState = rememberLazyListState(initialFirstVisibleItemIndex = 0)
+
+                updateCurrentPage2(page+1, lazyListState)
+
+                LaunchedEffect(key1= lazyListState.canScrollBackward){
+                    isVisibleTopBar.value = !lazyListState.canScrollBackward
+                }
 
 
-                        Box(
-                            modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.BottomCenter
-                        ) {
-                            Column(
-                                modifier = Modifier,
-                                verticalArrangement = Arrangement.Top,
-                                horizontalAlignment = Alignment.CenterHorizontally
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize().padding(it),
+                        state = lazyListState,
+                        contentPadding = PaddingValues(1.dp),
+                        userScrollEnabled = true
+                    ) {
+
+                        items(pagingData.size) { index ->
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .background(MaterialTheme.colorScheme.surfaceContainerLowest)
+                                    .border(
+                                        BorderStroke(
+                                            width = 1.dp,
+                                            color = Color.LightGray.copy(alpha = 0.2f)
+                                        )
+                                    ),
+                                verticalAlignment = Alignment.CenterVertically
                             ) {
-                                IconButton(onClick = {
-                                    isVisibleMenu.value = !isVisibleMenu.value
-                                    onChangePageSize( if(isVisibleMenu.value) 20 else presentData.size )
-                                }) {
-                                    Icon(
-                                        active = !isVisibleMenu.value,
-                                        activeContent = {
-                                            androidx.compose.material3.Icon(
-                                                Icons.Default.OpenWith,
-                                                contentDescription = "OpenBox"
-                                            )
-                                        },
-                                        inactiveContent = {
-                                            androidx.compose.material3.Icon(
-                                                Icons.Default.ArrowCircleDown,
-                                                contentDescription = "CloseBox"
-                                            )
-                                        }
-                                    )
-                                }
-                                AnimatedVisibility(
-                                    visible = isVisibleMenu.value,
-                                ) {
-                                    ComposeDataGridFloatingBox(
-                                        modifier = Modifier
-                                            .width(360.dp)
-                                            .padding(bottom = 40.dp),
-                                        lazyListState = lazyListState,
-                                        dataCnt = pagingData.size,
-                                        enableDarkMode = enableDarkMode,
-                                        onRefresh = onRefresh,
-                                        onChangePageSize,
-                                        currentPage != 1,
-                                        currentPage != lastPage.value,
-                                        updateCurrentPage,
-                                        columnNames,
-                                        updateColumnList,
-                                        channel
-                                    )
-                                }
+                                // row number
+                                Text(
+                                    text = (startRowNum + index + 1).toString(),
+                                    modifier = Modifier.width(40.dp),
+                                    textAlign = TextAlign.Center
+                                )
+                                ComposeDataGridRow(
+                                    columnInfo.value,
+                                    data = pagingData[index] as List<Any?>
+                                )
                             }
-
                         }
-
-
-
-
                     }
 
 
 
 
 
-
-
-
-
             }
+
         }
 
 
-
+    }
 
 }
-
 
