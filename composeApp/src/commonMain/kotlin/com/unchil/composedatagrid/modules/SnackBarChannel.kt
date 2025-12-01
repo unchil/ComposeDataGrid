@@ -4,10 +4,9 @@ import androidx.compose.material3.SnackbarDuration
 
 enum class SnackBarChannelType {
     SEARCH_RESULT,
-
     RELOAD,
-
-    MIN_SELECT_COLUMN
+    MIN_SELECT_COLUMN,
+    CHANGE_PAGE_SIZE
 }
 
 data class SnackBarChannelData(
@@ -43,6 +42,14 @@ val snackBarChannelList = listOf<SnackBarChannelData>(
         channelType = SnackBarChannelType.MIN_SELECT_COLUMN,
         channel = 3,
         message = "You must select at least 2 columns.",
+        duration = SnackbarDuration.Short,
+        actionLabel = null,
+        withDismissAction = true,
+    ),
+    SnackBarChannelData(
+        channelType = SnackBarChannelType.CHANGE_PAGE_SIZE,
+        channel = 4,
+        message = "",
         duration = SnackbarDuration.Short,
         actionLabel = null,
         withDismissAction = true,

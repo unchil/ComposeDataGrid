@@ -48,6 +48,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -87,7 +88,7 @@ fun ComposeDataGrid(
         }
     }
     val lastPage =  remember { mutableStateOf( value = getLastPage(presentData.size, pageSize.value)  )}
-
+    val pagerState = rememberPagerState(pageCount = { lastPage.value })
     var currentPage by remember {   mutableStateOf(1)}
     val startRowIndex = remember { mutableStateOf( (currentPage-1) * pageSize.value) }
     val endRowIndex = remember { mutableStateOf(
@@ -98,20 +99,6 @@ fun ComposeDataGrid(
         }
     )}
     var startRowNum by remember {  mutableStateOf(0)}
-    val coroutineScope = rememberCoroutineScope()
-
-    val makePagingData:(Int, Int, LazyListState?)->Unit = {
-            startIndex, endIndex, state->
-        startRowNum = startIndex
-        val currentPageData = mutableListOf<List<Any?>>()
-        for ( i in startIndex  until endIndex){
-            currentPageData.add( presentData[i] as List<Any?>)
-        }
-        pagingData = currentPageData
-
-        coroutineScope.launch { state?.animateScrollToItem(0) }
-    }
-
     val enableDarkMode = remember { mutableStateOf(false) }
 
     //----------
@@ -134,6 +121,9 @@ fun ComposeDataGrid(
                     } else {
                         "Data ${onFilterResultCnt} items were found."
                     }
+                }
+                SnackBarChannelType.CHANGE_PAGE_SIZE -> {
+                    "${pageSize.value} data items are displayed on one page."
                 }
                 else -> {
                     channelData.message
@@ -187,6 +177,20 @@ fun ComposeDataGrid(
         columnInfo.value.forEach { it.sortOrder.value = 0 }
     }
 
+
+    val coroutineScope = rememberCoroutineScope()
+
+    val makePagingData:(Int, Int, LazyListState?)->Unit = {
+            startIndex, endIndex, state->
+        startRowNum = startIndex
+        val currentPageData = mutableListOf<List<Any?>>()
+        for ( i in startIndex  until endIndex){
+            currentPageData.add( presentData[i] as List<Any?>)
+        }
+        pagingData = currentPageData
+
+    }
+
     val updateCurrentPage:(PageNav)->Unit = { it
         currentPage = when(it) {
             PageNav.Prev ->  currentPage - 1
@@ -205,11 +209,15 @@ fun ComposeDataGrid(
             pageSize.value * currentPage
         }
 
+        coroutineScope.launch {
+            pagerState.animateScrollToPage(currentPage -1)
+        }
+
         makePagingData(startRowIndex.value, endRowIndex.value, null)
 
     }
 
-    val updateCurrentPage2:(Int,  LazyListState)->Unit = { page, state ->
+    val updateCurrentPage2:(Int)->Unit = { page ->
         currentPage = page
 
         lastPage.value = getLastPage(presentData.size, pageSize.value)
@@ -219,7 +227,7 @@ fun ComposeDataGrid(
         } else{
             pageSize.value * currentPage
         }
-        makePagingData(startRowIndex.value, endRowIndex.value, state)
+        makePagingData(startRowIndex.value, endRowIndex.value, null)
     }
 
     val updateColumnList:( List<MutableState<Boolean>>)->Unit = { updateList ->
@@ -438,6 +446,10 @@ fun ComposeDataGrid(
     val onChangePageSize:(Int)->Unit = {
         pageSize.value = it
         updateCurrentPage(PageNav.First)
+        channel.trySend(snackBarChannelList.first { item ->
+            item.channelType == SnackBarChannelType.CHANGE_PAGE_SIZE
+        }.channel)
+
     }
     val isVisibleTopBar = rememberSaveable {mutableStateOf(true) }
 
@@ -632,14 +644,21 @@ fun ComposeDataGrid(
         }
     }
 
+    LaunchedEffect(pagerState.currentPage,pagerState.lastScrolledBackward,pagerState.lastScrolledForward,pagerState.isScrollInProgress){
+        if( (!pagerState.lastScrolledBackward && !pagerState.lastScrolledForward && !pagerState.isScrollInProgress)
+            || ( (pagerState.lastScrolledBackward||pagerState.lastScrolledForward) && !pagerState.isScrollInProgress)){
+            updateCurrentPage2(pagerState.currentPage+1)
+        }
+    }
+
+
 
     AppTheme(enableDarkMode = enableDarkMode.value) {
 
         Scaffold(
             modifier = then(modifier).fillMaxSize().border(
                 BorderStroke(width = 1.dp, color = Color.Black),
-                RoundedCornerShape(2.dp)
-            ),
+                RoundedCornerShape(2.dp) ),
             topBar = {
                 AnimatedVisibility(
                     visible = isVisibleTopBar.value,
@@ -658,18 +677,15 @@ fun ComposeDataGrid(
             snackbarHost = snackBarHost
         ){
 
-            val pagerState = rememberPagerState(pageCount = { lastPage.value })
+
 
             HorizontalPager(state = pagerState) { page ->
 
                 val lazyListState = rememberLazyListState(initialFirstVisibleItemIndex = 0)
 
-                updateCurrentPage2(page+1, lazyListState)
-
-                LaunchedEffect(key1= lazyListState.canScrollBackward){
+                LaunchedEffect(lazyListState.canScrollBackward){
                     isVisibleTopBar.value = !lazyListState.canScrollBackward
                 }
-
 
                     LazyColumn(
                         modifier = Modifier.fillMaxSize().padding(it),
