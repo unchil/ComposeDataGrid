@@ -180,6 +180,9 @@ fun ComposeDataGrid(
 
     val coroutineScope = rememberCoroutineScope()
 
+    var currentLazyListState = LazyListState()
+
+
     val makePagingData:(Int, Int, LazyListState?)->Unit = {
             startIndex, endIndex, state->
         startRowNum = startIndex
@@ -188,6 +191,10 @@ fun ComposeDataGrid(
             currentPageData.add( presentData[i] as List<Any?>)
         }
         pagingData = currentPageData
+
+        coroutineScope.launch {
+            currentLazyListState.animateScrollToItem(0)
+        }
 
     }
 
@@ -227,6 +234,8 @@ fun ComposeDataGrid(
         } else{
             pageSize.value * currentPage
         }
+
+
         makePagingData(startRowIndex.value, endRowIndex.value, null)
     }
 
@@ -681,9 +690,15 @@ fun ComposeDataGrid(
             HorizontalPager(state = pagerState) { page ->
 
                 val lazyListState = rememberLazyListState(initialFirstVisibleItemIndex = 0)
+                currentLazyListState = lazyListState
 
                 LaunchedEffect(lazyListState.firstVisibleItemIndex){
-                    isVisibleTopBar.value = lazyListState.firstVisibleItemIndex < 2
+                    if(lazyListState.firstVisibleItemIndex < 5){
+                        isVisibleTopBar.value = true
+                    } else{
+                        isVisibleTopBar.value = false
+                    }
+
                 }
 
 
