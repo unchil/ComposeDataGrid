@@ -678,14 +678,14 @@ fun ComposeDataGrid(
         ){
 
 
-
             HorizontalPager(state = pagerState) { page ->
 
                 val lazyListState = rememberLazyListState(initialFirstVisibleItemIndex = 0)
 
-                LaunchedEffect(lazyListState.canScrollBackward){
-                    isVisibleTopBar.value = !lazyListState.canScrollBackward
+                LaunchedEffect(lazyListState.firstVisibleItemIndex){
+                    isVisibleTopBar.value = lazyListState.firstVisibleItemIndex < 2
                 }
+
 
                     LazyColumn(
                         modifier = Modifier.fillMaxSize().padding(it),
