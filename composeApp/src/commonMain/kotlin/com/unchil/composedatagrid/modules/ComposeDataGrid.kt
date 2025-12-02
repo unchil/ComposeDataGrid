@@ -21,18 +21,30 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.AddCircle
+import androidx.compose.material.icons.filled.AddCircleOutline
 import androidx.compose.material.icons.filled.ArrowCircleDown
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.ChecklistRtl
 import androidx.compose.material.icons.filled.DarkMode
+import androidx.compose.material.icons.filled.Fullscreen
+import androidx.compose.material.icons.filled.FullscreenExit
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.KeyboardDoubleArrowLeft
+import androidx.compose.material.icons.filled.KeyboardDoubleArrowRight
 import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.OpenWith
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.ToggleOff
 import androidx.compose.material.icons.filled.ToggleOn
+import androidx.compose.material.icons.filled.ZoomInMap
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.FabPosition
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -61,9 +73,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.unchil.composedatagrid.theme.AppTheme
+import composedatagrid.composeapp.generated.resources.Res
+import composedatagrid.composeapp.generated.resources.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.painterResource
 
 
 @Composable
@@ -100,6 +115,7 @@ fun ComposeDataGrid(
     )}
     var startRowNum by remember {  mutableStateOf(0)}
     val enableDarkMode = remember { mutableStateOf(false) }
+    var enableIndicateArrow by remember { mutableStateOf(false) }
 
     //----------
     // SnackBar Setting
@@ -461,7 +477,6 @@ fun ComposeDataGrid(
 
     }
     val isVisibleTopBar = rememberSaveable {mutableStateOf(true) }
-
     val snackBarHost = @Composable {
         SnackbarHost(hostState = snackBarHostState) {
             Snackbar(
@@ -476,7 +491,7 @@ fun ComposeDataGrid(
     }
     val floatingActionButton = @Composable{
         val isExpandFloatingActionButton = rememberSaveable {mutableStateOf(false) }
-        Column (horizontalAlignment = Alignment.CenterHorizontally) {
+        Row (verticalAlignment = Alignment.CenterVertically) {
 
             IconButton(onClick = {
                 isExpandFloatingActionButton.value = !isExpandFloatingActionButton.value
@@ -486,13 +501,13 @@ fun ComposeDataGrid(
                     active = !isExpandFloatingActionButton.value,
                     activeContent = {
                         androidx.compose.material3.Icon(
-                            Icons.Default.OpenWith,
+                            painter = painterResource(Res.drawable.arrow_menu_open_24px),
                             contentDescription = "OpenBox"
                         )
                     },
                     inactiveContent = {
                         androidx.compose.material3.Icon(
-                            Icons.Default.ArrowCircleDown,
+                            painterResource(Res.drawable.arrow_menu_close_24px),
                             contentDescription = "CloseBox"
                         )
                     }
@@ -502,7 +517,31 @@ fun ComposeDataGrid(
             AnimatedVisibility(
                 visible = isExpandFloatingActionButton.value,
             ) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+
+                    IconButton(onClick = {
+                        enableIndicateArrow = !enableIndicateArrow
+                    }) {
+
+                        Icon(
+                            active = !enableIndicateArrow,
+                            activeContent = {
+                                androidx.compose.material3.Icon(
+                                    painterResource(Res.drawable.open_with_24px),
+                                    contentDescription = "enableIndicateArrow"
+                                )
+                            },
+                            inactiveContent = {
+                                androidx.compose.material3.Icon(
+                                    painterResource(Res.drawable.open_run_24px),
+                                    contentDescription = "disableIndicateArrow"
+                                )
+                            }
+                        )
+                    }
+
+
+
 
 
                     IconButton(
@@ -558,13 +597,13 @@ fun ComposeDataGrid(
                                 active = enableSelectColumn.value,
                                 activeContent = {
                                     androidx.compose.material3.Icon(
-                                        Icons.Default.Check,
+                                        Icons.Default.ChecklistRtl,
                                         contentDescription = "Open DropDownMenu"
                                     )
                                 },
                                 inactiveContent = {
                                     androidx.compose.material3.Icon(
-                                        Icons.Default.ChecklistRtl,
+                                        painterResource(Res.drawable.format_line_spacing_24px),
                                         contentDescription = "Close DropDownMenu"
                                     )
                                 }
@@ -660,7 +699,46 @@ fun ComposeDataGrid(
         }
     }
 
+    val onPageNavHandler:(PageNav)->Unit = { it ->
+        when(it){
+            PageNav.Prev -> {
+                coroutineScope.launch {
+                    pagerState.animateScrollToPage(pagerState.currentPage-1)
+                }
+            }
+            PageNav.Next -> {
+                coroutineScope.launch {
+                    pagerState.animateScrollToPage(pagerState.currentPage+1)
+                }
+            }
+            PageNav.First -> {
+                coroutineScope.launch {
+                    pagerState.animateScrollToPage(0)
+                }
+            }
+            PageNav.Last -> {
+                coroutineScope.launch {
+                    pagerState.animateScrollToPage(pagerState.pageCount-1)
+                }
+            }
+        }
+    }
 
+
+    val onListNavHandler:(ListNav)->Unit ={ it ->
+        when(it){
+            ListNav.Top -> {
+                coroutineScope.launch {
+                    currentLazyListState.animateScrollToItem(0)
+                }
+            }
+            ListNav.Bottom -> {
+                coroutineScope.launch {
+                    currentLazyListState.animateScrollToItem(pagingData.size-1)
+                }
+            }
+        }
+    }
 
     AppTheme(enableDarkMode = enableDarkMode.value) {
 
@@ -682,7 +760,7 @@ fun ComposeDataGrid(
                 }
             },
             floatingActionButton = floatingActionButton,
-            floatingActionButtonPosition = FabPosition.End,
+            floatingActionButtonPosition = FabPosition.Start,
             snackbarHost = snackBarHost
         ){
 
@@ -701,6 +779,9 @@ fun ComposeDataGrid(
 
                 }
 
+                Box(modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ){
 
                     LazyColumn(
                         modifier = Modifier.fillMaxSize().padding(it),
@@ -737,6 +818,110 @@ fun ComposeDataGrid(
                     }
 
 
+
+                        IconButton(
+                            onClick = {onListNavHandler(ListNav.Top) },
+                            modifier = Modifier.align( Alignment.TopCenter).padding(top=10.dp),
+                            enabled = lazyListState.canScrollBackward
+                        ) {
+                            AnimatedVisibility(
+                                visible = enableIndicateArrow
+                            ) {
+                                Icon(Icons.Filled.KeyboardArrowUp, contentDescription = "First Row")
+                            }
+                        }
+
+                        IconButton(
+                            onClick = {onListNavHandler(ListNav.Bottom) },
+                            modifier = Modifier.align( Alignment.BottomCenter).padding(bottom=10.dp),
+                            enabled = lazyListState.canScrollForward,
+
+                        ) {
+                            AnimatedVisibility(
+                                visible = enableIndicateArrow
+                            ) {
+                                Icon(
+                                    Icons.Filled.KeyboardArrowDown,
+                                    contentDescription = "Last Row"
+                                )
+                            }
+                        }
+
+
+                        Row( modifier = Modifier.align( Alignment.CenterStart).padding(start=10.dp)){
+
+                            IconButton(
+                                onClick = { onPageNavHandler(PageNav.First) },
+                                enabled = pagerState.canScrollBackward,
+
+                            ) {
+                                AnimatedVisibility(
+                                    visible = enableIndicateArrow
+                                ) {
+                                    Icon(
+                                        Icons.Filled.KeyboardDoubleArrowLeft,
+                                        contentDescription = "First Page"
+                                    )
+                                }
+                            }
+
+                            IconButton(
+                                onClick = { onPageNavHandler(PageNav.Prev)},
+                                enabled = pagerState.canScrollBackward,
+
+                            ) {
+                                AnimatedVisibility(
+                                    visible = enableIndicateArrow
+                                ) {
+                                    Icon(
+                                        Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                                        contentDescription = "Prev Page"
+                                    )
+                                }
+                            }
+                        }
+
+
+
+                        Row( modifier = Modifier.align( Alignment.CenterEnd).padding(end=10.dp)){
+
+                            IconButton(
+                                onClick = { onPageNavHandler(PageNav.Next)},
+                                enabled = pagerState.canScrollForward,
+
+                            ) {
+                                AnimatedVisibility(
+                                    visible = enableIndicateArrow
+                                ) {
+                                    Icon(
+                                        Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                                        contentDescription = "Next Page"
+                                    )
+                                }
+                            }
+
+                            IconButton(
+                                onClick = { onPageNavHandler(PageNav.Last)},
+                                enabled = pagerState.canScrollForward,
+                            ) {
+                                AnimatedVisibility(
+                                    visible = enableIndicateArrow
+                                ) {
+                                    Icon(
+                                        Icons.Filled.KeyboardDoubleArrowRight,
+                                        contentDescription = "Last Page"
+                                    )
+                                }
+                            }
+                        }
+
+
+
+
+
+
+
+                }
 
 
 

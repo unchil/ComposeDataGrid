@@ -7,6 +7,9 @@ enum class PageNav {
     Prev, Next, First, Last
 }
 
+enum class ListNav {
+    Top, Bottom
+}
 
 data class ColumnInfo(
     val columnName:String,
