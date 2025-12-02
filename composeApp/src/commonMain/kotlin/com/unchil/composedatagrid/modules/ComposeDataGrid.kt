@@ -827,7 +827,7 @@ fun ComposeDataGrid(
                             AnimatedVisibility(
                                 visible = enableIndicateArrow
                             ) {
-                                Icon(Icons.Filled.KeyboardArrowUp, contentDescription = "First Row")
+                                Icon(painterResource(Res.drawable.vertical_align_top_24px), contentDescription = "First Row")
                             }
                         }
 
@@ -841,7 +841,7 @@ fun ComposeDataGrid(
                                 visible = enableIndicateArrow
                             ) {
                                 Icon(
-                                    Icons.Filled.KeyboardArrowDown,
+                                    painterResource(Res.drawable.vertical_align_bottom_24px),
                                     contentDescription = "Last Row"
                                 )
                             }
@@ -859,7 +859,7 @@ fun ComposeDataGrid(
                                     visible = enableIndicateArrow
                                 ) {
                                     Icon(
-                                        Icons.Filled.KeyboardDoubleArrowLeft,
+                                        painterResource(Res.drawable.first_page_24px),
                                         contentDescription = "First Page"
                                     )
                                 }
@@ -908,7 +908,7 @@ fun ComposeDataGrid(
                                     visible = enableIndicateArrow
                                 ) {
                                     Icon(
-                                        Icons.Filled.KeyboardDoubleArrowRight,
+                                        painterResource(Res.drawable.last_page_24px),
                                         contentDescription = "Last Page"
                                     )
                                 }
