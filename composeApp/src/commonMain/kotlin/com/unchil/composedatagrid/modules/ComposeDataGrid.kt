@@ -88,7 +88,7 @@ fun ComposeDataGrid(
 
 
     var presentData by remember{mutableStateOf<List<Any?>>(data) }
-    val pageSize = remember {  mutableStateOf(20)}
+    val pageSize = remember {  mutableStateOf(50)}
     var pagingData by  remember{ mutableStateOf<List<Any?>>(data) }
     val getLastPage:(Int, Int)-> Int = { totCnt, pageSize ->
         if (totCnt <= pageSize) 1
@@ -466,8 +466,13 @@ fun ComposeDataGrid(
             item.channelType == SnackBarChannelType.RELOAD
         }.channel)
     }
-    val onChangePageSize:(Int)->Unit = {
-        pageSize.value = it
+    val onChangePageSize:(Int)->Unit = { it ->
+        pageSize.value = if(it.equals(0)){
+            presentData.size
+        }else{
+            it
+        }
+
         updateCurrentPage(PageNav.First)
         channel.trySend(snackBarChannelList.first { item ->
             item.channelType == SnackBarChannelType.CHANGE_PAGE_SIZE
@@ -681,8 +686,8 @@ fun ComposeDataGrid(
 
 
                     PageSizePicker(
-                        listOf("10", "20", "50", "100", "200", "500", "1000", "5000", "10000"),
-                        40.dp,
+                        listOf("10", "50", "100", "500", "1000", "All"),
+                        50.dp,
                         20.dp,
                         3,
                         onChangePageSize
