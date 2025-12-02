@@ -6,7 +6,6 @@ import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,33 +18,23 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material.icons.filled.AddCircle
-import androidx.compose.material.icons.filled.AddCircleOutline
-import androidx.compose.material.icons.filled.ArrowCircleDown
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.ChecklistRtl
 import androidx.compose.material.icons.filled.DarkMode
-import androidx.compose.material.icons.filled.Fullscreen
-import androidx.compose.material.icons.filled.FullscreenExit
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material.icons.filled.KeyboardDoubleArrowLeft
-import androidx.compose.material.icons.filled.KeyboardDoubleArrowRight
 import androidx.compose.material.icons.filled.LightMode
-import androidx.compose.material.icons.filled.OpenWith
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.ToggleOff
 import androidx.compose.material.icons.filled.ToggleOn
-import androidx.compose.material.icons.filled.ZoomInMap
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SegmentedButtonDefaults
@@ -60,7 +49,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -69,15 +57,25 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.Modifier.Companion.then
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.unchil.composedatagrid.theme.AppTheme
 import composedatagrid.composeapp.generated.resources.Res
-import composedatagrid.composeapp.generated.resources.*
+import composedatagrid.composeapp.generated.resources.arrow_menu_close_24px
+import composedatagrid.composeapp.generated.resources.arrow_menu_open_24px
+import composedatagrid.composeapp.generated.resources.first_page_24px
+import composedatagrid.composeapp.generated.resources.format_line_spacing_24px
+import composedatagrid.composeapp.generated.resources.last_page_24px
+import composedatagrid.composeapp.generated.resources.open_run_24px
+import composedatagrid.composeapp.generated.resources.open_with_24px
+import composedatagrid.composeapp.generated.resources.vertical_align_bottom_24px
+import composedatagrid.composeapp.generated.resources.vertical_align_top_24px
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Month
 import org.jetbrains.compose.resources.painterResource
 
 
@@ -493,22 +491,25 @@ fun ComposeDataGrid(
         val isExpandFloatingActionButton = rememberSaveable {mutableStateOf(false) }
         Row (verticalAlignment = Alignment.CenterVertically) {
 
-            IconButton(onClick = {
-                isExpandFloatingActionButton.value = !isExpandFloatingActionButton.value
-            }) {
+            IconButton(
+                onClick = { isExpandFloatingActionButton.value = !isExpandFloatingActionButton.value },
+                modifier= Modifier.clip(CircleShape).background(MaterialTheme.colorScheme.tertiaryContainer),
+            ) {
 
                 Icon(
                     active = !isExpandFloatingActionButton.value,
                     activeContent = {
-                        androidx.compose.material3.Icon(
+                        Icon(
                             painter = painterResource(Res.drawable.arrow_menu_open_24px),
-                            contentDescription = "OpenBox"
+                            contentDescription = "OpenBox",
+
                         )
                     },
                     inactiveContent = {
-                        androidx.compose.material3.Icon(
+                        Icon(
                             painterResource(Res.drawable.arrow_menu_close_24px),
-                            contentDescription = "CloseBox"
+                            contentDescription = "CloseBox",
+
                         )
                     }
                 )
@@ -519,9 +520,10 @@ fun ComposeDataGrid(
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
 
-                    IconButton(onClick = {
-                        enableIndicateArrow = !enableIndicateArrow
-                    }) {
+                    IconButton(
+                        onClick = { enableIndicateArrow = !enableIndicateArrow },
+                        modifier= Modifier.clip(CircleShape).background(MaterialTheme.colorScheme.tertiaryContainer),
+                    ) {
 
                         Icon(
                             active = !enableIndicateArrow,
@@ -545,7 +547,8 @@ fun ComposeDataGrid(
 
 
                     IconButton(
-                        onClick = { coroutineScope.launch { onRefresh.invoke() } }
+                        onClick = { coroutineScope.launch { onRefresh.invoke() } },
+                        modifier= Modifier.clip(CircleShape).background(MaterialTheme.colorScheme.tertiaryContainer),
                     ) {
                         androidx.compose.material3.Icon(
                             Icons.Default.Refresh,
@@ -556,7 +559,10 @@ fun ComposeDataGrid(
 
 
 
-                    IconButton(onClick = { enableDarkMode.value = !enableDarkMode.value }) {
+                    IconButton(
+                        onClick = { enableDarkMode.value = !enableDarkMode.value },
+                        modifier= Modifier.clip(CircleShape).background(MaterialTheme.colorScheme.tertiaryContainer),
+                    ) {
                         SegmentedButtonDefaults.Icon(
                             active = !enableDarkMode.value,
                             activeContent = {
@@ -589,9 +595,8 @@ fun ComposeDataGrid(
 
 
                         IconButton(
-                            onClick = {
-                                enableSelectColumn.value = !enableSelectColumn.value
-                            }
+                            onClick = {enableSelectColumn.value = !enableSelectColumn.value },
+                            modifier= Modifier.clip(CircleShape).background(MaterialTheme.colorScheme.tertiaryContainer),
                         ) {
                             SegmentedButtonDefaults.Icon(
                                 active = enableSelectColumn.value,
@@ -827,7 +832,11 @@ fun ComposeDataGrid(
                             AnimatedVisibility(
                                 visible = enableIndicateArrow
                             ) {
-                                Icon(painterResource(Res.drawable.vertical_align_top_24px), contentDescription = "First Row")
+                                Icon(
+                                    painterResource(Res.drawable.vertical_align_top_24px),
+                                    modifier = Modifier.clip(CircleShape).background(MaterialTheme.colorScheme.tertiaryContainer),
+                                    contentDescription = "First Row"
+                                )
                             }
                         }
 
@@ -842,7 +851,8 @@ fun ComposeDataGrid(
                             ) {
                                 Icon(
                                     painterResource(Res.drawable.vertical_align_bottom_24px),
-                                    contentDescription = "Last Row"
+                                    contentDescription = "Last Row",
+                                    modifier = Modifier.clip(CircleShape).background(MaterialTheme.colorScheme.tertiaryContainer),
                                 )
                             }
                         }
@@ -860,7 +870,8 @@ fun ComposeDataGrid(
                                 ) {
                                     Icon(
                                         painterResource(Res.drawable.first_page_24px),
-                                        contentDescription = "First Page"
+                                        contentDescription = "First Page",
+                                        modifier = Modifier.clip(CircleShape).background(MaterialTheme.colorScheme.tertiaryContainer),
                                     )
                                 }
                             }
@@ -875,7 +886,8 @@ fun ComposeDataGrid(
                                 ) {
                                     Icon(
                                         Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-                                        contentDescription = "Prev Page"
+                                        contentDescription = "Prev Page",
+                                        modifier = Modifier.clip(CircleShape).background(MaterialTheme.colorScheme.tertiaryContainer)
                                     )
                                 }
                             }
@@ -888,14 +900,14 @@ fun ComposeDataGrid(
                             IconButton(
                                 onClick = { onPageNavHandler(PageNav.Next)},
                                 enabled = pagerState.canScrollForward,
-
                             ) {
                                 AnimatedVisibility(
                                     visible = enableIndicateArrow
                                 ) {
                                     Icon(
                                         Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                                        contentDescription = "Next Page"
+                                        contentDescription = "Next Page",
+                                        modifier = Modifier.clip(CircleShape).background(MaterialTheme.colorScheme.tertiaryContainer)
                                     )
                                 }
                             }
@@ -909,7 +921,8 @@ fun ComposeDataGrid(
                                 ) {
                                     Icon(
                                         painterResource(Res.drawable.last_page_24px),
-                                        contentDescription = "Last Page"
+                                        contentDescription = "Last Page",
+                                        modifier = Modifier.clip(CircleShape).background(MaterialTheme.colorScheme.tertiaryContainer)
                                     )
                                 }
                             }
