@@ -142,11 +142,10 @@ fun ComposeColumnRow(
 
 
     val dividerThickness = 0.dp
-    val dividerPositions =  MutableList(columnInfoList.value.size) { 0.dp }
-    val initialPosition = (rowWidthInDp / columnInfoList.value.size)
-    for (i in 0 until columnInfoList.value.size ) {
-        dividerPositions[i] = initialPosition * (i + 1) - (dividerThickness * (i + 1) / 2)
+    val dividerPositions =  MutableList(columnInfoList.value.size) { index ->
+        (rowWidthInDp / columnInfoList.value.size) * (index + 1) - (dividerThickness * (index + 1) / 2)
     }
+
 
     val offsetList = MutableList(columnInfoList.value.size ) { mutableStateOf(IntOffset.Zero) }
     val boxSizePx =  MutableList(columnInfoList.value.size ){ mutableStateOf(IntSize.Zero) }
