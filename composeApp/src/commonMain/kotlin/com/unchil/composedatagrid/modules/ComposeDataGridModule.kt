@@ -133,57 +133,82 @@ fun ComposeColumnRow(
 
     require(columnInfoList.value.size >= 2) { "column must be at least 2" }
 
-
-
     val coroutineScope = rememberCoroutineScope()
     val density = LocalDensity.current.density
+
+
     var rowWidthInDp by remember { mutableStateOf(0.dp) }
+
+
+
+    val dividerThickness = 0.dp
+    val dividerPositions =  MutableList(columnInfoList.value.size) { 0.dp }
+    val initialPosition = (rowWidthInDp / columnInfoList.value.size)
+    for (i in 0 until columnInfoList.value.size ) {
+        dividerPositions[i] = initialPosition * (i + 1) - (dividerThickness * (i + 1) / 2)
+    }
+
+    val offsetList = MutableList(columnInfoList.value.size ) { mutableStateOf(IntOffset.Zero) }
+    val boxSizePx =  MutableList(columnInfoList.value.size ){ mutableStateOf(IntSize.Zero) }
+    val interactionSourceList = MutableList(columnInfoList.value.size ){ MutableInteractionSource() }
+    val currentHoverEnterInteraction =
+        MutableList(columnInfoList.value.size ){
+            mutableStateOf<HoverInteraction.Enter?>(null)
+        }
+
+
+
+
+/*
     val dividerPositions = remember { MutableList(columnInfoList.value.size) { 0.dp } }
     val offsetList = remember {  MutableList(columnInfoList.value.size ) { mutableStateOf(IntOffset.Zero) } }
     val boxSizePx = remember {  MutableList(columnInfoList.value.size ){ mutableStateOf(IntSize.Zero) } }
     val interactionSourceList = remember { MutableList(columnInfoList.value.size ){ MutableInteractionSource() } }
-    val currentHoverEnterInteraction = remember { MutableList(columnInfoList.value.size ){
-        mutableStateOf<HoverInteraction.Enter?>(null) }
-    }
-
-    val dividerThickness = 1.dp
-    val totalWidth = rowWidthInDp - (dividerThickness * (columnInfoList.value.size - 1))
-    val draggableStates = (0 until columnInfoList.value.size - 1).map {
-            index ->
-        rememberDraggableState { delta ->
-            val newPositionDp = ( dividerPositions[index] + (delta/density).dp  ).coerceIn(0.dp, totalWidth)
-            dividerPositions[index] = newPositionDp
-            val newWeightBefore = (newPositionDp / totalWidth)
-            val newWeightAfter = 1f - newWeightBefore
-            var oldSumBefore = 0f
-            for (i in 0 until index + 1){
-                oldSumBefore += columnInfoList.value[i].widthWeigth.value
-            }
-            val oldSumAfter = 1f - oldSumBefore
-            // Standard
-            columnInfoList.value[index].widthWeigth.value =
-                (newWeightBefore / oldSumBefore) * columnInfoList.value[index].widthWeigth.value
-            // After
-            for (i in index + 1 until columnInfoList.value.size) {
-                columnInfoList.value[i].widthWeigth.value =
-                    (newWeightAfter / oldSumAfter) * columnInfoList.value[i].widthWeigth.value
-            }
-            // Ensure weights don't go below a minimum value (e.g., 0.1f)
-            for (i in 0 until columnInfoList.value.size) {
-                columnInfoList.value[i].widthWeigth.value = max(columnInfoList.value[i].widthWeigth.value, 0.01f)
-            }
-            var sum = 0f
-            columnInfoList.value.forEach {
-                sum += it.widthWeigth.value
-            }
-            // Normalize weights to ensure they sum to 1
-            columnInfoList.value.forEach {
-                it.widthWeigth.value /= sum
-            }
+    val currentHoverEnterInteraction = remember {
+        MutableList(columnInfoList.value.size ){
+            mutableStateOf<HoverInteraction.Enter?>(null)
         }
     }
 
-    LaunchedEffect(rowWidthInDp) {
+val totalWidth = rowWidthInDp - (dividerThickness * (columnInfoList.value.size - 1))
+
+val draggableStates = (0 until columnInfoList.value.size - 1).map { index ->
+
+    rememberDraggableState { delta ->
+        val newPositionDp = ( dividerPositions[index] + (delta/density).dp  ).coerceIn(0.dp, totalWidth)
+        dividerPositions[index] = newPositionDp
+
+        val newWeightBefore = (newPositionDp / totalWidth)
+        val newWeightAfter = 1f - newWeightBefore
+        var oldSumBefore = 0f
+        for (i in 0 until index + 1){
+            oldSumBefore += columnInfoList.value[i].widthWeigth.value
+        }
+        val oldSumAfter = 1f - oldSumBefore
+        // Standard
+        columnInfoList.value[index].widthWeigth.value =
+            (newWeightBefore / oldSumBefore) * columnInfoList.value[index].widthWeigth.value
+        // After
+        for (i in index + 1 until columnInfoList.value.size) {
+            columnInfoList.value[i].widthWeigth.value =
+                (newWeightAfter / oldSumAfter) * columnInfoList.value[i].widthWeigth.value
+        }
+        // Ensure weights don't go below a minimum value (e.g., 0.1f)
+        for (i in 0 until columnInfoList.value.size) {
+            columnInfoList.value[i].widthWeigth.value = max(columnInfoList.value[i].widthWeigth.value, 0.01f)
+        }
+        var sum = 0f
+        columnInfoList.value.forEach {
+            sum += it.widthWeigth.value
+        }
+        // Normalize weights to ensure they sum to 1
+        columnInfoList.value.forEach {
+            it.widthWeigth.value /= sum
+        }
+    }
+}
+
+    LaunchedEffect(rowWidthInDp, columnInfoList.value) {
         if (rowWidthInDp > 0.dp) {
             val initialPosition = (rowWidthInDp / columnInfoList.value.size)
             for (i in 0 until columnInfoList.value.size ) {
@@ -191,6 +216,8 @@ fun ComposeColumnRow(
             }
         }
     }
+
+*/
 
     interactionSourceList.forEachIndexed { index, interactionSource ->
         LaunchedEffect(interactionSource){
@@ -326,10 +353,13 @@ fun ComposeColumnRow(
                 VerticalDivider(
                     modifier = Modifier
                         .height(40.dp)
+                        /*
                         .draggable(
                             orientation = Orientation.Horizontal,
                             state = draggableStates[index],
-                        ),
+                        )*/,
+
+
                     color = MaterialTheme.colorScheme.onSecondaryContainer,
                     thickness = dividerThickness
                 )
