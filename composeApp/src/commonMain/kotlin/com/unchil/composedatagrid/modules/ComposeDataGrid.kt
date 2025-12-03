@@ -820,7 +820,7 @@ fun ComposeDataGrid(
 
                         IconButton(
                             onClick = {onListNavHandler(ListNav.Top) },
-                            modifier = Modifier.align( Alignment.TopCenter).padding(top=10.dp),
+                            modifier = Modifier.align( Alignment.TopCenter).padding(top=60.dp),
                             enabled = lazyListState.canScrollBackward
                         ) {
                             AnimatedVisibility(
