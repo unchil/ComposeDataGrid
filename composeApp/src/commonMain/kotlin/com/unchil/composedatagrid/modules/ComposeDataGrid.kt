@@ -34,6 +34,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.ListItemDefaults.contentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SegmentedButtonDefaults
@@ -530,9 +531,6 @@ fun ComposeDataGrid(
 
     AppTheme(enableDarkMode = enableDarkMode.value) {
 
-
-
-
                 HorizontalPager(state = pagerState,
                     modifier =  then(modifier).fillMaxSize().border(
                         BorderStroke(width = 1.dp, color = Color.Black),
@@ -540,7 +538,8 @@ fun ComposeDataGrid(
                     ) { page ->
 
                     Box(modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
+                        contentAlignment = Alignment.Center,
+
                     ){
 
                         val lazyListState = rememberLazyListState(initialFirstVisibleItemIndex = 0)
@@ -555,6 +554,7 @@ fun ComposeDataGrid(
 
                         LazyColumn(
                             modifier = Modifier.fillMaxSize().padding(10.dp),
+
                             state = lazyListState,
                             contentPadding = PaddingValues(1.dp),
                             userScrollEnabled = true
@@ -579,7 +579,7 @@ fun ComposeDataGrid(
                                 Row(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .background(MaterialTheme.colorScheme.surfaceContainerLowest)
+                                            .background(MaterialTheme.colorScheme.background)
                                         .border(
                                             BorderStroke(
                                                 width = 1.dp,
@@ -592,7 +592,8 @@ fun ComposeDataGrid(
                                     Text(
                                         text = (startRowNum + index + 1).toString(),
                                         modifier = Modifier.width(40.dp),
-                                        textAlign = TextAlign.Center
+                                        textAlign = TextAlign.Center,
+                                        color = MaterialTheme.colorScheme.onSurface
                                     )
                                     ComposeDataGridRow(
                                         columnInfo.value,

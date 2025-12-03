@@ -116,7 +116,7 @@ fun ComposeDataGridRow( columnInfo:List< ColumnInfo>, data:List<Any?>) {
                 modifier = Modifier.weight(columnInfo.widthWeigth.value),
                 horizontalArrangement = Arrangement.Center
             ) {
-                Text( data[index].toString() )
+                Text( data[index].toString(), color=MaterialTheme.colorScheme.onSurface )
             }
         }
     }
@@ -403,7 +403,7 @@ fun SearchMenu(
     ){
 
         IconButton( onClick = {  expanded = !expanded } ) {
-            Icon(Icons.Default.ArrowDropDown, contentDescription = "Filter")
+            Icon(Icons.Default.ArrowDropDown, contentDescription = "Filter", tint = MaterialTheme.colorScheme.onSurface)
         }
 
         DropdownMenu(
