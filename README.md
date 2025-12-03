@@ -6,7 +6,6 @@
   - ascending, descending
 * Column Data Filtering
   - Contains, Equals, Begins With, Ends With, Blank, Null
-* Column Divider draggable
 * Change the order of columns
 * Added pagination feature
 * Request parameters
