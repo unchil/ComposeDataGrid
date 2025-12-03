@@ -193,6 +193,7 @@ fun ComposeDataGrid(
 
     val coroutineScope = rememberCoroutineScope()
 
+    val isVisibleTopBar = rememberSaveable {mutableStateOf(true) }
     var currentLazyListState = LazyListState()
 
 
@@ -296,10 +297,6 @@ fun ComposeDataGrid(
 
         updateCurrentPage(PageNav.First)
     }
-
-
-
-
 
 
     val updateSortedIndexList:(colInfo: ColumnInfo)->Unit = {
@@ -481,7 +478,8 @@ fun ComposeDataGrid(
         }.channel)
 
     }
-    val isVisibleTopBar = rememberSaveable {mutableStateOf(true) }
+
+
     val snackBarHost = @Composable {
         SnackbarHost(hostState = snackBarHostState) {
             Snackbar(
@@ -704,12 +702,12 @@ fun ComposeDataGrid(
         }
     }
 
-    LaunchedEffect(pagerState.currentPage,pagerState.lastScrolledBackward,pagerState.lastScrolledForward,pagerState.isScrollInProgress){
-        if( (!pagerState.lastScrolledBackward && !pagerState.lastScrolledForward && !pagerState.isScrollInProgress)
-            || ( (pagerState.lastScrolledBackward||pagerState.lastScrolledForward) && !pagerState.isScrollInProgress)){
+
+    LaunchedEffect(pagerState.currentPage){
             updateCurrentPage2(pagerState.currentPage+1)
-        }
     }
+
+
 
     val onPageNavHandler:(PageNav)->Unit = { it ->
         when(it){
@@ -761,9 +759,7 @@ fun ComposeDataGrid(
                     BorderStroke(width = 1.dp, color = Color.Black),
                     RoundedCornerShape(2.dp) ),
                 topBar = {
-                    AnimatedVisibility(
-                        visible = isVisibleTopBar.value,
-                    ) {
+                    AnimatedVisibility( visible = isVisibleTopBar.value,  ) {
                         ComposeDataGridHeader(
                             modifier = Modifier.fillMaxWidth(),
                             columnInfo = columnInfo,
@@ -781,15 +777,6 @@ fun ComposeDataGrid(
 
                     val lazyListState = rememberLazyListState(initialFirstVisibleItemIndex = 0)
                     currentLazyListState = lazyListState
-
-                    LaunchedEffect(lazyListState.firstVisibleItemIndex){
-                        if(lazyListState.firstVisibleItemIndex < 5){
-                            isVisibleTopBar.value = true
-                        } else{
-                            isVisibleTopBar.value = false
-                        }
-
-                    }
 
                     Box(modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
