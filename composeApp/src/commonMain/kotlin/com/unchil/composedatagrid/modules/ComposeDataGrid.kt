@@ -47,6 +47,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -193,7 +194,7 @@ fun ComposeDataGrid(
 
     val coroutineScope = rememberCoroutineScope()
 
-    val isVisibleTopBar = rememberSaveable {mutableStateOf(true) }
+
     var currentLazyListState = LazyListState()
 
 
@@ -480,229 +481,6 @@ fun ComposeDataGrid(
     }
 
 
-    val snackBarHost = @Composable {
-        SnackbarHost(hostState = snackBarHostState) {
-            Snackbar(
-                snackbarData = it,
-                modifier = Modifier,
-                shape = ShapeDefaults.ExtraSmall,
-                containerColor = MaterialTheme.colorScheme.surfaceVariant,
-                contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                dismissActionContentColor = MaterialTheme.colorScheme.tertiary
-            )
-        }
-    }
-    val floatingActionButton = @Composable{
-        val isExpandFloatingActionButton = rememberSaveable {mutableStateOf(false) }
-        Row (verticalAlignment = Alignment.CenterVertically) {
-
-            IconButton(
-                onClick = { isExpandFloatingActionButton.value = !isExpandFloatingActionButton.value },
-                modifier= Modifier.clip(CircleShape).background(MaterialTheme.colorScheme.tertiaryContainer),
-            ) {
-
-                Icon(
-                    active = !isExpandFloatingActionButton.value,
-                    activeContent = {
-                        Icon(
-                            painter = painterResource(Res.drawable.arrow_menu_open_24px),
-                            contentDescription = "OpenBox",
-
-                        )
-                    },
-                    inactiveContent = {
-                        Icon(
-                            painterResource(Res.drawable.arrow_menu_close_24px),
-                            contentDescription = "CloseBox",
-
-                        )
-                    }
-                )
-            }
-
-            AnimatedVisibility(
-                visible = isExpandFloatingActionButton.value,
-            ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-
-                    IconButton(
-                        onClick = { enableIndicateArrow = !enableIndicateArrow },
-                        modifier= Modifier.clip(CircleShape).background(MaterialTheme.colorScheme.tertiaryContainer),
-                    ) {
-
-                        Icon(
-                            active = !enableIndicateArrow,
-                            activeContent = {
-                                androidx.compose.material3.Icon(
-                                    painterResource(Res.drawable.open_with_24px),
-                                    contentDescription = "enableIndicateArrow"
-                                )
-                            },
-                            inactiveContent = {
-                                androidx.compose.material3.Icon(
-                                    painterResource(Res.drawable.open_run_24px),
-                                    contentDescription = "disableIndicateArrow"
-                                )
-                            }
-                        )
-                    }
-
-
-
-
-
-                    IconButton(
-                        onClick = { coroutineScope.launch { onRefresh.invoke() } },
-                        modifier= Modifier.clip(CircleShape).background(MaterialTheme.colorScheme.tertiaryContainer),
-                    ) {
-                        androidx.compose.material3.Icon(
-                            Icons.Default.Refresh,
-                            contentDescription = "Refresh"
-                        )
-                    }
-
-
-
-
-                    IconButton(
-                        onClick = { enableDarkMode.value = !enableDarkMode.value },
-                        modifier= Modifier.clip(CircleShape).background(MaterialTheme.colorScheme.tertiaryContainer),
-                    ) {
-                        SegmentedButtonDefaults.Icon(
-                            active = !enableDarkMode.value,
-                            activeContent = {
-                                androidx.compose.material3.Icon(
-                                    Icons.Default.LightMode,
-                                    contentDescription = "LightMode"
-                                )
-                            },
-                            inactiveContent = {
-                                androidx.compose.material3.Icon(
-                                    Icons.Default.DarkMode,
-                                    contentDescription = "DarkMode"
-                                )
-                            }
-                        )
-                    }
-
-
-                    Box {
-
-                        val enableSelectColumn = remember { mutableStateOf(false) }
-
-                        val scrollState = remember { ScrollState(0) }
-
-                        val selectedColumnList =
-                            remember { columnNames.map { mutableStateOf(true) }.toList() }
-
-
-
-
-
-                        IconButton(
-                            onClick = {enableSelectColumn.value = !enableSelectColumn.value },
-                            modifier= Modifier.clip(CircleShape).background(MaterialTheme.colorScheme.tertiaryContainer),
-                        ) {
-                            SegmentedButtonDefaults.Icon(
-                                active = enableSelectColumn.value,
-                                activeContent = {
-                                    androidx.compose.material3.Icon(
-                                        Icons.Default.ChecklistRtl,
-                                        contentDescription = "Open DropDownMenu"
-                                    )
-                                },
-                                inactiveContent = {
-                                    androidx.compose.material3.Icon(
-                                        painterResource(Res.drawable.format_line_spacing_24px),
-                                        contentDescription = "Close DropDownMenu"
-                                    )
-                                }
-                            )
-                        }
-
-
-                        DropdownMenu(
-                            expanded = enableSelectColumn.value,
-                            onDismissRequest = {
-                                enableSelectColumn.value = false
-
-                                if (selectedColumnList.filter { state ->
-                                        state.value
-                                    }.size >= 2) {
-                                    updateColumnList(selectedColumnList)
-                                } else {
-                                    channel.trySend(snackBarChannelList.first { item ->
-                                        item.channelType == SnackBarChannelType.MIN_SELECT_COLUMN
-                                    }.channel)
-                                    selectedColumnList.map { it.value = true }
-                                }
-
-                            },
-                            scrollState = scrollState,
-                            modifier = Modifier.width(180.dp).height(200.dp)
-                                .background(color = MaterialTheme.colorScheme.tertiaryContainer),
-                        ) {
-
-                            columnNames.forEachIndexed { index, columnName ->
-
-                                // HorizontalDivider()
-                                DropdownMenuItem(
-                                    text = { Text(columnName) },
-                                    trailingIcon = {
-                                        IconButton(onClick = {
-                                            selectedColumnList[index].value =
-                                                !selectedColumnList[index].value
-                                        }) {
-                                            SegmentedButtonDefaults.Icon(
-                                                active = selectedColumnList[index].value,
-                                                activeContent = {
-                                                    androidx.compose.material3.Icon(
-                                                        Icons.Default.ToggleOn,
-                                                        contentDescription = "Selected Column"
-                                                    )
-                                                },
-                                                inactiveContent = {
-                                                    androidx.compose.material3.Icon(
-                                                        Icons.Default.ToggleOff,
-                                                        contentDescription = "Unselected Column"
-                                                    )
-                                                }
-                                            )
-                                        }
-
-
-                                    },
-                                    onClick = {
-                                        selectedColumnList[index].value =
-                                            !selectedColumnList[index].value
-                                    }
-                                )
-                            }
-
-                        }
-
-                    }
-
-
-
-                    PageSizePicker(
-                        listOf("10", "50", "100", "500", "1000", "All"),
-                        50.dp,
-                        20.dp,
-                        3,
-                        onChangePageSize
-                    )
-
-
-                }
-            }
-
-
-
-        }
-    }
-
-
     LaunchedEffect(pagerState.currentPage){
             updateCurrentPage2(pagerState.currentPage+1)
     }
@@ -754,40 +532,48 @@ fun ComposeDataGrid(
 
 
 
-            Scaffold(
-                modifier = then(modifier).fillMaxSize().border(
-                    BorderStroke(width = 1.dp, color = Color.Black),
-                    RoundedCornerShape(2.dp) ),
-                topBar = {
-                    AnimatedVisibility( visible = isVisibleTopBar.value,  ) {
-                        ComposeDataGridHeader(
-                            modifier = Modifier.fillMaxWidth(),
-                            columnInfo = columnInfo,
-                            onSortOrder = onMultiSortedOrder,
-                            onFilter = onFilter,
-                            updateDataColumnOrder = updateDataColumnOrder,
-                        )
-                    }
-                },
-                floatingActionButton = floatingActionButton,
-                floatingActionButtonPosition = FabPosition.Start,
-                snackbarHost = snackBarHost
-            ){
-                HorizontalPager(state = pagerState) { page ->
 
-                    val lazyListState = rememberLazyListState(initialFirstVisibleItemIndex = 0)
-                    currentLazyListState = lazyListState
+                HorizontalPager(state = pagerState,
+                    modifier =  then(modifier).fillMaxSize().border(
+                        BorderStroke(width = 1.dp, color = Color.Black),
+                        RoundedCornerShape(2.dp) ),
+                    ) { page ->
 
                     Box(modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
                     ){
 
+                        val lazyListState = rememberLazyListState(initialFirstVisibleItemIndex = 0)
+                        currentLazyListState = lazyListState
+
+
+                        val isVisibleTopBar by remember {
+                            derivedStateOf {
+                                lazyListState.firstVisibleItemIndex < 5
+                            }
+                        }
+
                         LazyColumn(
-                            modifier = Modifier.fillMaxSize().padding(it),
+                            modifier = Modifier.fillMaxSize().padding(10.dp),
                             state = lazyListState,
                             contentPadding = PaddingValues(1.dp),
                             userScrollEnabled = true
                         ) {
+
+
+                                stickyHeader {
+                                    AnimatedVisibility( visible = isVisibleTopBar,  ) {
+                                        ComposeDataGridHeader(
+                                            modifier = Modifier.fillMaxWidth(),
+                                            columnInfo = columnInfo,
+                                            onSortOrder = onMultiSortedOrder,
+                                            onFilter = onFilter,
+                                            updateDataColumnOrder = updateDataColumnOrder,
+                                        )
+                                    }
+                                }
+
+
 
                             items(pagingData.size) { index ->
                                 Row(
@@ -816,6 +602,217 @@ fun ComposeDataGrid(
                             }
                         }
 
+
+                        Box(modifier= Modifier.align( Alignment.BottomStart).padding(20.dp)){
+
+                            val isExpandFloatingActionButton = rememberSaveable {mutableStateOf(false) }
+                            Row (verticalAlignment = Alignment.CenterVertically) {
+
+                                IconButton(
+                                    onClick = { isExpandFloatingActionButton.value = !isExpandFloatingActionButton.value },
+                                    modifier= Modifier.clip(CircleShape).background(MaterialTheme.colorScheme.tertiaryContainer),
+                                ) {
+
+                                    Icon(
+                                        active = !isExpandFloatingActionButton.value,
+                                        activeContent = {
+                                            Icon(
+                                                painter = painterResource(Res.drawable.arrow_menu_open_24px),
+                                                contentDescription = "OpenBox",
+
+                                                )
+                                        },
+                                        inactiveContent = {
+                                            Icon(
+                                                painterResource(Res.drawable.arrow_menu_close_24px),
+                                                contentDescription = "CloseBox",
+
+                                                )
+                                        }
+                                    )
+                                }
+
+                                AnimatedVisibility(
+                                    visible = isExpandFloatingActionButton.value,
+                                ) {
+                                    Row(verticalAlignment = Alignment.CenterVertically) {
+
+                                        IconButton(
+                                            onClick = { enableIndicateArrow = !enableIndicateArrow },
+                                            modifier= Modifier.clip(CircleShape).background(MaterialTheme.colorScheme.tertiaryContainer),
+                                        ) {
+
+                                            Icon(
+                                                active = !enableIndicateArrow,
+                                                activeContent = {
+                                                    androidx.compose.material3.Icon(
+                                                        painterResource(Res.drawable.open_with_24px),
+                                                        contentDescription = "enableIndicateArrow"
+                                                    )
+                                                },
+                                                inactiveContent = {
+                                                    androidx.compose.material3.Icon(
+                                                        painterResource(Res.drawable.open_run_24px),
+                                                        contentDescription = "disableIndicateArrow"
+                                                    )
+                                                }
+                                            )
+                                        }
+
+
+
+
+
+                                        IconButton(
+                                            onClick = { coroutineScope.launch { onRefresh.invoke() } },
+                                            modifier= Modifier.clip(CircleShape).background(MaterialTheme.colorScheme.tertiaryContainer),
+                                        ) {
+                                            androidx.compose.material3.Icon(
+                                                Icons.Default.Refresh,
+                                                contentDescription = "Refresh"
+                                            )
+                                        }
+
+
+
+
+                                        IconButton(
+                                            onClick = { enableDarkMode.value = !enableDarkMode.value },
+                                            modifier= Modifier.clip(CircleShape).background(MaterialTheme.colorScheme.tertiaryContainer),
+                                        ) {
+                                            SegmentedButtonDefaults.Icon(
+                                                active = !enableDarkMode.value,
+                                                activeContent = {
+                                                    androidx.compose.material3.Icon(
+                                                        Icons.Default.LightMode,
+                                                        contentDescription = "LightMode"
+                                                    )
+                                                },
+                                                inactiveContent = {
+                                                    androidx.compose.material3.Icon(
+                                                        Icons.Default.DarkMode,
+                                                        contentDescription = "DarkMode"
+                                                    )
+                                                }
+                                            )
+                                        }
+
+
+                                        Box {
+
+                                            val enableSelectColumn = remember { mutableStateOf(false) }
+
+                                            val scrollState = remember { ScrollState(0) }
+
+                                            val selectedColumnList =
+                                                remember { columnNames.map { mutableStateOf(true) }.toList() }
+
+
+
+
+
+                                            IconButton(
+                                                onClick = {enableSelectColumn.value = !enableSelectColumn.value },
+                                                modifier= Modifier.clip(CircleShape).background(MaterialTheme.colorScheme.tertiaryContainer),
+                                            ) {
+                                                SegmentedButtonDefaults.Icon(
+                                                    active = enableSelectColumn.value,
+                                                    activeContent = {
+                                                        androidx.compose.material3.Icon(
+                                                            Icons.Default.ChecklistRtl,
+                                                            contentDescription = "Open DropDownMenu"
+                                                        )
+                                                    },
+                                                    inactiveContent = {
+                                                        androidx.compose.material3.Icon(
+                                                            painterResource(Res.drawable.format_line_spacing_24px),
+                                                            contentDescription = "Close DropDownMenu"
+                                                        )
+                                                    }
+                                                )
+                                            }
+
+
+                                            DropdownMenu(
+                                                expanded = enableSelectColumn.value,
+                                                onDismissRequest = {
+                                                    enableSelectColumn.value = false
+
+                                                    if (selectedColumnList.filter { state ->
+                                                            state.value
+                                                        }.size >= 2) {
+                                                        updateColumnList(selectedColumnList)
+                                                    } else {
+                                                        channel.trySend(snackBarChannelList.first { item ->
+                                                            item.channelType == SnackBarChannelType.MIN_SELECT_COLUMN
+                                                        }.channel)
+                                                        selectedColumnList.map { it.value = true }
+                                                    }
+
+                                                },
+                                                scrollState = scrollState,
+                                                modifier = Modifier.width(180.dp).height(200.dp)
+                                                    .background(color = MaterialTheme.colorScheme.tertiaryContainer),
+                                            ) {
+
+                                                columnNames.forEachIndexed { index, columnName ->
+
+                                                    // HorizontalDivider()
+                                                    DropdownMenuItem(
+                                                        text = { Text(columnName) },
+                                                        trailingIcon = {
+                                                            IconButton(onClick = {
+                                                                selectedColumnList[index].value =
+                                                                    !selectedColumnList[index].value
+                                                            }) {
+                                                                SegmentedButtonDefaults.Icon(
+                                                                    active = selectedColumnList[index].value,
+                                                                    activeContent = {
+                                                                        androidx.compose.material3.Icon(
+                                                                            Icons.Default.ToggleOn,
+                                                                            contentDescription = "Selected Column"
+                                                                        )
+                                                                    },
+                                                                    inactiveContent = {
+                                                                        androidx.compose.material3.Icon(
+                                                                            Icons.Default.ToggleOff,
+                                                                            contentDescription = "Unselected Column"
+                                                                        )
+                                                                    }
+                                                                )
+                                                            }
+
+
+                                                        },
+                                                        onClick = {
+                                                            selectedColumnList[index].value =
+                                                                !selectedColumnList[index].value
+                                                        }
+                                                    )
+                                                }
+
+                                            }
+
+                                        }
+
+
+
+                                        PageSizePicker(
+                                            listOf("10", "50", "100", "500", "1000", "All"),
+                                            50.dp,
+                                            20.dp,
+                                            3,
+                                            onChangePageSize
+                                        )
+
+
+                                    }
+                                }
+
+
+
+                            }
+                        }
 
 
                         IconButton(
@@ -924,7 +921,18 @@ fun ComposeDataGrid(
 
 
 
-
+                        SnackbarHost(
+                            hostState = snackBarHostState,
+                            modifier= Modifier.align (Alignment.BottomCenter)
+                        ) { snackBarData ->
+                            Snackbar(
+                                snackbarData = snackBarData,
+                                shape = ShapeDefaults.ExtraSmall,
+                                containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                                contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                dismissActionContentColor = MaterialTheme.colorScheme.tertiary
+                            )
+                        }
 
 
 
@@ -933,7 +941,7 @@ fun ComposeDataGrid(
 
 
                 }
-            }
+
 
 
 
