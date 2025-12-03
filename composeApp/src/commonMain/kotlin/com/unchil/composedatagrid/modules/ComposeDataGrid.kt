@@ -34,7 +34,6 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SegmentedButtonDefaults
@@ -75,7 +74,6 @@ import composedatagrid.composeapp.generated.resources.vertical_align_top_24px
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Month
 import org.jetbrains.compose.resources.painterResource
 
 
@@ -118,6 +116,7 @@ fun ComposeDataGrid(
     //----------
     // SnackBar Setting
     val channel = remember { Channel<Int>(Channel.CONFLATED) }
+
     val snackBarHostState = remember { SnackbarHostState() }
     var onFilterResultCnt by remember {  mutableStateOf(0)}
     LaunchedEffect(channel) {
@@ -268,29 +267,26 @@ fun ComposeDataGrid(
         data.forEach { row ->
             selectedData.add(row.filterIndexed { index, _ -> index in  indexList})
         }
-
-        columnInfo.value = makeColInfo(selectedColumns, selectedData)
         presentData = selectedData
         pagingData = selectedData
 
         updateCurrentPage(PageNav.First)
+        columnInfo.value = makeColInfo(selectedColumns, selectedData)
     }
-    val updateDataColumnOrder:(MutableState<List<ColumnInfo>>) -> Unit = { newColumnInfoList ->
+
+    val updateDataColumnOrder:() -> Unit = {
 
         presentData = presentData.map { row ->
             val oldRow = row as List<Any?>
             val newRow = mutableListOf<Any?>().apply { repeat(oldRow.size) { add(null) } }
 
-            newColumnInfoList.value.forEach { colInfo ->
+            columnInfo.value.forEach { colInfo ->
                 newRow[colInfo.columnIndex] = oldRow[colInfo.originalColumnIndex]
             }
             newRow
         }
-
-
-
         val tempSortedIndexList =  mutableListOf<Int>()
-        newColumnInfoList.value.forEach {
+        columnInfo.value.forEach {
             if(sortedIndexList.contains(it.originalColumnIndex)){
                 tempSortedIndexList.add(it.columnIndex)
             }
@@ -300,6 +296,12 @@ fun ComposeDataGrid(
 
         updateCurrentPage(PageNav.First)
     }
+
+
+
+
+
+
     val updateSortedIndexList:(colInfo: ColumnInfo)->Unit = {
         if(sortedIndexList.isEmpty() ){
             sortedIndexList.add(it.columnIndex)
@@ -752,80 +754,80 @@ fun ComposeDataGrid(
 
     AppTheme(enableDarkMode = enableDarkMode.value) {
 
-        Scaffold(
-            modifier = then(modifier).fillMaxSize().border(
-                BorderStroke(width = 1.dp, color = Color.Black),
-                RoundedCornerShape(2.dp) ),
-            topBar = {
-                AnimatedVisibility(
-                    visible = isVisibleTopBar.value,
-                ) {
-                    ComposeDataGridHeader(
-                        modifier = Modifier.fillMaxWidth(),
-                        columnInfo = columnInfo,
-                        onSortOrder = onMultiSortedOrder,
-                        onFilter = onFilter,
-                        updateDataColumnOrder = updateDataColumnOrder,
-                    )
-                }
-            },
-            floatingActionButton = floatingActionButton,
-            floatingActionButtonPosition = FabPosition.Start,
-            snackbarHost = snackBarHost
-        ){
 
 
-            HorizontalPager(state = pagerState) { page ->
+            Scaffold(
+                modifier = then(modifier).fillMaxSize().border(
+                    BorderStroke(width = 1.dp, color = Color.Black),
+                    RoundedCornerShape(2.dp) ),
+                topBar = {
+                    AnimatedVisibility(
+                        visible = isVisibleTopBar.value,
+                    ) {
+                        ComposeDataGridHeader(
+                            modifier = Modifier.fillMaxWidth(),
+                            columnInfo = columnInfo,
+                            onSortOrder = onMultiSortedOrder,
+                            onFilter = onFilter,
+                            updateDataColumnOrder = updateDataColumnOrder,
+                        )
+                    }
+                },
+                floatingActionButton = floatingActionButton,
+                floatingActionButtonPosition = FabPosition.Start,
+                snackbarHost = snackBarHost
+            ){
+                HorizontalPager(state = pagerState) { page ->
 
-                val lazyListState = rememberLazyListState(initialFirstVisibleItemIndex = 0)
-                currentLazyListState = lazyListState
+                    val lazyListState = rememberLazyListState(initialFirstVisibleItemIndex = 0)
+                    currentLazyListState = lazyListState
 
-                LaunchedEffect(lazyListState.firstVisibleItemIndex){
-                    if(lazyListState.firstVisibleItemIndex < 5){
-                        isVisibleTopBar.value = true
-                    } else{
-                        isVisibleTopBar.value = false
+                    LaunchedEffect(lazyListState.firstVisibleItemIndex){
+                        if(lazyListState.firstVisibleItemIndex < 5){
+                            isVisibleTopBar.value = true
+                        } else{
+                            isVisibleTopBar.value = false
+                        }
+
                     }
 
-                }
+                    Box(modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ){
 
-                Box(modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ){
+                        LazyColumn(
+                            modifier = Modifier.fillMaxSize().padding(it),
+                            state = lazyListState,
+                            contentPadding = PaddingValues(1.dp),
+                            userScrollEnabled = true
+                        ) {
 
-                    LazyColumn(
-                        modifier = Modifier.fillMaxSize().padding(it),
-                        state = lazyListState,
-                        contentPadding = PaddingValues(1.dp),
-                        userScrollEnabled = true
-                    ) {
-
-                        items(pagingData.size) { index ->
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .background(MaterialTheme.colorScheme.surfaceContainerLowest)
-                                    .border(
-                                        BorderStroke(
-                                            width = 1.dp,
-                                            color = Color.LightGray.copy(alpha = 0.2f)
-                                        )
-                                    ),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                // row number
-                                Text(
-                                    text = (startRowNum + index + 1).toString(),
-                                    modifier = Modifier.width(40.dp),
-                                    textAlign = TextAlign.Center
-                                )
-                                ComposeDataGridRow(
-                                    columnInfo.value,
-                                    data = pagingData[index] as List<Any?>
-                                )
+                            items(pagingData.size) { index ->
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .background(MaterialTheme.colorScheme.surfaceContainerLowest)
+                                        .border(
+                                            BorderStroke(
+                                                width = 1.dp,
+                                                color = Color.LightGray.copy(alpha = 0.2f)
+                                            )
+                                        ),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    // row number
+                                    Text(
+                                        text = (startRowNum + index + 1).toString(),
+                                        modifier = Modifier.width(40.dp),
+                                        textAlign = TextAlign.Center
+                                    )
+                                    ComposeDataGridRow(
+                                        columnInfo.value,
+                                        data = pagingData[index] as List<Any?>
+                                    )
+                                }
                             }
                         }
-                    }
 
 
 
@@ -850,7 +852,7 @@ fun ComposeDataGrid(
                             modifier = Modifier.align( Alignment.BottomCenter).padding(bottom=10.dp),
                             enabled = lazyListState.canScrollForward,
 
-                        ) {
+                            ) {
                             AnimatedVisibility(
                                 visible = enableIndicateArrow
                             ) {
@@ -869,7 +871,7 @@ fun ComposeDataGrid(
                                 onClick = { onPageNavHandler(PageNav.First) },
                                 enabled = pagerState.canScrollBackward,
 
-                            ) {
+                                ) {
                                 AnimatedVisibility(
                                     visible = enableIndicateArrow
                                 ) {
@@ -885,7 +887,7 @@ fun ComposeDataGrid(
                                 onClick = { onPageNavHandler(PageNav.Prev)},
                                 enabled = pagerState.canScrollBackward,
 
-                            ) {
+                                ) {
                                 AnimatedVisibility(
                                     visible = enableIndicateArrow
                                 ) {
@@ -939,13 +941,14 @@ fun ComposeDataGrid(
 
 
 
+                    }
+
+
+
                 }
-
-
-
             }
 
-        }
+
 
 
     }

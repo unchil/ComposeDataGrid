@@ -16,33 +16,18 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.ChecklistRtl
-import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material.icons.filled.KeyboardDoubleArrowDown
-import androidx.compose.material.icons.filled.KeyboardDoubleArrowLeft
-import androidx.compose.material.icons.filled.KeyboardDoubleArrowRight
-import androidx.compose.material.icons.filled.KeyboardDoubleArrowUp
-import androidx.compose.material.icons.filled.LightMode
-import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.ToggleOff
-import androidx.compose.material.icons.filled.ToggleOn
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
@@ -50,7 +35,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.VerticalDivider
@@ -84,7 +68,6 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import kotlin.math.max
 import kotlin.math.roundToInt
-import kotlinx.coroutines.channels.Channel
 
 @Composable
 fun ComposeDataGridHeader(
@@ -92,7 +75,7 @@ fun ComposeDataGridHeader(
     columnInfo: MutableState<List<ColumnInfo>>,
     onSortOrder:((ColumnInfo) -> Unit)? = null,
     onFilter:((String, String, String) -> Unit)? = null,
-    updateDataColumnOrder: (MutableState<List<ColumnInfo>>) -> Unit, ) {
+    updateDataColumnOrder: () -> Unit, ) {
 
     Row (
         modifier =  then(modifier)
@@ -110,7 +93,7 @@ fun ComposeDataGridHeader(
 
         ComposeColumnRow(
             columnInfoList = columnInfo,
-            updateColumnInfo = updateDataColumnOrder,
+            updateDataColumnOrder = updateDataColumnOrder,
             onSortOrder = onSortOrder,
             onFilter = onFilter,
         )
@@ -143,11 +126,14 @@ fun ComposeDataGridRow( columnInfo:List< ColumnInfo>, data:List<Any?>) {
 @Composable
 fun ComposeColumnRow(
     columnInfoList: MutableState<List<ColumnInfo>>,
-    updateColumnInfo: ((MutableState<List<ColumnInfo>>) -> Unit)? = null,
+    updateDataColumnOrder: () -> Unit,
     onSortOrder:((ColumnInfo) -> Unit)? = null,
-    onFilter:((String, String, String) -> Unit)? = null, ){
+    onFilter:((String, String, String) -> Unit)? = null,
+){
 
     require(columnInfoList.value.size >= 2) { "column must be at least 2" }
+
+
 
     val coroutineScope = rememberCoroutineScope()
     val density = LocalDensity.current.density
@@ -180,7 +166,7 @@ fun ComposeColumnRow(
             // After
             for (i in index + 1 until columnInfoList.value.size) {
                 columnInfoList.value[i].widthWeigth.value =
-                    (newWeightAfter / oldSumAfter) *columnInfoList.value[i].widthWeigth.value
+                    (newWeightAfter / oldSumAfter) * columnInfoList.value[i].widthWeigth.value
             }
             // Ensure weights don't go below a minimum value (e.g., 0.1f)
             for (i in 0 until columnInfoList.value.size) {
@@ -231,54 +217,52 @@ fun ComposeColumnRow(
         verticalAlignment = Alignment.CenterVertically,
     ) {
 
-        columnInfoList.value.forEachIndexed { index,  columnInfo ->
+        columnInfoList.value.forEachIndexed { index,  colInfo ->
 
-            val imageVector = when(columnInfo.sortOrder.value){
+            val imageVector = when(colInfo.sortOrder.value){
                 1 -> Icons.Default.KeyboardArrowUp
                 -1 -> Icons.Default.KeyboardArrowDown
                 else -> EmptyImageVector
             }
             val draggedItemAlpha = remember { mutableStateOf(1f) }
+
             val animatedAlpha by animateFloatAsState(
-                targetValue = if (offsetList[index].value == IntOffset.Zero) 1f else  draggedItemAlpha.value,
+                targetValue = if (offsetList.getOrNull(index)?.value == IntOffset.Zero) 1f else  draggedItemAlpha.value,
                 label = "alphaAnimation"
             )
             val onDragStart: (Offset) -> Unit = {
                 draggedItemAlpha.value = 0.5f
             }
+
             val onDragEnd:() -> Unit = {
+
                 currentHoverEnterInteraction[index].value?.let {
                     coroutineScope.launch {
                         interactionSourceList[index].emit(HoverInteraction.Exit(it))
                     }
                 }
-
                 var appendBoxSize = 0
                 for ( i in 0 until index ) {
                     appendBoxSize += boxSizePx[i].value.width
                 }
                 val currentDp = (( offsetList[index].value.x + boxSizePx[index].value.width / 2 + appendBoxSize ) / density).dp
+                val targetColumnIndex = findIndexFromDividerPositions(currentDp, dividerPositions, index, density)
 
-
-                val targetColumnIndex =
-                    findIndexFromDividerPositions(currentDp, dividerPositions, index, density)
+                //-------
                 val currentList = columnInfoList.value.toMutableList()
                 val draggedColumn = currentList.removeAt(index)
                 currentList.add(targetColumnIndex, draggedColumn)
-
-                currentList.forEachIndexed{ newIndex, colInfo ->
-                    colInfo.columnIndex = newIndex
+                currentList.forEachIndexed{ newIndex, it ->
+                    it.columnIndex = newIndex
                 }
-
                 columnInfoList.value = currentList.toList()
-
-                updateColumnInfo?.let{
-                    it(columnInfoList)
-                }
+                updateDataColumnOrder()
+                //-------
 
                 offsetList[index].value = IntOffset.Zero
                 draggedItemAlpha.value = 1f
             }
+
             val onDragCancel: () -> Unit = {
                 offsetList[index].value = IntOffset.Zero
                 draggedItemAlpha.value = 1f
@@ -289,17 +273,17 @@ fun ComposeColumnRow(
                 offsetList[index].value = offsetList[index].value.plus(offsetChange)
             }
             val onClick: () -> Unit = {
-                columnInfo.sortOrder.value = when(columnInfo.sortOrder.value){
+                colInfo.sortOrder.value = when(colInfo.sortOrder.value){
                     0 -> 1
                     1 -> -1
                     else -> 0
                 }
-                onSortOrder?.invoke( columnInfo)
+                onSortOrder?.invoke( colInfo)
             }
 
             Row(
                 modifier = Modifier
-                    .weight(columnInfo.widthWeigth.value)
+                    .weight(colInfo.widthWeigth.value)
                     // onGloballyPositioned를 사용하여 Box의 크기를 가져옴
                     .onGloballyPositioned { layoutCoordinates ->
                         boxSizePx[index].value = layoutCoordinates.size
@@ -321,7 +305,7 @@ fun ComposeColumnRow(
                     onClick = onClick,
                     interactionSource = interactionSourceList[index],
                 ) {
-                    Text(columnInfo.columnName, color = MaterialTheme.colorScheme.onSurface)
+                    Text(colInfo.columnName, color = MaterialTheme.colorScheme.onSurface)
                 }
 
                 Icon(
@@ -332,7 +316,7 @@ fun ComposeColumnRow(
                 )
 
                 SearchMenu(
-                    columnInfo.columnName,
+                    colInfo.columnName,
                     onFilter
                 )
             }
