@@ -1,6 +1,7 @@
 package com.unchil.composedatagrid.modules
 
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 
 
 enum class PageNav {
@@ -10,6 +11,13 @@ enum class PageNav {
 enum class ListNav {
     Top, Bottom
 }
+
+data class NewColumnInfo(
+    val dataType: String = "UNKNOWN",
+    val isContainNull:Boolean = false,
+    val widthWeight: Float = 0f
+)
+
 
 data class ColumnInfo(
     val columnName:String,

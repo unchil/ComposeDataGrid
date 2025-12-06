@@ -184,6 +184,7 @@ fun DataGridWithViewModel(
             )
 
             if(isVisible){
+
                 /*
                 ComposeDataGrid(
                     modifier = modifier,

@@ -59,17 +59,18 @@ fun NewComposeDataGrid(
 ){
 
     val presentData by  remember{mutableStateOf(Pair(columnNames, data).toMap())}
+    val selectedColumns = remember{ presentData.keys.associateWith { mutableStateOf(true) } }
+
+
     var mutableData by remember { mutableStateOf(data)}
     var mutableColumnNames by remember { mutableStateOf(columnNames)}
 
-
     val enableDarkMode by remember { mutableStateOf(false) }
-
 
     val initPageSize = 100
     val pageSize by remember{mutableStateOf(initPageSize)}
     var lastPageIndex by  remember{mutableStateOf(getLastPageIndex(mutableData.size, pageSize))}
-    val columnsInfo = remember { mutableStateOf(makeColInfo(mutableColumnNames, mutableData)) }
+    var newColumnsInfo by remember { mutableStateOf(newMakeColInfo(Pair(mutableColumnNames, mutableData).toMap())) }
 
     val pagerState = rememberPagerState( pageCount = { lastPageIndex+1 })
 
@@ -92,13 +93,13 @@ fun NewComposeDataGrid(
     val paddingHorizontalPager = remember { PaddingValues(10.dp)}
     val paddingBoxInHorizontalPager = remember { PaddingValues(10.dp)}
 
-    val selectedColumns = remember{ presentData.keys.associateWith { mutableStateOf(true) } }
+
 
     val updateColumnList:( )->Unit = {
         Pair(selectedColumns, presentData).toSelectedColumnsData().let { result ->
             mutableColumnNames = result.first
             mutableData = result.second
-            columnsInfo.value = makeColInfo(mutableColumnNames, mutableData)
+            newColumnsInfo = newMakeColInfo(Pair(mutableColumnNames, mutableData).toMap())
         }
     }
 
@@ -167,20 +168,17 @@ fun NewComposeDataGrid(
                                             verticalAlignment = Alignment.CenterVertically,
                                         ) {
                                             pagingData.keys.forEach { columnName ->
-                                                val weight =
-                                                    columnsInfo.value.firstOrNull { columnInfo ->
-                                                        columnInfo.columnName == columnName
-                                                    }?.widthWeigth?.value ?: 1f
 
                                                 Row(
                                                     modifier = Modifier.height(columnHeaderHeight)
                                                         .border(borderStrokeDarkGray, shape = borderShapeIn)
-                                                        .weight(weight),
+                                                        .weight(newColumnsInfo[columnName]?.widthWeight ?: 0f),
                                                     horizontalArrangement = Arrangement.Center,
                                                     verticalAlignment = Alignment.CenterVertically,
                                                 ) {
                                                     Text(columnName,)
                                                 }
+
                                             }
                                         }
                                     }
@@ -194,16 +192,11 @@ fun NewComposeDataGrid(
                                         verticalAlignment = Alignment.CenterVertically,
                                     ) {
                                         pagingData.keys.forEach { columnName ->
-                                            val weight =
-                                                columnsInfo.value.firstOrNull { columnInfo ->
-                                                    columnInfo.columnName == columnName
-                                                }?.widthWeigth?.value ?: 1f
-
                                             Text(
                                                 text = (pagingData[columnName] as List<*>)[index].toString(),
                                                 modifier = Modifier
                                                     .border(borderStrokeLightGray, shape = borderShapeIn)
-                                                    .weight(weight),
+                                                    .weight(newColumnsInfo[columnName]?.widthWeight ?: 0f),
                                                 textAlign = TextAlign.Center,
                                             )
                                         }
