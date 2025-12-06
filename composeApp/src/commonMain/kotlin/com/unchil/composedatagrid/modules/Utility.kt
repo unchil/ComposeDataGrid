@@ -32,6 +32,10 @@ val getLastPageIndex:(Int, Int)-> Int = { totCnt, pageSize ->
     }
 }
 
+val getRowNumber:(Int, Int, Int)-> Int = { pageIndex, pageSize, rowIndex->
+    (pageIndex * pageSize ) + rowIndex +1
+}
+
 fun Pair<List<String>, List<List<Any?>>>.toMap():MutableMap<String, List<Any?>>{
     val result = mutableMapOf<String, List<Any?>>()
      if(first.size == second.first().size) {

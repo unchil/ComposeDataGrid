@@ -66,6 +66,7 @@ fun NewComposeDataGrid(
     var mutableColumnNames by remember { mutableStateOf(columnNames)}
 
     val enableDarkMode by remember { mutableStateOf(false) }
+    val isVisibleRowNum by remember { mutableStateOf(true) }
 
     val initPageSize = 100
     val pageSize by remember{mutableStateOf(initPageSize)}
@@ -74,7 +75,7 @@ fun NewComposeDataGrid(
 
     val pagerState = rememberPagerState( pageCount = { lastPageIndex+1 })
 
-    val columnHeaderHeight = remember{ 36.dp }
+
     val borderStrokeBlack = remember {BorderStroke(width = 1.dp, color = Color.Black)}
     val borderStrokeRed = remember {BorderStroke(width = 1.dp, color = Color.Red)}
     val borderStrokeBlue = remember {BorderStroke(width = 1.dp, color = Color.Blue)}
@@ -86,7 +87,7 @@ fun NewComposeDataGrid(
 
     val borderShapeOut = remember{RoundedCornerShape(0.dp)}
     val borderShapeIn = remember{RoundedCornerShape(2.dp)}
-    val widthColumnSelectDropDownMenu = remember{180.dp}
+
     val paddingGridMenuButton = remember{ PaddingValues(start =20.dp, bottom = 20.dp)}
     val paddingLazyColumn = remember { PaddingValues(10.dp)}
     val paddingLazyColumnContent = remember { PaddingValues(10.dp)}
@@ -94,8 +95,12 @@ fun NewComposeDataGrid(
     val paddingBoxInHorizontalPager = remember { PaddingValues(10.dp)}
 
 
+    val heightColumnHeader = remember{ 36.dp }
+    val widthColumnSelectDropDownMenu = remember{180.dp}
+    val widthRowNumColumn = remember{ 40.dp}
 
-    val updateColumnList:( )->Unit = {
+
+    val onUpdateColumnsEventHandle:( )->Unit = {
         Pair(selectedColumns, presentData).toSelectedColumnsData().let { result ->
             mutableColumnNames = result.first
             mutableData = result.second
@@ -167,10 +172,22 @@ fun NewComposeDataGrid(
                                         Row(
                                             verticalAlignment = Alignment.CenterVertically,
                                         ) {
+
+                                            if(isVisibleRowNum){
+                                                Row(
+                                                    modifier = Modifier.height(heightColumnHeader).width(widthRowNumColumn)
+                                                        .border(borderStrokeDarkGray, shape = borderShapeIn),
+                                                    horizontalArrangement = Arrangement.Center,
+                                                    verticalAlignment = Alignment.CenterVertically,
+                                                ) {
+                                                    Text("Num")
+                                                }
+                                            }
+
                                             pagingData.keys.forEach { columnName ->
 
                                                 Row(
-                                                    modifier = Modifier.height(columnHeaderHeight)
+                                                    modifier = Modifier.height(heightColumnHeader)
                                                         .border(borderStrokeDarkGray, shape = borderShapeIn)
                                                         .weight(newColumnsInfo[columnName]?.widthWeight ?: 0f),
                                                     horizontalArrangement = Arrangement.Center,
@@ -191,6 +208,14 @@ fun NewComposeDataGrid(
                                         modifier = Modifier,
                                         verticalAlignment = Alignment.CenterVertically,
                                     ) {
+                                        if(isVisibleRowNum){
+                                            Text(
+                                                text = getRowNumber(pageIndex,pageSize, index ).toString(),
+                                                modifier = Modifier.width(widthRowNumColumn)
+                                                    .border(borderStrokeLightGray, shape = borderShapeIn),
+                                                textAlign = TextAlign.Center,
+                                            )
+                                        }
                                         pagingData.keys.forEach { columnName ->
                                             Text(
                                                 text = (pagingData[columnName] as List<*>)[index].toString(),
@@ -213,7 +238,6 @@ fun NewComposeDataGrid(
                             ){
                                 var expandMenu by remember { mutableStateOf(false) }
                                 val scrollState = remember { ScrollState(0) }
-
                                 IconButton(
                                     onClick = {expandMenu = !expandMenu },
                                     modifier= Modifier
@@ -237,13 +261,11 @@ fun NewComposeDataGrid(
                                         }
                                     )
                                 }
-
-
                                 DropdownMenu(
                                     expanded = expandMenu,
                                     onDismissRequest = {
                                         expandMenu = false
-                                        updateColumnList()
+                                        onUpdateColumnsEventHandle()
                                     },
                                     scrollState = scrollState,
                                     modifier = Modifier
@@ -251,7 +273,6 @@ fun NewComposeDataGrid(
                                         .border(borderStrokeLightGray, shape = borderShapeIn)
                                         .background(color = MaterialTheme.colorScheme.tertiaryContainer),
                                 ) {
-
                                     presentData.keys.forEach { columnName ->
                                         // HorizontalDivider()
 
@@ -289,10 +310,7 @@ fun NewComposeDataGrid(
                                             }
                                         )
                                     }
-
                                 }
-
-
                             }//Box
 
                         }//Box
