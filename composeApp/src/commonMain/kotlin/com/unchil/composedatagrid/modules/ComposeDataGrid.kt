@@ -31,12 +31,9 @@ import androidx.compose.material.icons.filled.ToggleOff
 import androidx.compose.material.icons.filled.ToggleOn
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.ListItemDefaults.contentColor
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SegmentedButtonDefaults.Icon
 import androidx.compose.material3.ShapeDefaults
@@ -284,16 +281,16 @@ fun ComposeDataGrid(
             val newRow = mutableListOf<Any?>().apply { repeat(oldRow.size) { add(null) } }
 
             columnInfo.value.forEach { colInfo ->
-                newRow[colInfo.columnIndex] = oldRow[colInfo.originalColumnIndex]
+                newRow[colInfo.columnIndex] = oldRow[colInfo.beforeColumnIndex]
             }
             newRow
         }
         val tempSortedIndexList =  mutableListOf<Int>()
         columnInfo.value.forEach {
-            if(sortedIndexList.contains(it.originalColumnIndex)){
+            if(sortedIndexList.contains(it.beforeColumnIndex)){
                 tempSortedIndexList.add(it.columnIndex)
             }
-            it.originalColumnIndex = it.columnIndex
+            it.beforeColumnIndex = it.columnIndex
         }
         sortedIndexList = tempSortedIndexList
 

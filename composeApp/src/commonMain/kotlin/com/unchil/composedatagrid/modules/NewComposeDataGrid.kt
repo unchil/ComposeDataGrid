@@ -85,9 +85,16 @@ fun NewComposeDataGrid(
 
     val borderShapeOut = remember{RoundedCornerShape(0.dp)}
     val borderShapeIn = remember{RoundedCornerShape(2.dp)}
+    val widthColumnSelectDropDownMenu = remember{180.dp}
+    val paddingGridMenuButton = remember{ PaddingValues(start =20.dp, bottom = 20.dp)}
+    val paddingLazyColumn = remember { PaddingValues(10.dp)}
+    val paddingLazyColumnContent = remember { PaddingValues(10.dp)}
+    val paddingHorizontalPager = remember { PaddingValues(10.dp)}
+    val paddingBoxInHorizontalPager = remember { PaddingValues(10.dp)}
 
+    val selectedColumns = remember{ presentData.keys.associateWith { mutableStateOf(true) } }
 
-    val updateColumnList:( Map<String, MutableState<Boolean>>)->Unit = { selectedColumns ->
+    val updateColumnList:( )->Unit = {
         Pair(selectedColumns, presentData).toSelectedColumnsData().let { result ->
             mutableColumnNames = result.first
             mutableData = result.second
@@ -99,12 +106,16 @@ fun NewComposeDataGrid(
     AppTheme(enableDarkMode = enableDarkMode) {
 
         Box(
-            then(modifier).fillMaxSize().border(borderStrokeRed, shape = borderShapeOut),
+            then(modifier)
+                .fillMaxSize()
+                .border(borderStrokeBlack, shape = borderShapeOut),
             contentAlignment = Alignment.Center,
         ){
                 HorizontalPager(
                     state = pagerState,
-                    modifier = Modifier.padding(2.dp).border(borderStrokeGreen, shape = borderShapeIn),
+                    modifier = Modifier
+                        .padding(paddingHorizontalPager)
+                        .border(borderStrokeGreen, shape = borderShapeIn),
                     flingBehavior = PagerDefaults.flingBehavior(
                         state = pagerState,
                         snapPositionalThreshold = 0.7f
@@ -124,7 +135,10 @@ fun NewComposeDataGrid(
                     ).let { pagingData ->
 
                         Box(
-                            modifier = Modifier.fillMaxSize(),
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(paddingBoxInHorizontalPager )
+                                .border(borderStrokeBlue, shape = borderShapeIn),
                             contentAlignment = Alignment.Center
                         ) {
                             val lazyRowListState =
@@ -138,9 +152,12 @@ fun NewComposeDataGrid(
 
 
                             LazyColumn(
-                                modifier = Modifier.fillMaxSize(),
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(paddingLazyColumn)
+                                    .border(borderStrokeRed, shape = borderShapeIn),
                                 state = lazyRowListState,
-                                contentPadding = PaddingValues(1.dp)
+                                contentPadding = paddingLazyColumnContent
                             ) {
                                 stickyHeader {
                                     AnimatedVisibility(
@@ -157,7 +174,7 @@ fun NewComposeDataGrid(
 
                                                 Row(
                                                     modifier = Modifier.height(columnHeaderHeight)
-                                                        .border(borderStrokeGray, shape = borderShapeIn)
+                                                        .border(borderStrokeDarkGray, shape = borderShapeIn)
                                                         .weight(weight),
                                                     horizontalArrangement = Arrangement.Center,
                                                     verticalAlignment = Alignment.CenterVertically,
@@ -184,10 +201,9 @@ fun NewComposeDataGrid(
 
                                             Text(
                                                 text = (pagingData[columnName] as List<*>)[index].toString(),
-                                                modifier = Modifier.border(
-                                                    borderStrokeLightGray,
-                                                    shape = borderShapeIn
-                                                ).weight(weight),
+                                                modifier = Modifier
+                                                    .border(borderStrokeLightGray, shape = borderShapeIn)
+                                                    .weight(weight),
                                                 textAlign = TextAlign.Center,
                                             )
                                         }
@@ -196,14 +212,21 @@ fun NewComposeDataGrid(
 
                             }//LazyColumn
 
-                            Box(modifier= Modifier.align( Alignment.BottomStart).padding(20.dp)){
+                            Box(
+                                modifier= Modifier
+                                    .padding(paddingLazyColumn)
+                                    .border(borderStrokeRed, shape = borderShapeIn)
+                                    .align( Alignment.BottomStart)
+                            ){
                                 var expandMenu by remember { mutableStateOf(false) }
                                 val scrollState = remember { ScrollState(0) }
-                                val selectedColumns =  remember{ presentData.keys.associateWith { mutableStateOf(true) } }
 
                                 IconButton(
                                     onClick = {expandMenu = !expandMenu },
-                                    modifier= Modifier.clip(CircleShape).background(MaterialTheme.colorScheme.tertiaryContainer),
+                                    modifier= Modifier
+                                        .padding(paddingGridMenuButton)
+                                        .clip(CircleShape)
+                                        .background(MaterialTheme.colorScheme.tertiaryContainer),
                                 ) {
                                     SegmentedButtonDefaults.Icon(
                                         active = expandMenu,
@@ -227,11 +250,12 @@ fun NewComposeDataGrid(
                                     expanded = expandMenu,
                                     onDismissRequest = {
                                         expandMenu = false
-
-                                        updateColumnList(selectedColumns)
+                                        updateColumnList()
                                     },
                                     scrollState = scrollState,
-                                    modifier = Modifier.width(180.dp)
+                                    modifier = Modifier
+                                        .width(widthColumnSelectDropDownMenu)
+                                        .border(borderStrokeLightGray, shape = borderShapeIn)
                                         .background(color = MaterialTheme.colorScheme.tertiaryContainer),
                                 ) {
 
@@ -242,12 +266,9 @@ fun NewComposeDataGrid(
                                             text = { Text(columnName) },
                                             trailingIcon = {
                                                 IconButton(onClick = {
-
                                                     selectedColumns[columnName]?.let { it->
                                                       it.value = !it.value
                                                     }
-
-
                                                 }) {
                                                     SegmentedButtonDefaults.Icon(
                                                         active = selectedColumns.getValue(columnName).value,

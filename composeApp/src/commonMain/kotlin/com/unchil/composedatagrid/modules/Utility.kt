@@ -1,12 +1,10 @@
 package com.unchil.composedatagrid.modules
 
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.CoroutineScope
 
 val makePagingData:(Int,Int, List<String>,List<List<Any?>>)->MutableMap<String, List<Any?>> = {
     topRowIndex, bottomRowIndex, columnNames, data ->
@@ -36,9 +34,10 @@ val getLastPageIndex:(Int, Int)-> Int = { totCnt, pageSize ->
 
 fun Pair<List<String>, List<List<Any?>>>.toMap():MutableMap<String, List<Any?>>{
     val result = mutableMapOf<String, List<Any?>>()
-     if(this.first.size == this.second.first().size) {
-        this.first.forEachIndexed { index, string ->
-            result.putAll(mapOf(Pair(string, this.second.map { it -> it[index] }.toList())))}
+     if(first.size == second.first().size) {
+        first.forEachIndexed { index, string ->
+            result.putAll(mapOf(string to second.map { it -> it[index] }.toList()) )
+        }
     }
     return result
 }
@@ -87,13 +86,13 @@ val makeColInfo: (columnNames: List<String>, data: List<List<Any?>>) -> List<Col
 
         columnInfo.add(
             ColumnInfo(
-                columnName,
-                columnIndex,
-                columnIndex,
-                columnType,
-                mutableStateOf(0),
-                mutableStateOf(1f / columnNames.size),
-                isContainNull[columnIndex]
+                columnName=columnName,
+                columnIndex=columnIndex,
+                beforeColumnIndex=columnIndex,
+                columnType=columnType,
+                sortOrder=mutableStateOf(0),
+                widthWeigth=mutableStateOf(1f / columnNames.size),
+                isContainNull=isContainNull[columnIndex]
             )
         )
 

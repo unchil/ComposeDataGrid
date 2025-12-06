@@ -14,7 +14,7 @@ enum class ListNav {
 data class ColumnInfo(
     val columnName:String,
     var columnIndex:Int,          // 현재 컬럼의 index
-    var originalColumnIndex: Int, // drag 이전 컬럼 index
+    var beforeColumnIndex: Int, // drag 이전 컬럼 index
     val columnType: String,
     var sortOrder: MutableState<Int>,
     val widthWeigth: MutableState<Float>,
