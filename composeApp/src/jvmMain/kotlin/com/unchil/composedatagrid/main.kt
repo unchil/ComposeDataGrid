@@ -16,7 +16,7 @@ import org.jetbrains.kotlinx.dataframe.api.select
 import org.jetbrains.kotlinx.dataframe.io.readJson
 
 val state = WindowState(
-    size = DpSize(1400.dp, 800.dp),
+    size = DpSize(1600.dp, 800.dp),
     position = WindowPosition(Alignment.TopCenter)
 )
 

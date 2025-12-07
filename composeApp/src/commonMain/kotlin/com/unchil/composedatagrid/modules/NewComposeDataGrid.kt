@@ -5,6 +5,9 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.draggable
+import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -30,8 +33,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -42,13 +45,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.Modifier.Companion.then
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.unchil.composedatagrid.theme.AppTheme
 import composedatagrid.composeapp.generated.resources.Res
 import composedatagrid.composeapp.generated.resources.format_line_spacing_24px
 import org.jetbrains.compose.resources.painterResource
-
 
 @Composable
 fun NewComposeDataGrid(
@@ -71,7 +75,6 @@ fun NewComposeDataGrid(
     val initPageSize = 100
     val pageSize by remember{mutableStateOf(initPageSize)}
     var lastPageIndex by  remember{mutableStateOf(getLastPageIndex(mutableData.size, pageSize))}
-    var newColumnsInfo by remember { mutableStateOf(newMakeColInfo(Pair(mutableColumnNames, mutableData).toMap())) }
 
     val pagerState = rememberPagerState( pageCount = { lastPageIndex+1 })
 
@@ -86,25 +89,34 @@ fun NewComposeDataGrid(
     val borderStrokeGreen = remember {BorderStroke(width = 1.dp, color = Color.Green)}
 
     val borderShapeOut = remember{RoundedCornerShape(0.dp)}
-    val borderShapeIn = remember{RoundedCornerShape(2.dp)}
+    val borderShapeIn = remember{RoundedCornerShape(0.dp)}
 
     val paddingGridMenuButton = remember{ PaddingValues(start =20.dp, bottom = 20.dp)}
     val paddingLazyColumn = remember { PaddingValues(10.dp)}
     val paddingLazyColumnContent = remember { PaddingValues(10.dp)}
     val paddingHorizontalPager = remember { PaddingValues(10.dp)}
     val paddingBoxInHorizontalPager = remember { PaddingValues(10.dp)}
-
+    val paddingDataRow = remember { PaddingValues(vertical = 1.dp) }
 
     val heightColumnHeader = remember{ 36.dp }
+    val heightColumnHeaderDivider = remember{ 10.dp }
     val widthColumnSelectDropDownMenu = remember{180.dp}
-    val widthRowNumColumn = remember{ 40.dp}
+    val widthRowNumColumn = remember{ 60.dp}
 
+
+    val density = LocalDensity.current.density
+    val widthHeaderDividerThickness = remember{ 6.dp}
+    val widthDataDividerThickness = remember{ 6.dp}
+
+    var columnInfoMutable = remember {
+         MutableList(mutableColumnNames.size) { mutableStateOf(1f / mutableColumnNames.size) }
+    }
 
     val onUpdateColumnsEventHandle:( )->Unit = {
         Pair(selectedColumns, presentData).toSelectedColumnsData().let { result ->
             mutableColumnNames = result.first
             mutableData = result.second
-            newColumnsInfo = newMakeColInfo(Pair(mutableColumnNames, mutableData).toMap())
+            columnInfoMutable =  MutableList(mutableColumnNames.size) { mutableStateOf(1f / mutableColumnNames.size) }
         }
     }
 
@@ -140,6 +152,8 @@ fun NewComposeDataGrid(
                         mutableData
                     ).let { pagingData ->
 
+                        var rowWidthInDp by remember { mutableStateOf(0.dp) }
+
                         Box(
                             modifier = Modifier
                                 .fillMaxSize()
@@ -156,7 +170,6 @@ fun NewComposeDataGrid(
                                 }
                             }
 
-
                             LazyColumn(
                                 modifier = Modifier
                                     .fillMaxSize()
@@ -170,61 +183,118 @@ fun NewComposeDataGrid(
                                         visible = isVisibleColumnHeader,
                                     ) {
                                         Row(
+                                            modifier=Modifier.onGloballyPositioned { layoutResult ->
+                                                rowWidthInDp = (layoutResult.size.width / density ).dp
+                                            },
                                             verticalAlignment = Alignment.CenterVertically,
                                         ) {
 
                                             if(isVisibleRowNum){
                                                 Row(
                                                     modifier = Modifier.height(heightColumnHeader).width(widthRowNumColumn)
-                                                        .border(borderStrokeDarkGray, shape = borderShapeIn),
+                                                        .border(borderStrokeLightGray, shape = borderShapeIn),
                                                     horizontalArrangement = Arrangement.Center,
                                                     verticalAlignment = Alignment.CenterVertically,
                                                 ) {
                                                     Text("Num")
                                                 }
+                                                VerticalDivider(
+                                                    modifier = Modifier
+                                                        .height(heightColumnHeaderDivider),
+                                                    thickness = widthHeaderDividerThickness,
+                                                    color = Color.Transparent
+                                                )
                                             }
 
-                                            pagingData.keys.forEach { columnName ->
+                                            pagingData.keys.forEachIndexed { index, columnName ->
+
 
                                                 Row(
                                                     modifier = Modifier.height(heightColumnHeader)
-                                                        .border(borderStrokeDarkGray, shape = borderShapeIn)
-                                                        .weight(newColumnsInfo[columnName]?.widthWeight ?: 0f),
+                                                        .border(borderStrokeLightGray, shape = borderShapeIn)
+                                                        .weight(columnInfoMutable.get(index).value),
                                                     horizontalArrangement = Arrangement.Center,
                                                     verticalAlignment = Alignment.CenterVertically,
                                                 ) {
                                                     Text(columnName,)
                                                 }
 
-                                            }
-                                        }
-                                    }
+                                                // 마지막 컬럼이 아닐 경우에만 구분선을 표시하고 드래그 가능하게 합니다.
+                                                if (index < pagingData.keys.size - 1) {
+                                                    val draggableState = rememberDraggableState { delta ->
+
+                                                        // 픽셀(px) 단위의 delta를 전체 너비에 대한 가중치 변화량으로 변환합니다.
+                                                        val deltaWeight = delta / (rowWidthInDp.value * density)
+
+                                                        val weightCurrent = columnInfoMutable[index].value
+                                                        val weightNext = columnInfoMutable[index+1].value
+
+                                                        // 최소 너비를 5%로 설정 (0.05f)
+                                                        val minWeight = 0.05f
+
+                                                        // 가중치 변화량을 적용하되, 최소 너비 제약을 준수합니다.
+                                                        val newWeightCurrent = (weightCurrent + deltaWeight).coerceIn(minWeight, weightCurrent + weightNext - minWeight)
+                                                        val newWeightNext = (weightCurrent + weightNext) - newWeightCurrent
+
+                                                        columnInfoMutable[index].value = newWeightCurrent
+                                                        columnInfoMutable[index+1].value = newWeightNext
+
+                                                    }
+
+                                                    VerticalDivider(
+                                                        modifier = Modifier
+                                                            .height(heightColumnHeaderDivider)
+                                                            .draggable(
+                                                                orientation = Orientation.Horizontal,
+                                                                state = draggableState,
+                                                            ),
+                                                        thickness = widthHeaderDividerThickness,
+                                                        color = Color.Transparent
+                                                    )
+                                                }
+
+                                            }//pagingData.keys loop
+                                        } //Row
+                                    }//AnimatedVisibility
                                 }//stickyHeader
 
                                 val rowCnt = pagingData.values.firstOrNull()?.size ?: 0
 
-                                items(rowCnt) { index ->
+                                items(rowCnt) { dataIndex ->
                                     Row(
-                                        modifier = Modifier,
+                                        modifier = Modifier.padding(paddingDataRow),
                                         verticalAlignment = Alignment.CenterVertically,
                                     ) {
                                         if(isVisibleRowNum){
                                             Text(
-                                                text = getRowNumber(pageIndex,pageSize, index ).toString(),
-                                                modifier = Modifier.width(widthRowNumColumn)
-                                                    .border(borderStrokeLightGray, shape = borderShapeIn),
+                                                text = getRowNumber(pageIndex,pageSize, dataIndex ).toString(),
+                                                modifier = Modifier.width(widthRowNumColumn).border(borderStrokeLightGray, shape = borderShapeIn),
                                                 textAlign = TextAlign.Center,
                                             )
+
+                                            VerticalDivider(
+                                                thickness = widthDataDividerThickness,
+                                                color = Color.Transparent
+                                            )
                                         }
-                                        pagingData.keys.forEach { columnName ->
+
+                                        pagingData.keys.forEachIndexed { keyIndex, columnName ->
                                             Text(
-                                                text = (pagingData[columnName] as List<*>)[index].toString(),
-                                                modifier = Modifier
-                                                    .border(borderStrokeLightGray, shape = borderShapeIn)
-                                                    .weight(newColumnsInfo[columnName]?.widthWeight ?: 0f),
+                                                text = (pagingData[columnName] as List<*>)[dataIndex].toString(),
+                                                modifier = Modifier.border(borderStrokeLightGray, shape = borderShapeIn)
+                                                    .weight(columnInfoMutable[keyIndex].value),
                                                 textAlign = TextAlign.Center,
                                             )
+
+                                            if (keyIndex < pagingData.keys.size - 1) {
+                                                VerticalDivider(
+                                                    thickness = widthDataDividerThickness,
+                                                    color = Color.Transparent
+
+                                                )
+                                            }
                                         }
+
                                     }
                                 }
 

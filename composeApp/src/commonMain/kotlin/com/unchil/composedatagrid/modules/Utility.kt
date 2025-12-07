@@ -1,6 +1,7 @@
 package com.unchil.composedatagrid.modules
 
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.Dp
@@ -65,8 +66,8 @@ fun Pair< Map<String,MutableState<Boolean>>, MutableMap<String,List<Any?>> >.toS
 }
 
 
+
 val newMakeColInfo: (pagingData: Map<String, List<Any?>>) -> Map<String, NewColumnInfo> = { pagingData ->
-    val widthWeight = 1f / pagingData.keys.size
     pagingData.mapValues { (columnName, data) ->
         if (data.isEmpty()) {
             NewColumnInfo()
@@ -74,7 +75,6 @@ val newMakeColInfo: (pagingData: Map<String, List<Any?>>) -> Map<String, NewColu
             NewColumnInfo(
                 dataType = data.firstOrNull { it != null }?.let { it::class.simpleName } ?: "UNKNOWN",
                 isContainNull = data.contains(null),
-                widthWeight = widthWeight
             )
         }
     }
