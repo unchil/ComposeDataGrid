@@ -120,44 +120,22 @@ val makeColInfo: (columnNames: List<String>, data: List<List<Any?>>) -> List<Col
 }
 
 //-------------
-val  findIndexFromDividerPositions: (
-    currentDp:Dp,
-    dividerPositions: MutableList<Dp>,
-    index: Int,
-    density: Float ) -> Int = { currentDp, dividerPositions, index, density ->
+val findIndexFromDividerPositions: (
+    currentDp: Dp,
+    dividerPositions: List<Dp>
+) -> Int = { currentDp, dividerPositions ->
 
-    val oldDp = dividerPositions[index]
+    if (dividerPositions.isEmpty()) {
+        0
+    } else {
+        val targetIndex = dividerPositions.indexOfFirst { it > currentDp }
 
-    var result:Int = index
-
-    when(currentDp){
-        in 0.dp.. dividerPositions[0] -> {
-            result = 0
-        }
-        in dividerPositions.last()..Int.MAX_VALUE.dp -> {
-            result = dividerPositions.size - 1
-        }
-        in (oldDp + 1.dp)..currentDp -> {
-            for ( i in index + 1 until dividerPositions.size ) {
-                if ( currentDp <= dividerPositions[i]) {
-                    result = i
-                    break
-                }
-            }
-        }
-        in currentDp .. (oldDp - 1.dp) -> {
-            for ( i in (0 until index ).reversed() ) {
-                if ( currentDp >= dividerPositions[i]) {
-                    result = i + 1
-                    break
-                }
-            }
-        }
-        else -> {
-            result = index
+        if (targetIndex == -1) {
+            dividerPositions.size
+        } else {
+            targetIndex
         }
     }
-    result
 }
 
 val EmptyImageVector: ImageVector = ImageVector.Builder(
@@ -167,4 +145,3 @@ val EmptyImageVector: ImageVector = ImageVector.Builder(
     viewportWidth = 0f,
     viewportHeight = 0f
 ).build()
-
