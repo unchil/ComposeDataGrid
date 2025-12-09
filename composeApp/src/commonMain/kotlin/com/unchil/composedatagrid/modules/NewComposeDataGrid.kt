@@ -10,6 +10,7 @@ import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.gestures.rememberDraggableState
+import androidx.compose.foundation.hoverable
 import androidx.compose.foundation.interaction.HoverInteraction
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -30,10 +31,12 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChecklistRtl
+import androidx.compose.material.icons.filled.SwapHoriz
 import androidx.compose.material.icons.filled.ToggleOff
 import androidx.compose.material.icons.filled.ToggleOn
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SegmentedButtonDefaults
@@ -53,23 +56,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.Modifier.Companion.then
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
-import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.unchil.composedatagrid.theme.AppTheme
 import composedatagrid.composeapp.generated.resources.Res
 import composedatagrid.composeapp.generated.resources.format_line_spacing_24px
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
-import kotlin.collections.MutableList
 import kotlin.math.roundToInt
 
 @Composable
@@ -117,7 +116,7 @@ fun NewComposeDataGrid(
     val paddingDataRow = remember { PaddingValues(vertical = 1.dp) }
 
     val heightColumnHeader = remember{ 36.dp }
-    val heightColumnHeaderDivider = remember{ 10.dp }
+    val heightColumnHeaderDivider = remember{ 30.dp }
     val widthColumnSelectDropDownMenu = remember{180.dp}
     val widthRowNumColumn = remember{ 60.dp}
 
@@ -126,21 +125,20 @@ fun NewComposeDataGrid(
     val widthHeaderDividerThickness = remember{ 6.dp}
     val widthDataDividerThickness = remember{ 6.dp}
 
-    var columnInfoMutable = remember {
-         MutableList(mutableColumnNames.size) { mutableStateOf(1f / mutableColumnNames.size) }
+    // --- 유일한 '진실의 원천'으로 사용할 가중치 리스트 ---
+    var columnWeights by remember {
+        mutableStateOf(List(mutableColumnNames.size) { 1f / mutableColumnNames.size })
     }
+
 
     var rowWidthInDp by remember { mutableStateOf(0.dp) }
     val dividerPositions = MutableList(mutableColumnNames.size) {0.dp}
-    LaunchedEffect(rowWidthInDp,mutableColumnNames) {
-        if (rowWidthInDp > 0.dp) {
-            for (i in 0 until mutableColumnNames.size ) {
-                dividerPositions[i] =  (rowWidthInDp /mutableColumnNames.size) * (i + 1) - (widthHeaderDividerThickness * (i + 1) / 2)
-            }
+    // 컬럼 목록이 변경될 때만 가중치를 재설정
+    LaunchedEffect(mutableColumnNames) {
+        if (mutableColumnNames.isNotEmpty()) {
+            columnWeights = List(mutableColumnNames.size) { 1f / mutableColumnNames.size }
         }
-        columnInfoMutable =  MutableList(mutableColumnNames.size) { mutableStateOf(1f / mutableColumnNames.size) }
     }
-
     val onUpdateColumnsEventHandle:()->Unit = {
         Pair(selectedColumns, presentData).toSelectedColumnsData().let { result ->
             mutableColumnNames = result.first
@@ -161,8 +159,14 @@ fun NewComposeDataGrid(
         // 변경된 리스트로 상태 변수를 업데이트하여 Recomposition을 트리거합니다.
         mutableColumnNames = newColumnOrder
         mutableData = newData
+
+        val newWeights = columnWeights.toMutableList().apply {
+            add(targetIndex, removeAt(beforeIndex))
+        }
+        columnWeights = newWeights
     }
 
+    val coroutineScope = rememberCoroutineScope()
 
     AppTheme(enableDarkMode = enableDarkMode) {
 
@@ -213,6 +217,7 @@ fun NewComposeDataGrid(
                                 }
                             }
 
+
                             LazyColumn(
                                 modifier = Modifier
                                     .fillMaxSize()
@@ -225,6 +230,7 @@ fun NewComposeDataGrid(
                                     AnimatedVisibility(
                                         visible = isVisibleColumnHeader,
                                     ) {
+
                                         Row(
                                             modifier=Modifier.onGloballyPositioned { layoutResult ->
                                                 rowWidthInDp = (layoutResult.size.width / density ).dp
@@ -249,11 +255,18 @@ fun NewComposeDataGrid(
                                                 )
                                             }
 
+                                            val columnsAreaWidth = if (isVisibleRowNum) {
+                                                rowWidthInDp - widthRowNumColumn - (widthHeaderDividerThickness * (mutableColumnNames.size - 1))
+                                            } else {
+                                                rowWidthInDp - (widthHeaderDividerThickness * (mutableColumnNames.size - 1))
+                                            }
+
+
                                             pagingData.keys.forEachIndexed { index, columnName ->
 
 
                                                 val offset = remember { mutableStateOf(IntOffset.Zero) }
-                                                val boxSizePx = remember {mutableStateOf(IntSize.Zero) }
+
                                                 val interactionSource =  remember { MutableInteractionSource() }
                                                 val currentHoverEnterInteraction = remember {  mutableStateOf<HoverInteraction.Enter?>(null) }
 
@@ -272,18 +285,9 @@ fun NewComposeDataGrid(
                                                 }
 
 
-                                                val coroutineScope = rememberCoroutineScope()
 
-                                                val draggedItemAlpha = remember { mutableStateOf(1f) }
+                                                val animatedAlpha by animateFloatAsState(if (offset.value == IntOffset.Zero) 1f else 0.5f)
 
-                                                val animatedAlpha by animateFloatAsState(
-                                                    targetValue = if (offset.value == IntOffset.Zero) 1f else  draggedItemAlpha.value,
-                                                    label = "alphaAnimation"
-                                                )
-
-                                                val onDragStart: (Offset) -> Unit = {
-                                                    draggedItemAlpha.value = 0.5f
-                                                }
 
                                                 val onDragEnd:() -> Unit = {
                                                     currentHoverEnterInteraction.value?.let {
@@ -291,41 +295,48 @@ fun NewComposeDataGrid(
                                                             interactionSource.emit(HoverInteraction.Exit(it))
                                                         }
                                                     }
-                                                    var appendBoxSize = 0
-                                                    for ( i in 0 until index ) {
-                                                        appendBoxSize += boxSizePx.value.width
+
+                                                    // --- 드롭 시점에 구분선 위치를 동적으로 계산 ---
+                                                    val currentDividerPositions = mutableListOf<Dp>()
+                                                    var accumulatedWidth = 0f
+
+                                                    val totalWidthPx = (density * columnsAreaWidth.value)
+
+
+                                                    // divider 의 갯수는 column 갯수 - 1
+                                                    columnWeights.dropLast(1).forEach { weight ->
+                                                        accumulatedWidth += totalWidthPx * weight
+                                                        currentDividerPositions.add((accumulatedWidth / density).dp)
                                                     }
-                                                    val currentDp = (( offset.value.x + boxSizePx.value.width / 2 + appendBoxSize ) / density).dp
-                                                    val targetColumnIndex = findIndexFromDividerPositions(currentDp, dividerPositions)
-                                                    onUpdateColumnsOrderEventHandle(index, targetColumnIndex)
+                                                    // -----------------------------------------
+                                                    var startOffsetPx = 0f
+                                                    for (i in 0 until index) {
+                                                        startOffsetPx += totalWidthPx * columnWeights[i]
+                                                    }
+
+                                                    val currentCellWidthPx = totalWidthPx * columnWeights[index]
+                                                    val dropPositionPx = startOffsetPx + offset.value.x + (currentCellWidthPx / 2)
+                                                    val targetIndex = findIndexFromDividerPositions((  dropPositionPx/density).dp, currentDividerPositions)
+                                                    onUpdateColumnsOrderEventHandle(index, targetIndex)
                                                     offset.value = IntOffset.Zero
-                                                    draggedItemAlpha.value = 1f
+
                                                 }
 
-                                                val onDragCancel: () -> Unit = {
-                                                    offset.value = IntOffset.Zero
-                                                    draggedItemAlpha.value = 1f
-                                                }
 
-                                                val onDrag: (PointerInputChange, Offset) -> Unit = { pointerInputChange, curOffset ->
-                                                    pointerInputChange.consume()
-                                                    val offsetChange = IntOffset(curOffset.x.roundToInt(), curOffset.y.roundToInt())
-                                                    offset.value = offset.value.plus(offsetChange)
-                                                }
 
                                                 Row(
                                                     modifier = Modifier.height(heightColumnHeader)
                                                         .border(borderStrokeLightGray, shape = borderShapeIn)
-                                                        .weight(columnInfoMutable[index].value)
-                                                        // onGloballyPositioned를 사용하여 Box의 크기를 가져옴
-                                                        .onGloballyPositioned { layoutCoordinates ->
-                                                            boxSizePx.value = layoutCoordinates.size
-                                                        }.pointerInput(Unit) {
+                                                        .width(columnsAreaWidth * columnWeights.getOrElse(index) { 0f })
+                                                        .pointerInput(Unit) {
                                                             detectDragGestures (
-                                                                onDragStart = onDragStart,
                                                                 onDragEnd = onDragEnd  ,
-                                                                onDragCancel = onDragCancel,
-                                                                onDrag = onDrag)
+                                                                onDragCancel = { offset.value = IntOffset.Zero },
+                                                                onDrag = { change, dragAmount ->
+                                                                    change.consume()
+                                                                    offset.value += IntOffset(dragAmount.x.roundToInt(), 0)
+                                                                }
+                                                            )
                                                         }.offset { offset.value }
                                                         .alpha(animatedAlpha),
                                                     horizontalArrangement = Arrangement.Center,
@@ -339,49 +350,97 @@ fun NewComposeDataGrid(
                                                     }
                                                 }
 
-                                                val totalWidth = rowWidthInDp  - (widthHeaderDividerThickness * (pagingData.keys.size - 1))
+
                                                 // 마지막 컬럼이 아닐 경우에만 구분선을 표시하고 드래그 가능하게 합니다.
                                                 if (index < pagingData.keys.size - 1) {
-                                                    val draggableState = rememberDraggableState { delta ->
 
-                                                        // 픽셀(px) 단위의 delta를 전체 너비에 대한 가중치 변화량으로 변환합니다.
-                                                        val deltaWeight = delta / (rowWidthInDp.value * density)
+                                                    val interactionSource = remember { MutableInteractionSource() }
+                                                    var isHovered by remember { mutableStateOf(false) }
 
-                                                        val weightCurrent = columnInfoMutable[index].value
-                                                        val weightNext = columnInfoMutable[index+1].value
-
-                                                        // 최소 너비를 5%로 설정 (0.05f)
-                                                        val minWeight = 0.05f
-
-                                                        // 가중치 변화량을 적용하되, 최소 너비 제약을 준수합니다.
-                                                        val newWeightCurrent = (weightCurrent + deltaWeight).coerceIn(minWeight, weightCurrent + weightNext - minWeight)
-                                                        val newWeightNext = (weightCurrent + weightNext) - newWeightCurrent
-
-                                                        columnInfoMutable[index].value = newWeightCurrent
-                                                        columnInfoMutable[index+1].value = newWeightNext
-
-                                                        dividerPositions[index] = ( dividerPositions[index] + (delta/density).dp  ).coerceIn(0.dp, totalWidth)
-
-
+                                                    LaunchedEffect(interactionSource) {
+                                                        interactionSource.interactions.collect { interaction ->
+                                                            when (interaction) {
+                                                                is HoverInteraction.Enter -> isHovered = true
+                                                                is HoverInteraction.Exit -> isHovered = false
+                                                            }
+                                                        }
                                                     }
 
-                                                    VerticalDivider(
-                                                        modifier = Modifier
-                                                            .height(heightColumnHeaderDivider)
-                                                            .draggable(
-                                                                orientation = Orientation.Horizontal,
-                                                                state = draggableState,
-                                                            ),
-                                                        thickness = widthHeaderDividerThickness,
-                                                        color = Color.Transparent
-                                                    )
+
+
+
+                                                        val draggableState =
+                                                            rememberDraggableState { delta ->
+
+                                                                // 픽셀(px) 단위의 delta를 전체 너비에 대한 가중치 변화량으로 변환합니다.
+                                                                val deltaWeight =
+                                                                    delta / (rowWidthInDp.value * density)
+
+                                                                val currentWeight =
+                                                                    columnWeights[index]
+                                                                val nextWeight =
+                                                                    columnWeights[index + 1]
+
+                                                                // 최소 너비를 5%로 설정 (0.05f)
+                                                                val minWeight = 0.05f
+
+                                                                // 가중치 변화량을 적용하되, 최소 너비 제약을 준수합니다.
+                                                                val newCurrentWeight =
+                                                                    (currentWeight + deltaWeight).coerceIn(
+                                                                        minWeight,
+                                                                        currentWeight + nextWeight - minWeight
+                                                                    )
+                                                                val newNextWeight =
+                                                                    (currentWeight + nextWeight) - newCurrentWeight
+
+                                                                // --- 새로운 리스트로 상태를 업데이트! ---
+                                                                columnWeights =
+                                                                    columnWeights.toMutableList()
+                                                                        .apply {
+                                                                            this[index] =
+                                                                                newCurrentWeight
+                                                                            this[index + 1] =
+                                                                                newNextWeight
+                                                                        }
+                                                                // ------------------------------------
+
+                                                            }
+
+                                                        VerticalDivider(
+                                                            modifier = Modifier
+                                                                .height(heightColumnHeaderDivider)
+                                                                .width(widthHeaderDividerThickness) // Give it a clear width for interaction
+                                                                .draggable(
+                                                                    orientation = Orientation.Horizontal,
+                                                                    state = draggableState )
+                                                                .hoverable(interactionSource), // Make the area hoverable,
+
+                                                            thickness = widthHeaderDividerThickness,
+                                                            // Change color on hover for better visual feedback
+                                                            color = if (isHovered) Color.DarkGray else Color.Transparent
+                                                        )
+
+                                                        // The floating icon, which appears on hover
+                                                        AnimatedVisibility(  isHovered) {
+                                                            Icon(
+                                                                Icons.Default.SwapHoriz,
+                                                                contentDescription = "Resize Column",
+                                                                modifier = Modifier,
+                                                                tint = MaterialTheme.colorScheme.primary
+                                                            )
+                                                        }
+
+
                                                 }
 
 
                                             }//pagingData.keys loop
+
+
                                         } //Row
                                     }//AnimatedVisibility
                                 }//stickyHeader
+
 
                                 val rowCnt = pagingData.values.firstOrNull()?.size ?: 0
 
@@ -403,11 +462,17 @@ fun NewComposeDataGrid(
                                             )
                                         }
 
+                                        val dataColumnsWidth = if (isVisibleRowNum) {
+                                            rowWidthInDp - widthRowNumColumn - (widthDataDividerThickness * (mutableColumnNames.size - 1))
+                                        } else {
+                                            rowWidthInDp - (widthDataDividerThickness * (mutableColumnNames.size - 1))
+                                        }
+
                                         pagingData.keys.forEachIndexed { keyIndex, columnName ->
                                             Text(
                                                 text = (pagingData[columnName] as List<*>)[dataIndex].toString(),
                                                 modifier = Modifier.border(borderStrokeLightGray, shape = borderShapeIn)
-                                                    .weight(columnInfoMutable[keyIndex].value),
+                                                .width(dataColumnsWidth * columnWeights.getOrElse(keyIndex){0f}),
                                                 textAlign = TextAlign.Center,
                                             )
 
@@ -423,7 +488,11 @@ fun NewComposeDataGrid(
                                     }
                                 }
 
+
+
                             }//LazyColumn
+
+
 
 
 
