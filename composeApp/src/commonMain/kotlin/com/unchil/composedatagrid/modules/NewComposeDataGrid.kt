@@ -57,11 +57,10 @@ fun NewComposeDataGrid(
     val enableDarkMode = remember { mutableStateOf(false) }
     val isVisibleRowNum by remember { mutableStateOf(true) }
 
-    val initPageSize = 100
-    val pageSize = remember{mutableStateOf(initPageSize)}
-    val lastPageIndex =  remember{mutableStateOf(getLastPageIndex(mutableData.value.size, pageSize.value))}
     val selectPageSizeList = remember{ listOf("10", "50", "100", "500", "1000", "All") }
     val selectPageSizeIndex = remember{ mutableStateOf(1) }
+    val pageSize = remember{mutableStateOf(selectPageSizeList.get(selectPageSizeIndex.value).toInt())}
+    val lastPageIndex =  remember{mutableStateOf(getLastPageIndex(mutableData.value.size, pageSize.value))}
 
     val isExpandPageNavControlMenu = rememberSaveable {mutableStateOf(false) }
     val isExpandGridSettingMenu = rememberSaveable {mutableStateOf(false) }
