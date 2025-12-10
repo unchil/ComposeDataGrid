@@ -35,25 +35,23 @@ import kotlin.math.absoluteValue
 @Composable
 fun PageSizePicker(
     dataList:List<Any>,
+    selectPageSizeIndex:Int = 1 ,
     pickerWidth: Dp,
     itemHeight: Dp,
     itemViewCount:Int,
     onChangePageSize:(Int)-> Unit ){
 
     val pagerState  =   rememberPagerState(
-        initialPage = 0,
+        initialPage = selectPageSizeIndex,
         initialPageOffsetFraction = 0f,
         pageCount = {  dataList.size } )
 
-    LaunchedEffect(key1 = dataList ){
-        pagerState.scrollToPage(1)
-    }
 
     LaunchedEffect(key1 = pagerState.isScrollInProgress){
 
         if (!pagerState.isScrollInProgress && (pagerState.lastScrolledForward || pagerState.lastScrolledBackward)){
             onChangePageSize(
-                if(dataList[pagerState.currentPage].toString().equals("All")){
+                if(dataList[pagerState.currentPage].toString() == "All"){
                     0
                 }else{
                     dataList[pagerState.currentPage].toString().toInt()

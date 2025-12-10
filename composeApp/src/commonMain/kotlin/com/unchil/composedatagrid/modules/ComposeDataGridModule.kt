@@ -1,17 +1,23 @@
 package com.unchil.composedatagrid.modules
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.gestures.draggable
+import androidx.compose.foundation.gestures.rememberDraggableState
+import androidx.compose.foundation.hoverable
 import androidx.compose.foundation.interaction.HoverInteraction
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,12 +25,23 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.pager.PagerState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.ChecklistRtl
+import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.SwapHoriz
+import androidx.compose.material.icons.filled.ToggleOff
+import androidx.compose.material.icons.filled.ToggleOn
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
@@ -32,6 +49,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.VerticalDivider
@@ -42,11 +60,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.Modifier.Companion.then
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
@@ -59,11 +79,584 @@ import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import composedatagrid.composeapp.generated.resources.Res
+import composedatagrid.composeapp.generated.resources.arrow_menu_close_24px
+import composedatagrid.composeapp.generated.resources.arrow_menu_open_24px
+import composedatagrid.composeapp.generated.resources.first_page_24px
+import composedatagrid.composeapp.generated.resources.format_line_spacing_24px
+import composedatagrid.composeapp.generated.resources.last_page_24px
+import composedatagrid.composeapp.generated.resources.open_run_24px
+import composedatagrid.composeapp.generated.resources.open_with_24px
+import composedatagrid.composeapp.generated.resources.vertical_align_bottom_24px
+import composedatagrid.composeapp.generated.resources.vertical_align_top_24px
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.painterResource
 import kotlin.math.roundToInt
+
+@Composable
+fun MenuPageNavControl(
+    isExpandPageNavControlMenu: MutableState<Boolean>,
+    lazyListState: LazyListState,
+    pagerState: PagerState,
+    onListNavHandler:(ListNav)->Unit,
+    onPageNavHandler:(PageNav)->Unit,
+){
+
+
+    Row (
+        modifier = Modifier.clip(CircleShape).background(MaterialTheme.colorScheme.tertiaryContainer),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+
+
+
+        AnimatedVisibility( visible = isExpandPageNavControlMenu.value,) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+
+                IconButton(
+                    onClick = {onListNavHandler(ListNav.Top) },
+                    enabled = lazyListState.canScrollBackward
+                ) {
+                    Icon(
+                        painterResource(Res.drawable.vertical_align_top_24px),
+                        contentDescription = "First Row"
+                    )
+                }
+
+                IconButton(
+                    onClick = {onListNavHandler(ListNav.Bottom) },
+                    enabled = lazyListState.canScrollForward,
+                ) {
+                    Icon(
+                        painterResource(Res.drawable.vertical_align_bottom_24px),
+                        contentDescription = "Last Row",
+                    )
+                }
+
+
+                IconButton(
+                    onClick = { onPageNavHandler(PageNav.First) },
+                    enabled = pagerState.canScrollBackward,
+                ) {
+                    Icon(
+                        painterResource(Res.drawable.first_page_24px),
+                        contentDescription = "First Page",
+                    )
+                }
+
+                IconButton(
+                    onClick = { onPageNavHandler(PageNav.Prev)},
+                    enabled = pagerState.canScrollBackward,
+                ) {
+                    Icon(
+                        Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                        contentDescription = "Prev Page",
+                    )
+                }
+
+                IconButton(
+                    onClick = { onPageNavHandler(PageNav.Next)},
+                    enabled = pagerState.canScrollForward,
+                ) {
+                    Icon(
+                        Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                        contentDescription = "Next Page",
+                    )
+                }
+
+                IconButton(
+                    onClick = { onPageNavHandler(PageNav.Last)},
+                    enabled = pagerState.canScrollForward,
+                ) {
+                    Icon(
+                        painterResource(Res.drawable.last_page_24px),
+                        contentDescription = "Last Page",
+                    )
+                }
+            }
+        }
+
+        IconButton(
+            onClick = { isExpandPageNavControlMenu.value = !isExpandPageNavControlMenu.value },
+            modifier= Modifier.clip(CircleShape),
+        ) {
+            SegmentedButtonDefaults.Icon(
+                active = !isExpandPageNavControlMenu.value,
+                activeContent = {
+                    Icon(
+                        painterResource(Res.drawable.open_with_24px),
+                        contentDescription = "enableIndicateArrow"
+                    )
+                },
+                inactiveContent = {
+                    Icon(
+                        painterResource(Res.drawable.open_run_24px),
+                        contentDescription = "disableIndicateArrow"
+                    )
+                }
+            )
+        }
+
+
+    }
+}
+
+@Composable
+fun MenuGridSetting(
+    isExpandGridSettingMenu: MutableState<Boolean>,
+    enableDarkMode: MutableState<Boolean>,
+    allColumns: List<String>,
+    selectedColumns:Map<String, MutableState<Boolean>>,
+    onUpdateColumns:()->Unit,
+    onChangePageSize:(Int)->Unit,
+    selectPageSizeList: List<String>,
+    selectPageSizeIndex:Int
+
+){
+
+    Row (
+        modifier= Modifier.clip(CircleShape).background(MaterialTheme.colorScheme.tertiaryContainer),
+        verticalAlignment = Alignment.CenterVertically) {
+
+        IconButton(
+            onClick = { isExpandGridSettingMenu.value = !isExpandGridSettingMenu.value },
+        ) {
+            SegmentedButtonDefaults.Icon(
+                active = !isExpandGridSettingMenu.value,
+                activeContent = {
+                    Icon(
+                        painter = painterResource(Res.drawable.arrow_menu_open_24px),
+                        contentDescription = "OpenBox"
+                    )
+                },
+                inactiveContent = {
+                    Icon(
+                        painterResource(Res.drawable.arrow_menu_close_24px),
+                        contentDescription = "CloseBox"
+                    )
+                }
+            )
+        }
+
+        AnimatedVisibility( visible = isExpandGridSettingMenu.value,) {
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+
+                IconButton(
+                    onClick = { enableDarkMode.value = !enableDarkMode.value },
+
+                ) {
+                    SegmentedButtonDefaults.Icon(
+                        active = !enableDarkMode.value,
+                        activeContent = {
+                            Icon(
+                                Icons.Default.LightMode,
+                                contentDescription = "LightMode"
+                            )
+                        },
+                        inactiveContent = {
+                            Icon(
+                                Icons.Default.DarkMode,
+                                contentDescription = "DarkMode"
+                            )
+                        }
+                    )
+                }
+
+                PageSizePicker(
+                    selectPageSizeList,
+                    selectPageSizeIndex,
+                    50.dp,
+                    20.dp,
+                    3,
+                    onChangePageSize
+                )
+
+                MenuSelectColumn(
+                    allColumns,
+                    selectedColumns,
+                    onUpdateColumns,
+                )
+
+
+            }
+
+        }
+
+    }
+}
+
+@Composable
+fun MenuSelectColumn(
+    allColumns:List<String>,
+    selectedColumns: Map<String, MutableState<Boolean>>,
+    onUpdateColumns: ()->Unit,
+){
+    Box{
+        val widthColumnSelectDropDownMenu = remember{180.dp}
+        var expandMenu by remember { mutableStateOf(false) }
+        val scrollState = remember { ScrollState(0) }
+        val borderStrokeLightGray = remember {BorderStroke(width = 1.dp, color = Color.LightGray)}
+        val borderShapeIn = remember{RoundedCornerShape(0.dp)}
+
+        IconButton(
+            onClick = {expandMenu = !expandMenu },
+            modifier= Modifier
+                .clip(CircleShape)
+                .background(MaterialTheme.colorScheme.tertiaryContainer),
+        ) {
+            SegmentedButtonDefaults.Icon(
+                active = expandMenu,
+                activeContent = {
+                    Icon(
+                        Icons.Default.ChecklistRtl,
+                        contentDescription = "Open DropDownMenu"
+                    )
+                },
+                inactiveContent = {
+                    Icon(
+                        painterResource(Res.drawable.format_line_spacing_24px),
+                        contentDescription = "Close DropDownMenu"
+                    )
+                }
+            )
+        }
+        DropdownMenu(
+            expanded = expandMenu,
+            onDismissRequest = {
+                expandMenu = false
+                onUpdateColumns()
+            },
+            scrollState = scrollState,
+            modifier = Modifier
+                .width(widthColumnSelectDropDownMenu)
+                .border(borderStrokeLightGray, shape = borderShapeIn)
+                .background(color = MaterialTheme.colorScheme.tertiaryContainer),
+        ) {
+            allColumns.forEach { columnName ->
+                // HorizontalDivider()
+                DropdownMenuItem(
+                    text = { Text(columnName) },
+                    trailingIcon = {
+                        IconButton(onClick = {
+                            selectedColumns[columnName]?.let { it->
+                                it.value = !it.value
+                            }
+                        }) {
+                            SegmentedButtonDefaults.Icon(
+                                active = selectedColumns.getValue(columnName).value,
+                                activeContent = {
+                                    androidx.compose.material3.Icon(
+                                        Icons.Default.ToggleOn,
+                                        contentDescription = "Selected Column"
+                                    )
+                                },
+                                inactiveContent = {
+                                    androidx.compose.material3.Icon(
+                                        Icons.Default.ToggleOff,
+                                        contentDescription = "Unselected Column"
+                                    )
+                                }
+                            )
+                        }
+
+
+                    },
+                    onClick = {
+                        selectedColumns[columnName]?.let { it->
+                            it.value = !it.value
+                        }
+                    }
+                )
+            }
+        }
+    }
+
+}
+
+
+@Composable
+fun DataRow(
+    isVisibleRowNum: Boolean,
+    maxWidthInDp: Dp,
+    widthDividerThickness:Dp,
+    widthRowNumColumn: Dp,
+    pageIndex:Int,
+    pageSize:Int,
+    dataIndex:Int,
+    pagingData: MutableMap<String, List<Any?>>,
+    columnWeights:MutableState<List<Float>>,
+){
+
+    val paddingDataRow = remember { PaddingValues(vertical = 1.dp) }
+    val borderStrokeLightGray = remember {BorderStroke(width = 1.dp, color = Color.LightGray)}
+    val borderShapeIn = remember{RoundedCornerShape(0.dp)}
+
+
+    Row(
+        modifier = Modifier.padding(paddingDataRow),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        if(isVisibleRowNum){
+            Text(
+                text = getRowNumber(pageIndex, pageSize, dataIndex ).toString(),
+                modifier = Modifier.width(widthRowNumColumn).border(borderStrokeLightGray, shape = borderShapeIn),
+                textAlign = TextAlign.Center,
+            )
+
+            VerticalDivider(
+                thickness = widthDividerThickness,
+                color = Color.Transparent
+            )
+        }
+
+        val dataColumnsWidth = if (isVisibleRowNum) {
+            maxWidthInDp - widthRowNumColumn - (widthDividerThickness * (pagingData.keys.size - 1))
+        } else {
+            maxWidthInDp - (widthDividerThickness * (pagingData.keys.size - 1))
+        }
+
+        pagingData.keys.forEachIndexed { keyIndex, columnName ->
+            Text(
+                text = (pagingData[columnName] as List<*>)[dataIndex].toString(),
+                modifier = Modifier.border(borderStrokeLightGray, shape = borderShapeIn)
+                    .width(dataColumnsWidth * columnWeights.value.getOrElse(keyIndex){0f}),
+                textAlign = TextAlign.Center,
+            )
+
+            if (keyIndex < pagingData.keys.size - 1) {
+                VerticalDivider(
+                    thickness = widthDividerThickness,
+                    color = Color.Transparent
+
+                )
+            }
+        }
+
+    }
+
+}
+
+@Composable
+fun HeaderRow(
+    isVisibleRowNum: Boolean,
+    maxWidthInDp: Dp,
+    widthDividerThickness:Dp,
+    widthRowNumColumn: Dp,
+    columnNames:List<String>,
+    columnWeights:MutableState<List<Float>>,
+    onUpdateColumnsOrder:(Int, Int)->Unit
+){
+
+    val heightColumnHeader = remember{ 36.dp }
+    val heightColumnHeaderDivider = remember{ 30.dp }
+
+
+    val borderStrokeLightGray = remember {BorderStroke(width = 1.dp, color = Color.LightGray)}
+    val borderShapeIn = remember{RoundedCornerShape(0.dp)}
+
+    Row( verticalAlignment = Alignment.CenterVertically ) {
+        val density = LocalDensity.current.density
+
+        if(isVisibleRowNum){
+            Row(
+                modifier = Modifier
+                    .height(heightColumnHeader)
+                    .width(widthRowNumColumn)
+                    .border(
+                        border = borderStrokeLightGray,
+                        shape = borderShapeIn
+                    ),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text("Num")
+            }
+            VerticalDivider(
+                modifier = Modifier
+                    .height(heightColumnHeaderDivider),
+                thickness = widthDividerThickness,
+                color = Color.Transparent
+            )
+        }
+
+        val columnsAreaWidth = if (isVisibleRowNum) {
+            maxWidthInDp - widthRowNumColumn - (widthDividerThickness * (columnNames.size - 1))
+        } else {
+            maxWidthInDp - (widthDividerThickness * (columnNames.size - 1))
+        }
+
+        columnNames.forEachIndexed { index, columnName ->
+            val coroutineScope = rememberCoroutineScope()
+            val offset = remember { mutableStateOf(IntOffset.Zero) }
+            val interactionSource = remember { MutableInteractionSource() }
+            val currentHoverEnterInteraction = remember {
+                mutableStateOf<HoverInteraction.Enter?>(null)
+            }
+            LaunchedEffect(interactionSource) {
+                interactionSource.interactions.collect { interaction ->
+                    when (interaction) {
+                        is HoverInteraction.Enter -> {
+                            currentHoverEnterInteraction.value = interaction
+                        }
+                        is HoverInteraction.Exit -> {
+                            currentHoverEnterInteraction.value = null
+                        }
+                        else -> {}
+                    }
+                }
+            }
+
+            val animatedAlpha by animateFloatAsState(if (offset.value == IntOffset.Zero) 1f else 0.5f)
+
+            val onDragEnd: () -> Unit = {
+                currentHoverEnterInteraction.value?.let {
+                    coroutineScope.launch {
+                        interactionSource.emit(
+                            HoverInteraction.Exit(
+                                it
+                            )
+                        )
+                    }
+                }
+                // --- 드롭 시점에 구분선 위치를 동적으로 계산 ---
+                val currentDividerPositions = mutableListOf<Dp>()
+                var accumulatedWidth = 0f
+                val totalWidthPx =  (density * columnsAreaWidth.value)
+                // divider 의 갯수는 column 갯수 - 1
+                columnWeights.value.dropLast(1).forEach { weight ->
+                        accumulatedWidth += totalWidthPx * weight
+                        currentDividerPositions.add((accumulatedWidth / density).dp)
+                    }
+                // -----------------------------------------
+
+
+                var startOffsetPx = 0f
+                for (i in 0 until index) {
+                    startOffsetPx += totalWidthPx * columnWeights.value[i]
+                }
+
+                val currentCellWidthPx = totalWidthPx * columnWeights.value[index]
+                val dropPositionPx = startOffsetPx + offset.value.x + (currentCellWidthPx / 2)
+                val targetIndex = findIndexFromDividerPositions(
+                    (dropPositionPx / density).dp,
+                    currentDividerPositions
+                )
+                onUpdateColumnsOrder( index, targetIndex )
+                offset.value = IntOffset.Zero
+            }
+
+            Row(
+                modifier = Modifier
+                    .height(heightColumnHeader)
+                    .width(columnsAreaWidth * columnWeights.value.getOrElse( index ) { 0f })
+                    .border(
+                        borderStrokeLightGray,
+                        shape = borderShapeIn)
+                    .pointerInput(Unit) {
+                        detectDragGestures(
+                            onDragEnd = onDragEnd,
+                            onDragCancel = { offset.value = IntOffset.Zero },
+                            onDrag = { change, dragAmount ->
+                                change.consume()
+                                offset.value += IntOffset( dragAmount.x.roundToInt(), 0)
+                            }
+                        )}
+                    .offset { offset.value }
+                    .alpha(animatedAlpha),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                TextButton(
+                    onClick = { },
+                    interactionSource = interactionSource,
+                ) {
+                    Text(columnName)
+                }
+            }
+
+            // 마지막 컬럼이 아닐 경우에만 구분선을 표시하고 드래그 가능하게 합니다.
+            if (index < columnNames.size - 1) {
+                val interactionSource = remember { MutableInteractionSource() }
+                val isHovered = remember { mutableStateOf(false) }
+
+                LaunchedEffect(interactionSource) {
+                    interactionSource.interactions.collect { interaction ->
+                        when (interaction) {
+                            is HoverInteraction.Enter -> isHovered.value = true
+                            is HoverInteraction.Exit -> isHovered.value = false
+                        }
+                    }
+                }
+
+                val draggableState = rememberDraggableState { delta ->
+                    // 픽셀(px) 단위의 delta를 전체 너비에 대한 가중치 변화량으로 변환합니다.
+                    val deltaWeight = delta / (maxWidthInDp.value * density)
+                    val currentWeight = columnWeights.value[index]
+                    val nextWeight = columnWeights.value[index + 1]
+                    // 최소 너비를 5%로 설정 (0.05f)
+                    val minWeight = 0.05f
+                    // 가중치 변화량을 적용하되, 최소 너비 제약을 준수합니다.
+                    val newCurrentWeight = (currentWeight + deltaWeight).coerceIn(
+                            minWeight,
+                            currentWeight + nextWeight - minWeight
+                        )
+
+                    val newNextWeight = (currentWeight + nextWeight) - newCurrentWeight
+
+                    // --- 새로운 리스트로 상태를 업데이트! ---
+                    columnWeights.value =
+                        columnWeights.value.toMutableList()
+                            .apply {
+                                this[index] =
+                                    newCurrentWeight
+                                this[index + 1] =
+                                    newNextWeight
+                            }
+                    // ------------------------------------
+                }
+
+                VerticalDivider(
+                    modifier = Modifier
+                        .height(heightColumnHeaderDivider)
+                        .width(widthDividerThickness) // Give it a clear width for interaction
+                        .draggable(
+                            orientation = Orientation.Horizontal,
+                            state = draggableState
+                        )
+                        .hoverable(interactionSource) // Make the area hoverable,
+                    , thickness = widthDividerThickness,
+                    // Change color on hover for better visual feedback
+                    color = if (isHovered.value) Color.DarkGray else Color.Transparent
+                )
+
+
+                AnimatedVisibility(isHovered.value) {
+                    Icon(
+                        Icons.Default.SwapHoriz,
+                        contentDescription = "Resize Column",
+                        modifier = Modifier,
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
+            }
+
+
+        }// columnNames loop
+    }// Row
+}
+
+
+
+
+
 
 @Composable
 fun ComposeDataGridHeader(

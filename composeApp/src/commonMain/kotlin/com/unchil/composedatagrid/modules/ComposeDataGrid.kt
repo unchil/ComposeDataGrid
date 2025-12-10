@@ -797,6 +797,7 @@ fun ComposeDataGrid(
 
                                         PageSizePicker(
                                             listOf("10", "50", "100", "500", "1000", "All"),
+                                            1,
                                             50.dp,
                                             20.dp,
                                             3,
