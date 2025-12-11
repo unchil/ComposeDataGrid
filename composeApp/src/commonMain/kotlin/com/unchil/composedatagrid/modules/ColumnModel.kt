@@ -37,11 +37,10 @@ object OperatorMenu {
         EndsWith{ override fun toString() = "Ends With"},
         Blank{ override fun toString() = "Blank"},
         NotBlank{ override fun toString() = "Not Blank"},
-        Null{override fun toString() = "Null"},
-        NotNull{override fun toString() = "Not Null"}
+
     }
     val Operators = listOf(
         Operator.Contains, Operator.DoseNotContains, Operator.Equals, Operator.DoseNotEquals,
-        Operator.BeginsWith, Operator.EndsWith, Operator.Blank, Operator.NotBlank, Operator.Null, Operator.NotNull
+        Operator.BeginsWith, Operator.EndsWith, Operator.Blank, Operator.NotBlank
     )
 }

@@ -426,16 +426,6 @@ fun ComposeDataGrid(
                         it as List<*>
                         it[columInfo.columnIndex].toString().isNotBlank()
                     }
-                OperatorMenu.Operator.Null.toString() ->
-                    presentData.filter {
-                        it as List<*>
-                        it[columInfo.columnIndex] == null
-                    }
-                OperatorMenu.Operator.NotNull.toString() ->
-                    presentData.filter {
-                        it as List<*>
-                        it[columInfo.columnIndex] != null
-                    }
                 else -> {
                     presentData
                 }

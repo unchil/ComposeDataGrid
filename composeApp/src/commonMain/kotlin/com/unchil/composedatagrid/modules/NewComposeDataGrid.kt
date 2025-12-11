@@ -29,6 +29,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.Modifier.Companion.then
@@ -38,6 +39,7 @@ import com.unchil.composedatagrid.theme.AppTheme
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import kotlin.text.startsWith
 
 @Composable
 fun NewComposeDataGrid(
@@ -47,8 +49,8 @@ fun NewComposeDataGrid(
     reloadData :()->Unit
 ){
 
-    val presentData by  remember{mutableStateOf(Pair(columnNames, data).toMap())}
-    val selectedColumns = remember{ presentData.keys.associateWith { mutableStateOf(true) } }
+    var presentData by  remember{ mutableStateOf(Pair(columnNames, data).toMap()) }
+    var selectedColumns =  remember {presentData.keys.associateWith { mutableStateOf(true) } }
 
 
     val mutableData = remember { mutableStateOf(data)}
@@ -103,8 +105,8 @@ fun NewComposeDataGrid(
     //--------------------
     val channel = remember { Channel<Int>(Channel.CONFLATED) }
     val snackBarHostState = remember { SnackbarHostState() }
-    var onFilterResultCnt = remember { 0 }
 
+    val onFilterResultCnt = remember {  mutableStateOf(0)}
     LaunchedEffect(channel) {
         channel.receiveAsFlow().collect { index ->
             val channelData = snackBarChannelList.first {
@@ -113,10 +115,10 @@ fun NewComposeDataGrid(
             //----------
             val message:String = when (channelData.channelType) {
                 SnackBarChannelType.SEARCH_RESULT -> {
-                    if (onFilterResultCnt == 0) {
+                    if (onFilterResultCnt.value == 0) {
                         "No data was found."
                     } else {
-                        "Data ${onFilterResultCnt} items were found."
+                        "Data ${onFilterResultCnt.value} items were found."
                     }
                 }
                 SnackBarChannelType.CHANGE_PAGE_SIZE -> {
@@ -197,8 +199,7 @@ fun NewComposeDataGrid(
 
         pageSize.value = result.first
         selectPageSizeIndex.value = result.second
-        lastPageIndex.value =   getLastPageIndex(mutableData.value.size, pageSize.value)
-
+        lastPageIndex.value = getLastPageIndex(mutableData.value.size, pageSize.value)
         coroutineScope.launch {
             pagerState.animateScrollToPage(0)
         }
@@ -234,8 +235,90 @@ fun NewComposeDataGrid(
     }
 
 
+    val onFilter:(columnName:String, searchText:String, operator:String) -> Unit = { columnName, searchText, operator ->
 
+        val columnIndex = mutableColumnNames.value.indexOf(columnName)
 
+        val result = when(operator){
+            OperatorMenu.Operator.Contains.toString() -> {
+                mutableData.value.filter { list ->
+                    list[columnIndex].toString().contains(searchText)
+                }
+            }
+            OperatorMenu.Operator.DoseNotContains.toString() -> {
+                mutableData.value.filter { list ->
+                    list[columnIndex].toString().contains(searchText).not()
+                }
+            }
+            OperatorMenu.Operator.Equals.toString() -> {
+                mutableData.value.filter { list ->
+                    list[columnIndex].toString().equals(searchText)
+                }
+            }
+            OperatorMenu.Operator.DoseNotEquals.toString() -> {
+                mutableData.value.filter { list ->
+                    list[columnIndex].toString().equals(searchText).not()
+                }
+            }
+            OperatorMenu.Operator.BeginsWith.toString() -> {
+                mutableData.value.filter { list ->
+                    list[columnIndex].toString().startsWith(searchText)
+                }
+            }
+            OperatorMenu.Operator.EndsWith.toString() -> {
+                mutableData.value.filter { list ->
+                    list[columnIndex].toString().endsWith(searchText)
+                }
+            }
+            OperatorMenu.Operator.Blank.toString() -> {
+                mutableData.value.filter { list ->
+                    list[columnIndex].toString().isBlank()
+                }
+            }
+            OperatorMenu.Operator.NotBlank.toString() -> {
+                mutableData.value.filter { list ->
+                    list[columnIndex].toString().isNotBlank()
+                }
+            }
+            else -> {
+                mutableData.value
+            }
+
+        }
+
+        onFilterResultCnt.value = result.size
+        mutableData.value = result.ifEmpty {
+            mutableData.value
+        }
+        lastPageIndex.value = getLastPageIndex(mutableData.value.size, pageSize.value)
+
+        coroutineScope.launch {
+            pagerState.animateScrollToPage(0)
+        }
+
+        channel.trySend(snackBarChannelList.first { item ->
+            item.channelType == SnackBarChannelType.SEARCH_RESULT
+        }.channel)
+
+    }
+
+    var currentLazyListState: LazyListState = LazyListState()
+
+    val onRefresh:()-> Unit = {
+        presentData = Pair(columnNames, data).toMap()
+        selectedColumns =   presentData.keys.associateWith { mutableStateOf(true) }
+        mutableData.value =   data
+        mutableColumnNames.value = columnNames
+        lastPageIndex.value = getLastPageIndex(mutableData.value.size, pageSize.value)
+
+        coroutineScope.launch {
+            pagerState.animateScrollToPage(0)
+            currentLazyListState.animateScrollToItem(0)
+        }
+        channel.trySend(snackBarChannelList.first { item ->
+            item.channelType == SnackBarChannelType.RELOAD
+        }.channel)
+    }
 
     AppTheme(enableDarkMode = enableDarkMode.value) {
 
@@ -280,7 +363,7 @@ fun NewComposeDataGrid(
                         ) {
                             val maxWidthInDp = this.maxWidth
                             val lazyListState = rememberLazyListState(initialFirstVisibleItemIndex = 0)
-
+                            currentLazyListState = lazyListState
                             val isVisibleColumnHeader by remember {
                                 derivedStateOf {
                                     lazyListState.firstVisibleItemIndex < 1
@@ -321,7 +404,8 @@ fun NewComposeDataGrid(
                                             widthRowNumColumn,
                                             pagingData.keys.toList(),
                                             columnWeights,
-                                            onUpdateColumnsOrder
+                                            onUpdateColumnsOrder,
+                                            onFilter
                                         )
                                     }//AnimatedVisibility
                                 }//stickyHeader
@@ -343,6 +427,9 @@ fun NewComposeDataGrid(
                             }//LazyColumn
 
 
+
+
+
                             Box(
                                 modifier = Modifier
                                     .padding(paddingGridMenuButton)
@@ -357,7 +444,8 @@ fun NewComposeDataGrid(
                                     onUpdateColumns,
                                     onChangePageSize,
                                     selectPageSizeList,
-                                    selectPageSizeIndex.value
+                                    selectPageSizeIndex.value,
+                                    onRefresh
                                 )
                             }//Box  MenuGridSetting
 

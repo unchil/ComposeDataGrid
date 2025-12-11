@@ -11,8 +11,10 @@ import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.foundation.hoverable
+import androidx.compose.foundation.interaction.DragInteraction
 import androidx.compose.foundation.interaction.HoverInteraction
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -32,16 +34,28 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.automirrored.filled.ManageSearch
+import androidx.compose.material.icons.automirrored.filled.Sort
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.ArrowDropUp
+import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.ChecklistRtl
 import androidx.compose.material.icons.filled.DarkMode
+import androidx.compose.material.icons.filled.DoubleArrow
+import androidx.compose.material.icons.filled.Filter
+import androidx.compose.material.icons.filled.ImportExport
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.LightMode
+import androidx.compose.material.icons.filled.ManageSearch
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.SwapHoriz
+import androidx.compose.material.icons.filled.SwapVert
 import androidx.compose.material.icons.filled.ToggleOff
 import androidx.compose.material.icons.filled.ToggleOn
+import androidx.compose.material.icons.filled.UnfoldLess
+import androidx.compose.material.icons.filled.UnfoldMore
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
@@ -70,6 +84,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
@@ -85,15 +100,19 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import composedatagrid.composeapp.generated.resources.Res
+import composedatagrid.composeapp.generated.resources.arrow_downward_alt_24px
 import composedatagrid.composeapp.generated.resources.arrow_menu_close_24px
 import composedatagrid.composeapp.generated.resources.arrow_menu_open_24px
+import composedatagrid.composeapp.generated.resources.arrow_upward_alt_24px
 import composedatagrid.composeapp.generated.resources.first_page_24px
 import composedatagrid.composeapp.generated.resources.format_line_spacing_24px
 import composedatagrid.composeapp.generated.resources.last_page_24px
 import composedatagrid.composeapp.generated.resources.open_run_24px
 import composedatagrid.composeapp.generated.resources.open_with_24px
+import composedatagrid.composeapp.generated.resources.swap_vert_24px
 import composedatagrid.composeapp.generated.resources.vertical_align_bottom_24px
 import composedatagrid.composeapp.generated.resources.vertical_align_top_24px
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import kotlin.math.roundToInt
@@ -215,8 +234,8 @@ fun MenuGridSetting(
     onUpdateColumns:()->Unit,
     onChangePageSize:(Int)->Unit,
     selectPageSizeList: List<String>,
-    selectPageSizeIndex:Int
-
+    selectPageSizeIndex:Int,
+    onRefresh:()->Unit
 ){
 
     Row (
@@ -248,6 +267,16 @@ fun MenuGridSetting(
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
+
+                IconButton(
+                    onClick = { onRefresh.invoke()  },
+                ) {
+                    androidx.compose.material3.Icon(
+                        Icons.Default.Refresh,
+                        contentDescription = "Refresh"
+                    )
+                }
+
 
                 IconButton(
                     onClick = { enableDarkMode.value = !enableDarkMode.value },
@@ -452,7 +481,8 @@ fun HeaderRow(
     widthRowNumColumn: Dp,
     columnNames:List<String>,
     columnWeights:MutableState<List<Float>>,
-    onUpdateColumnsOrder:(Int, Int)->Unit
+    onUpdateColumnsOrder:(Int, Int)->Unit,
+    onFilter:(String, String, String) -> Unit
 ){
 
     val heightColumnHeader = remember{ 36.dp }
@@ -461,6 +491,8 @@ fun HeaderRow(
 
     val borderStrokeLightGray = remember {BorderStroke(width = 1.dp, color = Color.LightGray)}
     val borderShapeIn = remember{RoundedCornerShape(0.dp)}
+
+
 
     Row( verticalAlignment = Alignment.CenterVertically ) {
         val density = LocalDensity.current.density
@@ -496,36 +528,12 @@ fun HeaderRow(
         columnNames.forEachIndexed { index, columnName ->
             val coroutineScope = rememberCoroutineScope()
             val offset = remember { mutableStateOf(IntOffset.Zero) }
-            val interactionSource = remember { MutableInteractionSource() }
-            val currentHoverEnterInteraction = remember {
-                mutableStateOf<HoverInteraction.Enter?>(null)
-            }
-            LaunchedEffect(interactionSource) {
-                interactionSource.interactions.collect { interaction ->
-                    when (interaction) {
-                        is HoverInteraction.Enter -> {
-                            currentHoverEnterInteraction.value = interaction
-                        }
-                        is HoverInteraction.Exit -> {
-                            currentHoverEnterInteraction.value = null
-                        }
-                        else -> {}
-                    }
-                }
-            }
 
+            val orderByIcon = remember {mutableStateOf(0)}
             val animatedAlpha by animateFloatAsState(if (offset.value == IntOffset.Zero) 1f else 0.5f)
 
             val onDragEnd: () -> Unit = {
-                currentHoverEnterInteraction.value?.let {
-                    coroutineScope.launch {
-                        interactionSource.emit(
-                            HoverInteraction.Exit(
-                                it
-                            )
-                        )
-                    }
-                }
+
                 // --- 드롭 시점에 구분선 위치를 동적으로 계산 ---
                 val currentDividerPositions = mutableListOf<Dp>()
                 var accumulatedWidth = 0f
@@ -571,24 +579,55 @@ fun HeaderRow(
                         )}
                     .offset { offset.value }
                     .alpha(animatedAlpha),
-                horizontalArrangement = Arrangement.Center,
+                horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                TextButton(
-                    onClick = { },
-                    interactionSource = interactionSource,
-                ) {
-                    Text(columnName)
+
+
+                IconButton(
+                    onClick = {
+                        orderByIcon.value = when(orderByIcon.value){
+                            0 -> 1
+                            1 -> -1
+                            -1 -> 0
+                            else -> {0}
+                        }
+                    }
+
+
+                ){
+                    Icon(
+                        painter = when(orderByIcon.value){
+                            -1 ->  painterResource(Res.drawable.arrow_downward_alt_24px)
+                            1 ->  painterResource(Res.drawable.arrow_upward_alt_24px)
+                            0 -> painterResource(Res.drawable.swap_vert_24px)
+                            else -> { painterResource(Res.drawable.swap_vert_24px)}
+                        },
+                        contentDescription = "Sort",
+                    )
+
                 }
+
+
+
+                Text(columnName)
+
+
+                SearchMenu(
+                    columnName,
+                    onFilter
+                )
+
+
             }
 
             // 마지막 컬럼이 아닐 경우에만 구분선을 표시하고 드래그 가능하게 합니다.
             if (index < columnNames.size - 1) {
-                val interactionSource = remember { MutableInteractionSource() }
+                val interactionSourceDivider = remember { MutableInteractionSource() }
                 val isHovered = remember { mutableStateOf(false) }
 
-                LaunchedEffect(interactionSource) {
-                    interactionSource.interactions.collect { interaction ->
+                LaunchedEffect(interactionSourceDivider) {
+                    interactionSourceDivider.interactions.collect { interaction ->
                         when (interaction) {
                             is HoverInteraction.Enter -> isHovered.value = true
                             is HoverInteraction.Exit -> isHovered.value = false
@@ -631,7 +670,7 @@ fun HeaderRow(
                             orientation = Orientation.Horizontal,
                             state = draggableState
                         )
-                        .hoverable(interactionSource) // Make the area hoverable,
+                        .hoverable(interactionSourceDivider) // Make the area hoverable,
                     , thickness = widthDividerThickness,
                     // Change color on hover for better visual feedback
                     color = if (isHovered.value) Color.DarkGray else Color.Transparent
@@ -663,7 +702,7 @@ fun ComposeDataGridHeader(
     modifier: Modifier = Modifier,
     columnInfo: MutableState<List<ColumnInfo>>,
     onSortOrder:((ColumnInfo) -> Unit)? = null,
-    onFilter:((String, String, String) -> Unit)? = null,
+    onFilter:(String, String, String) -> Unit,
     updateDataColumnOrder: () -> Unit, ) {
 
     Row (
@@ -717,7 +756,7 @@ fun ComposeColumnRow(
     columnInfoList: MutableState<List<ColumnInfo>>,
     updateDataColumnOrder: () -> Unit,
     onSortOrder:((ColumnInfo) -> Unit)? = null,
-    onFilter:((String, String, String) -> Unit)? = null,
+    onFilter:(String, String, String) -> Unit,
 ){
 
     require(columnInfoList.value.size >= 2) { "column must be at least 2" }
@@ -959,7 +998,7 @@ fun ComposeColumnRow(
 @Composable
 fun SearchMenu(
     columnName:String,
-    onFilter: ((String, String, String)-> Unit)? = null ) {
+    onFilter: (String, String, String)-> Unit ) {
 
     var expanded by remember { mutableStateOf(false) }
     val filterText = remember { mutableStateOf("") }
@@ -971,7 +1010,7 @@ fun SearchMenu(
     var expandedOperator by remember { mutableStateOf(false) }
 
     val onSearch: () -> Unit = {
-        onFilter?.invoke(columnName, filterText.value, operatorText.value)
+        onFilter.invoke(columnName, filterText.value, operatorText.value)
         expanded = false
         filterText.value = ""
         operatorText.value = OperatorMenu.Operators.first().toString()
@@ -988,7 +1027,7 @@ fun SearchMenu(
     ){
 
         IconButton( onClick = {  expanded = !expanded } ) {
-            Icon(Icons.Default.ArrowDropDown, contentDescription = "Filter", tint = MaterialTheme.colorScheme.onSurface)
+            Icon(Icons.AutoMirrored.Filled.ManageSearch, contentDescription = "Filter", tint = MaterialTheme.colorScheme.onSurface)
         }
 
         DropdownMenu(
@@ -1014,7 +1053,11 @@ fun SearchMenu(
                         label = { Text("Operator...")  },
                         trailingIcon = {
                             IconButton( onClick = { expandedOperator = !expandedOperator}, )
-                            { Icon(Icons.Default.ArrowDropDown, contentDescription = "Operator",) }
+                            {
+                                Icon(if(expandedOperator) Icons.Default.ArrowDropUp else Icons.Default.ArrowDropDown,
+                                    contentDescription = "Operator"
+                                )
+                            }
                         },
                         singleLine = true,
                     )
