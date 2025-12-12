@@ -35,7 +35,7 @@ import kotlin.math.absoluteValue
 @Composable
 fun PageSizePicker(
     dataList:List<Any>,
-    selectPageSizeIndex:Int = 1 ,
+    selectPageSizeIndex:Int ,
     pickerWidth: Dp,
     itemHeight: Dp,
     itemViewCount:Int,

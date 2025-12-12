@@ -39,6 +39,7 @@ import com.unchil.composedatagrid.theme.AppTheme
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import kotlin.String
 import kotlin.apply
 import kotlin.comparisons.compareBy
 import kotlin.text.startsWith
@@ -71,8 +72,8 @@ fun NewComposeDataGrid(
     val pageSize = remember{mutableStateOf(selectPageSizeList.get(selectPageSizeIndex.value).toInt())}
     val lastPageIndex =  remember{mutableStateOf(getLastPageIndex(mutableData.value.size, pageSize.value))}
 
-    val isExpandPageNavControlMenu = rememberSaveable {mutableStateOf(false) }
-    val isExpandGridSettingMenu = rememberSaveable {mutableStateOf(false) }
+    val isExpandGridControlMenu = rememberSaveable {mutableStateOf(true) }
+    val isExpandPageNavControlMenu = rememberSaveable {mutableStateOf(true) }
 
     val pagerState = rememberPagerState( pageCount = { lastPageIndex.value+1 })
 
@@ -182,19 +183,18 @@ fun NewComposeDataGrid(
     }
 
     val onUpdateColumnsOrder:(Int, Int)->Unit = { beforeIndex, targetIndex ->
+        // 변경된 리스트로 상태 변수를 업데이트하여 Recomposition을 트리거합니다.
         val newColumnOrder = mutableColumnNames.value.toMutableList().apply {
             add(targetIndex, removeAt(beforeIndex))
         }
+        mutableColumnNames.value = newColumnOrder
 
         val newData = mutableData.value.map { row ->
             row.toMutableList().apply {
                 add(targetIndex, removeAt(beforeIndex))
             }
         }
-        // 변경된 리스트로 상태 변수를 업데이트하여 Recomposition을 트리거합니다.
-        mutableColumnNames.value = newColumnOrder
         mutableData.value = newData
-
 
         val newDataColumnOrderApplied = dataColumnOrderApplied.value.map { row ->
             row.toMutableList().apply {
@@ -210,22 +210,16 @@ fun NewComposeDataGrid(
         }
         dataFilterApplied.value = newDataFilterApplied
 
-
-
         val newWeights = columnWeights.value.toMutableList().apply {
             add(targetIndex, removeAt(beforeIndex))
         }
         columnWeights.value = newWeights
-
-
 
         val beforeSortType = columnDataSortFlag.value[beforeIndex]
         val newSortFlag =  MutableList(columnDataSortFlag.value.size) { 0 }.apply {
             this[targetIndex] = beforeSortType
         }
         columnDataSortFlag.value = newSortFlag
-
-
 
     }
 
@@ -234,7 +228,8 @@ fun NewComposeDataGrid(
     val onChangePageSize:(Int)->Unit = {
        val result = if(it == 0){
            Pair(
-            presentData.values.firstOrNull()?.size ?: 0 ,
+            //presentData.values.firstOrNull()?.size ?: 0 ,
+               mutableData.value.size,
             selectPageSizeList.indexOf("All")
            )
         }else{
@@ -485,9 +480,6 @@ fun NewComposeDataGrid(
                         mutableData.value
                     ).let { pagingData ->
 
-
-
-
                         BoxWithConstraints(
                             modifier = Modifier
                                 .fillMaxSize()
@@ -562,42 +554,19 @@ fun NewComposeDataGrid(
 
                             }//LazyColumn
 
-
-
-
-
-                            Box(
-                                modifier = Modifier
-                                    .padding(paddingGridMenuButton)
-                                    .border(borderStrokeRed, shape = borderShapeIn)
-                                    .align(Alignment.BottomStart)
-                            ) {
-                                MenuGridSetting(
-                                    isExpandGridSettingMenu,
-                                    enableDarkMode,
-                                    presentData.keys.toList(),
-                                    selectedColumns,
-                                    onUpdateColumns,
-                                    onChangePageSize,
-                                    selectPageSizeList,
-                                    selectPageSizeIndex.value,
-                                    onRefresh
-                                )
-                            }//Box  MenuGridSetting
-
-
                             Box(
                                 modifier = Modifier
                                     .padding(paddingGridMenuButton)
                                     .border(borderStrokeRed, shape = borderShapeIn)
                                     .align(Alignment.BottomEnd)
                             ) {
-                                MenuPageNavControl(
-                                    isExpandPageNavControlMenu,
+                                MenuGridControl(
+                                    isExpandGridControlMenu,
                                     lazyListState,
-                                    pagerState,
+                                    presentData.keys.toList(),
+                                    selectedColumns,
+                                    onUpdateColumns,
                                     onListNavHandler,
-                                    onPageNavHandler,
                                 )
                             }//Box  MenuPageNavControl
 
@@ -621,6 +590,24 @@ fun NewComposeDataGrid(
                 }//HorizontalPager
 
 
+
+            Box(
+                modifier = Modifier
+                    .padding(paddingGridMenuButton)
+                    .border(borderStrokeRed, shape = borderShapeIn)
+                    .align(Alignment.BottomStart)
+            ) {
+                MenuPageNavControl(
+                    isExpandPageNavControlMenu,
+                    enableDarkMode,
+                    onChangePageSize,
+                    selectPageSizeList,
+                    selectPageSizeIndex.value,
+                    onRefresh,
+                    onPageNavHandler,
+                    pagerState
+                )
+            }//Box  MenuGridSetting
 
 
         }//Box

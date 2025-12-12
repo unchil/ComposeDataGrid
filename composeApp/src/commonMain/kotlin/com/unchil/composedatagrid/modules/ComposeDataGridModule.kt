@@ -37,6 +37,7 @@ import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.ArrowDropUp
 import androidx.compose.material.icons.filled.ChecklistRtl
 import androidx.compose.material.icons.filled.DarkMode
+import androidx.compose.material.icons.filled.GridView
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.LightMode
@@ -46,6 +47,7 @@ import androidx.compose.material.icons.filled.SwapHoriz
 import androidx.compose.material.icons.filled.ToggleOff
 import androidx.compose.material.icons.filled.ToggleOn
 import androidx.compose.material.icons.filled.UnfoldMore
+import androidx.compose.material.icons.filled.ViewColumn
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
@@ -91,24 +93,21 @@ import composedatagrid.composeapp.generated.resources.Res
 import composedatagrid.composeapp.generated.resources.arrow_menu_close_24px
 import composedatagrid.composeapp.generated.resources.arrow_menu_open_24px
 import composedatagrid.composeapp.generated.resources.first_page_24px
-import composedatagrid.composeapp.generated.resources.format_line_spacing_24px
 import composedatagrid.composeapp.generated.resources.last_page_24px
-import composedatagrid.composeapp.generated.resources.open_run_24px
-import composedatagrid.composeapp.generated.resources.open_with_24px
 import composedatagrid.composeapp.generated.resources.vertical_align_bottom_24px
 import composedatagrid.composeapp.generated.resources.vertical_align_top_24px
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
-import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 
 @Composable
-fun MenuPageNavControl(
-    isExpandPageNavControlMenu: MutableState<Boolean>,
+fun MenuGridControl(
+    isExpandGridControlMenu: MutableState<Boolean>,
     lazyListState: LazyListState,
-    pagerState: PagerState,
+    allColumns: List<String>,
+    selectedColumns:Map<String, MutableState<Boolean>>,
+    onUpdateColumns:()->Unit,
     onListNavHandler:(ListNav)->Unit,
-    onPageNavHandler:(PageNav)->Unit,
 ){
 
 
@@ -119,7 +118,7 @@ fun MenuPageNavControl(
 
 
 
-        AnimatedVisibility( visible = isExpandPageNavControlMenu.value,) {
+        AnimatedVisibility( visible = isExpandGridControlMenu.value,) {
             Row(verticalAlignment = Alignment.CenterVertically) {
 
                 IconButton(
@@ -139,6 +138,118 @@ fun MenuPageNavControl(
                     Icon(
                         painterResource(Res.drawable.vertical_align_bottom_24px),
                         contentDescription = "Last Row",
+                    )
+                }
+
+
+                MenuSelectColumn(
+                    allColumns,
+                    selectedColumns,
+                    onUpdateColumns,
+                )
+
+            }
+        }
+
+        IconButton(
+            onClick = { isExpandGridControlMenu.value = !isExpandGridControlMenu.value },
+            modifier= Modifier.clip(CircleShape),
+        ) {
+            Icon(
+                Icons.Default.GridView,
+                contentDescription = "enableGridControl"
+            )
+
+
+        }
+
+
+
+
+
+    }
+}
+
+@Composable
+fun MenuPageNavControl(
+    isExpandPageNavControlMenu: MutableState<Boolean>,
+    enableDarkMode: MutableState<Boolean>,
+    onChangePageSize:(Int)->Unit,
+    selectPageSizeList: List<String>,
+    selectPageSizeIndex:Int,
+    onRefresh:()->Unit,
+    onPageNavHandler:(PageNav)->Unit,
+    pagerState: PagerState,
+){
+
+    Row (
+        modifier= Modifier.clip(CircleShape).background(MaterialTheme.colorScheme.tertiaryContainer),
+        verticalAlignment = Alignment.CenterVertically) {
+
+        IconButton(
+            onClick = { isExpandPageNavControlMenu.value = !isExpandPageNavControlMenu.value },
+        ) {
+            SegmentedButtonDefaults.Icon(
+                active = !isExpandPageNavControlMenu.value,
+                activeContent = {
+                    Icon(
+                        painter = painterResource(Res.drawable.arrow_menu_open_24px),
+                        contentDescription = "OpenBox"
+                    )
+                },
+                inactiveContent = {
+                    Icon(
+                        painterResource(Res.drawable.arrow_menu_close_24px),
+                        contentDescription = "CloseBox"
+                    )
+                }
+            )
+        }
+
+        AnimatedVisibility( visible = isExpandPageNavControlMenu.value,) {
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+
+                IconButton(
+                    onClick = { enableDarkMode.value = !enableDarkMode.value },
+
+                    ) {
+                    SegmentedButtonDefaults.Icon(
+                        active = !enableDarkMode.value,
+                        activeContent = {
+                            Icon(
+                                Icons.Default.LightMode,
+                                contentDescription = "LightMode"
+                            )
+                        },
+                        inactiveContent = {
+                            Icon(
+                                Icons.Default.DarkMode,
+                                contentDescription = "DarkMode"
+                            )
+                        }
+                    )
+                }
+
+
+                PageSizePicker(
+                    selectPageSizeList,
+                    selectPageSizeIndex,
+                    50.dp,
+                    20.dp,
+                    3,
+                    onChangePageSize
+                )
+
+
+                IconButton(
+                    onClick = { onRefresh.invoke()  },
+                ) {
+                    androidx.compose.material3.Icon(
+                        Icons.Default.Refresh,
+                        contentDescription = "Refresh"
                     )
                 }
 
@@ -182,122 +293,6 @@ fun MenuPageNavControl(
                         contentDescription = "Last Page",
                     )
                 }
-            }
-        }
-
-        IconButton(
-            onClick = { isExpandPageNavControlMenu.value = !isExpandPageNavControlMenu.value },
-            modifier= Modifier.clip(CircleShape),
-        ) {
-            SegmentedButtonDefaults.Icon(
-                active = !isExpandPageNavControlMenu.value,
-                activeContent = {
-                    Icon(
-                        painterResource(Res.drawable.open_with_24px),
-                        contentDescription = "enableIndicateArrow"
-                    )
-                },
-                inactiveContent = {
-                    Icon(
-                        painterResource(Res.drawable.open_run_24px),
-                        contentDescription = "disableIndicateArrow"
-                    )
-                }
-            )
-        }
-
-
-    }
-}
-
-@Composable
-fun MenuGridSetting(
-    isExpandGridSettingMenu: MutableState<Boolean>,
-    enableDarkMode: MutableState<Boolean>,
-    allColumns: List<String>,
-    selectedColumns:Map<String, MutableState<Boolean>>,
-    onUpdateColumns:()->Unit,
-    onChangePageSize:(Int)->Unit,
-    selectPageSizeList: List<String>,
-    selectPageSizeIndex:Int,
-    onRefresh:()->Unit
-){
-
-    Row (
-        modifier= Modifier.clip(CircleShape).background(MaterialTheme.colorScheme.tertiaryContainer),
-        verticalAlignment = Alignment.CenterVertically) {
-
-        IconButton(
-            onClick = { isExpandGridSettingMenu.value = !isExpandGridSettingMenu.value },
-        ) {
-            SegmentedButtonDefaults.Icon(
-                active = !isExpandGridSettingMenu.value,
-                activeContent = {
-                    Icon(
-                        painter = painterResource(Res.drawable.arrow_menu_open_24px),
-                        contentDescription = "OpenBox"
-                    )
-                },
-                inactiveContent = {
-                    Icon(
-                        painterResource(Res.drawable.arrow_menu_close_24px),
-                        contentDescription = "CloseBox"
-                    )
-                }
-            )
-        }
-
-        AnimatedVisibility( visible = isExpandGridSettingMenu.value,) {
-
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-
-                IconButton(
-                    onClick = { onRefresh.invoke()  },
-                ) {
-                    androidx.compose.material3.Icon(
-                        Icons.Default.Refresh,
-                        contentDescription = "Refresh"
-                    )
-                }
-
-
-                IconButton(
-                    onClick = { enableDarkMode.value = !enableDarkMode.value },
-
-                ) {
-                    SegmentedButtonDefaults.Icon(
-                        active = !enableDarkMode.value,
-                        activeContent = {
-                            Icon(
-                                Icons.Default.LightMode,
-                                contentDescription = "LightMode"
-                            )
-                        },
-                        inactiveContent = {
-                            Icon(
-                                Icons.Default.DarkMode,
-                                contentDescription = "DarkMode"
-                            )
-                        }
-                    )
-                }
-
-                PageSizePicker(
-                    selectPageSizeList,
-                    selectPageSizeIndex,
-                    50.dp,
-                    20.dp,
-                    3,
-                    onChangePageSize
-                )
-
-                MenuSelectColumn(
-                    allColumns,
-                    selectedColumns,
-                    onUpdateColumns,
-                )
 
 
             }
@@ -336,7 +331,7 @@ fun MenuSelectColumn(
                 },
                 inactiveContent = {
                     Icon(
-                        painterResource(Res.drawable.format_line_spacing_24px),
+                        Icons.Default.ViewColumn,
                         contentDescription = "Close DropDownMenu"
                     )
                 }
