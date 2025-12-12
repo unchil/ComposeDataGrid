@@ -118,11 +118,15 @@ fun NewComposeDataGrid(
                     if (onFilterResultCnt.value == 0) {
                         "No data was found."
                     } else {
-                        "Data ${onFilterResultCnt.value} items were found."
+                        "${onFilterResultCnt.value} data items were found."
                     }
                 }
                 SnackBarChannelType.CHANGE_PAGE_SIZE -> {
                     "${pageSize.value} data items are displayed on one page."
+                }
+
+                SnackBarChannelType.RELOAD -> {
+                    "${data.size} ${channelData.message}"
                 }
                 else -> {
                     channelData.message
@@ -302,13 +306,14 @@ fun NewComposeDataGrid(
 
     }
 
-    var currentLazyListState: LazyListState = LazyListState()
+    var currentLazyListState = LazyListState()
 
     val onRefresh:()-> Unit = {
         presentData = Pair(columnNames, data).toMap()
         selectedColumns =   presentData.keys.associateWith { mutableStateOf(true) }
         mutableData.value =   data
         mutableColumnNames.value = columnNames
+        columnWeights.value = List(mutableColumnNames.value.size) { 1f / mutableColumnNames.value.size  }
         lastPageIndex.value = getLastPageIndex(mutableData.value.size, pageSize.value)
 
         coroutineScope.launch {
@@ -345,7 +350,7 @@ fun NewComposeDataGrid(
                             pageIndex,
                             pageSize.value,
                             pageIndex == lastPageIndex.value,
-                            mutableData.value.size - 1
+                            mutableData.value.size
                         ),
                         mutableColumnNames.value,
                         mutableData.value

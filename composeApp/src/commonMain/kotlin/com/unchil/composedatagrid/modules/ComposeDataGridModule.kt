@@ -11,10 +11,8 @@ import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.foundation.hoverable
-import androidx.compose.foundation.interaction.DragInteraction
 import androidx.compose.foundation.interaction.HoverInteraction
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -35,26 +33,18 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.automirrored.filled.ManageSearch
-import androidx.compose.material.icons.automirrored.filled.Sort
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.ArrowDropUp
-import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.ChecklistRtl
 import androidx.compose.material.icons.filled.DarkMode
-import androidx.compose.material.icons.filled.DoubleArrow
-import androidx.compose.material.icons.filled.Filter
-import androidx.compose.material.icons.filled.ImportExport
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.LightMode
-import androidx.compose.material.icons.filled.ManageSearch
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.SwapHoriz
-import androidx.compose.material.icons.filled.SwapVert
 import androidx.compose.material.icons.filled.ToggleOff
 import androidx.compose.material.icons.filled.ToggleOn
-import androidx.compose.material.icons.filled.UnfoldLess
 import androidx.compose.material.icons.filled.UnfoldMore
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -74,7 +64,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -84,7 +73,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
@@ -100,19 +88,15 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import composedatagrid.composeapp.generated.resources.Res
-import composedatagrid.composeapp.generated.resources.arrow_downward_alt_24px
 import composedatagrid.composeapp.generated.resources.arrow_menu_close_24px
 import composedatagrid.composeapp.generated.resources.arrow_menu_open_24px
-import composedatagrid.composeapp.generated.resources.arrow_upward_alt_24px
 import composedatagrid.composeapp.generated.resources.first_page_24px
 import composedatagrid.composeapp.generated.resources.format_line_spacing_24px
 import composedatagrid.composeapp.generated.resources.last_page_24px
 import composedatagrid.composeapp.generated.resources.open_run_24px
 import composedatagrid.composeapp.generated.resources.open_with_24px
-import composedatagrid.composeapp.generated.resources.swap_vert_24px
 import composedatagrid.composeapp.generated.resources.vertical_align_bottom_24px
 import composedatagrid.composeapp.generated.resources.vertical_align_top_24px
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import kotlin.math.roundToInt
@@ -597,11 +581,11 @@ fun HeaderRow(
 
                 ){
                     Icon(
-                        painter = when(orderByIcon.value){
-                            -1 ->  painterResource(Res.drawable.arrow_downward_alt_24px)
-                            1 ->  painterResource(Res.drawable.arrow_upward_alt_24px)
-                            0 -> painterResource(Res.drawable.swap_vert_24px)
-                            else -> { painterResource(Res.drawable.swap_vert_24px)}
+                        imageVector = when(orderByIcon.value){
+                            -1 ->  Icons.Default.ArrowDropDown
+                            1 ->  Icons.Default.ArrowDropUp
+                            0 -> Icons.Default.UnfoldMore
+                            else -> Icons.Default.UnfoldMore
                         },
                         contentDescription = "Sort",
                     )
