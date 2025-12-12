@@ -41,11 +41,15 @@ import androidx.compose.material.icons.filled.GridView
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.LightMode
+import androidx.compose.material.icons.filled.PanTool
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.SwapHoriz
+import androidx.compose.material.icons.filled.TableRows
+import androidx.compose.material.icons.filled.TableView
 import androidx.compose.material.icons.filled.ToggleOff
 import androidx.compose.material.icons.filled.ToggleOn
+import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material.icons.filled.UnfoldMore
 import androidx.compose.material.icons.filled.ViewColumn
 import androidx.compose.material3.DropdownMenu
@@ -155,11 +159,23 @@ fun MenuGridControl(
             onClick = { isExpandGridControlMenu.value = !isExpandGridControlMenu.value },
             modifier= Modifier.clip(CircleShape),
         ) {
-            Icon(
-                Icons.Default.GridView,
-                contentDescription = "enableGridControl"
-            )
 
+
+            SegmentedButtonDefaults.Icon(
+                active = !isExpandGridControlMenu.value,
+                activeContent = {
+                    Icon(
+                        painter = painterResource(Res.drawable.arrow_menu_close_24px),
+                        contentDescription = ""
+                    )
+                },
+                inactiveContent = {
+                    Icon(
+                        painterResource(Res.drawable.arrow_menu_open_24px),
+                        contentDescription = ""
+                    )
+                }
+            )
 
         }
 
@@ -331,7 +347,7 @@ fun MenuSelectColumn(
                 },
                 inactiveContent = {
                     Icon(
-                        Icons.Default.ViewColumn,
+                        Icons.Default.Tune,
                         contentDescription = "Close DropDownMenu"
                     )
                 }
