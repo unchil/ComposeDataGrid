@@ -39,6 +39,8 @@ import com.unchil.composedatagrid.theme.AppTheme
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import kotlin.apply
+import kotlin.comparisons.compareBy
 import kotlin.text.startsWith
 
 @Composable
@@ -53,7 +55,12 @@ fun NewComposeDataGrid(
     var selectedColumns =  remember {presentData.keys.associateWith { mutableStateOf(true) } }
 
 
+    val dataColumnOrderApplied = remember { mutableStateOf(data)}
+    val dataFilterApplied = remember { mutableStateOf(data)}
     val mutableData = remember { mutableStateOf(data)}
+    val isFilteringData = remember { mutableStateOf(false)}
+
+
     val mutableColumnNames = remember { mutableStateOf(columnNames)}
 
     val enableDarkMode = remember { mutableStateOf(false) }
@@ -97,6 +104,9 @@ fun NewComposeDataGrid(
 
     val columnWeights = remember {
         mutableStateOf(List(mutableColumnNames.value.size) { 1f / mutableColumnNames.value.size  } )
+    }
+    val columnDataSortFlag = remember {
+        mutableStateOf(MutableList(mutableColumnNames.value.size) { 0  } )
     }
 
 
@@ -164,6 +174,9 @@ fun NewComposeDataGrid(
         Pair(selectedColumns, presentData).toSelectedColumnsData().let { result ->
             mutableColumnNames.value = result.first
             mutableData.value = result.second
+            dataColumnOrderApplied.value = result.second
+            isFilteringData.value = false
+            dataFilterApplied.value = result.second
             columnWeights.value = List(mutableColumnNames.value.size) { 1f / mutableColumnNames.value.size }
         }
     }
@@ -182,11 +195,41 @@ fun NewComposeDataGrid(
         mutableColumnNames.value = newColumnOrder
         mutableData.value = newData
 
+
+        val newDataColumnOrderApplied = dataColumnOrderApplied.value.map { row ->
+            row.toMutableList().apply {
+                add(targetIndex, removeAt(beforeIndex))
+            }
+        }
+        dataColumnOrderApplied.value = newDataColumnOrderApplied
+
+        val newDataFilterApplied = dataFilterApplied.value.map { row ->
+            row.toMutableList().apply {
+                add(targetIndex, removeAt(beforeIndex))
+            }
+        }
+        dataFilterApplied.value = newDataFilterApplied
+
+
+
         val newWeights = columnWeights.value.toMutableList().apply {
             add(targetIndex, removeAt(beforeIndex))
         }
         columnWeights.value = newWeights
+
+
+
+        val beforeSortType = columnDataSortFlag.value[beforeIndex]
+        val newSortFlag =  MutableList(columnDataSortFlag.value.size) { 0 }.apply {
+            this[targetIndex] = beforeSortType
+        }
+        columnDataSortFlag.value = newSortFlag
+
+
+
     }
+
+
 
     val onChangePageSize:(Int)->Unit = {
        val result = if(it == 0){
@@ -241,6 +284,8 @@ fun NewComposeDataGrid(
 
     val onFilter:(columnName:String, searchText:String, operator:String) -> Unit = { columnName, searchText, operator ->
 
+        isFilteringData.value = true
+
         val columnIndex = mutableColumnNames.value.indexOf(columnName)
 
         val result = when(operator){
@@ -294,6 +339,11 @@ fun NewComposeDataGrid(
         mutableData.value = result.ifEmpty {
             mutableData.value
         }
+
+        dataFilterApplied.value =  mutableData.value
+
+
+
         lastPageIndex.value = getLastPageIndex(mutableData.value.size, pageSize.value)
 
         coroutineScope.launch {
@@ -306,14 +356,93 @@ fun NewComposeDataGrid(
 
     }
 
+
+    val onColumnSort:( Int, Int) -> Unit = { columnIndex, sortType ->
+
+
+        val newSortFlag =  MutableList(columnDataSortFlag.value.size) { 0 }.apply {
+            this[columnIndex] = sortType
+        }
+        columnDataSortFlag.value = newSortFlag
+
+
+        val columnDataType = dataColumnOrderApplied.value.first { firstRow ->
+            firstRow.elementAt(columnIndex) != null
+        }[columnIndex]?.let {  it::class.simpleName.toString() } ?: "UNKNOWN"
+
+        // String    "\u0000":NullAtBeginning (ASCII 코드 0),   "":NullAtEnd
+
+        when(sortType){
+            1 -> {
+                val comparator  = when(columnDataType) {
+                    "String" -> compareBy { it.getOrNull(columnIndex) as String }
+                    "Double" -> compareBy { it.getOrNull(columnIndex) as Double }
+                    "Float" -> compareBy { it.getOrNull(columnIndex) as Float }
+                    "Int" -> compareBy { it.getOrNull(columnIndex) as Int }
+                    "Long" -> compareBy { it.getOrNull(columnIndex) as Long }
+                    else ->  compareBy<List<Any?>> { it[columnIndex] as String }
+                }
+                mutableData.value = if(isFilteringData.value) {
+                    dataFilterApplied.value.sortedWith(comparator)
+                } else {
+                    dataColumnOrderApplied.value.sortedWith(comparator)
+                }
+
+
+
+            }
+            -1 -> {
+                val comparator  = when(columnDataType) {
+                    "String" -> compareByDescending { it.getOrNull(columnIndex) as String }
+                    "Double" -> compareByDescending { it.getOrNull(columnIndex) as Double }
+                    "Float" -> compareByDescending { it.getOrNull(columnIndex) as Float }
+                    "Int" -> compareByDescending { it.getOrNull(columnIndex) as Int }
+                    "Long" -> compareByDescending { it.getOrNull(columnIndex) as Long }
+                    else ->  compareByDescending<List<Any?>>  { it[columnIndex] as String }
+                }
+
+                mutableData.value = if(isFilteringData.value) {
+                    dataFilterApplied.value.sortedWith(comparator)
+                } else {
+                    dataColumnOrderApplied.value.sortedWith(comparator)
+                }
+
+            }
+            0 -> {
+
+                mutableData.value = if(isFilteringData.value) {
+                    dataFilterApplied.value
+                } else {
+                    dataColumnOrderApplied.value
+                }
+
+            }
+            else ->  {
+                mutableData.value = if(isFilteringData.value) {
+                    dataFilterApplied.value
+                } else {
+                    dataColumnOrderApplied.value
+                }
+
+            }
+        }
+
+
+
+    }
+
+
     var currentLazyListState = LazyListState()
 
     val onRefresh:()-> Unit = {
+        isFilteringData.value = false
         presentData = Pair(columnNames, data).toMap()
         selectedColumns =   presentData.keys.associateWith { mutableStateOf(true) }
         mutableData.value =   data
+        dataColumnOrderApplied.value = data
         mutableColumnNames.value = columnNames
         columnWeights.value = List(mutableColumnNames.value.size) { 1f / mutableColumnNames.value.size  }
+        columnDataSortFlag.value = MutableList(mutableColumnNames.value.size) { 0  }
         lastPageIndex.value = getLastPageIndex(mutableData.value.size, pageSize.value)
 
         coroutineScope.launch {
@@ -410,7 +539,9 @@ fun NewComposeDataGrid(
                                             pagingData.keys.toList(),
                                             columnWeights,
                                             onUpdateColumnsOrder,
-                                            onFilter
+                                            onFilter,
+                                            onColumnSort,
+                                            columnDataSortFlag
                                         )
                                     }//AnimatedVisibility
                                 }//stickyHeader

@@ -99,6 +99,7 @@ import composedatagrid.composeapp.generated.resources.vertical_align_bottom_24px
 import composedatagrid.composeapp.generated.resources.vertical_align_top_24px
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
+import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 
 @Composable
@@ -466,7 +467,10 @@ fun HeaderRow(
     columnNames:List<String>,
     columnWeights:MutableState<List<Float>>,
     onUpdateColumnsOrder:(Int, Int)->Unit,
-    onFilter:(String, String, String) -> Unit
+    onFilter:(String, String, String) -> Unit,
+    onColumnSort:(Int, Int) -> Unit,
+    columnDataSortFlag:MutableState<MutableList<Int>>,
+
 ){
 
     val heightColumnHeader = remember{ 36.dp }
@@ -513,7 +517,7 @@ fun HeaderRow(
             val coroutineScope = rememberCoroutineScope()
             val offset = remember { mutableStateOf(IntOffset.Zero) }
 
-            val orderByIcon = remember {mutableStateOf(0)}
+
             val animatedAlpha by animateFloatAsState(if (offset.value == IntOffset.Zero) 1f else 0.5f)
 
             val onDragEnd: () -> Unit = {
@@ -541,6 +545,7 @@ fun HeaderRow(
                     (dropPositionPx / density).dp,
                     currentDividerPositions
                 )
+
                 onUpdateColumnsOrder( index, targetIndex )
                 offset.value = IntOffset.Zero
             }
@@ -557,6 +562,7 @@ fun HeaderRow(
                             onDragEnd = onDragEnd,
                             onDragCancel = { offset.value = IntOffset.Zero },
                             onDrag = { change, dragAmount ->
+
                                 change.consume()
                                 offset.value += IntOffset( dragAmount.x.roundToInt(), 0)
                             }
@@ -568,20 +574,23 @@ fun HeaderRow(
             ) {
 
 
+
                 IconButton(
                     onClick = {
-                        orderByIcon.value = when(orderByIcon.value){
+                        val iconFlag = when(columnDataSortFlag.value[index]){
                             0 -> 1
                             1 -> -1
                             -1 -> 0
                             else -> {0}
                         }
+                        onColumnSort( index, iconFlag)
+
                     }
 
 
                 ){
                     Icon(
-                        imageVector = when(orderByIcon.value){
+                        imageVector = when(columnDataSortFlag.value[index]){
                             -1 ->  Icons.Default.ArrowDropDown
                             1 ->  Icons.Default.ArrowDropUp
                             0 -> Icons.Default.UnfoldMore
