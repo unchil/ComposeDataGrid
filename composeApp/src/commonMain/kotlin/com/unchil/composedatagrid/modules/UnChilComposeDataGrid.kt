@@ -45,7 +45,7 @@ import kotlin.comparisons.compareBy
 import kotlin.text.startsWith
 
 @Composable
-fun NewComposeDataGrid(
+fun UnChilComposeDataGrid(
     modifier:Modifier = Modifier,
     columnNames:List<String>,
     data:List<List<Any?>>,
@@ -55,12 +55,10 @@ fun NewComposeDataGrid(
     var presentData by  remember{ mutableStateOf(Pair(columnNames, data).toMap()) }
     var selectedColumns =  remember {presentData.keys.associateWith { mutableStateOf(true) } }
 
-
     val dataColumnOrderApplied = remember { mutableStateOf(data)}
     val dataFilterApplied = remember { mutableStateOf(data)}
     val mutableData = remember { mutableStateOf(data)}
     val isFilteringData = remember { mutableStateOf(false)}
-
 
     val mutableColumnNames = remember { mutableStateOf(columnNames)}
 
@@ -77,7 +75,6 @@ fun NewComposeDataGrid(
 
     val pagerState = rememberPagerState( pageCount = { lastPageIndex.value+1 })
 
-
     val borderStrokeBlack = remember {BorderStroke(width = 1.dp, color = Color.Black)}
     val borderStrokeRed = remember {BorderStroke(width = 1.dp, color = Color.Red)}
     val borderStrokeBlue = remember {BorderStroke(width = 1.dp, color = Color.Blue)}
@@ -90,13 +87,11 @@ fun NewComposeDataGrid(
     val borderShapeOut = remember{RoundedCornerShape(0.dp)}
     val borderShapeIn = remember{RoundedCornerShape(0.dp)}
 
-
     val paddingLazyColumn = remember { PaddingValues(10.dp)}
     val paddingLazyColumnContent = remember { PaddingValues(10.dp)}
     val paddingHorizontalPager = remember { PaddingValues(10.dp)}
     val paddingBoxInHorizontalPager = remember { PaddingValues(10.dp)}
     val paddingGridMenuButton = remember{ PaddingValues(all = 10.dp)}
-
 
     val widthRowNumColumn = remember{ 60.dp}
     val widthDividerThickness = remember{ 6.dp}
@@ -110,7 +105,6 @@ fun NewComposeDataGrid(
         mutableStateOf(MutableList(mutableColumnNames.value.size) { 0  } )
     }
 
-
     //--------------------
     // SnackBar Setting
     //--------------------
@@ -118,6 +112,7 @@ fun NewComposeDataGrid(
     val snackBarHostState = remember { SnackbarHostState() }
 
     val onFilterResultCnt = remember {  mutableStateOf(0)}
+
     LaunchedEffect(channel) {
         channel.receiveAsFlow().collect { index ->
             val channelData = snackBarChannelList.first {
@@ -168,8 +163,6 @@ fun NewComposeDataGrid(
         }
     }
     //----------
-
-
 
     val onUpdateColumns:()->Unit = {
         Pair(selectedColumns, presentData).toSelectedColumnsData().let { result ->
@@ -223,8 +216,6 @@ fun NewComposeDataGrid(
 
     }
 
-
-
     val onChangePageSize:(Int)->Unit = {
        val result = if(it == 0){
            Pair(
@@ -275,7 +266,6 @@ fun NewComposeDataGrid(
             }
         }
     }
-
 
     val onFilter:(columnName:String, searchText:String, operator:String) -> Unit = { columnName, searchText, operator ->
 
@@ -337,8 +327,6 @@ fun NewComposeDataGrid(
 
         dataFilterApplied.value =  mutableData.value
 
-
-
         lastPageIndex.value = getLastPageIndex(mutableData.value.size, pageSize.value)
 
         coroutineScope.launch {
@@ -351,15 +339,13 @@ fun NewComposeDataGrid(
 
     }
 
-
     val onColumnSort:( Int, Int) -> Unit = { columnIndex, sortType ->
-
 
         val newSortFlag =  MutableList(columnDataSortFlag.value.size) { 0 }.apply {
             this[columnIndex] = sortType
         }
-        columnDataSortFlag.value = newSortFlag
 
+        columnDataSortFlag.value = newSortFlag
 
         val columnDataType = dataColumnOrderApplied.value.first { firstRow ->
             firstRow.elementAt(columnIndex) != null
@@ -383,8 +369,6 @@ fun NewComposeDataGrid(
                     dataColumnOrderApplied.value.sortedWith(comparator)
                 }
 
-
-
             }
             -1 -> {
                 val comparator  = when(columnDataType) {
@@ -404,13 +388,11 @@ fun NewComposeDataGrid(
 
             }
             0 -> {
-
                 mutableData.value = if(isFilteringData.value) {
                     dataFilterApplied.value
                 } else {
                     dataColumnOrderApplied.value
                 }
-
             }
             else ->  {
                 mutableData.value = if(isFilteringData.value) {
@@ -418,12 +400,8 @@ fun NewComposeDataGrid(
                 } else {
                     dataColumnOrderApplied.value
                 }
-
             }
         }
-
-
-
     }
 
 
@@ -442,8 +420,12 @@ fun NewComposeDataGrid(
 
         coroutineScope.launch {
             pagerState.animateScrollToPage(0)
+        }
+
+        coroutineScope.launch {
             currentLazyListState.animateScrollToItem(0)
         }
+
         channel.trySend(snackBarChannelList.first { item ->
             item.channelType == SnackBarChannelType.RELOAD
         }.channel)
@@ -457,139 +439,135 @@ fun NewComposeDataGrid(
                 .border(borderStrokeBlack, shape = borderShapeOut),
             contentAlignment = Alignment.Center,
         ){
-                HorizontalPager(
+            HorizontalPager(
+                state = pagerState,
+                modifier = Modifier
+                    .padding(paddingHorizontalPager)
+                    .border(borderStrokeGreen, shape = borderShapeIn),
+                flingBehavior = PagerDefaults.flingBehavior(
                     state = pagerState,
-                    modifier = Modifier
-                        .padding(paddingHorizontalPager)
-                        .border(borderStrokeGreen, shape = borderShapeIn),
-                    flingBehavior = PagerDefaults.flingBehavior(
-                        state = pagerState,
-                        snapPositionalThreshold = 0.7f
-                    )
-                ) { pageIndex ->
+                    snapPositionalThreshold = 0.7f
+                )
+            ) { pageIndex ->
 
-                    makePagingData(
-                        topRowIndex(pageIndex, pageSize.value),
-                        bottomRowIndex(
-                            pageIndex,
-                            pageSize.value,
-                            pageIndex == lastPageIndex.value,
-                            mutableData.value.size
-                        ),
-                        mutableColumnNames.value,
-                        mutableData.value
-                    ).let { pagingData ->
+                makePagingData(
+                    topRowIndex(pageIndex, pageSize.value),
+                    bottomRowIndex(
+                        pageIndex,
+                        pageSize.value,
+                        pageIndex == lastPageIndex.value,
+                        mutableData.value.size
+                    ),
+                    mutableColumnNames.value,
+                    mutableData.value
+                ).let { pagingData ->
 
-                        BoxWithConstraints(
+                    BoxWithConstraints(
+                        modifier = Modifier
+                            .fillMaxSize()
+                                .padding(paddingBoxInHorizontalPager)
+                            .border(borderStrokeBlue, shape = borderShapeIn),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        val maxWidthInDp = this.maxWidth
+                        val lazyListState = rememberLazyListState(initialFirstVisibleItemIndex = 0)
+                        currentLazyListState = lazyListState
+                        val isVisibleColumnHeader by remember {
+                            derivedStateOf {
+                                lazyListState.firstVisibleItemIndex < 1
+                            }
+                        }
+
+                        val onListNavHandler:(ListNav)->Unit = { it ->
+                            when(it){
+                                ListNav.Top -> {
+                                    coroutineScope.launch {
+                                        lazyListState.animateScrollToItem(0)
+                                    }
+                                }
+                                ListNav.Bottom -> {
+                                    coroutineScope.launch {
+                                        lazyListState.animateScrollToItem(( pagingData.values.firstOrNull()?.size ?: 1 ) -1 )
+                                    }
+                                }
+                            }
+                        }
+
+                        LazyColumn(
                             modifier = Modifier
                                 .fillMaxSize()
-                                    .padding(paddingBoxInHorizontalPager)
-                                .border(borderStrokeBlue, shape = borderShapeIn),
-                            contentAlignment = Alignment.Center
+                                .padding(paddingLazyColumn)
+                                .border(borderStrokeRed, shape = borderShapeIn),
+                            state = lazyListState,
+                            contentPadding = paddingLazyColumnContent
                         ) {
-                            val maxWidthInDp = this.maxWidth
-                            val lazyListState = rememberLazyListState(initialFirstVisibleItemIndex = 0)
-                            currentLazyListState = lazyListState
-                            val isVisibleColumnHeader by remember {
-                                derivedStateOf {
-                                    lazyListState.firstVisibleItemIndex < 1
-                                }
-                            }
 
-                            val onListNavHandler:(ListNav)->Unit = { it ->
-                                when(it){
-                                    ListNav.Top -> {
-                                        coroutineScope.launch {
-                                            lazyListState.animateScrollToItem(0)
-                                        }
-                                    }
-                                    ListNav.Bottom -> {
-                                        coroutineScope.launch {
-                                            lazyListState.animateScrollToItem(( pagingData.values.firstOrNull()?.size ?: 1 ) -1 )
-                                        }
-                                    }
-                                }
-                            }
-
-
-                            LazyColumn(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .padding(paddingLazyColumn)
-                                    .border(borderStrokeRed, shape = borderShapeIn),
-                                state = lazyListState,
-                                contentPadding = paddingLazyColumnContent
-                            ) {
-
-                                stickyHeader {
-                                    AnimatedVisibility(visible = isVisibleColumnHeader,) {
-                                        HeaderRow(
-                                            isVisibleRowNum,
-                                            maxWidthInDp,
-                                            widthDividerThickness,
-                                            widthRowNumColumn,
-                                            pagingData.keys.toList(),
-                                            columnWeights,
-                                            onUpdateColumnsOrder,
-                                            onFilter,
-                                            onColumnSort,
-                                            columnDataSortFlag
-                                        )
-                                    }//AnimatedVisibility
-                                }//stickyHeader
-
-                                items(pagingData.values.firstOrNull()?.size ?: 0) { dataIndex ->
-                                    DataRow(
+                            stickyHeader {
+                                AnimatedVisibility(visible = isVisibleColumnHeader,) {
+                                    HeaderRow(
                                         isVisibleRowNum,
                                         maxWidthInDp,
                                         widthDividerThickness,
                                         widthRowNumColumn,
-                                        pageIndex,
-                                        pageSize.value,
-                                        dataIndex,
-                                        pagingData,
+                                        pagingData.keys.toList(),
                                         columnWeights,
+                                        onUpdateColumnsOrder,
+                                        onFilter,
+                                        onColumnSort,
+                                        columnDataSortFlag
                                     )
-                                }
+                                }//AnimatedVisibility
+                            }//stickyHeader
 
-                            }//LazyColumn
-
-                            Box(
-                                modifier = Modifier
-                                    .padding(paddingGridMenuButton)
-                                    .border(borderStrokeRed, shape = borderShapeIn)
-                                    .align(Alignment.BottomEnd)
-                            ) {
-                                MenuGridControl(
-                                    isExpandGridControlMenu,
-                                    lazyListState,
-                                    presentData.keys.toList(),
-                                    selectedColumns,
-                                    onUpdateColumns,
-                                    onListNavHandler,
-                                )
-                            }//Box  MenuPageNavControl
-
-
-                            SnackbarHost(
-                                hostState = snackBarHostState,
-                                modifier= Modifier.align (Alignment.BottomCenter)
-                            ) { snackBarData ->
-                                Snackbar(
-                                    snackbarData = snackBarData,
-                                    shape = ShapeDefaults.ExtraSmall,
-                                    containerColor = MaterialTheme.colorScheme.surfaceVariant,
-                                    contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    dismissActionContentColor = MaterialTheme.colorScheme.tertiary
+                            items(pagingData.values.firstOrNull()?.size ?: 0) { dataIndex ->
+                                DataRow(
+                                    isVisibleRowNum,
+                                    maxWidthInDp,
+                                    widthDividerThickness,
+                                    widthRowNumColumn,
+                                    pageIndex,
+                                    pageSize.value,
+                                    dataIndex,
+                                    pagingData,
+                                    columnWeights,
                                 )
                             }
 
+                        }//LazyColumn
 
-                        }// BoxWithConstraints
-                    }//makePagingData
-                }//HorizontalPager
+                        Box(
+                            modifier = Modifier
+                                .padding(paddingGridMenuButton)
+                                .border(borderStrokeRed, shape = borderShapeIn)
+                                .align(Alignment.BottomEnd)
+                        ) {
+                            MenuGridControl(
+                                isExpandGridControlMenu,
+                                lazyListState,
+                                presentData.keys.toList(),
+                                selectedColumns,
+                                onUpdateColumns,
+                                onListNavHandler,
+                            )
+                        }//Box  MenuPageNavControl
 
 
+                        SnackbarHost(
+                            hostState = snackBarHostState,
+                            modifier= Modifier.align (Alignment.BottomCenter)
+                        ) { snackBarData ->
+                            Snackbar(
+                                snackbarData = snackBarData,
+                                shape = ShapeDefaults.ExtraSmall,
+                                containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                                contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                dismissActionContentColor = MaterialTheme.colorScheme.tertiary
+                            )
+                        }
+
+                    }// BoxWithConstraints
+                }//makePagingData
+            }//HorizontalPager
 
             Box(
                 modifier = Modifier
@@ -608,7 +586,6 @@ fun NewComposeDataGrid(
                     pagerState
                 )
             }//Box  MenuGridSetting
-
 
         }//Box
 

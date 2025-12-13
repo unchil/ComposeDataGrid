@@ -26,10 +26,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.unchil.composedatagrid.modules.ComposeDataGrid
-import com.unchil.composedatagrid.modules.NewComposeDataGrid
+import com.unchil.composedatagrid.modules.UnChilComposeDataGrid
 import com.unchil.composedatagrid.theme.AppTheme
-import com.unchil.composedatagrid.viewmodel.MofSeaWaterInfoViewModel
+import com.unchil.composedatagrid.viewmodel.NifsSeaWaterInfoViewModel
 import kotlinx.coroutines.launch
 
 val LocalPlatform = compositionLocalOf<Platform> { error("No Platform found!") }
@@ -51,7 +50,6 @@ fun DataGrid( columns: List<String>,  gridData:List<List<Any?>> ){
         }
     }
 
-
     val modifier = when(platform.alias){
         PlatformAlias.ANDROID -> {
             Modifier.fillMaxWidth(0.95f).height(700.dp ).padding(0.dp)
@@ -68,6 +66,7 @@ fun DataGrid( columns: List<String>,  gridData:List<List<Any?>> ){
     }
 
 
+
     AppTheme{
         Column(
             modifier = Modifier.fillMaxSize()
@@ -77,14 +76,14 @@ fun DataGrid( columns: List<String>,  gridData:List<List<Any?>> ){
         ) {
 
             Text(
-                "Kotlin Compose Multiplatform Data Grid",
-                modifier = Modifier.padding(20.dp),
+                "Compose Multiplatform DataGrid",
+                modifier = Modifier.padding(top = 60.dp, bottom = 20.dp),
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold
             )
 
             if(isVisible){
-                ComposeDataGrid(
+                UnChilComposeDataGrid(
                     modifier = modifier,
                     columnNames = columns,
                     data = gridData,
@@ -98,19 +97,19 @@ fun DataGrid( columns: List<String>,  gridData:List<List<Any?>> ){
 
 @Composable
 fun DataGridWithViewModel(
-    viewModel: MofSeaWaterInfoViewModel = viewModel { MofSeaWaterInfoViewModel() }
+    viewModel: NifsSeaWaterInfoViewModel = viewModel { NifsSeaWaterInfoViewModel() }
 ){
 
     val platform = LocalPlatform.current
 
     LaunchedEffect(key1 = viewModel){
-        viewModel.onEvent(MofSeaWaterInfoViewModel.Event.Refresh)
+        viewModel.onEvent(NifsSeaWaterInfoViewModel.Event.Refresh)
     }
 
     val coroutineScope = rememberCoroutineScope()
     val reloadData :()->Unit = {
         coroutineScope.launch{
-            viewModel.onEvent(MofSeaWaterInfoViewModel.Event.Refresh)
+            viewModel.onEvent(NifsSeaWaterInfoViewModel.Event.Refresh)
         }
     }
     val seaWaterInfo = viewModel._seaWaterInfo.collectAsState()
@@ -165,24 +164,12 @@ fun DataGridWithViewModel(
 
             if(isVisible){
 
-/*
-                ComposeDataGrid(
+                UnChilComposeDataGrid(
                     modifier = modifier,
                     columnNames = columnNames.value,
                     data = data.value,
                     reloadData = reloadData
                 )
-
-*/
-                NewComposeDataGrid(
-                    modifier = modifier,
-                    columnNames = columnNames.value,
-                    data = data.value,
-                    reloadData = reloadData
-                )
-
-
-
             }
 
         }
