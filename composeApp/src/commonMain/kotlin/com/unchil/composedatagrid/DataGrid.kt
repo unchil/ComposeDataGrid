@@ -76,7 +76,7 @@ fun DataGrid( columns: List<String>,  gridData:List<List<Any?>> ){
         ) {
 
             Text(
-                "Compose Multiplatform DataGrid",
+                "UnChil Data Grid for Compose Multiplatform",
                 modifier = Modifier.padding(top = 60.dp, bottom = 20.dp),
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold
@@ -156,7 +156,7 @@ fun DataGridWithViewModel(
         ) {
 
             Text(
-                "Compose Multiplatform DataGrid",
+                "UnChil Data Grid for Compose Multiplatform",
                 modifier = Modifier.padding(top = 60.dp, bottom = 20.dp),
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold
