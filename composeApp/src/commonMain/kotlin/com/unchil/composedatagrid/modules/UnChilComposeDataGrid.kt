@@ -96,7 +96,7 @@ fun UnChilComposeDataGrid(
     val widthRowNumColumn = remember{ 60.dp}
     val widthDividerThickness = remember{ 6.dp}
 
-    val coroutineScope = rememberCoroutineScope()
+
 
     val columnWeights = remember {
         mutableStateOf(List(mutableColumnNames.value.size) { 1f / mutableColumnNames.value.size  } )
@@ -104,14 +104,17 @@ fun UnChilComposeDataGrid(
     val columnDataSortFlag = remember {
         mutableStateOf(MutableList(mutableColumnNames.value.size) { 0  } )
     }
+    val onFilterResultCnt = remember {  mutableStateOf(0)}
 
+
+
+
+    val coroutineScope = rememberCoroutineScope()
     //--------------------
     // SnackBar Setting
     //--------------------
     val channel = remember { Channel<Int>(Channel.CONFLATED) }
     val snackBarHostState = remember { SnackbarHostState() }
-
-    val onFilterResultCnt = remember {  mutableStateOf(0)}
 
     LaunchedEffect(channel) {
         channel.receiveAsFlow().collect { index ->
@@ -163,6 +166,33 @@ fun UnChilComposeDataGrid(
         }
     }
     //----------
+
+    val onPageNavHandler:(PageNav)->Unit = {
+        when(it){
+            PageNav.Prev -> {
+                coroutineScope.launch {
+                    pagerState.animateScrollToPage(pagerState.currentPage-1)
+                }
+            }
+            PageNav.Next -> {
+                coroutineScope.launch {
+                    pagerState.animateScrollToPage(pagerState.currentPage+1)
+                }
+            }
+            PageNav.First -> {
+                coroutineScope.launch {
+                    pagerState.animateScrollToPage(0)
+                }
+            }
+            PageNav.Last -> {
+                coroutineScope.launch {
+                    pagerState.animateScrollToPage(pagerState.pageCount-1)
+                }
+            }
+        }
+    }
+
+
 
     val onUpdateColumns:()->Unit = {
         Pair(selectedColumns, presentData).toSelectedColumnsData().let { result ->
@@ -240,31 +270,6 @@ fun UnChilComposeDataGrid(
         channel.trySend(snackBarChannelList.first { item ->
             item.channelType == SnackBarChannelType.CHANGE_PAGE_SIZE
         }.channel)
-    }
-
-    val onPageNavHandler:(PageNav)->Unit = {
-        when(it){
-            PageNav.Prev -> {
-                coroutineScope.launch {
-                    pagerState.animateScrollToPage(pagerState.currentPage-1)
-                }
-            }
-            PageNav.Next -> {
-                coroutineScope.launch {
-                    pagerState.animateScrollToPage(pagerState.currentPage+1)
-                }
-            }
-            PageNav.First -> {
-                coroutineScope.launch {
-                    pagerState.animateScrollToPage(0)
-                }
-            }
-            PageNav.Last -> {
-                coroutineScope.launch {
-                    pagerState.animateScrollToPage(pagerState.pageCount-1)
-                }
-            }
-        }
     }
 
     val onFilter:(columnName:String, searchText:String, operator:String) -> Unit = { columnName, searchText, operator ->
@@ -403,7 +408,6 @@ fun UnChilComposeDataGrid(
             }
         }
     }
-
 
     var currentLazyListState = LazyListState()
 

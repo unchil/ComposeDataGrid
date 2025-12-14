@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.unchil.composedatagrid.modules.UnChilComposeDataGrid
 import com.unchil.composedatagrid.theme.AppTheme
+import com.unchil.composedatagrid.viewmodel.MofSeaWaterInfoViewModel
 import com.unchil.composedatagrid.viewmodel.NifsSeaWaterInfoViewModel
 import kotlinx.coroutines.launch
 
@@ -97,27 +98,22 @@ fun DataGrid( columns: List<String>,  gridData:List<List<Any?>> ){
 
 @Composable
 fun DataGridWithViewModel(
-    viewModel: NifsSeaWaterInfoViewModel = viewModel { NifsSeaWaterInfoViewModel() }
+    viewModel: MofSeaWaterInfoViewModel = viewModel { MofSeaWaterInfoViewModel() }
 ){
-
     val platform = LocalPlatform.current
 
     LaunchedEffect(key1 = viewModel){
-        viewModel.onEvent(NifsSeaWaterInfoViewModel.Event.Refresh)
+        viewModel.onEvent(MofSeaWaterInfoViewModel.Event.Refresh)
     }
 
     val coroutineScope = rememberCoroutineScope()
     val reloadData :()->Unit = {
         coroutineScope.launch{
-            viewModel.onEvent(NifsSeaWaterInfoViewModel.Event.Refresh)
+            viewModel.onEvent(MofSeaWaterInfoViewModel.Event.Refresh)
         }
     }
     val seaWaterInfo = viewModel._seaWaterInfo.collectAsState()
-
     var isVisible by remember { mutableStateOf(false) }
-
-
-
     val columnNames = remember { mutableStateOf(emptyList<String>() ) }
     val data = remember { mutableStateOf(emptyList<List<Any?>>()) }
 
