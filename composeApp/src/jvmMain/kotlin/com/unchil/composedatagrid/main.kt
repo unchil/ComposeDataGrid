@@ -13,6 +13,7 @@ import org.jetbrains.kotlinx.dataframe.api.after
 import org.jetbrains.kotlinx.dataframe.api.insert
 import org.jetbrains.kotlinx.dataframe.api.rows
 import org.jetbrains.kotlinx.dataframe.api.select
+import org.jetbrains.kotlinx.dataframe.api.toMap
 import org.jetbrains.kotlinx.dataframe.io.readJson
 
 val state = WindowState(
@@ -20,36 +21,27 @@ val state = WindowState(
     position = WindowPosition(Alignment.TopCenter)
 )
 
-fun makeData():Pair<List<String>, List<List<Any?>>>{
-    val url = "http://localhost:7788/nifs/seawaterinfo/current"
-    var data = DataFrame.readJson(url)
-    data =  data.insert("관측층"){
-        when(this["obs_lay"]){
-            "1" -> "표층"
-            "2" -> "중층"
-            "3" -> "심층"
-            else -> ""
-        }
-    }.after("obs_lay")
+fun makeData():Map<String, List<Any?>>{
+    val url = "http://localhost:7788/mof/swi/mof_oneday"
+    val url2 = "http://localhost:7788/nifs/seawaterinfo/current"
+    val data = DataFrame.readJson(url2)
 
-    val columns = listOf("수집시간", "해역", "관측지점",  "관측층", "수온" ,"경도", "위도")
-    val gridData = data.select {
-        cols("obs_datetime", "gru_nam", "sta_nam_kor", "관측층", "wtr_tmp" ,"lon", "lat")
-    }.rows().map { it.values() }
-
-    return Pair(columns,gridData )
+    return data.toMap()
 }
 
 
 fun main() = application {
-    val data = makeData()
+
     Window(
         onCloseRequest = ::exitApplication,
         title = "ComposeDataGrid",
         state = state,
     ) {
         CompositionLocalProvider( LocalPlatform provides getPlatform() ) {
+
+           // DataGrid(makeData())
             DataGridWithViewModel()
+
         }
     }
 

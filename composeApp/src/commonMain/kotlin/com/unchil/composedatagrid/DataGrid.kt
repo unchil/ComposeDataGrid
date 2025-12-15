@@ -26,10 +26,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.unchil.composedatagrid.modules.UnChilComposeDataGrid
+import com.unchil.composedatagrid.modules.Un7KCMPDataGrid
+import com.unchil.composedatagrid.modules.toMap
 import com.unchil.composedatagrid.theme.AppTheme
 import com.unchil.composedatagrid.viewmodel.MofSeaWaterInfoViewModel
-import com.unchil.composedatagrid.viewmodel.NifsSeaWaterInfoViewModel
 import kotlinx.coroutines.launch
 
 val LocalPlatform = compositionLocalOf<Platform> { error("No Platform found!") }
@@ -38,18 +38,10 @@ val LocalPlatform = compositionLocalOf<Platform> { error("No Platform found!") }
 
 
 @Composable
-fun DataGrid( columns: List<String>,  gridData:List<List<Any?>> ){
+fun DataGrid( data:Map<String, List<Any?>> ){
 
     val platform = LocalPlatform.current
 
-    val coroutineScope = rememberCoroutineScope()
-    var isVisible by remember { mutableStateOf(gridData.isNotEmpty()) }
-
-    val reloadData :()->Unit = {
-        coroutineScope.launch{
-
-        }
-    }
 
     val modifier = when(platform.alias){
         PlatformAlias.ANDROID -> {
@@ -83,14 +75,9 @@ fun DataGrid( columns: List<String>,  gridData:List<List<Any?>> ){
                 fontWeight = FontWeight.Bold
             )
 
-            if(isVisible){
-                UnChilComposeDataGrid(
-                    modifier = modifier,
-                    columnNames = columns,
-                    data = gridData,
-                    reloadData = reloadData
-                )
-            }
+
+            Un7KCMPDataGrid(modifier, data)
+
         }
     }
 
@@ -159,13 +146,18 @@ fun DataGridWithViewModel(
             )
 
             if(isVisible){
-
+/*
                 UnChilComposeDataGrid(
                     modifier = modifier,
                     columnNames = columnNames.value,
                     data = data.value,
                     reloadData = reloadData
                 )
+
+ */
+
+                Un7KCMPDataGrid(modifier, Pair(columnNames.value, data.value).toMap())
+
             }
 
         }

@@ -72,22 +72,16 @@ fun Pair< Map<String,MutableState<Boolean>>, MutableMap<String,List<Any?>> >.toS
     return Pair(selectedColumnNames, selectedData)
 }
 
-fun Pair< Map<String,MutableState<Boolean>>, Map<String,List<Any?>> >.toSelectedColumnsData():Pair<List<String>, List<List<Any?>>>{
 
-    val selectedColumnNames = this.first.filterValues { it.value }.keys.toList()
-    val rowCount = this.second.values.firstOrNull()?.size ?: 0
-    if (rowCount == 0) {
-        return Pair(selectedColumnNames, emptyList())
-    }
-    val selectedData = (0 until rowCount).map { rowIndex ->
-        selectedColumnNames.map { columnName ->
-            this.second[columnName]?.getOrNull(rowIndex)
+fun Map<String,List<Any?>>.toGridList():List<List<Any?>>{
+    val rowCount = this.values.firstOrNull()?.size ?: 0
+    val data = (0 until rowCount).map { rowIndex ->
+        this.keys.toList().map { columnName ->
+            this[columnName]?.getOrNull(rowIndex)
         }
     }
-
-    return Pair(selectedColumnNames, selectedData)
+    return data
 }
-
 
 
 

@@ -460,7 +460,7 @@ fun HeaderRow(
     onUpdateColumnsOrder:(Int, Int)->Unit,
     onFilter:(String, String, String) -> Unit,
     onColumnSort:(Int, Int) -> Unit,
-    columnDataSortFlag:MutableState<MutableList<Int>>,
+    columnDataSortFlag: MutableState<MutableList<Int>>,
 
     ){
 

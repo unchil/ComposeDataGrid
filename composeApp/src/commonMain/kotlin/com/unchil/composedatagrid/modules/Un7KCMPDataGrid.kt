@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerDefaults
@@ -23,58 +22,87 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.Modifier.Companion.then
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.unchil.composedatagrid.theme.AppTheme
+import com.unchil.composedatagrid.viewmodel.Un7KCMPDataGridViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
-import kotlin.String
-import kotlin.apply
-import kotlin.comparisons.compareBy
-import kotlin.text.startsWith
 
-/*
 @Composable
-fun UnChilComposeDataGrid(
+fun Un7KCMPDataGrid(
     modifier:Modifier = Modifier,
-    columnNames:List<String>,
-    data:List<List<Any?>>,
-    reloadData :()->Unit
+    data:Map<String, List<Any?>>
 ){
+    val viewModel = remember { Un7KCMPDataGridViewModel(data) }
 
-    var presentData by  remember{ mutableStateOf(Pair(columnNames, data).toMap()) }
-    var selectedColumns =  remember {presentData.keys.associateWith { mutableStateOf(true) } }
+    val _columnWeights = viewModel.columnWeights.collectAsState()
+    val columnWeights  = remember { mutableStateOf(_columnWeights.value ) }
+    LaunchedEffect(_columnWeights.value){
+        columnWeights.value = _columnWeights.value
+    }
 
-    val dataColumnOrderApplied = remember { mutableStateOf(data)}
-    val dataFilterApplied = remember { mutableStateOf(data)}
-    val mutableData = remember { mutableStateOf(data)}
-    val isFilteringData = remember { mutableStateOf(false)}
+    val _columnDataSortFlag = viewModel.columnDataSortFlag.collectAsState()
+    val columnDataSortFlag  = remember { mutableStateOf(_columnDataSortFlag.value.toMutableList()) }
+    LaunchedEffect(_columnDataSortFlag.value){
+        columnDataSortFlag.value = _columnDataSortFlag.value.toMutableList()
+    }
 
-    val mutableColumnNames = remember { mutableStateOf(columnNames)}
+    val _pageSize = viewModel.pageSize.collectAsState()
+    val pageSize  = remember { mutableStateOf(_pageSize.value ) }
+    LaunchedEffect(_pageSize.value){
+        pageSize.value = _pageSize.value
+    }
+
+    val _lastPageIndex = viewModel.lastPageIndex.collectAsState()
+    val lastPageIndex  = remember { mutableStateOf(_lastPageIndex.value ) }
+    LaunchedEffect(_lastPageIndex.value){
+        lastPageIndex.value = _lastPageIndex.value
+    }
+
+    val _columnNames = viewModel.columnNames.collectAsState()
+    val columnNames  = remember { mutableStateOf(_columnNames.value ) }
+    LaunchedEffect(_columnNames.value){
+        columnNames.value = _columnNames.value
+    }
+
+    val _dataRows = viewModel.dataRows.collectAsState()
+    val dataRows  = remember { mutableStateOf(_dataRows.value ) }
+    LaunchedEffect(_dataRows.value){
+        dataRows.value = _dataRows.value
+    }
+
+    val _selectedColumns = viewModel.selectedColumns.collectAsState()
+    val selectedColumns  = remember { mutableStateOf(_selectedColumns.value ) }
+    LaunchedEffect(_selectedColumns.value){
+        selectedColumns.value = _selectedColumns.value
+    }
+
+    val _selectPageSizeIndex = viewModel.selectPageSizeIndex.collectAsState()
+    val selectPageSizeIndex = remember { mutableStateOf(_selectPageSizeIndex.value ) }
+    LaunchedEffect(_selectPageSizeIndex.value){
+        selectPageSizeIndex.value = _selectPageSizeIndex.value
+    }
+
+
+    val coroutineScope = rememberCoroutineScope()
+
 
     val enableDarkMode = remember { mutableStateOf(false) }
     val isVisibleRowNum by remember { mutableStateOf(true) }
-
-    val selectPageSizeList = remember{ listOf("10", "50", "100", "500", "1000", "All") }
-    val selectPageSizeIndex = remember{ mutableStateOf(1) }
-    val pageSize = remember{mutableStateOf(selectPageSizeList.get(selectPageSizeIndex.value).toInt())}
-    val lastPageIndex =  remember{mutableStateOf(getLastPageIndex(mutableData.value.size, pageSize.value))}
-
     val isExpandGridControlMenu = rememberSaveable {mutableStateOf(true) }
     val isExpandPageNavControlMenu = rememberSaveable {mutableStateOf(true) }
-
-    val pagerState = rememberPagerState( pageCount = { lastPageIndex.value+1 })
 
     val borderStrokeBlack = remember {BorderStroke(width = 1.dp, color = Color.Black)}
     val borderStrokeRed = remember {BorderStroke(width = 1.dp, color = Color.Red)}
@@ -97,20 +125,6 @@ fun UnChilComposeDataGrid(
     val widthRowNumColumn = remember{ 60.dp}
     val widthDividerThickness = remember{ 6.dp}
 
-
-
-    val columnWeights = remember {
-        mutableStateOf(List(mutableColumnNames.value.size) { 1f / mutableColumnNames.value.size  } )
-    }
-    val columnDataSortFlag = remember {
-        mutableStateOf(MutableList(mutableColumnNames.value.size) { 0  } )
-    }
-    val onFilterResultCnt = remember {  mutableStateOf(0)}
-
-
-
-
-    val coroutineScope = rememberCoroutineScope()
     //--------------------
     // SnackBar Setting
     //--------------------
@@ -125,18 +139,18 @@ fun UnChilComposeDataGrid(
             //----------
             val message:String = when (channelData.channelType) {
                 SnackBarChannelType.SEARCH_RESULT -> {
-                    if (onFilterResultCnt.value == 0) {
+                    if (viewModel.onFilterResultCnt.value == 0) {
                         "No data was found."
                     } else {
-                        "${onFilterResultCnt.value} data items were found."
+                        "${viewModel.onFilterResultCnt.value} data items were found."
                     }
                 }
                 SnackBarChannelType.CHANGE_PAGE_SIZE -> {
-                    "${pageSize.value} data items are displayed on one page."
+                    "${viewModel.pageSize.value} data items are displayed on one page."
                 }
 
                 SnackBarChannelType.RELOAD -> {
-                    "${data.size} ${channelData.message}"
+                    "${data.values.firstOrNull()?.size ?:0 } ${channelData.message}"
                 }
                 else -> {
                     channelData.message
@@ -168,8 +182,11 @@ fun UnChilComposeDataGrid(
     }
     //----------
 
-    val onPageNavHandler:(PageNav)->Unit = {
-        when(it){
+
+    val pagerState = rememberPagerState( pageCount = { lastPageIndex.value+1 })
+
+    val onPageNavHandler:(PageNav)->Unit = { pageNav ->
+        when(pageNav){
             PageNav.Prev -> {
                 coroutineScope.launch {
                     pagerState.animateScrollToPage(pagerState.currentPage-1)
@@ -193,253 +210,56 @@ fun UnChilComposeDataGrid(
         }
     }
 
-
-
-    val onUpdateColumns:()->Unit = {
-        Pair(selectedColumns, presentData).toSelectedColumnsData().let { result ->
-            mutableColumnNames.value = result.first
-            mutableData.value = result.second
-            dataColumnOrderApplied.value = result.second
-            isFilteringData.value = false
-            dataFilterApplied.value = result.second
-            columnWeights.value = List(mutableColumnNames.value.size) { 1f / mutableColumnNames.value.size }
-        }
-    }
-
     val onUpdateColumnsOrder:(Int, Int)->Unit = { beforeIndex, targetIndex ->
-        // 변경된 리스트로 상태 변수를 업데이트하여 Recomposition을 트리거합니다.
-        val newColumnOrder = mutableColumnNames.value.toMutableList().apply {
-            add(targetIndex, removeAt(beforeIndex))
-        }
-        mutableColumnNames.value = newColumnOrder
-
-        val newData = mutableData.value.map { row ->
-            row.toMutableList().apply {
-                add(targetIndex, removeAt(beforeIndex))
-            }
-        }
-        mutableData.value = newData
-
-        val newDataColumnOrderApplied = dataColumnOrderApplied.value.map { row ->
-            row.toMutableList().apply {
-                add(targetIndex, removeAt(beforeIndex))
-            }
-        }
-        dataColumnOrderApplied.value = newDataColumnOrderApplied
-
-        val newDataFilterApplied = dataFilterApplied.value.map { row ->
-            row.toMutableList().apply {
-                add(targetIndex, removeAt(beforeIndex))
-            }
-        }
-        dataFilterApplied.value = newDataFilterApplied
-
-        val newWeights = columnWeights.value.toMutableList().apply {
-            add(targetIndex, removeAt(beforeIndex))
-        }
-        columnWeights.value = newWeights
-
-        val beforeSortType = columnDataSortFlag.value[beforeIndex]
-        val newSortFlag =  MutableList(columnDataSortFlag.value.size) { 0 }.apply {
-            this[targetIndex] = beforeSortType
-        }
-        columnDataSortFlag.value = newSortFlag
-
+        viewModel.onEvent(Un7KCMPDataGridViewModel.Event.UpdateColumnsOrder(beforeIndex, targetIndex))
     }
 
-    val onChangePageSize:(Int)->Unit = {
-       val result = if(it == 0){
-           Pair(
-            //presentData.values.firstOrNull()?.size ?: 0 ,
-               mutableData.value.size,
-            selectPageSizeList.indexOf("All")
-           )
-        }else{
-           Pair(
-            it,
-            selectPageSizeList.indexOf(it.toString())
-           )
-        }
-
-        pageSize.value = result.first
-        selectPageSizeIndex.value = result.second
-        lastPageIndex.value = getLastPageIndex(mutableData.value.size, pageSize.value)
-        coroutineScope.launch {
-            pagerState.animateScrollToPage(0)
-        }
-
-        channel.trySend(snackBarChannelList.first { item ->
-            item.channelType == SnackBarChannelType.CHANGE_PAGE_SIZE
-        }.channel)
-    }
-
-    val onFilter:(columnName:String, searchText:String, operator:String) -> Unit = { columnName, searchText, operator ->
-
-        isFilteringData.value = true
-
-        val columnIndex = mutableColumnNames.value.indexOf(columnName)
-
-        val result = when(operator){
-            OperatorMenu.Operator.Contains.toString() -> {
-                mutableData.value.filter { list ->
-                    list[columnIndex].toString().contains(searchText)
-                }
+    val onFilter:(columnName:String, searchText:String, operator:String) -> Unit ={ columnName, searchText, operator ->
+        viewModel.onEvent(Un7KCMPDataGridViewModel.Event.Filter(columnName, searchText, operator){
+            coroutineScope.launch {
+                pagerState.animateScrollToPage(0)
             }
-            OperatorMenu.Operator.DoseNotContains.toString() -> {
-                mutableData.value.filter { list ->
-                    list[columnIndex].toString().contains(searchText).not()
-                }
-            }
-            OperatorMenu.Operator.Equals.toString() -> {
-                mutableData.value.filter { list ->
-                    list[columnIndex].toString().equals(searchText)
-                }
-            }
-            OperatorMenu.Operator.DoseNotEquals.toString() -> {
-                mutableData.value.filter { list ->
-                    list[columnIndex].toString().equals(searchText).not()
-                }
-            }
-            OperatorMenu.Operator.BeginsWith.toString() -> {
-                mutableData.value.filter { list ->
-                    list[columnIndex].toString().startsWith(searchText)
-                }
-            }
-            OperatorMenu.Operator.EndsWith.toString() -> {
-                mutableData.value.filter { list ->
-                    list[columnIndex].toString().endsWith(searchText)
-                }
-            }
-            OperatorMenu.Operator.Blank.toString() -> {
-                mutableData.value.filter { list ->
-                    list[columnIndex].toString().isBlank()
-                }
-            }
-            OperatorMenu.Operator.NotBlank.toString() -> {
-                mutableData.value.filter { list ->
-                    list[columnIndex].toString().isNotBlank()
-                }
-            }
-            else -> {
-                mutableData.value
-            }
-
-        }
-
-        onFilterResultCnt.value = result.size
-        mutableData.value = result.ifEmpty {
-            mutableData.value
-        }
-
-        dataFilterApplied.value =  mutableData.value
-
-        lastPageIndex.value = getLastPageIndex(mutableData.value.size, pageSize.value)
-
-        coroutineScope.launch {
-            pagerState.animateScrollToPage(0)
-        }
-
-        channel.trySend(snackBarChannelList.first { item ->
-            item.channelType == SnackBarChannelType.SEARCH_RESULT
-        }.channel)
-
+            channel.trySend(snackBarChannelList.first { item ->
+                item.channelType == SnackBarChannelType.SEARCH_RESULT
+            }.channel)
+        })
     }
 
     val onColumnSort:( Int, Int) -> Unit = { columnIndex, sortType ->
-
-        val newSortFlag =  MutableList(columnDataSortFlag.value.size) { 0 }.apply {
-            this[columnIndex] = sortType
-        }
-
-        columnDataSortFlag.value = newSortFlag
-
-        val columnDataType = dataColumnOrderApplied.value.first { firstRow ->
-            firstRow.elementAt(columnIndex) != null
-        }[columnIndex]?.let {  it::class.simpleName.toString() } ?: "UNKNOWN"
-
-        // String    "\u0000":NullAtBeginning (ASCII 코드 0),   "":NullAtEnd
-
-        when(sortType){
-            1 -> {
-                val comparator  = when(columnDataType) {
-                    "String" -> compareBy { it.getOrNull(columnIndex) as String }
-                    "Double" -> compareBy { it.getOrNull(columnIndex) as Double }
-                    "Float" -> compareBy { it.getOrNull(columnIndex) as Float }
-                    "Int" -> compareBy { it.getOrNull(columnIndex) as Int }
-                    "Long" -> compareBy { it.getOrNull(columnIndex) as Long }
-                    else ->  compareBy<List<Any?>> { it[columnIndex] as String }
-                }
-                mutableData.value = if(isFilteringData.value) {
-                    dataFilterApplied.value.sortedWith(comparator)
-                } else {
-                    dataColumnOrderApplied.value.sortedWith(comparator)
-                }
-
-            }
-            -1 -> {
-                val comparator  = when(columnDataType) {
-                    "String" -> compareByDescending { it.getOrNull(columnIndex) as String }
-                    "Double" -> compareByDescending { it.getOrNull(columnIndex) as Double }
-                    "Float" -> compareByDescending { it.getOrNull(columnIndex) as Float }
-                    "Int" -> compareByDescending { it.getOrNull(columnIndex) as Int }
-                    "Long" -> compareByDescending { it.getOrNull(columnIndex) as Long }
-                    else ->  compareByDescending<List<Any?>>  { it[columnIndex] as String }
-                }
-
-                mutableData.value = if(isFilteringData.value) {
-                    dataFilterApplied.value.sortedWith(comparator)
-                } else {
-                    dataColumnOrderApplied.value.sortedWith(comparator)
-                }
-
-            }
-            0 -> {
-                mutableData.value = if(isFilteringData.value) {
-                    dataFilterApplied.value
-                } else {
-                    dataColumnOrderApplied.value
-                }
-            }
-            else ->  {
-                mutableData.value = if(isFilteringData.value) {
-                    dataFilterApplied.value
-                } else {
-                    dataColumnOrderApplied.value
-                }
-            }
-        }
+        viewModel.onEvent(Un7KCMPDataGridViewModel.Event.ColumnSort(columnIndex, sortType ))
     }
 
-    var currentLazyListState = LazyListState()
+    val onUpdateColumns:()->Unit = {
+        viewModel.onEvent(Un7KCMPDataGridViewModel.Event.UpdateColumns)
+    }
+
+    val onChangePageSize:(Int)->Unit = { pageSize ->
+        viewModel.onEvent(Un7KCMPDataGridViewModel.Event.ChangePageSize(pageSize){
+            coroutineScope.launch {
+                pagerState.animateScrollToPage(0)
+            }
+            channel.trySend(snackBarChannelList.first { item ->
+                item.channelType == SnackBarChannelType.CHANGE_PAGE_SIZE
+            }.channel)
+        })
+    }
 
     val onRefresh:()-> Unit = {
-        isFilteringData.value = false
-        presentData = Pair(columnNames, data).toMap()
-        selectedColumns =   presentData.keys.associateWith { mutableStateOf(true) }
-        mutableData.value =   data
-        dataColumnOrderApplied.value = data
-        mutableColumnNames.value = columnNames
-        columnWeights.value = List(mutableColumnNames.value.size) { 1f / mutableColumnNames.value.size  }
-        columnDataSortFlag.value = MutableList(mutableColumnNames.value.size) { 0  }
-        lastPageIndex.value = getLastPageIndex(mutableData.value.size, pageSize.value)
-
-        coroutineScope.launch {
-            pagerState.animateScrollToPage(0)
-        }
-
-        coroutineScope.launch {
-            currentLazyListState.animateScrollToItem(0)
-        }
-
-        channel.trySend(snackBarChannelList.first { item ->
-            item.channelType == SnackBarChannelType.RELOAD
-        }.channel)
+        viewModel.onEvent(Un7KCMPDataGridViewModel.Event.Refresh{
+                coroutineScope.launch {
+                    pagerState.animateScrollToPage(0)
+                }
+                channel.trySend(snackBarChannelList.first { item ->
+                    item.channelType == SnackBarChannelType.RELOAD
+                }.channel)
+            }
+        )
     }
+
 
     AppTheme(enableDarkMode = enableDarkMode.value) {
 
-        Box(
-            then(modifier)
+        Box( then(modifier)
                 .fillMaxSize()
                 .border(borderStrokeBlack, shape = borderShapeOut),
             contentAlignment = Alignment.Center,
@@ -461,30 +281,30 @@ fun UnChilComposeDataGrid(
                         pageIndex,
                         pageSize.value,
                         pageIndex == lastPageIndex.value,
-                        mutableData.value.size
+                        dataRows.value.size
                     ),
-                    mutableColumnNames.value,
-                    mutableData.value
+                    columnNames.value,
+                    dataRows.value.toList()
                 ).let { pagingData ->
 
                     BoxWithConstraints(
                         modifier = Modifier
                             .fillMaxSize()
-                                .padding(paddingBoxInHorizontalPager)
+                            .padding(paddingBoxInHorizontalPager)
                             .border(borderStrokeBlue, shape = borderShapeIn),
                         contentAlignment = Alignment.Center
                     ) {
                         val maxWidthInDp = this.maxWidth
                         val lazyListState = rememberLazyListState(initialFirstVisibleItemIndex = 0)
-                        currentLazyListState = lazyListState
+                      //  currentLazyListState = lazyListState
                         val isVisibleColumnHeader by remember {
                             derivedStateOf {
                                 lazyListState.firstVisibleItemIndex < 1
                             }
                         }
 
-                        val onListNavHandler:(ListNav)->Unit = { it ->
-                            when(it){
+                        val onListNavHandler:(ListNav)->Unit = { listNav ->
+                            when(listNav){
                                 ListNav.Top -> {
                                     coroutineScope.launch {
                                         lazyListState.animateScrollToItem(0)
@@ -549,8 +369,8 @@ fun UnChilComposeDataGrid(
                             MenuGridControl(
                                 isExpandGridControlMenu,
                                 lazyListState,
-                                presentData.keys.toList(),
-                                selectedColumns,
+                                viewModel.data.keys.toList(),
+                                selectedColumns.value,
                                 onUpdateColumns,
                                 onListNavHandler,
                             )
@@ -584,7 +404,7 @@ fun UnChilComposeDataGrid(
                     isExpandPageNavControlMenu,
                     enableDarkMode,
                     onChangePageSize,
-                    selectPageSizeList,
+                    viewModel.selectPageSizeList,
                     selectPageSizeIndex.value,
                     onRefresh,
                     onPageNavHandler,
@@ -593,10 +413,5 @@ fun UnChilComposeDataGrid(
             }//Box  MenuGridSetting
 
         }//Box
-
-
-    }
+    }//AppTheme
 }
-
- */
-

@@ -1,74 +1,123 @@
 package com.unchil.composedatagrid.viewmodel
 
-import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.pager.PagerState
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.unchil.composedatagrid.modules.OperatorMenu
-import com.unchil.composedatagrid.modules.PageNav
-import com.unchil.composedatagrid.modules.SnackBarChannelType
 import com.unchil.composedatagrid.modules.getLastPageIndex
-import com.unchil.composedatagrid.modules.snackBarChannelList
+import com.unchil.composedatagrid.modules.toGridList
 import com.unchil.composedatagrid.modules.toSelectedColumnsData
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.MutableStateFlow
 
 class Un7KCMPDataGridViewModel(val data: Map<String,List<Any?>>): ViewModel() {
 
-    val columnNames:MutableState<List<String>>
+    val columnNames:MutableStateFlow<List<String>>
+        = MutableStateFlow(emptyList())
+
+    val dataRows:MutableStateFlow<List<List<Any?>>>
+        = MutableStateFlow(emptyList())
+
+    val dataColumnOrderApplied:MutableState<List<List<Any?>>>
         = mutableStateOf(emptyList())
 
-    val dataRows:  MutableState<List<List<Any?>>>
-            = mutableStateOf(emptyList())
+    val dataFilterApplied:MutableState<List<List<Any?>>>
+        = mutableStateOf(emptyList())
 
-    init{
-        columnNames.value = data.keys.toList()
-        dataRows.value = data.values.toList()
-    }
+    val pageSize:MutableStateFlow<Int>
+        = MutableStateFlow(50)
 
-    val isFilteringData: MutableState<Boolean>
+    val lastPageIndex:MutableStateFlow<Int>
+        = MutableStateFlow(1)
+
+    val columnWeights: MutableStateFlow<List<Float>>
+       = MutableStateFlow(emptyList())
+
+    val columnDataSortFlag: MutableStateFlow<List<Int>>
+            = MutableStateFlow(emptyList())
+
+
+    val isFilteringData:MutableState<Boolean>
         = mutableStateOf(false)
 
-    val onFilterResultCnt: MutableState<Int>
-        =  mutableStateOf(0)
+    val onFilterResultCnt:MutableState<Int>
+        = mutableStateOf(0)
 
-  //  var selectedColumns: Map<String,MutableState<Boolean>>  = mapOf()
+    val selectedColumns: MutableStateFlow<Map<String, MutableState<Boolean>>>
+        = MutableStateFlow(mapOf())
 
-    val dataColumnOrderApplied: MutableState<List<List<Any?>>>
-            = mutableStateOf(dataRows.value)
-
-    val dataFilterApplied: MutableState<List<List<Any?>>>
-            = mutableStateOf(dataRows.value)
 
     val selectPageSizeList = listOf("10", "50", "100", "500", "1000", "All")
 
-   // val selectPageSizeIndex =  mutableStateOf(1)
-
-    val lastPageIndex =  mutableStateOf(1)
-
-    val pageSize: MutableState<Int> = mutableStateOf(50)
-
-    val columnWeights: MutableState<List<Float>> =
-        mutableStateOf(List(columnNames.value.size) { 1f / columnNames.value.size  } )
-
-    val columnDataSortFlag: MutableState<MutableList<Int>> =
-        mutableStateOf(MutableList(columnNames.value.size) {0 } )
+    val selectPageSizeIndex:MutableStateFlow<Int>
+        =  MutableStateFlow(1)
 
 
-    val onUpdateColumns:( Map<String, MutableState<Boolean>>  )->Unit = { selectedColumns ->
-        Pair(selectedColumns, data).toSelectedColumnsData().let { result ->
-            columnNames.value = result.first
-            dataRows.value = result.second
-            dataColumnOrderApplied.value = result.second
-            isFilteringData.value = false
-            dataFilterApplied.value = result.second
-            columnWeights.value = List(selectedColumns.size) { 1f / selectedColumns.size  }
+
+
+
+    init{
+        columnNames.value = data.keys.toList()
+        dataRows.value = data.toGridList()
+        dataColumnOrderApplied.value = dataRows.value
+        dataFilterApplied.value = dataRows.value
+        columnWeights.value = List(columnNames.value.size) { 1f / columnNames.value.size }
+        columnDataSortFlag.value = MutableList(columnNames.value.size) {0}
+        selectedColumns.value = data.keys.associateWith { mutableStateOf(true) }
+        pageSize.value = selectPageSizeList.get(selectPageSizeIndex.value).toInt()
+        lastPageIndex.value = getLastPageIndex(dataRows.value.size, pageSize.value)
+    }
+
+    fun onEvent(event: Event) {
+        when (event) {
+            is Event.Refresh -> {
+                onRefresh(
+                    event.closerFunc
+                )
+            }
+            is Event.UpdateColumns -> {
+                onUpdateColumns()
+            }
+            is Event.UpdateColumnsOrder -> {
+                onUpdateColumnsOrder(
+                    event.beforeIndex,
+                    event.targetIndex
+                )
+            }
+            is Event.ChangePageSize -> {
+                onChangePageSize(
+                    event.index,
+                    event.closerFunc
+                )
+            }
+            is Event.ColumnSort -> {
+                onColumnSort(
+                    event.columnIndex,
+                    event.sortType
+                )
+            }
+            is Event.Filter -> {
+                onFilter(
+                    event.columnName,
+                    event.searchText,
+                    event.operator,
+                    event.closerFunc
+                )
+            }
+
         }
     }
 
+    val onUpdateColumns:( )->Unit = {
+        Pair(selectedColumns.value, data.toMutableMap()).toSelectedColumnsData().let { result ->
+            columnNames.value = result.first
+            dataRows.value = result.second
+            dataColumnOrderApplied.value = result.second
+            dataFilterApplied.value = result.second
+            isFilteringData.value = false
 
+            columnWeights.value = List(columnNames.value.size) { 1f / columnNames.value.size }
+        }
+    }
 
     val onUpdateColumnsOrder:(Int, Int)->Unit = { beforeIndex, targetIndex ->
         // 변경된 리스트로 상태 변수를 업데이트하여 Recomposition을 트리거합니다.
@@ -111,7 +160,7 @@ class Un7KCMPDataGridViewModel(val data: Map<String,List<Any?>>): ViewModel() {
 
     }
 
-    val onChangePageSize:(Int, PagerState, Channel<Int>)->Unit = { index, pagerState, channel ->
+    val onChangePageSize:(Int, ()->Unit)->Unit = { index, closerFunc ->
         val result = if(index == 0){
             Pair(
                 //presentData.values.firstOrNull()?.size ?: 0 ,
@@ -125,18 +174,16 @@ class Un7KCMPDataGridViewModel(val data: Map<String,List<Any?>>): ViewModel() {
             )
         }
         pageSize.value = result.first
-     //   selectPageSizeIndex.value = result.second
+        selectPageSizeIndex.value = result.second
         lastPageIndex.value = getLastPageIndex(dataRows.value.size, pageSize.value)
-        viewModelScope.launch {
-            pagerState.animateScrollToPage(0)
-        }
-        channel.trySend(snackBarChannelList.first { item ->
-            item.channelType == SnackBarChannelType.CHANGE_PAGE_SIZE
-        }.channel)
+
+        closerFunc()
+
+
     }
 
-    val onFilter:(columnName:String, searchText:String, operator:String, PagerState,Channel<Int> ) -> Unit
-            = { columnName, searchText, operator, pagerState, channel ->
+    val onFilter:(columnName:String, searchText:String, operator:String, ()->Unit ) -> Unit
+            = { columnName, searchText, operator, closerFunc ->
 
         isFilteringData.value = true
 
@@ -198,14 +245,7 @@ class Un7KCMPDataGridViewModel(val data: Map<String,List<Any?>>): ViewModel() {
 
         lastPageIndex.value = getLastPageIndex(dataRows.value.size, pageSize.value)
 
-        viewModelScope.launch {
-            pagerState.animateScrollToPage(0)
-        }
-
-        channel.trySend(snackBarChannelList.first { item ->
-            item.channelType == SnackBarChannelType.SEARCH_RESULT
-        }.channel)
-
+        closerFunc()
     }
 
     val onColumnSort:( Int, Int) -> Unit = { columnIndex, sortType ->
@@ -273,109 +313,27 @@ class Un7KCMPDataGridViewModel(val data: Map<String,List<Any?>>): ViewModel() {
         }
     }
 
-    val onRefresh:( PagerState, Channel<Int>, LazyListState)-> Unit = {  pagerState, channel, lazyListState ->
+    val onRefresh:(()->Unit)-> Unit = {  closerFunc ->
         isFilteringData.value = false
-    //    selectedColumns =   data.keys.associateWith { mutableStateOf(true) }
-        dataRows.value =   data.values.toList()
-        dataColumnOrderApplied.value = data.values.toList()
+        selectedColumns.value =   data.keys.associateWith { mutableStateOf(true) }
+        dataRows.value = data.toGridList()
+        dataColumnOrderApplied.value =  dataRows.value
         columnNames.value = data.keys.toList()
         columnWeights.value = List(columnNames.value.size) { 1f / columnNames.value.size  }
         columnDataSortFlag.value = MutableList(columnNames.value.size) { 0  }
         lastPageIndex.value = getLastPageIndex(dataRows.value.size, pageSize.value)
-
-        viewModelScope.launch {
-            pagerState.animateScrollToPage(0)
-        }
-        viewModelScope.launch {
-            lazyListState.animateScrollToItem(0)
-        }
-        channel.trySend(snackBarChannelList.first { item ->
-            item.channelType == SnackBarChannelType.RELOAD
-        }.channel)
+        pageSize.value = selectPageSizeList.get(selectPageSizeIndex.value).toInt()
+        closerFunc()
     }
 
-    val onPageNavHandler:(PageNav, PagerState)->Unit = { pageNav, pagerState ->
-        when(pageNav){
-            PageNav.Prev -> {
-                viewModelScope.launch {
-                    pagerState.animateScrollToPage(pagerState.currentPage-1)
-                }
-            }
-            PageNav.Next -> {
-                viewModelScope.launch {
-                    pagerState.animateScrollToPage(pagerState.currentPage+1)
-                }
-            }
-            PageNav.First -> {
-                viewModelScope.launch {
-                    pagerState.animateScrollToPage(0)
-                }
-            }
-            PageNav.Last -> {
-                viewModelScope.launch {
-                    pagerState.animateScrollToPage(pagerState.pageCount-1)
-                }
-            }
-        }
-    }
-
-
-    fun onEvent(event: Event) {
-        when (event) {
-            is Event.Refresh -> {
-                onRefresh(
-                    event.pagerState,
-                    event.channel,
-                    event.lazyListState
-                )
-            }
-            is Event.UpdateColumns -> {
-                onUpdateColumns(event.selectedColumns)
-            }
-            is Event.UpdateColumnsOrder -> {
-                onUpdateColumnsOrder(
-                    event.beforeIndex,
-                    event.targetIndex
-                )
-            }
-            is Event.ChangePageSize -> {
-                onChangePageSize(
-                    event.index,
-                    event.pagerState,
-                    event.channel
-                )
-            }
-            is Event.ColumnSort -> {
-                onColumnSort(
-                    event.columnIndex,
-                    event.sortType
-                )
-            }
-            is Event.Filter -> {
-                onFilter(
-                    event.columnName,
-                    event.searchText,
-                    event.operator,
-                    event.pagerState,
-                    event.channel
-                )
-            }
-
-        }
-    }
 
     sealed class Event {
-       // object Refresh : Event()
+
         data class Refresh(
-            val pagerState :PagerState,
-            val channel:Channel<Int>,
-            val lazyListState:LazyListState
+            val closerFunc:()->Unit
         ): Event()
 
-
-        data class UpdateColumns(
-            val selectedColumns:Map<String, MutableState<Boolean>>
-        ):Event()
+        object UpdateColumns:Event()
 
         data class  UpdateColumnsOrder(
             val beforeIndex:Int,
@@ -385,16 +343,14 @@ class Un7KCMPDataGridViewModel(val data: Map<String,List<Any?>>): ViewModel() {
 
         data class ChangePageSize(
             val index:Int,
-            val pagerState:PagerState,
-            val channel:Channel<Int>
+            val closerFunc:()->Unit
         ):Event()
 
         data class Filter(
             val columnName:String,
             val searchText:String,
             val operator:String,
-            val pagerState:PagerState,
-            val channel:Channel<Int>
+            val closerFunc:()->Unit
         ):Event()
 
         data class ColumnSort(
