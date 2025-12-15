@@ -45,58 +45,18 @@ fun Un7KCMPDataGrid(
     modifier:Modifier = Modifier,
     data:Map<String, List<Any?>>
 ){
-    val viewModel = remember { Un7KCMPDataGridViewModel(data) }
-
-    val _columnWeights = viewModel.columnWeights.collectAsState()
-    val columnWeights  = remember { mutableStateOf(_columnWeights.value ) }
-    LaunchedEffect(_columnWeights.value){
-        columnWeights.value = _columnWeights.value
-    }
-
-    val _columnDataSortFlag = viewModel.columnDataSortFlag.collectAsState()
-    val columnDataSortFlag  = remember { mutableStateOf(_columnDataSortFlag.value.toMutableList()) }
-    LaunchedEffect(_columnDataSortFlag.value){
-        columnDataSortFlag.value = _columnDataSortFlag.value.toMutableList()
-    }
-
-    val _pageSize = viewModel.pageSize.collectAsState()
-    val pageSize  = remember { mutableStateOf(_pageSize.value ) }
-    LaunchedEffect(_pageSize.value){
-        pageSize.value = _pageSize.value
-    }
-
-    val _lastPageIndex = viewModel.lastPageIndex.collectAsState()
-    val lastPageIndex  = remember { mutableStateOf(_lastPageIndex.value ) }
-    LaunchedEffect(_lastPageIndex.value){
-        lastPageIndex.value = _lastPageIndex.value
-    }
-
-    val _columnNames = viewModel.columnNames.collectAsState()
-    val columnNames  = remember { mutableStateOf(_columnNames.value ) }
-    LaunchedEffect(_columnNames.value){
-        columnNames.value = _columnNames.value
-    }
-
-    val _dataRows = viewModel.dataRows.collectAsState()
-    val dataRows  = remember { mutableStateOf(_dataRows.value ) }
-    LaunchedEffect(_dataRows.value){
-        dataRows.value = _dataRows.value
-    }
-
-    val _selectedColumns = viewModel.selectedColumns.collectAsState()
-    val selectedColumns  = remember { mutableStateOf(_selectedColumns.value ) }
-    LaunchedEffect(_selectedColumns.value){
-        selectedColumns.value = _selectedColumns.value
-    }
-
-    val _selectPageSizeIndex = viewModel.selectPageSizeIndex.collectAsState()
-    val selectPageSizeIndex = remember { mutableStateOf(_selectPageSizeIndex.value ) }
-    LaunchedEffect(_selectPageSizeIndex.value){
-        selectPageSizeIndex.value = _selectPageSizeIndex.value
-    }
-
-
     val coroutineScope = rememberCoroutineScope()
+
+    val viewModel = remember(data) { Un7KCMPDataGridViewModel(data) }
+
+    val pageSize by viewModel.pageSize.collectAsState()
+    val lastPageIndex by viewModel.lastPageIndex.collectAsState()
+    val columnNames by viewModel.columnNames.collectAsState()
+    val dataRows by viewModel.dataRows.collectAsState()
+    val selectedColumns by viewModel.selectedColumns.collectAsState()
+    val selectPageSizeIndex by viewModel.selectPageSizeIndex.collectAsState()
+    val columnWeights by viewModel.columnWeights.collectAsState()
+    val columnDataSortFlag by viewModel.columnDataSortFlag.collectAsState()
 
 
     val enableDarkMode = remember { mutableStateOf(false) }
@@ -183,7 +143,7 @@ fun Un7KCMPDataGrid(
     //----------
 
 
-    val pagerState = rememberPagerState( pageCount = { lastPageIndex.value+1 })
+    val pagerState = rememberPagerState( pageCount = { lastPageIndex +1 })
 
     val onPageNavHandler:(PageNav)->Unit = { pageNav ->
         when(pageNav){
@@ -256,6 +216,10 @@ fun Un7KCMPDataGrid(
         )
     }
 
+    val onUpdateColumnWeight:(List<Float>)->Unit = { columnsWeight ->
+        viewModel.onEvent(Un7KCMPDataGridViewModel.Event.ColumnWeight(columnsWeight))
+    }
+
 
     AppTheme(enableDarkMode = enableDarkMode.value) {
 
@@ -276,15 +240,15 @@ fun Un7KCMPDataGrid(
             ) { pageIndex ->
 
                 makePagingData(
-                    topRowIndex(pageIndex, pageSize.value),
+                    topRowIndex(pageIndex, pageSize),
                     bottomRowIndex(
                         pageIndex,
-                        pageSize.value,
-                        pageIndex == lastPageIndex.value,
-                        dataRows.value.size
+                        pageSize,
+                        pageIndex == lastPageIndex,
+                        dataRows.size
                     ),
-                    columnNames.value,
-                    dataRows.value.toList()
+                    columnNames,
+                    dataRows.toList()
                 ).let { pagingData ->
 
                     BoxWithConstraints(
@@ -296,7 +260,6 @@ fun Un7KCMPDataGrid(
                     ) {
                         val maxWidthInDp = this.maxWidth
                         val lazyListState = rememberLazyListState(initialFirstVisibleItemIndex = 0)
-                      //  currentLazyListState = lazyListState
                         val isVisibleColumnHeader by remember {
                             derivedStateOf {
                                 lazyListState.firstVisibleItemIndex < 1
@@ -339,7 +302,8 @@ fun Un7KCMPDataGrid(
                                         onUpdateColumnsOrder,
                                         onFilter,
                                         onColumnSort,
-                                        columnDataSortFlag
+                                        columnDataSortFlag,
+                                        onUpdateColumnWeight
                                     )
                                 }//AnimatedVisibility
                             }//stickyHeader
@@ -351,7 +315,7 @@ fun Un7KCMPDataGrid(
                                     widthDividerThickness,
                                     widthRowNumColumn,
                                     pageIndex,
-                                    pageSize.value,
+                                    pageSize,
                                     dataIndex,
                                     pagingData,
                                     columnWeights,
@@ -370,7 +334,7 @@ fun Un7KCMPDataGrid(
                                 isExpandGridControlMenu,
                                 lazyListState,
                                 viewModel.data.keys.toList(),
-                                selectedColumns.value,
+                                selectedColumns,
                                 onUpdateColumns,
                                 onListNavHandler,
                             )
@@ -405,7 +369,7 @@ fun Un7KCMPDataGrid(
                     enableDarkMode,
                     onChangePageSize,
                     viewModel.selectPageSizeList,
-                    selectPageSizeIndex.value,
+                    selectPageSizeIndex,
                     onRefresh,
                     onPageNavHandler,
                     pagerState

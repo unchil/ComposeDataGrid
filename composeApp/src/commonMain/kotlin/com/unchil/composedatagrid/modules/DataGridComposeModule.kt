@@ -397,7 +397,7 @@ fun DataRow(
     pageSize:Int,
     dataIndex:Int,
     pagingData: MutableMap<String, List<Any?>>,
-    columnWeights:MutableState<List<Float>>,
+    columnWeights:List<Float>,
 ){
 
     val paddingDataRow = remember { PaddingValues(vertical = 1.dp) }
@@ -432,7 +432,7 @@ fun DataRow(
             Text(
                 text = (pagingData[columnName] as List<*>)[dataIndex].toString(),
                 modifier = Modifier.border(borderStrokeLightGray, shape = borderShapeIn)
-                    .width(dataColumnsWidth * columnWeights.value.getOrElse(keyIndex){0f}),
+                    .width(dataColumnsWidth * columnWeights.getOrElse(keyIndex){0f}),
                 textAlign = TextAlign.Center,
             )
 
@@ -456,11 +456,12 @@ fun HeaderRow(
     widthDividerThickness:Dp,
     widthRowNumColumn: Dp,
     columnNames:List<String>,
-    columnWeights:MutableState<List<Float>>,
+    columnWeights:List<Float>,
     onUpdateColumnsOrder:(Int, Int)->Unit,
     onFilter:(String, String, String) -> Unit,
     onColumnSort:(Int, Int) -> Unit,
-    columnDataSortFlag: MutableState<MutableList<Int>>,
+    columnDataSortFlag: List<Int>,
+    updateColumnWeight:(List<Float>)->Unit
 
     ){
 
@@ -518,7 +519,7 @@ fun HeaderRow(
                 var accumulatedWidth = 0f
                 val totalWidthPx =  (density * columnsAreaWidth.value)
                 // divider 의 갯수는 column 갯수 - 1
-                columnWeights.value.dropLast(1).forEach { weight ->
+                columnWeights.dropLast(1).forEach { weight ->
                     accumulatedWidth += totalWidthPx * weight
                     currentDividerPositions.add((accumulatedWidth / density).dp)
                 }
@@ -527,10 +528,10 @@ fun HeaderRow(
 
                 var startOffsetPx = 0f
                 for (i in 0 until index) {
-                    startOffsetPx += totalWidthPx * columnWeights.value[i]
+                    startOffsetPx += totalWidthPx * columnWeights[i]
                 }
 
-                val currentCellWidthPx = totalWidthPx * columnWeights.value[index]
+                val currentCellWidthPx = totalWidthPx * columnWeights[index]
                 val dropPositionPx = startOffsetPx + offset.value.x + (currentCellWidthPx / 2)
                 val targetIndex = findIndexFromDividerPositions(
                     (dropPositionPx / density).dp,
@@ -544,7 +545,7 @@ fun HeaderRow(
             Row(
                 modifier = Modifier
                     .height(heightColumnHeader)
-                    .width(columnsAreaWidth * columnWeights.value.getOrElse( index ) { 0f })
+                    .width(columnsAreaWidth * columnWeights.getOrElse( index ) { 0f })
                     .border(
                         borderStrokeLightGray,
                         shape = borderShapeIn)
@@ -566,7 +567,7 @@ fun HeaderRow(
 
                 IconButton(
                     onClick = {
-                        val iconFlag = when(columnDataSortFlag.value[index]){
+                        val iconFlag = when(columnDataSortFlag[index]){
                             0 -> 1
                             1 -> -1
                             -1 -> 0
@@ -576,7 +577,7 @@ fun HeaderRow(
                     }
                 ){
                     Icon(
-                        imageVector = when(columnDataSortFlag.value[index]){
+                        imageVector = when(columnDataSortFlag[index]){
                             -1 ->  Icons.Default.ArrowDropDown
                             1 ->  Icons.Default.ArrowDropUp
                             0 -> Icons.Default.UnfoldMore
@@ -611,8 +612,8 @@ fun HeaderRow(
                 val draggableState = rememberDraggableState { delta ->
                     // 픽셀(px) 단위의 delta를 전체 너비에 대한 가중치 변화량으로 변환합니다.
                     val deltaWeight = delta / (maxWidthInDp.value * density)
-                    val currentWeight = columnWeights.value[index]
-                    val nextWeight = columnWeights.value[index + 1]
+                    val currentWeight = columnWeights[index]
+                    val nextWeight = columnWeights[index + 1]
                     // 최소 너비를 5%로 설정 (0.05f)
                     val minWeight = 0.05f
                     // 가중치 변화량을 적용하되, 최소 너비 제약을 준수합니다.
@@ -624,6 +625,7 @@ fun HeaderRow(
                     val newNextWeight = (currentWeight + nextWeight) - newCurrentWeight
 
                     // --- 새로운 리스트로 상태를 업데이트! ---
+                    /*
                     columnWeights.value =
                         columnWeights.value.toMutableList()
                             .apply {
@@ -632,7 +634,18 @@ fun HeaderRow(
                                 this[index + 1] =
                                     newNextWeight
                             }
+                     */
                     // ------------------------------------
+
+                    updateColumnWeight(
+                        columnWeights.toMutableList()
+                        .apply {
+                            this[index] =
+                                newCurrentWeight
+                            this[index + 1] =
+                                newNextWeight
+                        }
+                    )
                 }
 
                 VerticalDivider(

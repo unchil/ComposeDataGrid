@@ -61,7 +61,7 @@ class Un7KCMPDataGridViewModel(val data: Map<String,List<Any?>>): ViewModel() {
         dataColumnOrderApplied.value = dataRows.value
         dataFilterApplied.value = dataRows.value
         columnWeights.value = List(columnNames.value.size) { 1f / columnNames.value.size }
-        columnDataSortFlag.value = MutableList(columnNames.value.size) {0}
+        columnDataSortFlag.value = List(columnNames.value.size) {0}
         selectedColumns.value = data.keys.associateWith { mutableStateOf(true) }
         pageSize.value = selectPageSizeList.get(selectPageSizeIndex.value).toInt()
         lastPageIndex.value = getLastPageIndex(dataRows.value.size, pageSize.value)
@@ -104,7 +104,14 @@ class Un7KCMPDataGridViewModel(val data: Map<String,List<Any?>>): ViewModel() {
                 )
             }
 
+           is Event.ColumnWeight -> {
+               onColumnWeight(event.columnWeight)
+           }
         }
+    }
+
+    val onColumnWeight:(List<Float>)->Unit = { it ->
+        columnWeights.value = it
     }
 
     val onUpdateColumns:( )->Unit = {
@@ -320,7 +327,7 @@ class Un7KCMPDataGridViewModel(val data: Map<String,List<Any?>>): ViewModel() {
         dataColumnOrderApplied.value =  dataRows.value
         columnNames.value = data.keys.toList()
         columnWeights.value = List(columnNames.value.size) { 1f / columnNames.value.size  }
-        columnDataSortFlag.value = MutableList(columnNames.value.size) { 0  }
+        columnDataSortFlag.value = List(columnNames.value.size) { 0  }
         lastPageIndex.value = getLastPageIndex(dataRows.value.size, pageSize.value)
         pageSize.value = selectPageSizeList.get(selectPageSizeIndex.value).toInt()
         closerFunc()
@@ -356,6 +363,10 @@ class Un7KCMPDataGridViewModel(val data: Map<String,List<Any?>>): ViewModel() {
         data class ColumnSort(
             val columnIndex:Int,
             val sortType:Int
+        ):Event()
+
+        data class ColumnWeight(
+            val columnWeight: List<Float>
         ):Event()
     }
 
