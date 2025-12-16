@@ -3,6 +3,7 @@ package com.unchil.composedatagrid.modules
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
@@ -114,7 +115,7 @@ fun MenuGridControl(
         verticalAlignment = Alignment.CenterVertically
     ) {
 
-        AnimatedVisibility( visible = isExpandGridControlMenu.value,) {
+        AnimatedVisibility(visible = isExpandGridControlMenu.value) {
             Row(verticalAlignment = Alignment.CenterVertically) {
 
                 IconButton(
@@ -237,7 +238,7 @@ fun MenuPageNavControl(
             )
         }
 
-        AnimatedVisibility( visible = isExpandPageNavControlMenu.value,) {
+        AnimatedVisibility(visible = isExpandPageNavControlMenu.value) {
 
             Row(
                 verticalAlignment = Alignment.CenterVertically
@@ -347,10 +348,9 @@ fun MenuSelectColumn(
         val borderShapeIn = remember{RoundedCornerShape(0.dp)}
 
         IconButton(
-            onClick = {expandMenu = !expandMenu },
-            modifier= Modifier
-                .clip(CircleShape)
-                ,
+            onClick = { expandMenu = !expandMenu },
+            modifier = Modifier
+                .clip(CircleShape),
         ) {
             SegmentedButtonDefaults.Icon(
                 active = expandMenu,
@@ -372,7 +372,6 @@ fun MenuSelectColumn(
             expanded = expandMenu,
             onDismissRequest = {
                 expandMenu = false
-                onUpdateColumns()
             },
             scrollState = scrollState,
             modifier = Modifier
@@ -390,6 +389,7 @@ fun MenuSelectColumn(
                             selectedColumns[columnName]?.let { it->
                                 it.value = !it.value
                             }
+                            onUpdateColumns()
                         }) {
                             SegmentedButtonDefaults.Icon(
                                 active = selectedColumns.getValue(columnName).value,
@@ -414,6 +414,7 @@ fun MenuSelectColumn(
                         selectedColumns[columnName]?.let { it->
                             it.value = !it.value
                         }
+                        onUpdateColumns()
                     }
                 )
             }
@@ -771,7 +772,7 @@ fun SearchMenu(
     ){
 
         IconButton( onClick = {  expanded = !expanded } ) {
-            Icon(Icons.AutoMirrored.Filled.ManageSearch, contentDescription = "Filter",)
+            Icon(Icons.AutoMirrored.Filled.ManageSearch, contentDescription = "Filter")
         }
 
         DropdownMenu(
@@ -787,7 +788,7 @@ fun SearchMenu(
 
             Column() {
 
-                Box( contentAlignment = Alignment.Center,){
+                Box(contentAlignment = Alignment.Center){
 
                     OutlinedTextField(
                         modifier = Modifier.padding(horizontal = 8.dp),
@@ -796,7 +797,7 @@ fun SearchMenu(
                         onValueChange = { operatorText.value = it },
                         label = { Text("Operator...")  },
                         trailingIcon = {
-                            IconButton( onClick = { expandedOperator = !expandedOperator}, )
+                            IconButton(onClick = { expandedOperator = !expandedOperator })
                             {
                                 Icon(if(expandedOperator) Icons.Default.ArrowDropUp else Icons.Default.ArrowDropDown,
                                     contentDescription = "Operator"
