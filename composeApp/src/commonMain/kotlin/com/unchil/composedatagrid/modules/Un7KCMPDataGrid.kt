@@ -8,19 +8,27 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ShapeDefaults
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -34,6 +42,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.Modifier.Companion.then
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.unchil.composedatagrid.theme.AppTheme
 import com.unchil.composedatagrid.viewmodel.Un7KCMPDataGridViewModel
@@ -62,8 +71,8 @@ fun Un7KCMPDataGrid(
 
     val enableDarkMode = remember { mutableStateOf(false) }
     val isVisibleRowNum = remember { mutableStateOf(true) }
-    val isExpandGridControlMenu = rememberSaveable {mutableStateOf(true) }
-    val isExpandPageNavControlMenu = rememberSaveable {mutableStateOf(true) }
+    val isExpandGridControlMenu = rememberSaveable {mutableStateOf(false) }
+    val isExpandPageNavControlMenu = rememberSaveable {mutableStateOf(false) }
 
     val borderStrokeBlack = remember {BorderStroke(width = 1.dp, color = Color.Black)}
     val borderStrokeRed = remember {BorderStroke(width = 1.dp, color = Color.Red)}
@@ -83,7 +92,8 @@ fun Un7KCMPDataGrid(
     val paddingLazyColumn = remember { PaddingValues(0.dp)}
     val paddingLazyColumnContent = remember { PaddingValues(10.dp)}
 
-    val paddingGridMenuButton = remember{ PaddingValues(all = 10.dp)}
+    val paddingMenuGridControl = remember{ PaddingValues(bottom = 60.dp, end = 10.dp)}
+    val paddingMenuPageNavControl = remember{ PaddingValues(start = 10.dp, bottom = 10.dp)}
 
     val widthRowNumColumn = remember{ 60.dp}
     val widthDividerThickness = remember{ 6.dp}
@@ -225,10 +235,11 @@ fun Un7KCMPDataGrid(
 
     AppTheme(enableDarkMode = enableDarkMode.value) {
 
-        Box( then(modifier)
-                .fillMaxSize()
-         //       .border(borderStrokeBlack, shape = borderShapeOut),
-            ,contentAlignment = Alignment.Center,
+        Box(
+            then(modifier)
+                .fillMaxSize(),
+            //       .border(borderStrokeBlack, shape = borderShapeOut),
+            contentAlignment = Alignment.Center,
         ){
             HorizontalPager(
                 state = pagerState,
@@ -294,7 +305,7 @@ fun Un7KCMPDataGrid(
                         ) {
 
                             stickyHeader {
-                                AnimatedVisibility(visible = isVisibleColumnHeader,) {
+                                AnimatedVisibility(visible = isVisibleColumnHeader) {
                                     HeaderRow(
                                         isVisibleRowNum.value,
                                         maxWidthInDp,
@@ -329,7 +340,7 @@ fun Un7KCMPDataGrid(
 
                         Box(
                             modifier = Modifier
-                                .padding(paddingGridMenuButton)
+                                .padding(paddingMenuGridControl)
                             //    .border(borderStrokeRed, shape = borderShapeIn)
                                 .align(Alignment.BottomEnd)
                         ) {
@@ -347,14 +358,35 @@ fun Un7KCMPDataGrid(
 
                         SnackbarHost(
                             hostState = snackBarHostState,
-                            modifier= Modifier.align (Alignment.BottomCenter)
+                            modifier= Modifier.align(Alignment.Center)
+                                .padding(horizontal = 10.dp)
                         ) { snackBarData ->
+                            /*
                             Snackbar(
                                 snackbarData = snackBarData,
                                 shape = ShapeDefaults.ExtraSmall,
                                 containerColor = Color.Gray,
                                 contentColor = Color.White,
                             )
+                             */
+                            Snackbar(
+                                shape = ShapeDefaults.ExtraSmall,
+                                containerColor = Color.Gray,
+                                contentColor = Color.White,
+                                dismissAction = {
+                                    if (snackBarData.visuals.withDismissAction) {
+                                        IconButton(onClick = { snackBarData.dismiss() }) {
+                                            Icon(Icons.Default.Close, contentDescription = "Dismiss")
+                                        }
+                                    }
+                                }
+                            ) {
+                                Text(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    textAlign = TextAlign.Center,
+                                    text = snackBarData.visuals.message
+                                )
+                            }
                         }
 
                     }// BoxWithConstraints
@@ -363,7 +395,7 @@ fun Un7KCMPDataGrid(
 
             Box(
                 modifier = Modifier
-                    .padding(paddingGridMenuButton)
+                    .padding(paddingMenuPageNavControl)
                   //  .border(borderStrokeRed, shape = borderShapeIn)
                     .align(Alignment.BottomStart)
             ) {
