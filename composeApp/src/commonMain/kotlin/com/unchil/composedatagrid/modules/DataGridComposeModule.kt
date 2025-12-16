@@ -58,6 +58,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.Text
@@ -108,7 +109,8 @@ fun MenuGridControl(
     isVisibleRowNum: MutableState<Boolean>
 ){
     Row (
-        modifier = Modifier.clip(CircleShape).background(MaterialTheme.colorScheme.tertiaryContainer),
+        modifier = Modifier.clip(CircleShape)
+            .background(Color.LightGray.copy(alpha = 0.5f)),
         verticalAlignment = Alignment.CenterVertically
     ) {
 
@@ -135,11 +137,7 @@ fun MenuGridControl(
                     )
                 }
 
-                MenuSelectColumn(
-                    allColumns,
-                    selectedColumns,
-                    onUpdateColumns,
-                )
+
 
                 IconButton(
                     onClick = { isVisibleRowNum.value = !isVisibleRowNum.value },
@@ -161,6 +159,12 @@ fun MenuGridControl(
                     )
 
                 }
+
+                MenuSelectColumn(
+                    allColumns,
+                    selectedColumns,
+                    onUpdateColumns,
+                )
 
             }
         }
@@ -209,8 +213,9 @@ fun MenuPageNavControl(
 ){
 
     Row (
-        modifier= Modifier.clip(CircleShape).background(MaterialTheme.colorScheme.tertiaryContainer),
-        verticalAlignment = Alignment.CenterVertically) {
+        modifier= Modifier.clip(CircleShape)
+            .background(Color.LightGray.copy(alpha = 0.5f))
+        ,verticalAlignment = Alignment.CenterVertically) {
 
         IconButton(
             onClick = { isExpandPageNavControlMenu.value = !isExpandPageNavControlMenu.value },
@@ -334,18 +339,18 @@ fun MenuSelectColumn(
     selectedColumns: Map<String, MutableState<Boolean>>,
     onUpdateColumns: ()->Unit,
 ){
-    Box{
+    Box(modifier= Modifier.background(Color.Transparent)){
         val widthColumnSelectDropDownMenu = remember{180.dp}
         var expandMenu by remember { mutableStateOf(false) }
         val scrollState = remember { ScrollState(0) }
-        val borderStrokeLightGray = remember {BorderStroke(width = 1.dp, color = Color.LightGray)}
+        val borderStroke = remember {BorderStroke(width = 1.dp, color = Color.Gray)}
         val borderShapeIn = remember{RoundedCornerShape(0.dp)}
 
         IconButton(
             onClick = {expandMenu = !expandMenu },
             modifier= Modifier
                 .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.tertiaryContainer),
+                ,
         ) {
             SegmentedButtonDefaults.Icon(
                 active = expandMenu,
@@ -372,12 +377,13 @@ fun MenuSelectColumn(
             scrollState = scrollState,
             modifier = Modifier
                 .width(widthColumnSelectDropDownMenu)
-                .border(borderStrokeLightGray, shape = borderShapeIn)
-                .background(color = MaterialTheme.colorScheme.tertiaryContainer),
+                .border(borderStroke, shape = borderShapeIn)
+                .background(Color.LightGray.copy(alpha = 0.5f)),
         ) {
             allColumns.forEach { columnName ->
                 // HorizontalDivider()
                 DropdownMenuItem(
+
                     text = { Text(columnName) },
                     trailingIcon = {
                         IconButton(onClick = {
@@ -430,41 +436,62 @@ fun DataRow(
     columnWeights:List<Float>,
 ){
 
-    val paddingDataRow = remember { PaddingValues(vertical = 1.dp) }
+    val paddingDataRow = remember { PaddingValues(top = 2.dp) }
     val borderStrokeLightGray = remember {BorderStroke(width = 1.dp, color = Color.LightGray)}
     val borderShapeIn = remember{RoundedCornerShape(0.dp)}
-    val heightDataRow = remember{ 26.dp }
+    val heightDataRow = remember{ 30.dp }
+
 
     Row(
         modifier = Modifier.padding(paddingDataRow),
+        horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        if(isVisibleRowNum){
-            Text(
-                text = getRowNumber(pageIndex, pageSize, dataIndex ).toString(),
-                modifier = Modifier.width(widthRowNumColumn).height(heightDataRow).border(borderStrokeLightGray, shape = borderShapeIn),
-                textAlign = TextAlign.Center,
-            )
+        AnimatedVisibility(isVisibleRowNum){
 
+            Row(
+                modifier = Modifier
+                    .width(widthRowNumColumn).height(heightDataRow)
+                    .border(borderStrokeLightGray, shape = borderShapeIn),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+
+                Text(
+                    text = getRowNumber(pageIndex, pageSize, dataIndex).toString(),
+                    textAlign = TextAlign.Center,
+                )
+            }
+        }
+        if(isVisibleRowNum) {
             VerticalDivider(
                 thickness = widthDividerThickness,
                 color = Color.Transparent
             )
         }
 
+
         val dataColumnsWidth = if (isVisibleRowNum) {
-            maxWidthInDp - widthRowNumColumn - (widthDividerThickness * (pagingData.keys.size - 1))
+            maxWidthInDp - widthRowNumColumn - (widthDividerThickness * (pagingData.keys.size))
         } else {
-            maxWidthInDp - (widthDividerThickness * (pagingData.keys.size - 1))
+            maxWidthInDp - (widthDividerThickness * (pagingData.keys.size -1))
         }
 
         pagingData.keys.forEachIndexed { keyIndex, columnName ->
-            Text(
-                text = (pagingData[columnName] as List<*>)[dataIndex].toString(),
-                modifier = Modifier.border(borderStrokeLightGray, shape = borderShapeIn)
-                    .width(dataColumnsWidth * columnWeights.getOrElse(keyIndex){0f}).height(heightDataRow),
-                textAlign = TextAlign.Center,
-            )
+
+            Row(
+                modifier = Modifier
+                    .width(dataColumnsWidth * columnWeights.getOrElse(keyIndex) { 0f }).height(heightDataRow)
+                    .border(borderStrokeLightGray, shape = borderShapeIn),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+
+                Text(
+                    text = (pagingData[columnName] as List<*>)[dataIndex].toString(),
+                    textAlign = TextAlign.Center,
+                )
+            }
 
             if (keyIndex < pagingData.keys.size - 1) {
                 VerticalDivider(
@@ -499,47 +526,49 @@ fun HeaderRow(
     val heightColumnHeaderDivider = remember{ 30.dp }
 
 
-    val borderStrokeLightGray = remember {BorderStroke(width = 1.dp, color = Color.LightGray)}
-    val borderShapeIn = remember{RoundedCornerShape(0.dp)}
+    val borderStroke = remember {BorderStroke(width = 1.dp, color = Color.Gray)}
+    val borderShapeIn = remember{RoundedCornerShape(2.dp)}
 
 
 
-    Row( verticalAlignment = Alignment.CenterVertically ) {
+    Row(
+      verticalAlignment = Alignment.CenterVertically
+    ) {
         val density = LocalDensity.current.density
 
-        if(isVisibleRowNum){
+        AnimatedVisibility(isVisibleRowNum){
             Row(
                 modifier = Modifier
+                    .background(color= Color.LightGray.copy(alpha = 0.5f))
                     .height(heightColumnHeader)
                     .width(widthRowNumColumn)
-                    .border(
-                        border = borderStrokeLightGray,
-                        shape = borderShapeIn
-                    ),
+                    .border( border = borderStroke,  shape = borderShapeIn  ),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text("Num")
             }
+        }
+        if(isVisibleRowNum){
             VerticalDivider(
                 modifier = Modifier
                     .height(heightColumnHeaderDivider),
                 thickness = widthDividerThickness,
                 color = Color.Transparent
             )
+
         }
 
+
         val columnsAreaWidth = if (isVisibleRowNum) {
-            maxWidthInDp - widthRowNumColumn - (widthDividerThickness * (columnNames.size - 1))
+            maxWidthInDp - widthRowNumColumn - (widthDividerThickness * (columnNames.size ))
         } else {
             maxWidthInDp - (widthDividerThickness * (columnNames.size - 1))
         }
 
         columnNames.forEachIndexed { index, columnName ->
-            val coroutineScope = rememberCoroutineScope()
+
             val offset = remember { mutableStateOf(IntOffset.Zero) }
-
-
             val animatedAlpha by animateFloatAsState(if (offset.value == IntOffset.Zero) 1f else 0.5f)
 
             val onDragEnd: () -> Unit = {
@@ -572,14 +601,14 @@ fun HeaderRow(
                 offset.value = IntOffset.Zero
             }
 
+
             Row(
                 modifier = Modifier
+                    .background(color= Color.LightGray.copy(alpha = 0.5f))
                     .height(heightColumnHeader)
                     .width(columnsAreaWidth * columnWeights.getOrElse( index ) { 0f })
                     .height(heightColumnHeader)
-                    .border(
-                        borderStrokeLightGray,
-                        shape = borderShapeIn)
+                    .border( borderStroke,  shape = borderShapeIn)
                     .pointerInput(Unit) {
                         detectDragGestures(
                             onDragEnd = onDragEnd,
@@ -742,7 +771,7 @@ fun SearchMenu(
     ){
 
         IconButton( onClick = {  expanded = !expanded } ) {
-            Icon(Icons.AutoMirrored.Filled.ManageSearch, contentDescription = "Filter", tint = MaterialTheme.colorScheme.onSurface)
+            Icon(Icons.AutoMirrored.Filled.ManageSearch, contentDescription = "Filter",)
         }
 
         DropdownMenu(
@@ -752,8 +781,8 @@ fun SearchMenu(
                 filterText.value = ""
             },
             modifier = Modifier.width(180.dp)
-                .background(color =MaterialTheme.colorScheme.tertiaryContainer),
-            border = BorderStroke(1.dp, color=Color.Black)
+                .background(color =Color.LightGray.copy(0.5f)),
+            border = BorderStroke(1.dp, color=Color.Gray)
         ) {
 
             Column() {
@@ -782,8 +811,8 @@ fun SearchMenu(
                         onDismissRequest = { expandedOperator = false },
                         scrollState = scrollState,
                         modifier = Modifier.width(200.dp).height(160.dp)
-                            .background(color  =MaterialTheme.colorScheme.tertiaryContainer),
-                        border = BorderStroke(1.dp, color=Color.Black)
+                            .background(color  =Color.LightGray.copy(0.5f)),
+                        border = BorderStroke(1.dp, color=Color.Gray)
                     ) {
                         OperatorMenu.Operators.forEach { operator ->
                             HorizontalDivider()

@@ -3,6 +3,7 @@ package com.unchil.composedatagrid.modules
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.PaddingValues
@@ -74,12 +75,14 @@ fun Un7KCMPDataGrid(
     val borderStrokeGreen = remember {BorderStroke(width = 1.dp, color = Color.Green)}
 
     val borderShapeOut = remember{RoundedCornerShape(0.dp)}
-    val borderShapeIn = remember{RoundedCornerShape(0.dp)}
+    val borderShapeIn = remember{RoundedCornerShape(2.dp)}
 
-    val paddingLazyColumn = remember { PaddingValues(10.dp)}
+
+    val paddingHorizontalPager = remember { PaddingValues(0.dp)}
+    val paddingBoxInHorizontalPager = remember { PaddingValues(6.dp)}
+    val paddingLazyColumn = remember { PaddingValues(0.dp)}
     val paddingLazyColumnContent = remember { PaddingValues(10.dp)}
-    val paddingHorizontalPager = remember { PaddingValues(10.dp)}
-    val paddingBoxInHorizontalPager = remember { PaddingValues(10.dp)}
+
     val paddingGridMenuButton = remember{ PaddingValues(all = 10.dp)}
 
     val widthRowNumColumn = remember{ 60.dp}
@@ -224,17 +227,17 @@ fun Un7KCMPDataGrid(
 
         Box( then(modifier)
                 .fillMaxSize()
-                .border(borderStrokeBlack, shape = borderShapeOut),
-            contentAlignment = Alignment.Center,
+         //       .border(borderStrokeBlack, shape = borderShapeOut),
+            ,contentAlignment = Alignment.Center,
         ){
             HorizontalPager(
                 state = pagerState,
                 modifier = Modifier
                     .padding(paddingHorizontalPager)
-                    .border(borderStrokeGreen, shape = borderShapeIn),
-                flingBehavior = PagerDefaults.flingBehavior(
+                //    .border(borderStrokeGreen, shape = borderShapeIn),
+                ,flingBehavior = PagerDefaults.flingBehavior(
                     state = pagerState,
-                    snapPositionalThreshold = 0.7f
+                    snapPositionalThreshold = 0.5f
                 )
             ) { pageIndex ->
 
@@ -254,8 +257,8 @@ fun Un7KCMPDataGrid(
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(paddingBoxInHorizontalPager)
-                            .border(borderStrokeBlue, shape = borderShapeIn),
-                        contentAlignment = Alignment.Center
+                         //   .border(borderStrokeBlue, shape = borderShapeIn),
+                        ,contentAlignment = Alignment.Center
                     ) {
                         val maxWidthInDp = this.maxWidth
                         val lazyListState = rememberLazyListState(initialFirstVisibleItemIndex = 0)
@@ -284,8 +287,9 @@ fun Un7KCMPDataGrid(
                             modifier = Modifier
                                 .fillMaxSize()
                                 .padding(paddingLazyColumn)
-                                .border(borderStrokeRed, shape = borderShapeIn),
+                                .border(borderStrokeDarkGray, shape = borderShapeIn),
                             state = lazyListState,
+
                             contentPadding = paddingLazyColumnContent
                         ) {
 
@@ -326,7 +330,7 @@ fun Un7KCMPDataGrid(
                         Box(
                             modifier = Modifier
                                 .padding(paddingGridMenuButton)
-                                .border(borderStrokeRed, shape = borderShapeIn)
+                            //    .border(borderStrokeRed, shape = borderShapeIn)
                                 .align(Alignment.BottomEnd)
                         ) {
                             MenuGridControl(
@@ -348,9 +352,8 @@ fun Un7KCMPDataGrid(
                             Snackbar(
                                 snackbarData = snackBarData,
                                 shape = ShapeDefaults.ExtraSmall,
-                                containerColor = MaterialTheme.colorScheme.surfaceVariant,
-                                contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                                dismissActionContentColor = MaterialTheme.colorScheme.tertiary
+                                containerColor = Color.Gray,
+                                contentColor = Color.White,
                             )
                         }
 
@@ -361,7 +364,7 @@ fun Un7KCMPDataGrid(
             Box(
                 modifier = Modifier
                     .padding(paddingGridMenuButton)
-                    .border(borderStrokeRed, shape = borderShapeIn)
+                  //  .border(borderStrokeRed, shape = borderShapeIn)
                     .align(Alignment.BottomStart)
             ) {
                 MenuPageNavControl(

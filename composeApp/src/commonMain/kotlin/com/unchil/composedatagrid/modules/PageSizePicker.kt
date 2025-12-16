@@ -89,11 +89,11 @@ fun PageSizePicker(
             .background(
                 Brush.verticalGradient(
                     listOf(
-                        MaterialTheme.colorScheme.tertiaryContainer,
-                        MaterialTheme.colorScheme.tertiaryContainer,
-                        MaterialTheme.colorScheme.surface,
-                        MaterialTheme.colorScheme.tertiaryContainer,
-                        MaterialTheme.colorScheme.tertiaryContainer,
+                        Color.LightGray.copy(alpha = 0.5f),
+                        Color.LightGray.copy(alpha = 0.5f),
+                        Color.White,
+                        Color.LightGray.copy(alpha = 0.5f),
+                        Color.LightGray.copy(alpha = 0.5f),
                     )
                 )
             ) ,
