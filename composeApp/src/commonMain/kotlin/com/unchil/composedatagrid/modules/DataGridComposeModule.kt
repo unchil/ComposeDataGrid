@@ -32,11 +32,19 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.automirrored.filled.ManageSearch
+import androidx.compose.material.icons.automirrored.filled.PlaylistAdd
+import androidx.compose.material.icons.automirrored.filled.PlaylistAddCheck
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.ArrowDropUp
 import androidx.compose.material.icons.filled.ChecklistRtl
 import androidx.compose.material.icons.filled.DarkMode
+import androidx.compose.material.icons.filled.FormatListNumbered
 import androidx.compose.material.icons.filled.LightMode
+import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.filled.PlaylistAdd
+import androidx.compose.material.icons.filled.PlaylistAddCheck
+import androidx.compose.material.icons.filled.PlaylistAddCheckCircle
+import androidx.compose.material.icons.filled.PlaylistAddCircle
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.SwapHoriz
@@ -94,9 +102,10 @@ fun MenuGridControl(
     isExpandGridControlMenu: MutableState<Boolean>,
     lazyListState: LazyListState,
     allColumns: List<String>,
-    selectedColumns:Map<String, MutableState<Boolean>>,
-    onUpdateColumns:()->Unit,
-    onListNavHandler:(ListNav)->Unit,
+    selectedColumns: Map<String, MutableState<Boolean>>,
+    onUpdateColumns: () -> Unit,
+    onListNavHandler: (ListNav) -> Unit,
+    isVisibleRowNum: MutableState<Boolean>
 ){
     Row (
         modifier = Modifier.clip(CircleShape).background(MaterialTheme.colorScheme.tertiaryContainer),
@@ -131,6 +140,27 @@ fun MenuGridControl(
                     selectedColumns,
                     onUpdateColumns,
                 )
+
+                IconButton(
+                    onClick = { isVisibleRowNum.value = !isVisibleRowNum.value },
+                ) {
+                    SegmentedButtonDefaults.Icon(
+                        active = !isVisibleRowNum.value,
+                        activeContent = {
+                            Icon(
+                                Icons.Default.List,
+                                contentDescription = ""
+                            )
+                        },
+                        inactiveContent = {
+                            Icon(
+                                Icons.Default.FormatListNumbered,
+                                contentDescription = ""
+                            )
+                        }
+                    )
+
+                }
 
             }
         }
@@ -321,13 +351,13 @@ fun MenuSelectColumn(
                 active = expandMenu,
                 activeContent = {
                     Icon(
-                        Icons.Default.ChecklistRtl,
+                        Icons.Default.PlaylistAddCheck,
                         contentDescription = "Open DropDownMenu"
                     )
                 },
                 inactiveContent = {
                     Icon(
-                        Icons.Default.Tune,
+                        Icons.Default.PlaylistAdd,
                         contentDescription = "Close DropDownMenu"
                     )
                 }
@@ -403,7 +433,7 @@ fun DataRow(
     val paddingDataRow = remember { PaddingValues(vertical = 1.dp) }
     val borderStrokeLightGray = remember {BorderStroke(width = 1.dp, color = Color.LightGray)}
     val borderShapeIn = remember{RoundedCornerShape(0.dp)}
-
+    val heightDataRow = remember{ 26.dp }
 
     Row(
         modifier = Modifier.padding(paddingDataRow),
@@ -412,7 +442,7 @@ fun DataRow(
         if(isVisibleRowNum){
             Text(
                 text = getRowNumber(pageIndex, pageSize, dataIndex ).toString(),
-                modifier = Modifier.width(widthRowNumColumn).border(borderStrokeLightGray, shape = borderShapeIn),
+                modifier = Modifier.width(widthRowNumColumn).height(heightDataRow).border(borderStrokeLightGray, shape = borderShapeIn),
                 textAlign = TextAlign.Center,
             )
 
@@ -432,7 +462,7 @@ fun DataRow(
             Text(
                 text = (pagingData[columnName] as List<*>)[dataIndex].toString(),
                 modifier = Modifier.border(borderStrokeLightGray, shape = borderShapeIn)
-                    .width(dataColumnsWidth * columnWeights.getOrElse(keyIndex){0f}),
+                    .width(dataColumnsWidth * columnWeights.getOrElse(keyIndex){0f}).height(heightDataRow),
                 textAlign = TextAlign.Center,
             )
 
@@ -546,6 +576,7 @@ fun HeaderRow(
                 modifier = Modifier
                     .height(heightColumnHeader)
                     .width(columnsAreaWidth * columnWeights.getOrElse( index ) { 0f })
+                    .height(heightColumnHeader)
                     .border(
                         borderStrokeLightGray,
                         shape = borderShapeIn)

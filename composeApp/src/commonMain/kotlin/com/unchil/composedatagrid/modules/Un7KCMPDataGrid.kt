@@ -60,7 +60,7 @@ fun Un7KCMPDataGrid(
 
 
     val enableDarkMode = remember { mutableStateOf(false) }
-    val isVisibleRowNum by remember { mutableStateOf(true) }
+    val isVisibleRowNum = remember { mutableStateOf(true) }
     val isExpandGridControlMenu = rememberSaveable {mutableStateOf(true) }
     val isExpandPageNavControlMenu = rememberSaveable {mutableStateOf(true) }
 
@@ -141,7 +141,6 @@ fun Un7KCMPDataGrid(
         }
     }
     //----------
-
 
     val pagerState = rememberPagerState( pageCount = { lastPageIndex +1 })
 
@@ -293,7 +292,7 @@ fun Un7KCMPDataGrid(
                             stickyHeader {
                                 AnimatedVisibility(visible = isVisibleColumnHeader,) {
                                     HeaderRow(
-                                        isVisibleRowNum,
+                                        isVisibleRowNum.value,
                                         maxWidthInDp,
                                         widthDividerThickness,
                                         widthRowNumColumn,
@@ -310,7 +309,7 @@ fun Un7KCMPDataGrid(
 
                             items(pagingData.values.firstOrNull()?.size ?: 0) { dataIndex ->
                                 DataRow(
-                                    isVisibleRowNum,
+                                    isVisibleRowNum.value,
                                     maxWidthInDp,
                                     widthDividerThickness,
                                     widthRowNumColumn,
@@ -337,6 +336,7 @@ fun Un7KCMPDataGrid(
                                 selectedColumns,
                                 onUpdateColumns,
                                 onListNavHandler,
+                                isVisibleRowNum
                             )
                         }//Box  MenuPageNavControl
 
