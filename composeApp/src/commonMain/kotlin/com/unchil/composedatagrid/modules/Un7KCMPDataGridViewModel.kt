@@ -1,32 +1,28 @@
-package com.unchil.composedatagrid.viewmodel
+package com.unchil.composedatagrid.modules
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import com.unchil.composedatagrid.modules.OperatorMenu
-import com.unchil.composedatagrid.modules.getLastPageIndex
-import com.unchil.composedatagrid.modules.toGridList
-import com.unchil.composedatagrid.modules.toSelectedColumnsData
 import kotlinx.coroutines.flow.MutableStateFlow
 
 class Un7KCMPDataGridViewModel(val data: Map<String,List<Any?>>): ViewModel() {
 
-    val columnNames:MutableStateFlow<List<String>>
+    val columnNames: MutableStateFlow<List<String>>
         = MutableStateFlow(emptyList())
 
-    val dataRows:MutableStateFlow<List<List<Any?>>>
+    val dataRows: MutableStateFlow<List<List<Any?>>>
         = MutableStateFlow(emptyList())
 
-    val dataColumnOrderApplied:MutableState<List<List<Any?>>>
+    val dataColumnOrderApplied: MutableState<List<List<Any?>>>
         = mutableStateOf(emptyList())
 
-    val dataFilterApplied:MutableState<List<List<Any?>>>
+    val dataFilterApplied: MutableState<List<List<Any?>>>
         = mutableStateOf(emptyList())
 
-    val pageSize:MutableStateFlow<Int>
+    val pageSize: MutableStateFlow<Int>
         = MutableStateFlow(50)
 
-    val lastPageIndex:MutableStateFlow<Int>
+    val lastPageIndex: MutableStateFlow<Int>
         = MutableStateFlow(1)
 
     val columnWeights: MutableStateFlow<List<Float>>
@@ -36,10 +32,10 @@ class Un7KCMPDataGridViewModel(val data: Map<String,List<Any?>>): ViewModel() {
             = MutableStateFlow(emptyList())
 
 
-    val isFilteringData:MutableState<Boolean>
+    val isFilteringData: MutableState<Boolean>
         = mutableStateOf(false)
 
-    val onFilterResultCnt:MutableState<Int>
+    val onFilterResultCnt: MutableState<Int>
         = mutableStateOf(0)
 
     val selectedColumns: MutableStateFlow<Map<String, MutableState<Boolean>>>
@@ -48,8 +44,8 @@ class Un7KCMPDataGridViewModel(val data: Map<String,List<Any?>>): ViewModel() {
 
     val selectPageSizeList = listOf("10", "50", "100", "500", "1000", "All")
 
-    val selectPageSizeIndex:MutableStateFlow<Int>
-        =  MutableStateFlow(1)
+    val selectPageSizeIndex: MutableStateFlow<Int>
+        = MutableStateFlow(1)
 
 
 
