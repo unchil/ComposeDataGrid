@@ -65,6 +65,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.Key
@@ -98,9 +99,19 @@ fun MenuGridControl(
     onListNavHandler: (ListNav) -> Unit,
     isVisibleRowNum: MutableState<Boolean>
 ){
+
+    val shape = RoundedCornerShape(10.dp)
     Row (
-        modifier = Modifier.clip(RoundedCornerShape(10.dp))
-            .background(MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.9f)),
+        modifier = Modifier
+            .shadow(elevation = 4.dp, shape = shape)
+            .background(
+                color = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.9f),
+                shape = shape
+            )
+            .border(
+                border = BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.secondaryFixedDim),
+                shape = shape
+            ),
         verticalAlignment = Alignment.CenterVertically
     ) {
 
@@ -202,10 +213,19 @@ fun MenuPageNavControl(
     onPageNavHandler:(PageNav)->Unit,
     pagerState: PagerState,
 ){
+    val shape = RoundedCornerShape(10.dp)
 
     Row (
-        modifier= Modifier.clip(RoundedCornerShape(10.dp))
-            .background(MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.9f)),
+        modifier= Modifier
+            .shadow(elevation = 4.dp, shape = shape)
+            .background(
+                color = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.9f),
+                shape = shape
+            )
+            .border(
+                border = BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.secondaryFixedDim),
+                shape = shape
+            ),
         verticalAlignment = Alignment.CenterVertically) {
 
         IconButton(
@@ -803,7 +823,7 @@ fun SearchMenu(
                         ) {
                             Icon(Icons.Default.Search,
                                 contentDescription = "Search",
-                                tint = if (isFocused) { Color(128,65,217)} else Color.LightGray
+                                tint = if (isFocused) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.inverseOnSurface
                             )
                         }
                     },

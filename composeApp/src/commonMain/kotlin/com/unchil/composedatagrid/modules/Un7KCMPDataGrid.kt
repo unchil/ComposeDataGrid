@@ -40,6 +40,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.Modifier.Companion.then
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -72,18 +73,8 @@ fun Un7KCMPDataGrid(
     val isExpandPageNavControlMenu = rememberSaveable {mutableStateOf(false) }
 
     val borderStrokeTransparent = remember {BorderStroke(width = 0.dp, color = Color.Transparent)}
-    val borderStrokeBlack = remember {BorderStroke(width = 1.dp, color = Color.Black)}
-    val borderStrokeRed = remember {BorderStroke(width = 1.dp, color = Color.Red)}
-    val borderStrokeBlue = remember {BorderStroke(width = 1.dp, color = Color.Blue)}
-    val borderStrokeGray = remember {BorderStroke(width = 1.dp, color = Color.Gray)}
-    val borderStrokeLightGray = remember {BorderStroke(width = 1.dp, color = Color.LightGray)}
-    val borderStrokeDarkGray = remember {BorderStroke(width = 1.dp, color = Color.DarkGray)}
-    val borderStrokeYellow = remember {BorderStroke(width = 1.dp, color = Color.Yellow)}
-    val borderStrokeGreen = remember {BorderStroke(width = 1.dp, color = Color.Green)}
-
     val borderShapeOut = remember{RoundedCornerShape(0.dp)}
     val borderShapeIn = remember{RoundedCornerShape(2.dp)}
-
 
     val paddingHorizontalPager = remember { PaddingValues(0.dp)}
     val paddingBoxInHorizontalPager = remember { PaddingValues(6.dp)}
@@ -232,8 +223,8 @@ fun Un7KCMPDataGrid(
 
         Surface(
             tonalElevation = 6.dp,
-            shadowElevation = 2.dp,
-            border = borderStrokeLightGray,
+            shadowElevation = 4.dp,
+            border = BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.primaryFixedDim),
         ) {
 
 
@@ -300,12 +291,21 @@ fun Un7KCMPDataGrid(
                                 }
                             }
 
+                            val shape = RoundedCornerShape(2.dp)
+
                             LazyColumn(
                                 modifier = Modifier
+                                    .shadow(elevation = 2.dp, shape = shape)
+                                    .background(
+                                        color = MaterialTheme.colorScheme.background,
+                                        shape = shape
+                                    )
+                                    .border(
+                                        border = BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.secondaryFixedDim),
+                                        shape = shape
+                                    )
                                     .fillMaxSize()
-                                    .padding(paddingLazyColumn)
-                                    .border(borderStrokeGray, shape = borderShapeIn)
-                                    .background(MaterialTheme.colorScheme.background),
+                                    .padding(paddingLazyColumn),
                                 state = lazyListState,
                                 contentPadding = paddingLazyColumnContent
                             ) {
@@ -366,18 +366,11 @@ fun Un7KCMPDataGrid(
                                 modifier = Modifier.align(Alignment.Center)
                                     .padding(horizontal = 10.dp)
                             ) { snackBarData ->
-                                /*
-                            Snackbar(
-                                snackbarData = snackBarData,
-                                shape = ShapeDefaults.ExtraSmall,
-                                containerColor = Color.Gray,
-                                contentColor = Color.White,
-                            )
-                             */
+
                                 Snackbar(
                                     shape = ShapeDefaults.ExtraSmall,
-                                    containerColor = Color.Gray,
-                                    contentColor = Color.White,
+                                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
                                     dismissAction = {
                                         if (snackBarData.visuals.withDismissAction) {
                                             IconButton(onClick = { snackBarData.dismiss() }) {
