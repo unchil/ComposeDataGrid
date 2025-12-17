@@ -2,68 +2,21 @@ package com.unchil.composedatagrid.theme
 
 
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Typography
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import org.jetbrains.compose.resources.Font
-import composedatagrid.composeapp.generated.resources.AppleGothic
-import composedatagrid.composeapp.generated.resources.Res
 import composedatagrid.composeapp.generated.resources.AppleSDGothicNeo
-
-
-@Composable
-fun AppTheme(enableDarkMode: Boolean = false, content: @Composable () -> Unit) {
-
-    val AppleGothic = FontFamily(
-        Font(Res.font.AppleGothic, FontWeight.Bold),
-        Font(Res.font.AppleGothic, FontWeight.SemiBold),
-        Font(Res.font.AppleGothic, FontWeight.ExtraBold),
-        Font(Res.font.AppleGothic, FontWeight.Medium),
-        Font(Res.font.AppleGothic, FontWeight.Normal),
-        Font(Res.font.AppleGothic, FontWeight.Black),
-        Font(Res.font.AppleGothic, FontWeight.Thin),
-        Font(Res.font.AppleGothic, FontWeight.ExtraLight),
-        Font(Res.font.AppleGothic, FontWeight.Light)
-    )
-
-    val AppleSDGothicNeo = FontFamily(
-        Font(Res.font.AppleSDGothicNeo, FontWeight.Bold),
-        Font(Res.font.AppleSDGothicNeo, FontWeight.SemiBold),
-        Font(Res.font.AppleSDGothicNeo, FontWeight.ExtraBold),
-        Font(Res.font.AppleSDGothicNeo, FontWeight.Medium),
-        Font(Res.font.AppleSDGothicNeo, FontWeight.Normal),
-        Font(Res.font.AppleSDGothicNeo, FontWeight.Black),
-        Font(Res.font.AppleSDGothicNeo, FontWeight.Thin),
-        Font(Res.font.AppleSDGothicNeo, FontWeight.ExtraLight),
-        Font(Res.font.AppleSDGothicNeo, FontWeight.Light)
-    )
+import composedatagrid.composeapp.generated.resources.Res
+import org.jetbrains.compose.resources.Font
+import kotlin.invoke
 
 
 
-
-    val typography = Typography(
-        displayLarge = Typography().displayLarge.copy(fontFamily = AppleSDGothicNeo),
-        displayMedium = Typography().displayMedium.copy(fontFamily = AppleSDGothicNeo),
-        displaySmall = Typography().displaySmall.copy(fontFamily = AppleSDGothicNeo),
-        headlineLarge = Typography().headlineLarge.copy(fontFamily = AppleSDGothicNeo),
-        headlineMedium = Typography().headlineMedium.copy(fontFamily = AppleSDGothicNeo),
-        headlineSmall = Typography().headlineSmall.copy(fontFamily = AppleSDGothicNeo),
-        titleLarge = Typography().titleLarge.copy(fontFamily = AppleSDGothicNeo),
-        titleMedium = Typography().titleMedium.copy(fontFamily = AppleSDGothicNeo),
-        titleSmall = Typography().titleSmall.copy(fontFamily = AppleSDGothicNeo),
-        bodyLarge = Typography().bodyLarge.copy(fontFamily = AppleSDGothicNeo),
-        bodyMedium = Typography().bodyMedium.copy(fontFamily = AppleSDGothicNeo),
-        bodySmall = Typography().bodySmall.copy(fontFamily = AppleSDGothicNeo),
-        labelLarge = Typography().labelLarge.copy(fontFamily = AppleSDGothicNeo),
-        labelMedium = Typography().labelMedium.copy(fontFamily = AppleSDGothicNeo),
-        labelSmall = Typography().labelSmall.copy(fontFamily = AppleSDGothicNeo)
-    )
-
-
-    val lightScheme = lightColorScheme(
+val lightScheme = lightColorScheme(
         primary = primaryLight,
         onPrimary = onPrimaryLight,
         primaryContainer = primaryContainerLight,
@@ -101,7 +54,7 @@ fun AppTheme(enableDarkMode: Boolean = false, content: @Composable () -> Unit) {
         surfaceContainerHighest = surfaceContainerHighestLight,
     )
 
-    val darkScheme = darkColorScheme(
+     val darkScheme = darkColorScheme(
         primary = primaryDark,
         onPrimary = onPrimaryDark,
         primaryContainer = primaryContainerDark,
@@ -139,7 +92,7 @@ fun AppTheme(enableDarkMode: Boolean = false, content: @Composable () -> Unit) {
         surfaceContainerHighest = surfaceContainerHighestDark,
     )
 
-    val mediumContrastLightColorScheme = lightColorScheme(
+     val mediumContrastLightColorScheme = lightColorScheme(
         primary = primaryLightMediumContrast,
         onPrimary = onPrimaryLightMediumContrast,
         primaryContainer = primaryContainerLightMediumContrast,
@@ -177,7 +130,7 @@ fun AppTheme(enableDarkMode: Boolean = false, content: @Composable () -> Unit) {
         surfaceContainerHighest = surfaceContainerHighestLightMediumContrast,
     )
 
-    val highContrastLightColorScheme = lightColorScheme(
+     val highContrastLightColorScheme = lightColorScheme(
         primary = primaryLightHighContrast,
         onPrimary = onPrimaryLightHighContrast,
         primaryContainer = primaryContainerLightHighContrast,
@@ -215,7 +168,7 @@ fun AppTheme(enableDarkMode: Boolean = false, content: @Composable () -> Unit) {
         surfaceContainerHighest = surfaceContainerHighestLightHighContrast,
     )
 
-    val mediumContrastDarkColorScheme = darkColorScheme(
+     val mediumContrastDarkColorScheme = darkColorScheme(
         primary = primaryDarkMediumContrast,
         onPrimary = onPrimaryDarkMediumContrast,
         primaryContainer = primaryContainerDarkMediumContrast,
@@ -292,11 +245,48 @@ fun AppTheme(enableDarkMode: Boolean = false, content: @Composable () -> Unit) {
     )
 
 
+
+
+
+@Composable
+fun AppTheme(enableDarkMode: Boolean = false, content: @Composable () -> Unit) {
+
+     val AppleSDGothicNeo = FontFamily(
+        Font(Res.font.AppleSDGothicNeo, FontWeight.Bold),
+        Font(Res.font.AppleSDGothicNeo, FontWeight.SemiBold),
+        Font(Res.font.AppleSDGothicNeo, FontWeight.ExtraBold),
+        Font(Res.font.AppleSDGothicNeo, FontWeight.Medium),
+        Font(Res.font.AppleSDGothicNeo, FontWeight.Normal),
+        Font(Res.font.AppleSDGothicNeo, FontWeight.Black),
+        Font(Res.font.AppleSDGothicNeo, FontWeight.Thin),
+        Font(Res.font.AppleSDGothicNeo, FontWeight.ExtraLight),
+        Font(Res.font.AppleSDGothicNeo, FontWeight.Light)
+    )
+
+
+    val AppTypography = androidx.compose.material3.Typography(
+        displayLarge = Typography().displayLarge.copy(fontFamily = AppleSDGothicNeo),
+        displayMedium = Typography().displayMedium.copy(fontFamily = AppleSDGothicNeo),
+        displaySmall = Typography().displaySmall.copy(fontFamily = AppleSDGothicNeo),
+        headlineLarge = Typography().headlineLarge.copy(fontFamily = AppleSDGothicNeo),
+        headlineMedium = Typography().headlineMedium.copy(fontFamily = AppleSDGothicNeo),
+        headlineSmall = Typography().headlineSmall.copy(fontFamily = AppleSDGothicNeo),
+        titleLarge = Typography().titleLarge.copy(fontFamily = AppleSDGothicNeo),
+        titleMedium = Typography().titleMedium.copy(fontFamily = AppleSDGothicNeo),
+        titleSmall = Typography().titleSmall.copy(fontFamily = AppleSDGothicNeo),
+        bodyLarge = Typography().bodyLarge.copy(fontFamily = AppleSDGothicNeo),
+        bodyMedium = Typography().bodyMedium.copy(fontFamily = AppleSDGothicNeo),
+        bodySmall = Typography().bodySmall.copy(fontFamily = AppleSDGothicNeo),
+        labelLarge = Typography().labelLarge.copy(fontFamily = AppleSDGothicNeo),
+        labelMedium = Typography().labelMedium.copy(fontFamily = AppleSDGothicNeo),
+        labelSmall = Typography().labelSmall.copy(fontFamily = AppleSDGothicNeo)
+    )
+
     val colorScheme = if(enableDarkMode) darkScheme else lightScheme
 
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = typography
+        typography = AppTypography
     ) {
         content()
     }

@@ -99,14 +99,13 @@ fun MenuGridControl(
     isVisibleRowNum: MutableState<Boolean>
 ){
     Row (
-        modifier = Modifier.clip(CircleShape)
-            .background(Color.LightGray.copy(alpha = 0.5f)),
+        modifier = Modifier.clip(RoundedCornerShape(10.dp))
+            .background(MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.9f)),
         verticalAlignment = Alignment.CenterVertically
     ) {
 
         IconButton(
             onClick = { isExpandGridControlMenu.value = !isExpandGridControlMenu.value },
-            modifier= Modifier.clip(CircleShape),
         ) {
 
 
@@ -205,9 +204,9 @@ fun MenuPageNavControl(
 ){
 
     Row (
-        modifier= Modifier.clip(CircleShape)
-            .background(Color.LightGray.copy(alpha = 0.5f))
-        ,verticalAlignment = Alignment.CenterVertically) {
+        modifier= Modifier.clip(RoundedCornerShape(10.dp))
+            .background(MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.9f)),
+        verticalAlignment = Alignment.CenterVertically) {
 
         IconButton(
             onClick = { isExpandPageNavControlMenu.value = !isExpandPageNavControlMenu.value },
@@ -248,7 +247,7 @@ fun MenuPageNavControl(
                 IconButton(
                     onClick = { onRefresh.invoke()  },
                 ) {
-                    androidx.compose.material3.Icon(
+                    Icon(
                         Icons.Default.Refresh,
                         contentDescription = "Refresh"
                     )
@@ -313,8 +312,7 @@ fun MenuSelectColumn(
         val widthColumnSelectDropDownMenu = remember{180.dp}
         var expandMenu by remember { mutableStateOf(false) }
         val scrollState = remember { ScrollState(0) }
-        val borderStroke = remember {BorderStroke(width = 1.dp, color = Color.Gray)}
-        val borderShapeIn = remember{RoundedCornerShape(0.dp)}
+
 
         IconButton(
             onClick = { expandMenu = !expandMenu },
@@ -345,8 +343,8 @@ fun MenuSelectColumn(
             scrollState = scrollState,
             modifier = Modifier
                 .width(widthColumnSelectDropDownMenu)
-                .border(borderStroke, shape = borderShapeIn)
-                .background(Color.LightGray.copy(alpha = 0.5f)),
+                .border(BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.secondaryFixedDim), shape = RoundedCornerShape(2.dp))
+                .background( MaterialTheme.colorScheme.secondaryContainer),
         ) {
             allColumns.forEach { columnName ->
                 // HorizontalDivider()
@@ -363,13 +361,13 @@ fun MenuSelectColumn(
                             SegmentedButtonDefaults.Icon(
                                 active = selectedColumns.getValue(columnName).value,
                                 activeContent = {
-                                    androidx.compose.material3.Icon(
+                                    Icon(
                                         Icons.Default.ToggleOn,
                                         contentDescription = "Selected Column"
                                     )
                                 },
                                 inactiveContent = {
-                                    androidx.compose.material3.Icon(
+                                    Icon(
                                         Icons.Default.ToggleOff,
                                         contentDescription = "Unselected Column"
                                     )
@@ -497,11 +495,6 @@ fun HeaderRow(
     val heightColumnHeader = remember{ 36.dp }
     val heightColumnHeaderDivider = remember{ 30.dp }
 
-
-    val borderStroke = remember {BorderStroke(width = 1.dp, color = Color.Gray)}
-    val borderShapeIn = remember{RoundedCornerShape(2.dp)}
-
-
     Row(
       verticalAlignment = Alignment.CenterVertically
     ) {
@@ -511,10 +504,11 @@ fun HeaderRow(
             AnimatedVisibility(isVisibleRowNum) {
                 Row(
                     modifier = Modifier
-                        .background(color = Color.LightGray.copy(alpha = 0.5f))
+                        .background(color = MaterialTheme.colorScheme.secondaryContainer)
                         .height(heightColumnHeader)
                         .width(widthRowNumColumn)
-                        .border(border = borderStroke, shape = borderShapeIn),
+                        .border(border = BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.secondaryFixedDim),
+                            shape = RoundedCornerShape(2.dp)),
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
@@ -577,11 +571,12 @@ fun HeaderRow(
 
             Row(
                 modifier = Modifier
-                    .background(color= Color.LightGray.copy(alpha = 0.5f))
+                    .background(color = MaterialTheme.colorScheme.secondaryContainer)
                     .height(heightColumnHeader)
                     .width(columnsAreaWidth * columnWeights.getOrElse( index ) { 0f })
                     .height(heightColumnHeader)
-                    .border( borderStroke,  shape = borderShapeIn)
+                    .border(border = BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.secondaryFixedDim),
+                        shape = RoundedCornerShape(2.dp))
                     .pointerInput(Unit) {
                         detectDragGestures(
                             onDragEnd = onDragEnd,
@@ -741,8 +736,8 @@ fun SearchMenu(
                 filterText.value = ""
             },
             modifier = Modifier.width(180.dp)
-                .background(color =Color.LightGray.copy(0.5f)),
-            border = BorderStroke(1.dp, color=Color.Gray)
+                .background(color=MaterialTheme.colorScheme.secondaryContainer),
+            border = BorderStroke(1.dp, color=MaterialTheme.colorScheme.secondaryFixedDim)
         ) {
 
             Column() {
@@ -771,8 +766,8 @@ fun SearchMenu(
                         onDismissRequest = { expandedOperator = false },
                         scrollState = scrollState,
                         modifier = Modifier.width(200.dp).height(160.dp)
-                            .background(color  =Color.LightGray.copy(0.5f)),
-                        border = BorderStroke(1.dp, color=Color.Gray)
+                            .background(color=MaterialTheme.colorScheme.secondaryContainer),
+                        border = BorderStroke(1.dp, color=MaterialTheme.colorScheme.secondaryFixedDim)
                     ) {
                         OperatorMenu.Operators.forEach { operator ->
                             HorizontalDivider()
