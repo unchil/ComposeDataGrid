@@ -1,3 +1,6 @@
+@file:OptIn(InternalComposeApi::class)
+
+
 package com.unchil.composedatagrid.modules
 
 import androidx.compose.animation.core.FastOutSlowInEasing
@@ -16,12 +19,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ShapeDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.InternalComposeApi
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -33,7 +36,7 @@ import kotlin.math.absoluteValue
 
 
 @Composable
-fun PageSizePicker(
+internal fun Un7KCMPPageSizePicker(
     dataList:List<Any>,
     selectPageSizeIndex:Int ,
     pickerWidth: Dp,

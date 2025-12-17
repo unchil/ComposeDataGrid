@@ -1,5 +1,8 @@
+@file:OptIn(InternalComposeApi::class)
+
 package com.unchil.composedatagrid.modules
 
+import androidx.compose.runtime.InternalComposeApi
 import androidx.compose.runtime.MutableState
 
 enum class PageNav {

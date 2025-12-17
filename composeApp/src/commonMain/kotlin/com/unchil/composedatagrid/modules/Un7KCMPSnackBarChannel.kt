@@ -1,6 +1,10 @@
+@file:OptIn(InternalComposeApi::class)
+
+
 package com.unchil.composedatagrid.modules
 
 import androidx.compose.material3.SnackbarDuration
+import androidx.compose.runtime.InternalComposeApi
 
 enum class SnackBarChannelType {
     SEARCH_RESULT,

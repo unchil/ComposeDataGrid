@@ -44,7 +44,6 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.unchil.composedatagrid.modules.Un7KCMPDataGridViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
@@ -311,7 +310,7 @@ fun Un7KCMPDataGrid(
 
                                 stickyHeader {
                                     AnimatedVisibility(visible = isVisibleColumnHeader) {
-                                        HeaderRow(
+                                        Un7KCMPHeaderRow(
                                             isVisibleRowNum.value,
                                             maxWidthInDp,
                                             widthDividerThickness,
@@ -328,7 +327,7 @@ fun Un7KCMPDataGrid(
                                 }//stickyHeader
 
                                 items(pagingData.values.firstOrNull()?.size ?: 0) { dataIndex ->
-                                    DataRow(
+                                    Un7KCMPDataRow(
                                         isVisibleRowNum.value,
                                         maxWidthInDp,
                                         widthDividerThickness,
@@ -349,7 +348,7 @@ fun Un7KCMPDataGrid(
                                     //    .border(borderStrokeRed, shape = borderShapeIn)
                                     .align(Alignment.BottomStart)
                             ) {
-                                MenuGridControl(
+                                Un7KCMPMenuGridControl(
                                     isExpandGridControlMenu,
                                     lazyListState,
                                     viewModel.data.keys.toList(),
@@ -399,7 +398,7 @@ fun Un7KCMPDataGrid(
                         //  .border(borderStrokeRed, shape = borderShapeIn)
                         .align(Alignment.BottomStart)
                 ) {
-                    MenuPageNavControl(
+                    Un7KCMPMenuPageNavControl(
                         isExpandPageNavControlMenu,
                         onChangePageSize,
                         viewModel.selectPageSizeList,
