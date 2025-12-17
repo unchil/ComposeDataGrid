@@ -59,13 +59,14 @@ fun DataGrid( data:Map<String, List<Any?>> ){
 
         Column(
             modifier = Modifier.fillMaxSize()
-                .background(Color.White)
+                .background( MaterialTheme.colorScheme.background)
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
                 "Un7 Data Grid for Compose Multiplatform",
                 modifier = Modifier.padding(top = 60.dp, bottom = 20.dp),
+                color = MaterialTheme.colorScheme.onBackground,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold
             )
