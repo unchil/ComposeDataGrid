@@ -3,14 +3,12 @@ package com.unchil.composedatagrid.modules
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
@@ -21,14 +19,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ShapeDefaults
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -68,8 +64,6 @@ fun Un7KCMPDataGrid(
     val columnWeights by viewModel.columnWeights.collectAsState()
     val columnDataSortFlag by viewModel.columnDataSortFlag.collectAsState()
 
-
-    val enableDarkMode = remember { mutableStateOf(false) }
     val isVisibleRowNum = remember { mutableStateOf(true) }
     val isExpandGridControlMenu = rememberSaveable {mutableStateOf(false) }
     val isExpandPageNavControlMenu = rememberSaveable {mutableStateOf(false) }
@@ -92,8 +86,8 @@ fun Un7KCMPDataGrid(
     val paddingLazyColumn = remember { PaddingValues(0.dp)}
     val paddingLazyColumnContent = remember { PaddingValues(10.dp)}
 
-    val paddingMenuGridControl = remember{ PaddingValues(bottom = 60.dp, end = 10.dp)}
-    val paddingMenuPageNavControl = remember{ PaddingValues(start = 10.dp, bottom = 10.dp)}
+    val paddingMenuGridControl = remember{ PaddingValues(bottom = 70.dp, end = 10.dp, start = 4.dp)}
+    val paddingMenuPageNavControl = remember{ PaddingValues(all = 10.dp)}
 
     val widthRowNumColumn = remember{ 60.dp}
     val widthDividerThickness = remember{ 6.dp}
@@ -232,9 +226,6 @@ fun Un7KCMPDataGrid(
         viewModel.onEvent(Un7KCMPDataGridViewModel.Event.ColumnWeight(columnsWeight))
     }
 
-
-    AppTheme(enableDarkMode = enableDarkMode.value) {
-
         Box(
             then(modifier)
                 .fillMaxSize(),
@@ -342,7 +333,7 @@ fun Un7KCMPDataGrid(
                             modifier = Modifier
                                 .padding(paddingMenuGridControl)
                             //    .border(borderStrokeRed, shape = borderShapeIn)
-                                .align(Alignment.BottomEnd)
+                                .align(Alignment.BottomStart)
                         ) {
                             MenuGridControl(
                                 isExpandGridControlMenu,
@@ -401,7 +392,6 @@ fun Un7KCMPDataGrid(
             ) {
                 MenuPageNavControl(
                     isExpandPageNavControlMenu,
-                    enableDarkMode,
                     onChangePageSize,
                     viewModel.selectPageSizeList,
                     selectPageSizeIndex,
@@ -412,5 +402,5 @@ fun Un7KCMPDataGrid(
             }//Box  MenuGridSetting
 
         }//Box
-    }//AppTheme
+
 }

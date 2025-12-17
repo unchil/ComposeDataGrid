@@ -3,7 +3,6 @@ package com.unchil.composedatagrid.modules
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
@@ -32,26 +31,18 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.automirrored.filled.ManageSearch
 import androidx.compose.material.icons.automirrored.filled.PlaylistAdd
 import androidx.compose.material.icons.automirrored.filled.PlaylistAddCheck
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.ArrowDropUp
-import androidx.compose.material.icons.filled.ChecklistRtl
-import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.FormatListNumbered
-import androidx.compose.material.icons.filled.LightMode
-import androidx.compose.material.icons.filled.List
-import androidx.compose.material.icons.filled.PlaylistAdd
-import androidx.compose.material.icons.filled.PlaylistAddCheck
-import androidx.compose.material.icons.filled.PlaylistAddCheckCircle
-import androidx.compose.material.icons.filled.PlaylistAddCircle
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.SwapHoriz
 import androidx.compose.material.icons.filled.ToggleOff
 import androidx.compose.material.icons.filled.ToggleOn
-import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material.icons.filled.UnfoldMore
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -59,7 +50,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.Text
@@ -70,7 +60,6 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -115,6 +104,31 @@ fun MenuGridControl(
         verticalAlignment = Alignment.CenterVertically
     ) {
 
+        IconButton(
+            onClick = { isExpandGridControlMenu.value = !isExpandGridControlMenu.value },
+            modifier= Modifier.clip(CircleShape),
+        ) {
+
+
+            SegmentedButtonDefaults.Icon(
+                active = !isExpandGridControlMenu.value,
+                activeContent = {
+                    Icon(
+                        painter = painterResource(Res.drawable.arrow_menu_open_24px),
+                        contentDescription = ""
+                    )
+                },
+                inactiveContent = {
+                    Icon(
+                        painterResource(Res.drawable.arrow_menu_close_24px),
+                        contentDescription = ""
+                    )
+                }
+            )
+
+        }
+
+
         AnimatedVisibility(visible = isExpandGridControlMenu.value) {
             Row(verticalAlignment = Alignment.CenterVertically) {
 
@@ -147,7 +161,7 @@ fun MenuGridControl(
                         active = !isVisibleRowNum.value,
                         activeContent = {
                             Icon(
-                                Icons.Default.List,
+                                Icons.AutoMirrored.Filled.List,
                                 contentDescription = ""
                             )
                         },
@@ -170,29 +184,7 @@ fun MenuGridControl(
             }
         }
 
-        IconButton(
-            onClick = { isExpandGridControlMenu.value = !isExpandGridControlMenu.value },
-            modifier= Modifier.clip(CircleShape),
-        ) {
 
-
-            SegmentedButtonDefaults.Icon(
-                active = !isExpandGridControlMenu.value,
-                activeContent = {
-                    Icon(
-                        painter = painterResource(Res.drawable.arrow_menu_close_24px),
-                        contentDescription = ""
-                    )
-                },
-                inactiveContent = {
-                    Icon(
-                        painterResource(Res.drawable.arrow_menu_open_24px),
-                        contentDescription = ""
-                    )
-                }
-            )
-
-        }
 
 
 
@@ -204,7 +196,6 @@ fun MenuGridControl(
 @Composable
 fun MenuPageNavControl(
     isExpandPageNavControlMenu: MutableState<Boolean>,
-    enableDarkMode: MutableState<Boolean>,
     onChangePageSize:(Int)->Unit,
     selectPageSizeList: List<String>,
     selectPageSizeIndex:Int,
@@ -243,28 +234,6 @@ fun MenuPageNavControl(
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
-
-                IconButton(
-                    onClick = { enableDarkMode.value = !enableDarkMode.value },
-
-                    ) {
-                    SegmentedButtonDefaults.Icon(
-                        active = !enableDarkMode.value,
-                        activeContent = {
-                            Icon(
-                                Icons.Default.LightMode,
-                                contentDescription = "LightMode"
-                            )
-                        },
-                        inactiveContent = {
-                            Icon(
-                                Icons.Default.DarkMode,
-                                contentDescription = "DarkMode"
-                            )
-                        }
-                    )
-                }
-
 
                 PageSizePicker(
                     selectPageSizeList,
@@ -356,13 +325,13 @@ fun MenuSelectColumn(
                 active = expandMenu,
                 activeContent = {
                     Icon(
-                        Icons.Default.PlaylistAddCheck,
+                        Icons.AutoMirrored.Filled.PlaylistAddCheck,
                         contentDescription = "Open DropDownMenu"
                     )
                 },
                 inactiveContent = {
                     Icon(
-                        Icons.Default.PlaylistAdd,
+                        Icons.AutoMirrored.Filled.PlaylistAdd,
                         contentDescription = "Close DropDownMenu"
                     )
                 }
@@ -461,6 +430,7 @@ fun DataRow(
                 Text(
                     text = getRowNumber(pageIndex, pageSize, dataIndex).toString(),
                     textAlign = TextAlign.Center,
+                    maxLines = 1
                 )
             }
         }
@@ -491,6 +461,7 @@ fun DataRow(
                 Text(
                     text = (pagingData[columnName] as List<*>)[dataIndex].toString(),
                     textAlign = TextAlign.Center,
+                    maxLines = 1
                 )
             }
 
@@ -531,34 +502,35 @@ fun HeaderRow(
     val borderShapeIn = remember{RoundedCornerShape(2.dp)}
 
 
-
     Row(
       verticalAlignment = Alignment.CenterVertically
     ) {
         val density = LocalDensity.current.density
 
-        AnimatedVisibility(isVisibleRowNum){
-            Row(
-                modifier = Modifier
-                    .background(color= Color.LightGray.copy(alpha = 0.5f))
-                    .height(heightColumnHeader)
-                    .width(widthRowNumColumn)
-                    .border( border = borderStroke,  shape = borderShapeIn  ),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text("Num")
-            }
-        }
-        if(isVisibleRowNum){
-            VerticalDivider(
-                modifier = Modifier
-                    .height(heightColumnHeaderDivider),
-                thickness = widthDividerThickness,
-                color = Color.Transparent
-            )
 
-        }
+            AnimatedVisibility(isVisibleRowNum) {
+                Row(
+                    modifier = Modifier
+                        .background(color = Color.LightGray.copy(alpha = 0.5f))
+                        .height(heightColumnHeader)
+                        .width(widthRowNumColumn)
+                        .border(border = borderStroke, shape = borderShapeIn),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text("Num")
+                }
+            }
+            if (isVisibleRowNum) {
+                VerticalDivider(
+                    modifier = Modifier
+                        .height(heightColumnHeaderDivider),
+                    thickness = widthDividerThickness,
+                    color = Color.Transparent
+                )
+
+            }
+
 
 
         val columnsAreaWidth = if (isVisibleRowNum) {
@@ -648,7 +620,7 @@ fun HeaderRow(
                     )
                 }
 
-                Text(columnName)
+                Text(columnName, maxLines = 1)
 
                 SearchMenu(
                     columnName,
@@ -684,19 +656,6 @@ fun HeaderRow(
                     )
 
                     val newNextWeight = (currentWeight + nextWeight) - newCurrentWeight
-
-                    // --- 새로운 리스트로 상태를 업데이트! ---
-                    /*
-                    columnWeights.value =
-                        columnWeights.value.toMutableList()
-                            .apply {
-                                this[index] =
-                                    newCurrentWeight
-                                this[index + 1] =
-                                    newNextWeight
-                            }
-                     */
-                    // ------------------------------------
 
                     updateColumnWeight(
                         columnWeights.toMutableList()

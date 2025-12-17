@@ -34,14 +34,10 @@ import kotlinx.coroutines.launch
 
 val LocalPlatform = compositionLocalOf<Platform> { error("No Platform found!") }
 
-
-
-
 @Composable
 fun DataGrid( data:Map<String, List<Any?>> ){
 
     val platform = LocalPlatform.current
-
 
     val modifier = when(platform.alias){
         PlatformAlias.ANDROID -> {
@@ -58,26 +54,21 @@ fun DataGrid( data:Map<String, List<Any?>> ){
         }
     }
 
+    AppTheme(enableDarkMode = false) {
 
-
-    AppTheme{
         Column(
             modifier = Modifier.fillMaxSize()
                 .background(Color.White)
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
             Text(
                 "Un7 Data Grid for Compose Multiplatform",
                 modifier = Modifier.padding(top = 60.dp, bottom = 20.dp),
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold
             )
-
-
             Un7KCMPDataGrid(modifier, data)
-
         }
     }
 
@@ -130,7 +121,8 @@ fun DataGridWithViewModel(
         }
     }
 
-    AppTheme{
+    AppTheme(enableDarkMode = false){
+
         Column(
             modifier = Modifier.fillMaxSize()
                 .background(Color.White)
@@ -146,18 +138,7 @@ fun DataGridWithViewModel(
             )
 
             if(isVisible){
-/*
-                UnChilComposeDataGrid(
-                    modifier = modifier,
-                    columnNames = columnNames.value,
-                    data = data.value,
-                    reloadData = reloadData
-                )
-
- */
-
                 Un7KCMPDataGrid(modifier, Pair(columnNames.value, data.value).toMap())
-
             }
 
         }
