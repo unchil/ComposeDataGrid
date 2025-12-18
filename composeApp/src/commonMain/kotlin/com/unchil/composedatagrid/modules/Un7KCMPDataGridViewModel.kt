@@ -45,7 +45,7 @@ class Un7KCMPDataGridViewModel(val data: Map<String,List<Any?>>): ViewModel() {
         = MutableStateFlow(mapOf())
 
 
-    val selectPageSizeList = listOf("10", "50", "100", "500", "1000", "All")
+    val selectPageSizeList = listOf("10", "20", "50", "100", "500", "1000", "All")
 
     val selectPageSizeIndex: MutableStateFlow<Int>
         = MutableStateFlow(1)

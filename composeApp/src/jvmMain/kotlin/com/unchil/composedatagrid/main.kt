@@ -8,12 +8,13 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.application
+
 import org.jetbrains.kotlinx.dataframe.DataFrame
 import org.jetbrains.kotlinx.dataframe.api.toMap
 import org.jetbrains.kotlinx.dataframe.io.readJson
 
 val state = WindowState(
-    size = DpSize(1600.dp, 800.dp),
+    size = DpSize(1600.dp, 900.dp),
     position = WindowPosition(Alignment.TopCenter)
 )
 
@@ -35,8 +36,8 @@ fun main() = application {
     ) {
         CompositionLocalProvider( LocalPlatform provides getPlatform() ) {
 
-           // DataGrid(makeData())
-            DataGridWithViewModel()
+            DataGrid(makeData())
+           // DataGridWithViewModel()
 
         }
     }
