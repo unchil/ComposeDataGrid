@@ -43,6 +43,7 @@ kotlin {
             implementation(libs.androidx.activity.compose)
         }
         commonMain.dependencies {
+
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material3)
@@ -66,6 +67,7 @@ kotlin {
 }
 
 android {
+
     namespace = "com.unchil.composedatagrid"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
@@ -90,6 +92,7 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+
 }
 
 dependencies {
