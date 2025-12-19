@@ -149,8 +149,8 @@ publishing {
             url = uri("https://maven.pkg.github.com/unchil/ComposeDataGrid")
             credentials {
                 // 인증 정보는 아래 2단계에서 설정할 로컬 gradle.properties 파일에서 읽어옵니다.
-                username = project.findProperty("gpr.user") as String? ?: System.getenv("GITHUB_ACTOR")
-                password = project.findProperty("gpr.key") as String? ?: System.getenv("GITHUB_TOKEN")
+                username = System.getenv("GPR_USER") ?: providers.gradleProperty("gpr.user").toString()
+                password = System.getenv("GPR_KEY") ?: providers.gradleProperty("gpr.key").toString()
             }
         }
     }

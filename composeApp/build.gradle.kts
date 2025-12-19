@@ -54,8 +54,8 @@ kotlin {
             implementation(libs.androidx.lifecycle.runtimeCompose)
 
 
-            implementation(projects.un7datagrid)
-       //     implementation("com.github.unchil:un7datagrid:1.0.0")
+      //      implementation(projects.un7datagrid)
+            implementation(libs.unchil.un7datagrid)
             implementation(projects.shared)
         }
         commonTest.dependencies {
