@@ -5,12 +5,12 @@
 * Multi Column Sorted
   - ascending, descending
 * Column Data Filtering
-  - Contains, Equals, Begins With, Ends With, Blank, Null
+  - Contains, Equals, Begins With, Ends With, Blank
 * Change the order of columns
 * Added pagination feature
 * Request parameters
-  - columnNames:List<String>
-  - data:List<List<Any?>>
+  - modifier:Modifier = Modifier
+  - data:Map<String, List<Any?>>
 * Accepted data types:<Any?>
   - String, Int, Long, Float, Double
   
