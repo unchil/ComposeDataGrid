@@ -11,7 +11,7 @@
 |![Alt text](https://github.com/unchil/ComposeDataGrid/blob/main/composeApp/src/webMain/resources/web.png)|
 
 
-|Web|
+|Desktop|
 |:-:|
 |![Alt text](https://github.com/unchil/ComposeDataGrid/blob/main/composeApp/src/webMain/resources/mac.png)|
 
