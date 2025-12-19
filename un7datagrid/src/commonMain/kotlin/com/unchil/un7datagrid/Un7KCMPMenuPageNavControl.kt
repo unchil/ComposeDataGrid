@@ -13,7 +13,17 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.automirrored.filled.LastPage
+import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.FirstPage
+import androidx.compose.material.icons.filled.HighlightOff
+import androidx.compose.material.icons.filled.LastPage
+import androidx.compose.material.icons.filled.MoreHoriz
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Start
+import androidx.compose.material.icons.filled.Stop
+import androidx.compose.material.icons.filled.SwipeLeftAlt
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -25,11 +35,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.unit.dp
-import composedatagrid.un7datagrid.generated.resources.Res
-import composedatagrid.un7datagrid.generated.resources.arrow_menu_close_24px
-import composedatagrid.un7datagrid.generated.resources.arrow_menu_open_24px
-import composedatagrid.un7datagrid.generated.resources.first_page_24px
-import composedatagrid.un7datagrid.generated.resources.last_page_24px
 
 
 import org.jetbrains.compose.resources.painterResource
@@ -67,13 +72,13 @@ internal fun Un7KCMPMenuPageNavControl(
                 active = !isExpandPageNavControlMenu.value,
                 activeContent = {
                     Icon(
-                        painter = painterResource(Res.drawable.arrow_menu_open_24px),
+                        Icons.Default.MoreHoriz,
                         contentDescription = "OpenBox"
                     )
                 },
                 inactiveContent = {
                     Icon(
-                        painterResource(Res.drawable.arrow_menu_close_24px),
+                        Icons.Default.Clear,
                         contentDescription = "CloseBox"
                     )
                 }
@@ -111,7 +116,7 @@ internal fun Un7KCMPMenuPageNavControl(
                     enabled = pagerState.canScrollBackward,
                 ) {
                     Icon(
-                        painterResource(Res.drawable.first_page_24px),
+                        Icons.Default.FirstPage,
                         contentDescription = "First Page",
                     )
                 }
@@ -141,7 +146,7 @@ internal fun Un7KCMPMenuPageNavControl(
                     enabled = pagerState.canScrollForward,
                 ) {
                     Icon(
-                        painterResource(Res.drawable.last_page_24px),
+                        Icons.AutoMirrored.Filled.LastPage,
                         contentDescription = "Last Page",
                     )
                 }

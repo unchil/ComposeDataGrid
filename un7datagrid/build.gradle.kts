@@ -1,5 +1,10 @@
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 
+// 1. 배포할 라이브러리의 그룹 ID와 버전을 설정합니다.
+// TODO: "YOUR_GITHUB_USERNAME"을 실제 GitHub 사용자 이름으로 변경하세요.
+group = "com.github.unchil"
+version = "1.0.0"
+
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.android.kotlin.multiplatform.library)
@@ -7,6 +12,7 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.composeHotReload)
+    id("maven-publish") // 2. 'maven-publish' 플러그인을 추가합니다.
 }
 
 kotlin {
@@ -133,4 +139,20 @@ kotlin {
 
     }
 
+}
+
+// 3. 파일의 가장 마지막에 publishing 블록을 추가합니다.
+publishing {
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            // TODO: "YOUR_GITHUB_USERNAME"과 "ComposeDataGrid"를 실제 GitHub 사용자 이름과 저장소 이름으로 변경하세요.
+            url = uri("https://maven.pkg.github.com/unchil/ComposeDataGrid")
+            credentials {
+                // 인증 정보는 아래 2단계에서 설정할 로컬 gradle.properties 파일에서 읽어옵니다.
+                username = project.findProperty("gpr.user") as String? ?: System.getenv("GITHUB_ACTOR")
+                password = project.findProperty("gpr.key") as String? ?: System.getenv("GITHUB_TOKEN")
+            }
+        }
+    }
 }

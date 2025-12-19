@@ -11,7 +11,16 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.filled.ArrowDownward
+import androidx.compose.material.icons.filled.ArrowUpward
+import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.FormatListNumbered
+import androidx.compose.material.icons.filled.HighlightOff
+import androidx.compose.material.icons.filled.MoreHoriz
+import androidx.compose.material.icons.filled.Start
+import androidx.compose.material.icons.filled.Stop
+import androidx.compose.material.icons.filled.SwipeLeftAlt
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -23,11 +32,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.unit.dp
-import composedatagrid.un7datagrid.generated.resources.Res
-import composedatagrid.un7datagrid.generated.resources.arrow_menu_close_24px
-import composedatagrid.un7datagrid.generated.resources.arrow_menu_open_24px
-import composedatagrid.un7datagrid.generated.resources.vertical_align_bottom_24px
-import composedatagrid.un7datagrid.generated.resources.vertical_align_top_24px
 
 import org.jetbrains.compose.resources.painterResource
 
@@ -67,13 +71,13 @@ internal fun Un7KCMPMenuGridControl(
                 active = !isExpandGridControlMenu.value,
                 activeContent = {
                     Icon(
-                        painter = painterResource(Res.drawable.arrow_menu_open_24px),
+                       Icons.Default.MoreHoriz,
                         contentDescription = ""
                     )
                 },
                 inactiveContent = {
                     Icon(
-                        painterResource(Res.drawable.arrow_menu_close_24px),
+                        Icons.Default.Clear,
                         contentDescription = ""
                     )
                 }
@@ -90,7 +94,7 @@ internal fun Un7KCMPMenuGridControl(
                     enabled = lazyListState.canScrollBackward
                 ) {
                     Icon(
-                        painterResource(Res.drawable.vertical_align_top_24px),
+                       Icons.Default.ArrowUpward,
                         contentDescription = "First Row"
                     )
                 }
@@ -100,7 +104,7 @@ internal fun Un7KCMPMenuGridControl(
                     enabled = lazyListState.canScrollForward,
                 ) {
                     Icon(
-                        painterResource(Res.drawable.vertical_align_bottom_24px),
+                       Icons.Default.ArrowDownward,
                         contentDescription = "Last Row",
                     )
                 }
