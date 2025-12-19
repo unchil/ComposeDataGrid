@@ -133,7 +133,6 @@ kotlin {
         getByName("androidDeviceTest") {
             dependencies {
                 implementation(kotlin("test"))
-                implementation(libs.androidx.junit.ktx)
             }
         }
 

@@ -25,6 +25,18 @@ dependencyResolutionManagement {
             }
         }
         mavenCentral()
+
+        // --- 아래 maven 블록을 추가하세요 ---
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/unchil/ComposeDataGrid")
+            credentials {
+                username = ""
+                password = ""
+
+            }
+        }
+        // ------------------------------------
     }
 }
 

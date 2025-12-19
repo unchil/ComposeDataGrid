@@ -14,13 +14,8 @@ import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.ArrowDownward
 import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.FormatListNumbered
-import androidx.compose.material.icons.filled.HighlightOff
 import androidx.compose.material.icons.filled.MoreHoriz
-import androidx.compose.material.icons.filled.Start
-import androidx.compose.material.icons.filled.Stop
-import androidx.compose.material.icons.filled.SwipeLeftAlt
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -32,8 +27,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.unit.dp
-
-import org.jetbrains.compose.resources.painterResource
 
 
 @Composable
