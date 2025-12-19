@@ -10,6 +10,18 @@
 |:-:|:-:|:-:|:-:|
 |![Alt text](https://github.com/unchil/ComposeDataGrid/blob/main/composeApp/src/webMain/resources/ios.png)|![Alt text](https://github.com/unchil/ComposeDataGrid/blob/main/composeApp/src/webMain/resources/android.png)|![Alt text](https://github.com/unchil/ComposeDataGrid/blob/main/composeApp/src/webMain/resources/web.png)|![Alt text](https://github.com/unchil/ComposeDataGrid/blob/main/composeApp/src/webMain/resources/mac.png)|
 
+|Web|
+|:-:|
+|![Alt text](https://github.com/unchil/ComposeDataGrid/blob/main/composeApp/src/webMain/resources/web.png)|
+
+
+|Desktop|
+|::|
+|![Alt text](https://github.com/unchil/ComposeDataGrid/blob/main/composeApp/src/webMain/resources/mac.png)|
+
+|iOS|Android|
+|:-:|:-:|
+|![Alt text](https://github.com/unchil/ComposeDataGrid/blob/main/composeApp/src/webMain/resources/ios.png)|![Alt text](https://github.com/unchil/ComposeDataGrid/blob/main/composeApp/src/webMain/resources/android.png)|
 
 ![datagrid-screenshot-placeholder](https://github.com/unchil/ComposeDataGrid/blob/main/composeApp/src/webMain/resources/ios.png)
 ![datagrid-screenshot-placeholder](https://github.com/unchil/ComposeDataGrid/blob/main/composeApp/src/webMain/resources/android.png)
