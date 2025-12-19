@@ -11,6 +11,11 @@
 |![Alt text](https://github.com/unchil/ComposeDataGrid/blob/main/composeApp/src/webMain/resources/ios.png)|![Alt text](https://github.com/unchil/ComposeDataGrid/blob/main/composeApp/src/webMain/resources/android.png)|![Alt text](https://github.com/unchil/ComposeDataGrid/blob/main/composeApp/src/webMain/resources/web.png)|![Alt text](https://github.com/unchil/ComposeDataGrid/blob/main/composeApp/src/webMain/resources/mac.png)|
 
 
+![datagrid-screenshot-placeholder](https://github.com/unchil/ComposeDataGrid/blob/main/composeApp/src/webMain/resources/ios.png)
+![datagrid-screenshot-placeholder](https://github.com/unchil/ComposeDataGrid/blob/main/composeApp/src/webMain/resources/android.png)
+![datagrid-screenshot-placeholder](https://github.com/unchil/ComposeDataGrid/blob/main/composeApp/src/webMain/resources/web.png)
+![datagrid-screenshot-placeholder](https://github.com/unchil/ComposeDataGrid/blob/main/composeApp/src/webMain/resources/mac.png)
+
 ## ✨ 주요 기능 (Features)
 
 - **⚙️ 다중 플랫폼 지원**: Kotlin Compose Multiplatform을 사용하여 Android, iOS, Desktop, Web에서 완벽하게 동작합니다.
