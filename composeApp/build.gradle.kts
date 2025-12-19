@@ -99,7 +99,6 @@ android {
 }
 
 dependencies {
-    implementation(project(":un7datagrid"))
     debugImplementation(compose.uiTooling)
 }
 
