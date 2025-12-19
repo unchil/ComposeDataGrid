@@ -22,17 +22,14 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.unchil.composedatagrid.modules.Un7KCMPDataGrid
-import com.unchil.composedatagrid.modules.toMap
 import com.unchil.composedatagrid.theme.AppTheme
 import com.unchil.composedatagrid.viewmodel.MofSeaWaterInfoViewModel
-
-
+import com.unchil.un7datagrid.Un7KCMPDataGrid
+import com.unchil.un7datagrid.toMap
 import kotlinx.coroutines.launch
 
 val LocalPlatform = compositionLocalOf<Platform> { error("No Platform found!") }
@@ -143,7 +140,7 @@ fun DataGridWithViewModel(
             )
 
             if(isVisible){
-                Un7KCMPDataGrid(modifier, Pair(columnNames.value, data.value).toMap()  )
+                Un7KCMPDataGrid(modifier, Pair(columnNames.value, data.value).toMap() )
             }
 
         }

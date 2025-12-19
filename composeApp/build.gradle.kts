@@ -1,4 +1,3 @@
-import org.gradle.kotlin.dsl.invoke
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
@@ -53,6 +52,9 @@ kotlin {
             implementation(compose.materialIconsExtended)
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
+
+
+            implementation(projects.un7datagrid)
             implementation(projects.shared)
         }
         commonTest.dependencies {
@@ -96,6 +98,7 @@ android {
 }
 
 dependencies {
+    implementation(project(":un7datagrid"))
     debugImplementation(compose.uiTooling)
 }
 
