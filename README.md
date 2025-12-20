@@ -8,16 +8,16 @@
 
 |Web|
 |:-:|
-|![Alt text](https://github.com/unchil/ComposeDataGrid/blob/main/composeApp/src/webMain/resources/web.png)|
+|![Alt text](https://github.com/unchil/ComposeDataGrid/blob/main/screenshot/web.png)|
 
 
 |Desktop|
 |:-:|
-|![Alt text](https://github.com/unchil/ComposeDataGrid/blob/main/composeApp/src/webMain/resources/mac.png)|
+|![Alt text](https://github.com/unchil/ComposeDataGrid/blob/main/screenshot/mac.png)|
 
-|iOS|Android|
-|:-:|:-:|
-|![Alt text](https://github.com/unchil/ComposeDataGrid/blob/main/composeApp/src/webMain/resources/ios.png)|![Alt text](https://github.com/unchil/ComposeDataGrid/blob/main/composeApp/src/webMain/resources/android.png)|
+|iOS|                                         Android                                         |
+|:-:|:---------------------------------------------------------------------------------------:|
+|![Alt text](https://github.com/unchil/ComposeDataGrid/blob/main/screenshot/ios.png)| ![Alt text](https://github.com/unchil/ComposeDataGrid/blob/main/screenshot/android.png) |
 
 
 
