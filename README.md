@@ -53,20 +53,20 @@ dependencyResolutionManagement {
             name = "GitHubPackages"
             url = uri("https://maven.pkg.github.com/unchil/ComposeDataGrid")
             credentials {
-                username = System.getenv("GPR_USER") ?: property("gpr.user") as String?
-                password = System.getenv("GPR_KEY") ?: property("gpr.key") as String?
+                username = System.getenv("GPR_USER")
+                password = System.getenv("GPR_KEY")
             }
         }
     }
 }
 ```
 
-> **참고**: GitHub Packages에 접근하려면 인증이 필요합니다. 개발 머신의 전역 `~/.gradle/gradle.properties` 파일에 GitHub 사용자 이름과 `read:packages` 권한이 있는 PAT(Personal Access Token)를 설정해야 합니다.
+> **참고**: GitHub Packages에 접근하려면 인증이 필요합니다. 개발 머신의 전역 `~/.zshenv` 파일에 GitHub 사용자 이름과 `read:packages` 권한이 있는 PAT(Personal Access Token)를 설정해야 합니다.
 > 
 > ```properties
-> # ~/.gradle/gradle.properties
-> gpr.user=YOUR_GITHUB_USERNAME
-> gpr.key=YOUR_GITHUB_PAT
+> # ~/.zshenv
+> GPR_USER=YOUR_GITHUB_USERNAME
+> GPR_KEY=YOUR_GITHUB_PAT
 > ```
 
 ### 2단계: 의존성 추가
