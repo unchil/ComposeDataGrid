@@ -15,7 +15,7 @@
 |:-:|
 |![Alt text](https://github.com/unchil/ComposeDataGrid/blob/main/screenshot/mac.png)|
 
-|iOS|                                         Android                                         |
+|iOS|                                           AOS                                           |
 |:-:|:---------------------------------------------------------------------------------------:|
 |![Alt text](https://github.com/unchil/ComposeDataGrid/blob/main/screenshot/ios.png)| ![Alt text](https://github.com/unchil/ComposeDataGrid/blob/main/screenshot/android.png) |
 
