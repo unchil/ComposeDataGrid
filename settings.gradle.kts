@@ -31,8 +31,8 @@ dependencyResolutionManagement {
             name = "GitHubPackages"
             url = uri("https://maven.pkg.github.com/unchil/ComposeDataGrid")
             credentials {
-                username = System.getenv("GPR_USER") ?: providers.gradleProperty("gpr.user").toString()
-                password = System.getenv("GPR_KEY") ?: providers.gradleProperty("gpr.key").toString()
+                username = System.getenv("GPR_USER")
+                password = System.getenv("GPR_KEY")
 
             }
         }
