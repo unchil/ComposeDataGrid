@@ -46,6 +46,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import kotlin.math.roundToInt
+import androidx.compose.ui.zIndex
+
 
 
 @Composable
@@ -72,7 +74,6 @@ internal fun Un7KCMPHeaderRow(
     ) {
         val density = LocalDensity.current.density
 
-
         AnimatedVisibility(isVisibleRowNum) {
             Row(
                 modifier = Modifier
@@ -97,8 +98,6 @@ internal fun Un7KCMPHeaderRow(
 
         }
 
-
-
         val columnsAreaWidth = if (isVisibleRowNum) {
             maxWidthInDp - widthRowNumColumn - (widthDividerThickness * (columnNames.size ))
         } else {
@@ -109,9 +108,7 @@ internal fun Un7KCMPHeaderRow(
 
             val offset = remember { mutableStateOf(IntOffset.Zero) }
             val animatedAlpha by animateFloatAsState(if (offset.value == IntOffset.Zero) 1f else 0.5f)
-
             val onDragEnd: () -> Unit = {
-
                 // --- 드롭 시점에 구분선 위치를 동적으로 계산 ---
                 val currentDividerPositions = mutableListOf<Dp>()
                 var accumulatedWidth = 0f
@@ -143,18 +140,19 @@ internal fun Un7KCMPHeaderRow(
 
             Row(
                 modifier = Modifier
+                    // zIndex를 추가하여 드래그 중인 아이템이 항상 위에 그려지도록 합니다.
+                    .zIndex(if (offset.value == IntOffset.Zero) 0f else 1f)
                     .background(color = MaterialTheme.colorScheme.secondaryContainer)
-                    .height(heightColumnHeader)
                     .width(columnsAreaWidth * columnWeights.getOrElse( index ) { 0f })
                     .height(heightColumnHeader)
-                    .border(border = BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.secondaryFixedDim),
+                    .border(
+                        border = BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.secondaryFixedDim),
                         shape = RoundedCornerShape(2.dp))
                     .pointerInput(Unit) {
                         detectDragGestures(
                             onDragEnd = onDragEnd,
                             onDragCancel = { offset.value = IntOffset.Zero },
                             onDrag = { change, dragAmount ->
-
                                 change.consume()
                                 offset.value += IntOffset( dragAmount.x.roundToInt(), 0)
                             }

@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 // 1. 배포할 라이브러리의 그룹 ID와 버전을 설정합니다.
 // TODO: "YOUR_GITHUB_USERNAME"을 실제 GitHub 사용자 이름으로 변경하세요.
 group = "com.github.unchil"
-version = "1.0.0"
+version = libs.versions.un7datagrid.get()
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -149,8 +149,9 @@ publishing {
             url = uri("https://maven.pkg.github.com/unchil/ComposeDataGrid")
             credentials {
                 // 인증 정보는 아래 2단계에서 설정할 로컬 gradle.properties 파일에서 읽어옵니다.
-                username = System.getenv("GPR_USER") ?: providers.gradleProperty("gpr.user").toString()
-                password = System.getenv("GPR_KEY") ?: providers.gradleProperty("gpr.key").toString()
+                username = project.findProperty("gpr.user") as String? ?: System.getenv("GITHUB_ACTOR")
+                password = project.findProperty("gpr.key") as String? ?: System.getenv("GITHUB_TOKEN")
+
             }
         }
     }
