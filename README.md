@@ -5,24 +5,18 @@
 `Un7-KCMP-DataGrid` is a comprehensive data grid solution designed to efficiently display and manipulate large datasets. Built on Compose Multiplatform, it runs on Android, iOS, Desktop (JVM), and Web (WasmJs).
 
 ## Video
-| Video |
-|:-----:|
-|[![Alt text](https://github.com/unchil/ComposeDataGrid/blob/main/screenshot/mac.png)](https://youtu.be/b8CSmhNF2OY)| [![Alt text]
+|                                                       Desktop                                                       |
+|:-------------------------------------------------------------------------------------------------------------------:|
+| [![Alt text](https://github.com/unchil/ComposeDataGrid/blob/main/screenshot/mac.png)](https://youtu.be/b8CSmhNF2OY) | 
 
-## Screen Shot
-
-|Web|
-|:-:|
-|![Alt text](https://github.com/unchil/ComposeDataGrid/blob/main/screenshot/web.png)|
+|                                           Web                                           |
+|:---------------------------------------------------------------------------------------:|
+| [![Alt text](https://github.com/unchil/ComposeDataGrid/blob/main/screenshot/web.png)](https://youtu.be/jc0iSYL26hM) |
 
 
-|Desktop|
-|:-:|
-|![Alt text](https://github.com/unchil/ComposeDataGrid/blob/main/screenshot/mac.png)|
-
-|iOS|                                           AOS                                           |
-|:-:|:---------------------------------------------------------------------------------------:|
-|![Alt text](https://github.com/unchil/ComposeDataGrid/blob/main/screenshot/ios.png)| ![Alt text](https://github.com/unchil/ComposeDataGrid/blob/main/screenshot/android.png) |
+|                                                              iOS                                                               |                                             AOS                                             |
+|:------------------------------------------------------------------------------------------------------------------------------:|:-------------------------------------------------------------------------------------------:|
+| [![Alt text](https://github.com/unchil/ComposeDataGrid/blob/main/screenshot/ios.png)](https://youtube.com/shorts/9-LS6tkr84o)  | [![Alt text](https://github.com/unchil/ComposeDataGrid/blob/main/screenshot/android.png)](https://youtube.com/shorts/L58hfEz1siA) |
 
 
 
