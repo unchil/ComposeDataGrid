@@ -2,7 +2,7 @@
 
 **A powerful, feature-rich, and customizable Data Grid component for Kotlin Compose Multiplatform.**
 
-`Un7-KCMP-DataGrid`는 대규모 데이터셋을 효율적으로 표시하고 조작하기 위해 설계된 포괄적인 데이터 그리드 솔루션입니다. Compose Multiplatform을 기반으로 하여 Android, iOS, Desktop(JVM), Web(WasmJs)에서 모두 동작합니다.
+`Un7-KCMP-DataGrid` is a comprehensive data grid solution designed to efficiently display and manipulate large datasets. Built on Compose Multiplatform, it runs on Android, iOS, Desktop (JVM), and Web (WasmJs).
 
 ## Video
 | Video |
@@ -26,26 +26,26 @@
 
 
 
-## ✨ 주요 기능 (Features)
+## ✨ Features
 
-- **⚙️ 다중 플랫폼 지원**: Kotlin Compose Multiplatform을 사용하여 Android, iOS, Desktop, Web에서 완벽하게 동작합니다.
-- **📄 페이지네이션 (Pagination)**: `HorizontalPager`를 이용한 수평 페이징으로 수만 개의 데이터도 부드럽게 처리합니다.
-- **↕️ 컬럼 정렬 (Column Sorting)**: 컬럼 헤더를 클릭하여 오름차순, 내림차순, 기본 순서로 데이터를 정렬할 수 있습니다.
-- **↔️ 컬럼 크기 조절 (Column Resizing)**: 컬럼 헤더 사이의 구분선을 드래그하여 각 컬럼의 너비를 동적으로 조절할 수 있습니다.
-- **🔄 컬럼 순서 변경 (Column Reordering)**: 컬럼 헤더를 드래그 앤 드롭하여 원하는 순서로 쉽게 변경할 수 있습니다.
-- **👁️ 컬럼 가시성 제어 (Column Visibility)**: 플로팅 메뉴를 통해 특정 컬럼을 동적으로 보이거나 숨길 수 있습니다.
-- **🧊 고정 헤더 (Sticky Header)**: 수직 스크롤 시에도 컬럼 헤더가 항상 상단에 고정되어 데이터의 맥락을 잃지 않습니다.
-- **🎨 메뉴 및 컨트롤**:
-  - **그리드 제어**: 컬럼 선택, 행 번호 표시/숨김, 리스트 최상단/최하단 이동 기능이 포함된 플로팅 메뉴.
-  - **페이지네이션 제어**: 페이지 크기 변경 및 첫 페이지/이전/다음/마지막 페이지로 이동하는 탐색 컨트롤.
-- **🔔 사용자 피드백**: 데이터 필터링, 페이지 크기 변경 등의 이벤트 발생 시 `Snackbar`를 통해 직관적인 피드백을 제공합니다.
-- **🖌️ 손쉬운 커스터마이징**: Material 3를 기반으로 설계되었으며, `Modifier`와 테마를 통해 쉽게 외형을 변경할 수 있습니다.
+- **⚙️ Multiplatform Support**: Works seamlessly on Android, iOS, Desktop, and Web using Kotlin Compose Multiplatform.
+- **📄 Pagination**: Smoothly handles tens of thousands of data entries with horizontal paging using `HorizontalPager`.
+- **↕️ Column Sorting**: Sort data in ascending, descending, or default order by clicking on column headers.
+- **↔️ Column Resizing**: Dynamically adjust the width of each column by dragging the divider between headers.
+- **🔄 Column Reordering**: Easily reorder columns by dragging and dropping the headers.
+- **👁️ Column Visibility Control**: Dynamically show or hide specific columns through a floating menu.
+- **🧊 Sticky Header**: Column headers remain fixed at the top during vertical scrolling, so you never lose context.
+- **🎨 Menus & Controls**:
+  - **Grid Control**: A floating menu that includes features for column selection, showing/hiding row numbers, and navigating to the top/bottom of the list.
+  - **Pagination Control**: Navigation controls to change page size and move to the first, previous, next, or last page.
+- **🔔 User Feedback**: Provides intuitive feedback via a `Snackbar` for events like data filtering or page size changes.
+- **🖌️ Easy Customization**: Designed based on Material 3, allowing for easy appearance changes through `Modifier` and themes.
 
-## 🚀 설치 (Installation)
+## 🚀 Installation
 
-### 1단계: 저장소 설정
+### Step 1: Set up the Repository
 
-라이브러리를 다운로드할 수 있도록 프로젝트의 **`settings.gradle.kts`** 파일에 GitHub Packages 저장소를 추가합니다.
+Add the GitHub Packages repository to your project's **`settings.gradle.kts`** file to download the library.
 
 ```kotlin
 // settings.gradle.kts
@@ -53,7 +53,7 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        // GitHub Packages 저장소 추가
+        // Add GitHub Packages repository
         maven {
             name = "GitHubPackages"
             url = uri("https://maven.pkg.github.com/unchil/ComposeDataGrid")
@@ -66,7 +66,7 @@ dependencyResolutionManagement {
 }
 ```
 
-> **참고**: GitHub Packages에 접근하려면 인증이 필요합니다. 개발 머신의 전역 `~/.zshenv` 파일에 GitHub 사용자 이름과 `read:packages` 권한이 있는 PAT(Personal Access Token)를 설정해야 합니다.
+> **Note**: Authentication is required to access GitHub Packages. You need to set your GitHub username and a PAT (Personal Access Token) with `read:packages` permission in your development machine's global `~/.zshenv` file.
 > 
 > ```properties
 > # ~/.zshenv
@@ -74,25 +74,25 @@ dependencyResolutionManagement {
 > GPR_KEY=YOUR_GITHUB_PAT
 > ```
 
-### 2단계: 의존성 추가
+### Step 2: Add the Dependency
 
-라이브러리를 사용할 모듈(예: `composeApp`)의 `build.gradle.kts` 파일에 의존성을 추가합니다.
+Add the dependency to the `build.gradle.kts` file of the module where you will use the library (e.g., `composeApp`).
 
 ```kotlin
 // composeApp/build.gradle.kts
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            // Un7KCMPDataGrid 라이브러리 추가 (버전은 최신 버전으로 변경)
+            // Add Un7KCMPDataGrid library (change to the latest version)
             implementation("com.github.unchil:un7datagrid:1.0.0")
         }
     }
 }
 ```
 
-## 💻 사용법 (Usage)
+## 💻 Usage
 
-`Un7KCMPDataGrid`를 사용하는 것은 매우 간단합니다. 데이터만 `Map` 형태로 제공하면 됩니다. 데이터 구조는 각 컬럼 이름을 `Key`로, 해당 컬럼의 데이터 리스트를 `Value`로 하는 **컬럼 기반(Column-oriented)** 형태입니다.
+Using `Un7KCMPDataGrid` is very simple. Just provide the data as a `Map`. The data structure is **column-oriented**, where each column name is a `Key` and the list of data for that column is the `Value`.
 
 ```kotlin
 import androidx.compose.runtime.Composable
@@ -100,7 +100,7 @@ import com.unchil.un7datagrid.Un7KCMPDataGrid
 
 @Composable
 fun MyDataScreen() {
-    // 컬럼 이름(Key)과 데이터 리스트(Value)로 구성된 Map 데이터
+    // Map data consisting of column names (Key) and data lists (Value)
     val myData: Map<String, List<Any?>> = mapOf(
         "ID" to listOf(1, 2, 3, 4, 5),
         "Product Name" to listOf("Keyboard", "Mouse", "Monitor", "Webcam", "Speaker"),
@@ -114,11 +114,11 @@ fun MyDataScreen() {
 
 ## 🛠️ API
 
-| 파라미터 | 타입 | 설명 | 기본값 |
+| Parameter | Type | Description | Default |
 | --- | --- | --- | --- |
-| `modifier` | `Modifier` | 컴포저블에 적용할 표준 `Modifier`입니다. | `Modifier` |
-| `data` | `Map<String, List<Any?>>` | 그리드에 표시할 데이터입니다. Key는 컬럼 이름, Value는 해당 컬럼의 데이터 리스트인 컬럼 기반(column-oriented) `Map`이어야 합니다. | (필수) |
+| `modifier` | `Modifier` | The standard `Modifier` to apply to the composable. | `Modifier` |
+| `data` | `Map<String, List<Any?>>` | The data to display in the grid. It must be a column-oriented `Map` where the Key is the column name and the Value is the list of data for that column. | (Required) |
 
-## 📄 라이선스 (License)
+## 📄 License
 
-`Un7-KCMP-DataGrid`는 [MIT License](https://opensource.org/licenses/MIT)에 따라 배포됩니다.
+`Un7-KCMP-DataGrid` is distributed under the [MIT License](https://opensource.org/licenses/MIT).
