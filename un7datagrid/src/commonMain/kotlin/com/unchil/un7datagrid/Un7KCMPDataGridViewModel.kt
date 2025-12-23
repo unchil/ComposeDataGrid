@@ -328,7 +328,12 @@ class Un7KCMPDataGridViewModel(val data: Map<String,List<Any?>>): ViewModel() {
         columnWeights.value = List(columnNames.value.size) { 1f / columnNames.value.size  }
         columnDataSortFlag.value = List(columnNames.value.size) { 0  }
         lastPageIndex.value = getLastPageIndex(dataRows.value.size, pageSize.value)
-        pageSize.value = selectPageSizeList.get(selectPageSizeIndex.value).toInt()
+        pageSize.value = if(selectPageSizeList.get(selectPageSizeIndex.value).equals("All")){
+            dataRows.value.size
+        }else {
+            selectPageSizeList.get(selectPageSizeIndex.value).toInt()
+        }
+
         closerFunc()
     }
 

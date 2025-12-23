@@ -67,7 +67,6 @@ fun Un7KCMPDataGrid(
     val columnDataSortFlag by viewModel.columnDataSortFlag.collectAsState()
 
     val isVisibleRowNum = remember { mutableStateOf(true) }
-    val isExpandGridControlMenu = rememberSaveable {mutableStateOf(false) }
     val isExpandPageNavControlMenu = rememberSaveable {mutableStateOf(false) }
 
     val borderStrokeTransparent = remember {BorderStroke(width = 0.dp, color = Color.Transparent)}
@@ -346,10 +345,11 @@ fun Un7KCMPDataGrid(
                                 modifier = Modifier
                                     .padding(paddingMenuGridControl)
                                     //    .border(borderStrokeRed, shape = borderShapeIn)
-                                    .align(Alignment.BottomStart)
+                                    .align(Alignment.BottomStart),
+
                             ) {
                                 Un7KCMPMenuGridControl(
-                                    isExpandGridControlMenu,
+                                    isExpandPageNavControlMenu,
                                     lazyListState,
                                     viewModel.data.keys.toList(),
                                     selectedColumns,
@@ -357,6 +357,7 @@ fun Un7KCMPDataGrid(
                                     onListNavHandler,
                                     isVisibleRowNum
                                 )
+
                             }//Box  MenuPageNavControl
 
                             SnackbarHost(

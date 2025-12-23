@@ -3,6 +3,7 @@
 
 package com.unchil.un7datagrid
 
+
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -14,16 +15,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.automirrored.filled.LastPage
-import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.FirstPage
-import androidx.compose.material.icons.filled.HighlightOff
-import androidx.compose.material.icons.filled.LastPage
-import androidx.compose.material.icons.filled.MoreHoriz
 import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material.icons.filled.Start
-import androidx.compose.material.icons.filled.Stop
-import androidx.compose.material.icons.filled.SwipeLeftAlt
+import androidx.compose.material.icons.filled.ZoomInMap
+import androidx.compose.material.icons.filled.ZoomOutMap
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -35,9 +30,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.unit.dp
-
-
-import org.jetbrains.compose.resources.painterResource
 
 
 @Composable
@@ -72,13 +64,13 @@ internal fun Un7KCMPMenuPageNavControl(
                 active = !isExpandPageNavControlMenu.value,
                 activeContent = {
                     Icon(
-                        Icons.Default.MoreHoriz,
+                        Icons.Default.ZoomInMap,
                         contentDescription = "OpenBox"
                     )
                 },
                 inactiveContent = {
                     Icon(
-                        Icons.Default.Clear,
+                        Icons.Default.ZoomOutMap,
                         contentDescription = "CloseBox"
                     )
                 }
