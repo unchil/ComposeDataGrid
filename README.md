@@ -29,6 +29,7 @@
 - **🔄 Column Reordering**: Easily reorder columns by dragging and dropping the headers.
 - **👁️ Column Visibility Control**: Dynamically show or hide specific columns through a floating menu.
 - **🧊 Sticky Header**: Column headers remain fixed at the top during vertical scrolling, so you never lose context.
+- **🖱️ Horizontal Scrolling**: Automatically enables horizontal scrolling when the total column width exceeds the screen width. This is especially useful when displaying all data on a single page.
 - **🎨 Menus & Controls**:
   - **Grid Control**: A floating menu that includes features for column selection, showing/hiding row numbers, and navigating to the top/bottom of the list.
   - **Pagination Control**: Navigation controls to change page size and move to the first, previous, next, or last page.
