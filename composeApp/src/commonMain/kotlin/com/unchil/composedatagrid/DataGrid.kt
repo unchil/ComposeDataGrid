@@ -2,7 +2,9 @@ package com.unchil.composedatagrid
 
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -107,42 +109,63 @@ fun DataGridWithViewModel(
         }
     }
 
-    val modifier = when(platform.alias){
-        PlatformAlias.ANDROID -> {
-            Modifier.fillMaxWidth(0.95f).height(700.dp ).padding(0.dp)
-        }
-        PlatformAlias.IOS -> {
-            Modifier.fillMaxWidth(0.95f).height(700.dp ).padding(0.dp)
-        }
-        PlatformAlias.JVM -> {
-            Modifier.fillMaxWidth(0.95f).height(700.dp ).padding(0.dp)
-        }
-        PlatformAlias.WASM -> {
-            Modifier.fillMaxWidth(0.95f).height(700.dp ).padding(0.dp)
-        }
-    }
+
 
     AppTheme(enableDarkMode=false){
-
-        Column(
+        BoxWithConstraints(
             modifier = Modifier.fillMaxSize()
-                .background( MaterialTheme.colorScheme.background)
-                .verticalScroll(rememberScrollState()),
-            horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            val isLandscape = maxWidth > maxHeight
 
-            Text(
-                "Un7 Data Grid for Compose Multiplatform",
-                modifier = Modifier.padding(top = 60.dp, bottom = 20.dp),
-                color = MaterialTheme.colorScheme.onBackground,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold
-            )
+            val modifier = when(platform.alias){
+                PlatformAlias.ANDROID -> {
+                    if (isLandscape) {
+                        // 가로 모드일 때
+                        Modifier.fillMaxWidth(0.95f).height(400.dp).padding(0.dp)
+                    } else {
+                        // 세로 모드일 때
+                        Modifier.fillMaxWidth(0.95f).height(700.dp).padding(0.dp)
+                    }
 
-            if(isVisible){
-                Un7KCMPDataGrid(modifier, Pair(columnNames.value, data.value).toMap() )
+                }
+                PlatformAlias.IOS -> {
+                    if (isLandscape) {
+                        // 가로 모드일 때
+                        Modifier.fillMaxWidth(0.95f).height(400.dp).padding(0.dp)
+                    } else {
+                        // 세로 모드일 때
+                        Modifier.fillMaxWidth(0.95f).height(700.dp).padding(0.dp)
+                    }
+
+                }
+                PlatformAlias.JVM -> {
+                    Modifier.fillMaxWidth(0.95f).height(700.dp ).padding(0.dp)
+                }
+                PlatformAlias.WASM -> {
+                    Modifier.fillMaxWidth(0.95f).height(700.dp ).padding(0.dp)
+                }
             }
 
+            Column(
+                modifier = Modifier.fillMaxSize()
+                    .background(MaterialTheme.colorScheme.background)
+                    .verticalScroll(rememberScrollState()),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+
+                Text(
+                    "Un7 Data Grid for Compose Multiplatform",
+                    modifier = Modifier.padding(top = 60.dp, bottom = 20.dp),
+                    color = MaterialTheme.colorScheme.onBackground,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold
+                )
+
+                if (isVisible) {
+                    Un7KCMPDataGrid(modifier, Pair(columnNames.value, data.value).toMap())
+                }
+
+            }
         }
     }
 

@@ -36,8 +36,8 @@ fun main() = application {
     ) {
         CompositionLocalProvider( LocalPlatform provides getPlatform() ) {
 
-            DataGrid(makeData())
-           // DataGridWithViewModel()
+           // DataGrid(makeData())
+            DataGridWithViewModel()
 
         }
     }
