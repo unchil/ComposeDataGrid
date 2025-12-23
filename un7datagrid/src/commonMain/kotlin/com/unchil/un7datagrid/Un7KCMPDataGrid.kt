@@ -88,7 +88,7 @@ fun Un7KCMPDataGrid(
     val widthRowNumColumn = remember{ 60.dp}
     val widthDividerThickness = remember{ 6.dp}
 
-    val isOnePageNav = remember { mutableStateOf(false) }
+    val isOnePageNav = remember { mutableStateOf(true) }
 
     //--------------------
     // SnackBar Setting

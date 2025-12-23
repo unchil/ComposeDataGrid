@@ -23,7 +23,7 @@ class Un7KCMPDataGridViewModel(val data: Map<String,List<Any?>>): ViewModel() {
         = mutableStateOf(emptyList())
 
     val pageSize: MutableStateFlow<Int>
-        = MutableStateFlow(50)
+        = MutableStateFlow(0)
 
     val lastPageIndex: MutableStateFlow<Int>
         = MutableStateFlow(1)
@@ -48,7 +48,7 @@ class Un7KCMPDataGridViewModel(val data: Map<String,List<Any?>>): ViewModel() {
     val selectPageSizeList = listOf("10", "20", "50", "100", "500", "1000", "All")
 
     val selectPageSizeIndex: MutableStateFlow<Int>
-        = MutableStateFlow(1)
+        = MutableStateFlow(6)
 
 
 
@@ -62,7 +62,9 @@ class Un7KCMPDataGridViewModel(val data: Map<String,List<Any?>>): ViewModel() {
         columnWeights.value = List(columnNames.value.size) { 1f / columnNames.value.size }
         columnDataSortFlag.value = List(columnNames.value.size) {0}
         selectedColumns.value = data.keys.associateWith { mutableStateOf(true) }
-        pageSize.value = selectPageSizeList.get(selectPageSizeIndex.value).toInt()
+
+        pageSize.value = dataRows.value.size
+
         lastPageIndex.value = getLastPageIndex(dataRows.value.size, pageSize.value)
     }
 
