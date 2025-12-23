@@ -84,7 +84,7 @@ class Un7KCMPDataGridViewModel(val data: Map<String,List<Any?>>): ViewModel() {
             }
             is Event.ChangePageSize -> {
                 onChangePageSize(
-                    event.index,
+                    event.pageSize,
                     event.closerFunc
                 )
             }
@@ -166,24 +166,23 @@ class Un7KCMPDataGridViewModel(val data: Map<String,List<Any?>>): ViewModel() {
 
     }
 
-    val onChangePageSize:(Int, ()->Unit)->Unit = { index, closerFunc ->
-        val result = if(index == 0){
+    val onChangePageSize:(Int, (Int)->Unit)->Unit = { size, closerFunc ->
+        val result = if(size == 0){
             Pair(
-                //presentData.values.firstOrNull()?.size ?: 0 ,
                 dataRows.value.size,
                 selectPageSizeList.indexOf("All")
             )
         }else{
             Pair(
-                index,
-                selectPageSizeList.indexOf(index.toString())
+                size,
+                selectPageSizeList.indexOf(size.toString())
             )
         }
         pageSize.value = result.first
         selectPageSizeIndex.value = result.second
         lastPageIndex.value = getLastPageIndex(dataRows.value.size, pageSize.value)
 
-        closerFunc()
+        closerFunc(result.first)
 
 
     }
@@ -353,8 +352,8 @@ class Un7KCMPDataGridViewModel(val data: Map<String,List<Any?>>): ViewModel() {
 
 
         data class ChangePageSize(
-            val index:Int,
-            val closerFunc:()->Unit
+            val pageSize:Int,
+            val closerFunc:(Int)->Unit
         ):Event()
 
         data class Filter(

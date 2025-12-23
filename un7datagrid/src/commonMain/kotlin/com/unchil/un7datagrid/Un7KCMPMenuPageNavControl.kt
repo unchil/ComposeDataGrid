@@ -41,6 +41,7 @@ internal fun Un7KCMPMenuPageNavControl(
     onRefresh:()->Unit,
     onPageNavHandler:(PageNav)->Unit,
     pagerState: PagerState,
+    isOnePageNav: Boolean
 ){
     val shape = RoundedCornerShape(10.dp)
 
@@ -102,47 +103,49 @@ internal fun Un7KCMPMenuPageNavControl(
                     )
                 }
 
+                if(!isOnePageNav) {
 
-                IconButton(
-                    onClick = { onPageNavHandler(PageNav.First) },
-                    enabled = pagerState.canScrollBackward,
-                ) {
-                    Icon(
-                        Icons.Default.FirstPage,
-                        contentDescription = "First Page",
-                    )
+                    IconButton(
+                        onClick = { onPageNavHandler(PageNav.First) },
+                        enabled = pagerState.canScrollBackward,
+                    ) {
+                        Icon(
+                            Icons.Default.FirstPage,
+                            contentDescription = "First Page",
+                        )
+                    }
+
+                    IconButton(
+                        onClick = { onPageNavHandler(PageNav.Prev) },
+                        enabled = pagerState.canScrollBackward,
+                    ) {
+                        Icon(
+                            Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                            contentDescription = "Prev Page",
+                        )
+                    }
+
+                    IconButton(
+                        onClick = { onPageNavHandler(PageNav.Next) },
+                        enabled = pagerState.canScrollForward,
+                    ) {
+                        Icon(
+                            Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                            contentDescription = "Next Page",
+                        )
+                    }
+
+                    IconButton(
+                        onClick = { onPageNavHandler(PageNav.Last) },
+                        enabled = pagerState.canScrollForward,
+                    ) {
+                        Icon(
+                            Icons.AutoMirrored.Filled.LastPage,
+                            contentDescription = "Last Page",
+                        )
+                    }
+
                 }
-
-                IconButton(
-                    onClick = { onPageNavHandler(PageNav.Prev)},
-                    enabled = pagerState.canScrollBackward,
-                ) {
-                    Icon(
-                        Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-                        contentDescription = "Prev Page",
-                    )
-                }
-
-                IconButton(
-                    onClick = { onPageNavHandler(PageNav.Next)},
-                    enabled = pagerState.canScrollForward,
-                ) {
-                    Icon(
-                        Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                        contentDescription = "Next Page",
-                    )
-                }
-
-                IconButton(
-                    onClick = { onPageNavHandler(PageNav.Last)},
-                    enabled = pagerState.canScrollForward,
-                ) {
-                    Icon(
-                        Icons.AutoMirrored.Filled.LastPage,
-                        contentDescription = "Last Page",
-                    )
-                }
-
 
             }
 
