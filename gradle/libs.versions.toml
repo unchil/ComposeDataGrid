@@ -27,7 +27,7 @@ ksp = "2.2.21-1.0.20"
 secrets-gradle-plugin = "2.0.1"
 
 ## Un7DataGrid
-un7datagrid = "1.0.6"
+un7datagrid = "1.0.7"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }

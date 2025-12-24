@@ -55,21 +55,14 @@ internal fun Un7KCMPSearchMenu(
     val scrollState = remember { ScrollState(0) }
     var expandedOperator by remember { mutableStateOf(false) }
 
-    val isSearch = remember { mutableStateOf(false) }
-
     val onSearch: () -> Unit = {
         onFilter.invoke(columnName, filterText.value, operatorText.value)
         expanded = false
         filterText.value = ""
         operatorText.value = OperatorMenu.Operators.first().toString()
-        isSearch.value = false
+
     }
 
-    LaunchedEffect(isSearch.value){
-        if(isSearch.value){
-            onSearch()
-        }
-    }
 
     Box(
         contentAlignment = Alignment.Center,
@@ -137,7 +130,7 @@ internal fun Un7KCMPSearchMenu(
                         .onKeyEvent { event ->
                             // 데스크탑 및 하드웨어 키보드의 Enter 키 입력을 처리합니다.
                             if (event.key == Key.Enter && event.type == KeyEventType.KeyDown) {
-                                isSearch.value = true
+                                onSearch()
                                 true
                             } else false
                         } ,
@@ -162,7 +155,7 @@ internal fun Un7KCMPSearchMenu(
                     ),
                     keyboardActions = KeyboardActions(
                         onSearch = {
-                            isSearch.value = true
+                            onSearch()
                         }
                     )
                 )
