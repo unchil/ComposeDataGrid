@@ -6,13 +6,13 @@ package com.unchil.un7datagrid
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ManageSearch
 import androidx.compose.material.icons.filled.ArrowDropDown
@@ -41,6 +41,7 @@ import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.type
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 
 
@@ -53,20 +54,21 @@ internal fun Un7KCMPSearchMenu(
     val filterText = remember { mutableStateOf("") }
     val operatorText = remember { mutableStateOf(OperatorMenu.Operators.first().toString()) }
     var isFocused by remember { mutableStateOf(false) }
-    val interactionSource = remember { MutableInteractionSource() }
-    val isPressed by interactionSource.collectIsPressedAsState()
     val scrollState = remember { ScrollState(0) }
     var expandedOperator by remember { mutableStateOf(false) }
+
+    val isSearch = remember { mutableStateOf(false) }
 
     val onSearch: () -> Unit = {
         onFilter.invoke(columnName, filterText.value, operatorText.value)
         expanded = false
         filterText.value = ""
         operatorText.value = OperatorMenu.Operators.first().toString()
+        isSearch.value = false
     }
 
-    LaunchedEffect(isPressed){
-        if(isPressed) {
+    LaunchedEffect(isSearch.value){
+        if(isSearch.value){
             onSearch()
         }
     }
@@ -90,7 +92,7 @@ internal fun Un7KCMPSearchMenu(
             border = BorderStroke(1.dp, color=MaterialTheme.colorScheme.secondaryFixedDim)
         ) {
 
-            Column() {
+            Column{
 
                 Box(contentAlignment = Alignment.Center){
 
@@ -101,8 +103,7 @@ internal fun Un7KCMPSearchMenu(
                         onValueChange = { operatorText.value = it },
                         label = { Text("Operator...")  },
                         trailingIcon = {
-                            IconButton(onClick = { expandedOperator = !expandedOperator })
-                            {
+                            IconButton(onClick = { expandedOperator = !expandedOperator }){
                                 Icon(if(expandedOperator) Icons.Default.ArrowDropUp else Icons.Default.ArrowDropDown,
                                     contentDescription = "Operator"
                                 )
@@ -123,7 +124,6 @@ internal fun Un7KCMPSearchMenu(
                             HorizontalDivider()
                             DropdownMenuItem(
                                 text = { Text(operator.toString()) },
-
                                 onClick = {
                                     operatorText.value = operator.toString()
                                     expandedOperator = false
@@ -134,21 +134,24 @@ internal fun Un7KCMPSearchMenu(
                 }
 
                 OutlinedTextField(
-                    modifier = Modifier.padding(horizontal = 8.dp).onKeyEvent { event ->
-                        if (event.key.equals(Key.Enter) && event.type.equals(KeyEventType.KeyUp) ) {
-                            onSearch()
-                            true
-                        }else{
-                            false
+                    modifier = Modifier
+                        .padding(horizontal = 8.dp)
+                        .onKeyEvent { event ->
+                            // 데스크탑 및 하드웨어 키보드의 Enter 키 입력을 처리합니다.
+                            if (event.key == Key.Enter && event.type == KeyEventType.KeyDown) {
+                                isSearch.value = true
+                                true
+                            } else false
                         }
-                    }.onFocusChanged { focusState ->  isFocused = focusState.isFocused  },
+                        .onFocusChanged { focusState ->  isFocused = focusState.isFocused  },
                     value = filterText.value,
                     onValueChange = { filterText.value = it  },
                     label = { Text("Search...")  },
                     trailingIcon = {
                         IconButton(
-                            onClick = { onSearch()  },
-                            interactionSource = interactionSource,
+                            onClick = {
+                                isSearch.value = true
+                            },
                             enabled = isFocused,
                         ) {
                             Icon(Icons.Default.Search,
@@ -157,7 +160,16 @@ internal fun Un7KCMPSearchMenu(
                             )
                         }
                     },
+
                     singleLine = true,
+                    keyboardOptions = KeyboardOptions(
+                        imeAction = ImeAction.Search
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onSearch = {
+                            isSearch.value = true
+                        }
+                    )
                 )
             }
 

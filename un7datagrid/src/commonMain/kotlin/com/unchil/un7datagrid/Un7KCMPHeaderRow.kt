@@ -42,6 +42,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -70,7 +71,8 @@ internal fun Un7KCMPHeaderRow(
     val heightColumnHeaderDivider = remember{ 30.dp }
 
     Row(
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
+
     ) {
         val density = LocalDensity.current.density
 
@@ -159,7 +161,6 @@ internal fun Un7KCMPHeaderRow(
                         )}
                     .offset { offset.value }
                     .alpha(animatedAlpha),
-                horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
 
@@ -172,7 +173,7 @@ internal fun Un7KCMPHeaderRow(
                             else -> {0}
                         }
                         onColumnSort( index, iconFlag)
-                    }
+                    },
                 ){
                     Icon(
                         imageVector = when(columnDataSortFlag[index]){
@@ -185,7 +186,7 @@ internal fun Un7KCMPHeaderRow(
                     )
                 }
 
-                Text(columnName, maxLines = 1)
+                Text(columnName, modifier=Modifier.weight(1f), textAlign = TextAlign.Center, maxLines = 1)
 
                 Un7KCMPSearchMenu(
                     columnName,
