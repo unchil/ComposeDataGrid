@@ -53,8 +53,7 @@ kotlin {
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
 
-            implementation(libs.unchil.un7datagrid)
-        //    implementation(projects.un7datagrid)
+            implementation(projects.un7datagrid)
             implementation(projects.shared)
         }
         commonTest.dependencies {

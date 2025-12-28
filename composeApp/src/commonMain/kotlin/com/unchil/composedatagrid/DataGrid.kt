@@ -33,6 +33,8 @@ import com.unchil.composedatagrid.viewmodel.MofSeaWaterInfoViewModel
 import com.unchil.un7datagrid.Un7KCMPDataGrid
 import com.unchil.un7datagrid.Un7KCMPDataGridConfig
 import com.unchil.un7datagrid.toMap
+
+
 import kotlinx.coroutines.launch
 
 val LocalPlatform = compositionLocalOf<Platform> { error("No Platform found!") }
@@ -167,7 +169,7 @@ fun DataGridWithViewModel(
                         modifier,
                         Pair(columnNames.value, data.value).toMap(),
                         Un7KCMPDataGridConfig(
-                            true, "Num", listOf("10", "20", "50", "100"), 2
+                            true, "No.", listOf("10", "20", "50", "100"), 2
                         )
                     )
                 }
