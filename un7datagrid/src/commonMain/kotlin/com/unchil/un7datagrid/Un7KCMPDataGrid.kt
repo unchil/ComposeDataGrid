@@ -55,11 +55,12 @@ import kotlinx.coroutines.launch
 @Composable
 fun Un7KCMPDataGrid(
     modifier:Modifier = Modifier,
-    data:Map<String, List<Any?>>
+    data:Map<String, List<Any?>>,
+    config: Un7KCMPDataGridConfig = Un7KCMPDataGridConfig()
 ){
     val coroutineScope = rememberCoroutineScope()
 
-    val viewModel = remember(data) { Un7KCMPDataGridViewModel(data) }
+    val viewModel = remember(data) { Un7KCMPDataGridViewModel(data, config) }
 
     val pageSize by viewModel.pageSize.collectAsState()
     val lastPageIndex by viewModel.lastPageIndex.collectAsState()
@@ -70,7 +71,9 @@ fun Un7KCMPDataGrid(
     val columnWeights by viewModel.columnWeights.collectAsState()
     val columnDataSortFlag by viewModel.columnDataSortFlag.collectAsState()
 
-    val isVisibleRowNum = remember { mutableStateOf(true) }
+    val isVisibleRowNum = remember { mutableStateOf(config.isVisibilityRowNumber) }
+    val rowNumColumnName = remember { config.rowNumberColumnName }
+
     val isExpandPageNavControlMenu = rememberSaveable {mutableStateOf(false) }
 
     val borderStrokeTransparent = remember {BorderStroke(width = 0.dp, color = Color.Transparent)}
@@ -327,6 +330,7 @@ fun Un7KCMPDataGrid(
                                         AnimatedVisibility(visible = isVisibleColumnHeader) {
                                             Un7KCMPHeaderRow(
                                                 isVisibleRowNum.value,
+                                                rowNumColumnName = rowNumColumnName,
                                                 gridContentWidth,
                                                 widthDividerThickness,
                                                 widthRowNumColumn,
@@ -525,6 +529,7 @@ fun Un7KCMPDataGrid(
                                         AnimatedVisibility(visible = isVisibleColumnHeader) {
                                             Un7KCMPHeaderRow(
                                                 isVisibleRowNum.value,
+                                                rowNumColumnName,
                                                 maxWidthInDp,
                                                 widthDividerThickness,
                                                 widthRowNumColumn,

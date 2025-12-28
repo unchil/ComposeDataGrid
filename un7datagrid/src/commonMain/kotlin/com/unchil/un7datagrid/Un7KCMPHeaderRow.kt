@@ -54,6 +54,7 @@ import androidx.compose.ui.zIndex
 @Composable
 internal fun Un7KCMPHeaderRow(
     isVisibleRowNum: Boolean,
+    rowNumColumnName: String,
     maxWidthInDp: Dp,
     widthDividerThickness:Dp,
     widthRowNumColumn: Dp,
@@ -87,7 +88,7 @@ internal fun Un7KCMPHeaderRow(
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Text("Num")
+                Text(rowNumColumnName)
             }
         }
         if (isVisibleRowNum) {

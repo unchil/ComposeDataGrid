@@ -31,6 +31,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.unchil.composedatagrid.theme.AppTheme
 import com.unchil.composedatagrid.viewmodel.MofSeaWaterInfoViewModel
 import com.unchil.un7datagrid.Un7KCMPDataGrid
+import com.unchil.un7datagrid.Un7KCMPDataGridConfig
 import com.unchil.un7datagrid.toMap
 import kotlinx.coroutines.launch
 
@@ -66,7 +67,7 @@ fun DataGrid( data:Map<String, List<Any?>> ){
         ) {
             Text(
                 "Un7 Data Grid for Compose Multiplatform",
-                modifier = Modifier.padding(top = 60.dp, bottom = 20.dp),
+                modifier = Modifier.padding(10.dp),
                 color = MaterialTheme.colorScheme.onBackground,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold
@@ -139,7 +140,7 @@ fun DataGridWithViewModel(
 
                 }
                 PlatformAlias.JVM -> {
-                    Modifier.fillMaxWidth(0.95f).height(700.dp ).padding(0.dp)
+                    Modifier.fillMaxWidth(0.95f).height(600.dp ).padding(0.dp)
                 }
                 PlatformAlias.WASM -> {
                     Modifier.fillMaxWidth(0.95f).height(700.dp ).padding(0.dp)
@@ -155,14 +156,20 @@ fun DataGridWithViewModel(
 
                 Text(
                     "Un7 Data Grid for Compose Multiplatform",
-                    modifier = Modifier.padding(top = 60.dp, bottom = 20.dp),
+                    modifier = Modifier.padding( 10.dp),
                     color = MaterialTheme.colorScheme.onBackground,
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold
                 )
 
                 if (isVisible) {
-                    Un7KCMPDataGrid(modifier, Pair(columnNames.value, data.value).toMap())
+                    Un7KCMPDataGrid(
+                        modifier,
+                        Pair(columnNames.value, data.value).toMap(),
+                        Un7KCMPDataGridConfig(
+                            true, "Num", listOf("10", "20", "50", "100"), 2
+                        )
+                    )
                 }
 
             }

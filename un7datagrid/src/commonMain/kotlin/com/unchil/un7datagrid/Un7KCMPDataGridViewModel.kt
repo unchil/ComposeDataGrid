@@ -5,10 +5,9 @@ package com.unchil.un7datagrid
 import androidx.compose.runtime.InternalComposeApi
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 
-class Un7KCMPDataGridViewModel(val data: Map<String,List<Any?>>): ViewModel() {
+class Un7KCMPDataGridViewModel(val data: Map<String,List<Any?>>, val config: Un7KCMPDataGridConfig) {
 
     val columnNames: MutableStateFlow<List<String>>
         = MutableStateFlow(emptyList())
@@ -45,10 +44,10 @@ class Un7KCMPDataGridViewModel(val data: Map<String,List<Any?>>): ViewModel() {
         = MutableStateFlow(mapOf())
 
 
-    val selectPageSizeList = listOf("10", "20", "50", "100", "500", "1000", "All")
+    var selectPageSizeList = mutableListOf<String>()
 
     val selectPageSizeIndex: MutableStateFlow<Int>
-        = MutableStateFlow(6)
+        = MutableStateFlow(0)
 
 
 
@@ -62,6 +61,12 @@ class Un7KCMPDataGridViewModel(val data: Map<String,List<Any?>>): ViewModel() {
         columnWeights.value = List(columnNames.value.size) { 1f / columnNames.value.size }
         columnDataSortFlag.value = List(columnNames.value.size) {0}
         selectedColumns.value = data.keys.associateWith { mutableStateOf(true) }
+
+        selectPageSizeList = config.pageSizeList.toMutableList()
+
+        if(!selectPageSizeList.contains("All")) selectPageSizeList.add("All")
+
+        selectPageSizeIndex.value = config.defaultPageSizeListIndex
 
         pageSize.value = dataRows.value.size
 
