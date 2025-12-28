@@ -29,12 +29,12 @@
 - **🔄 Column Reordering**: Easily reorder columns by dragging and dropping the headers.
 - **👁️ Column Visibility Control**: Dynamically show or hide specific columns through a floating menu.
 - **🧊 Sticky Header**: Column headers remain fixed at the top during vertical scrolling, so you never lose context.
-- **🖱️ Horizontal Scrolling**: When displaying all data on one page, horizontal scrolling is automatically enabled if the total column width exceeds the screen width.
+- **🖱️ Horizontal Scrolling**: The page size, which displays all data on one page, is automatically added as ["All"]. Horizontal scrolling is automatically enabled when the page size is set to ["All"] Otherwise, the paging function is enabled.
 - **🎨 Menus & Controls**:
   - **Grid Control**: A floating menu that includes features for column selection, showing/hiding row numbers, and navigating to the top/bottom of the list.
   - **Pagination Control**: Navigation controls to change page size and move to the first, previous, next, or last page.
 - **🔔 User Feedback**: Provides intuitive feedback via a `Snackbar` for events like data filtering or page size changes.
-- **🖌️ Easy Customization**: Designed based on Material 3, allowing for easy appearance changes through `Modifier` and themes.
+- **🖌️ Deep Customization**: Configure grid options like row number visibility, column titles, and page size items using the `Un7KCMPDataGridConfig` object.
 
 ## 🚀 Installation
 
@@ -87,15 +87,16 @@ kotlin {
 
 ## 💻 Usage
 
-Using `Un7KCMPDataGrid` is very simple. Just provide the data as a `Map`. The data structure is **column-oriented**, where each column name is a `Key` and the list of data for that column is the `Value`.
+Using `Un7KCMPDataGrid` is very simple. Just provide the data as a `Map`. You can also provide an optional `config` object to customize its behavior.
 
 ```kotlin
 import androidx.compose.runtime.Composable
 import com.unchil.un7datagrid.Un7KCMPDataGrid
+import com.unchil.un7datagrid.Un7KCMPDataGridConfig
 
 @Composable
 fun MyDataScreen() {
-    // Map data consisting of column names (Key) and data lists (Value)
+    // Column-oriented data map
     val myData: Map<String, List<Any?>> = mapOf(
         "ID" to listOf(1, 2, 3, 4, 5),
         "Product Name" to listOf("Keyboard", "Mouse", "Monitor", "Webcam", "Speaker"),
@@ -103,7 +104,18 @@ fun MyDataScreen() {
         "In Stock" to listOf(true, true, false, true, false)
     )
 
-    Un7KCMPDataGrid(data = myData)
+    // Configure optional grid features
+    val gridConfig = Un7KCMPDataGridConfig(
+        isVisibleRowNum = true,
+        rowNumColumnTitle = "No.",
+        pageSizeItems = listOf("10", "25", "50", "100"),
+        pageSizeItemInitIndex = 2 // Initial page size will be "50"
+    )
+
+    Un7KCMPDataGrid(
+        data = myData,
+        config = gridConfig
+    )
 }
 ```
 
@@ -112,7 +124,20 @@ fun MyDataScreen() {
 | Parameter | Type | Description | Default |
 | --- | --- | --- | --- |
 | `modifier` | `Modifier` | The standard `Modifier` to apply to the composable. | `Modifier` |
-| `data` | `Map<String, List<Any?>>` | The data to display in the grid. It must be a column-oriented `Map` where the Key is the column name and the Value is the list of data for that column. | (Required) |
+| `data` | `Map<String, List<Any?>>` | The column-oriented data to display in the grid. | (Required) |
+| `config` | `Un7KCMPDataGridConfig` | An optional configuration object to customize the grid's behavior and UI. | `Un7KCMPDataGridConfig()` |
+
+
+### `Un7KCMPDataGridConfig` API
+
+This data class allows you to configure various aspects of the data grid.
+
+| Parameter | Type | Description | Default |
+| --- | --- | --- | --- |
+| `isVisibleRowNum` | `Boolean` | Toggles the visibility of the row number column. | `true` |
+| `rowNumColumnTitle` | `String` | The title for the row number column. | `"Num"` |
+| `pageSizeItems` | `List<String>` | The list of page size options available in the pagination menu. | `listOf("10", "20", "50", "100")` |
+| `pageSizeItemInitIndex` | `Int` | The initial selected index for the `pageSizeItems` list. | `2` (which defaults to "50") |
 
 ## 📄 License
 
