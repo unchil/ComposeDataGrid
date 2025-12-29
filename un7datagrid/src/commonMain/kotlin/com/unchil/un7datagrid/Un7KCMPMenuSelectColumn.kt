@@ -7,7 +7,9 @@ import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -42,9 +44,10 @@ internal fun Un7KCMPMenuSelectColumn(
     onUpdateColumns: ()->Unit,
 ){
     Box(modifier= Modifier.background(Color.Transparent)){
-        val widthColumnSelectDropDownMenu = remember{180.dp}
+        val widthColumnSelectDropDownMenu = 180.dp
+        val heightColumnSelectDropDownMenu = 160.dp
         var expandMenu by remember { mutableStateOf(false) }
-        val scrollState = remember { ScrollState(0) }
+        val scrollState = rememberScrollState()
 
 
         IconButton(
@@ -76,6 +79,7 @@ internal fun Un7KCMPMenuSelectColumn(
             scrollState = scrollState,
             modifier = Modifier
                 .width(widthColumnSelectDropDownMenu)
+                .height(heightColumnSelectDropDownMenu)
                 .border(BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.secondaryFixedDim), shape = RoundedCornerShape(2.dp))
                 .background( MaterialTheme.colorScheme.secondaryContainer),
         ) {
