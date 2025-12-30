@@ -329,7 +329,7 @@ fun Un7KCMPDataGrid(
                                         AnimatedVisibility(visible = isVisibleColumnHeader.value) {
                                             Un7KCMPHeaderRow(
                                                 isVisibleRowNum.value,
-                                                rowNumColumnName = rowNumColumnName,
+                                                rowNumColumnName,
                                                 gridContentWidth,
                                                 widthDividerThickness,
                                                 widthRowNumColumn,
@@ -339,7 +339,9 @@ fun Un7KCMPDataGrid(
                                                 onFilter,
                                                 onColumnSort,
                                                 columnDataSortFlag,
-                                                onUpdateColumnWeight
+                                                onUpdateColumnWeight,
+                                                 viewModel.config.headerRowBackgroundColor ?:MaterialTheme.colorScheme.secondaryContainer ,
+                                                 viewModel.config.headerRowContentColor ?: MaterialTheme.colorScheme.onSecondaryContainer
                                             )
                                         }//AnimatedVisibility
                                     }//stickyHeader
@@ -355,6 +357,8 @@ fun Un7KCMPDataGrid(
                                             dataIndex,
                                             pagingData,
                                             columnWeights,
+                                            viewModel.config.dataRowBackgroundColor ?:MaterialTheme.colorScheme.surface ,
+                                            viewModel.config.dataRowContentColor ?: MaterialTheme.colorScheme.onSurface
                                         )
                                     }
 
@@ -535,7 +539,9 @@ fun Un7KCMPDataGrid(
                                                 onFilter,
                                                 onColumnSort,
                                                 columnDataSortFlag,
-                                                onUpdateColumnWeight
+                                                onUpdateColumnWeight,
+                                                viewModel.config.headerRowBackgroundColor ?:MaterialTheme.colorScheme.secondaryContainer ,
+                                                viewModel.config.headerRowContentColor ?: MaterialTheme.colorScheme.onSecondaryContainer
                                             )
                                         }//AnimatedVisibility
                                     }//stickyHeader
@@ -551,6 +557,8 @@ fun Un7KCMPDataGrid(
                                             dataIndex,
                                             pagingData,
                                             columnWeights,
+                                            viewModel.config.dataRowBackgroundColor ?:MaterialTheme.colorScheme.surface ,
+                                            viewModel.config.dataRowContentColor ?: MaterialTheme.colorScheme.onSurface
                                         )
                                     }
 

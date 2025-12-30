@@ -34,7 +34,8 @@
   - **Grid Control**: A floating menu that includes features for column selection, showing/hiding row numbers, and navigating to the top/bottom of the list.
   - **Pagination Control**: Navigation controls to change page size and move to the first, previous, next, or last page.
 - **🔔 User Feedback**: Provides intuitive feedback via a `Snackbar` for events like data filtering or page size changes.
-- **🖌️ Deep Customization**: Configure grid options like row number visibility, column titles, and page size items using the `Un7KCMPDataGridConfig` object.
+- **🖌️ Deep Customization**: Configure grid options like row number and column header visibility, column titles, and page size items using the `Un7KCMPDataGridConfig` object.
+- 🎨 Theming: Easily customize the colors of the header, data rows, and content to match your app's theme.
 
 ## 🚀 Installation
 
@@ -109,7 +110,11 @@ fun MyDataScreen() {
         isVisibleRowNum = true,
         rowNumColumnTitle = "No.",
         pageSizeItems = listOf("10", "25", "50", "100"),
-        pageSizeItemInitIndex = 2 // Initial page size will be "50"
+        pageSizeItemInitIndex = 2, // Initial page size will be "50"
+        headerRowBackgroundColor = Color(0xFFE0E0E0), 
+        headerRowContentColor = Color.DarkGray,
+        dataRowBackgroundColor = Color.White,
+        dataRowContentColor = Color(0xFFF5F5F5) 
     )
 
     Un7KCMPDataGrid(
@@ -138,6 +143,10 @@ This data class allows you to configure various aspects of the data grid.
 | `rowNumColumnTitle` | `String` | The title for the row number column. | `"Num"` |
 | `pageSizeItems` | `List<String>` | The list of page size options available in the pagination menu. | `listOf("10", "20", "50", "100")` |
 | `pageSizeItemInitIndex` | `Int` | The initial selected index for the `pageSizeItems` list. | `2` (which defaults to "50") |
+| `headerRowBackgroundColor` | `Color` | Sets the background color of the header row. | `Color.Transparent` | 
+| `headerRowContentColor` | `Color` | Sets the content color (text, icons) of the header row. | `Color.Unspecified` | 
+| `dataRowBackgroundColor` | `Color` | Sets the background color for all data rows. Overridden by odd/even colors if they are specified. | `Color.Transparent` | 
+| `dataRowContentColor` | `Color` | Sets the content color (text) for all data rows. | `Color.Unspecified` |
 
 ## 📄 License
 

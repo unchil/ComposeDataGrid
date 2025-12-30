@@ -4,6 +4,7 @@ package com.unchil.un7datagrid
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -36,6 +37,8 @@ internal fun Un7KCMPDataRow(
     dataIndex:Int,
     pagingData: MutableMap<String, List<Any?>>,
     columnWeights:List<Float>,
+    dataRowBackgroundColor:Color,
+    dataRowContentColor:Color
 ){
 
     val paddingDataRow = remember { PaddingValues(top = 2.dp) }
@@ -52,7 +55,7 @@ internal fun Un7KCMPDataRow(
         AnimatedVisibility(isVisibleRowNum){
 
             Row(
-                modifier = Modifier
+                modifier = Modifier.background(color = dataRowBackgroundColor)
                     .width(widthRowNumColumn).height(heightDataRow)
                     .border(borderStrokeLightGray, shape = borderShapeIn),
                 horizontalArrangement = Arrangement.Center,
@@ -62,7 +65,8 @@ internal fun Un7KCMPDataRow(
                 Text(
                     text = getRowNumber(pageIndex, pageSize, dataIndex).toString(),
                     textAlign = TextAlign.Center,
-                    maxLines = 1
+                    maxLines = 1,
+                    color = dataRowContentColor
                 )
             }
         }
@@ -83,7 +87,7 @@ internal fun Un7KCMPDataRow(
         pagingData.keys.forEachIndexed { keyIndex, columnName ->
 
             Row(
-                modifier = Modifier
+                modifier = Modifier.background(color = dataRowBackgroundColor)
                     .width(dataColumnsWidth * columnWeights.getOrElse(keyIndex) { 0f }).height(heightDataRow)
                     .border(borderStrokeLightGray, shape = borderShapeIn),
                 horizontalArrangement = Arrangement.Center,
@@ -93,7 +97,8 @@ internal fun Un7KCMPDataRow(
                 Text(
                     text = (pagingData[columnName] as List<*>)[dataIndex].toString(),
                     textAlign = TextAlign.Center,
-                    maxLines = 1
+                    maxLines = 1,
+                    color = dataRowContentColor
                 )
             }
 

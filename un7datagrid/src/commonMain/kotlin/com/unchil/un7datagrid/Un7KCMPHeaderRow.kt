@@ -64,7 +64,9 @@ internal fun Un7KCMPHeaderRow(
     onFilter:(String, String, String) -> Unit,
     onColumnSort:(Int, Int) -> Unit,
     columnDataSortFlag: List<Int>,
-    updateColumnWeight:(List<Float>)->Unit
+    updateColumnWeight:(List<Float>)->Unit,
+    headerRowBackgroundColor:Color,
+    headerRowContentColor:Color
 
 ){
 
@@ -80,7 +82,7 @@ internal fun Un7KCMPHeaderRow(
         AnimatedVisibility(isVisibleRowNum) {
             Row(
                 modifier = Modifier
-                    .background(color = MaterialTheme.colorScheme.secondaryContainer)
+                    .background(color = headerRowBackgroundColor)
                     .height(heightColumnHeader)
                     .width(widthRowNumColumn)
                     .border(border = BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.secondaryFixedDim),
@@ -88,7 +90,7 @@ internal fun Un7KCMPHeaderRow(
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Text(rowNumColumnName)
+                Text(rowNumColumnName, color= headerRowContentColor)
             }
         }
         if (isVisibleRowNum) {
@@ -145,7 +147,7 @@ internal fun Un7KCMPHeaderRow(
                 modifier = Modifier
                     // zIndex를 추가하여 드래그 중인 아이템이 항상 위에 그려지도록 합니다.
                     .zIndex(if (offset.value == IntOffset.Zero) 0f else 1f)
-                    .background(color = MaterialTheme.colorScheme.secondaryContainer)
+                    .background(color = headerRowBackgroundColor)
                     .width(columnsAreaWidth * columnWeights.getOrElse( index ) { 0f })
                     .height(heightColumnHeader)
                     .border(
@@ -184,14 +186,21 @@ internal fun Un7KCMPHeaderRow(
                             else -> Icons.Default.UnfoldMore
                         },
                         contentDescription = "Sort",
+                        tint = headerRowContentColor
                     )
                 }
 
-                Text(columnName, modifier=Modifier.weight(1f), textAlign = TextAlign.Center, maxLines = 1)
+                Text(columnName,
+                    modifier=Modifier.weight(1f),
+                    color= headerRowContentColor,
+                    textAlign = TextAlign.Center,
+                    maxLines = 1
+                )
 
                 Un7KCMPSearchMenu(
                     columnName,
-                    onFilter
+                    onFilter,
+                    headerRowContentColor
                 )
             }
 

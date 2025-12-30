@@ -24,6 +24,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -168,9 +169,7 @@ fun DataGridWithViewModel(
                     Un7KCMPDataGrid(
                         modifier,
                         Pair(columnNames.value, data.value).toMap(),
-                        Un7KCMPDataGridConfig(
-                            true, "No.", listOf("10", "20", "50", "100"), 2
-                        )
+                        Un7KCMPDataGridConfig()
                     )
                 }
 
