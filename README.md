@@ -48,6 +48,10 @@ Currently, we are filtering by converting all data to strings.
 
 *   **For `String` data:**
     *   `Contains`, `Dose Not Contains`, `Equals`, `Dose Not Equals`, `Begins with`, `Ends with`, `Blank`,`Not Blank`
+*   **For `Int`, `Float`, `Double`, `Long` data:**
+    *   `=`, `!=`, `>`, `>=`, `<`, `<=`
+*   **For `Boolean` data:**
+    *   `Equals (true or false)`
 
 
 

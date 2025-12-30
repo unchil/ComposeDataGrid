@@ -46,19 +46,51 @@ data class ColumnInfo(
 
 
 object OperatorMenu {
-    enum class Operator {
-        Contains{ override fun toString() = "Contains"},
-        DoseNotContains{ override fun toString() = "Dose Not Contains"},
-        Equals{ override fun toString() = "Equals"},
-        DoseNotEquals{ override fun toString() = "Dose Not Equals"},
-        BeginsWith{ override fun toString() = "Begins With"},
-        EndsWith{ override fun toString() = "Ends With"},
-        Blank{ override fun toString() = "Blank"},
-        NotBlank{ override fun toString() = "Not Blank"},
+    enum class OperatorString(private val symbol: String) {
+        Contains( "Contains"),
+        DoseNotContains("Dose Not Contains"),
+        Equals("Equals"),
+        DoseNotEquals("Dose Not Equals"),
+        BeginsWith("Begins With"),
+        EndsWith("Ends With"),
+        Blank("Blank"),
+        NotBlank("Not Blank");
 
+        override fun toString(): String {
+            return symbol
+        }
     }
-    val Operators = listOf(
-        Operator.Contains, Operator.DoseNotContains, Operator.Equals, Operator.DoseNotEquals,
-        Operator.BeginsWith, Operator.EndsWith, Operator.Blank, Operator.NotBlank
+    val OperatorStrings = listOf(
+        OperatorString.Contains, OperatorString.DoseNotContains,
+        OperatorString.Equals, OperatorString.DoseNotEquals,
+        OperatorString.BeginsWith, OperatorString.EndsWith,
+        OperatorString.Blank, OperatorString.NotBlank
     )
+
+    enum class OperatorNumeric(private val symbol: String) {
+        Equals("(=) Equals"),
+        NotEquals("(!=) NotEquals"),
+        GreaterThan("(>) GreaterThan"),
+        GreaterThanOrEquals("(>=) GreaterThanOrEquals"),
+        LessThan("(<) LessThan"),
+        LessThanOrEquals("(<=) LessThanOrEquals");
+
+        override fun toString(): String {
+            return symbol
+        }
+    }
+
+    val OperatorNumerics = listOf(
+        OperatorNumeric.Equals, OperatorNumeric.NotEquals,
+        OperatorNumeric.GreaterThan, OperatorNumeric.GreaterThanOrEquals,
+        OperatorNumeric.LessThan, OperatorNumeric.LessThanOrEquals
+    )
+
+    enum class OperatorBoolean(private val symbol: String) {
+        Equals("Equals")
+    }
+    val OperatorBooleans = listOf(
+        OperatorBoolean.Equals
+    )
+
 }

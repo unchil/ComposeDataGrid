@@ -66,7 +66,8 @@ internal fun Un7KCMPHeaderRow(
     columnDataSortFlag: List<Int>,
     updateColumnWeight:(List<Float>)->Unit,
     headerRowBackgroundColor:Color,
-    headerRowContentColor:Color
+    headerRowContentColor:Color,
+    columnsInfo: Map<String, NewColumnInfo>
 
 ){
 
@@ -199,6 +200,7 @@ internal fun Un7KCMPHeaderRow(
 
                 Un7KCMPSearchMenu(
                     columnName,
+                    columnsInfo[columnName],
                     onFilter,
                     headerRowContentColor
                 )

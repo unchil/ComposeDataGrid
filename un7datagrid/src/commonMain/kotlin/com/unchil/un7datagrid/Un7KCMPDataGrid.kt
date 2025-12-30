@@ -185,6 +185,7 @@ fun Un7KCMPDataGrid(
     }
 
     val onFilter:(columnName:String, searchText:String, operator:String) -> Unit ={ columnName, searchText, operator ->
+
         viewModel.onEvent(Un7KCMPDataGridViewModel.Event.Filter(columnName, searchText, operator){
             coroutineScope.launch {
                 pagerState.animateScrollToPage(0)
@@ -193,6 +194,8 @@ fun Un7KCMPDataGrid(
                 item.channelType == SnackBarChannelType.SEARCH_RESULT
             }.channel)
         })
+
+
     }
 
     val onColumnSort:( Int, Int) -> Unit = { columnIndex, sortType ->
@@ -341,7 +344,8 @@ fun Un7KCMPDataGrid(
                                                 columnDataSortFlag,
                                                 onUpdateColumnWeight,
                                                  viewModel.config.headerRowBackgroundColor ?:MaterialTheme.colorScheme.secondaryContainer ,
-                                                 viewModel.config.headerRowContentColor ?: MaterialTheme.colorScheme.onSecondaryContainer
+                                                 viewModel.config.headerRowContentColor ?: MaterialTheme.colorScheme.onSecondaryContainer,
+                                                viewModel.columnsInfo.value
                                             )
                                         }//AnimatedVisibility
                                     }//stickyHeader
@@ -541,7 +545,8 @@ fun Un7KCMPDataGrid(
                                                 columnDataSortFlag,
                                                 onUpdateColumnWeight,
                                                 viewModel.config.headerRowBackgroundColor ?:MaterialTheme.colorScheme.secondaryContainer ,
-                                                viewModel.config.headerRowContentColor ?: MaterialTheme.colorScheme.onSecondaryContainer
+                                                viewModel.config.headerRowContentColor ?: MaterialTheme.colorScheme.onSecondaryContainer,
+                                                viewModel.columnsInfo.value
                                             )
                                         }//AnimatedVisibility
                                     }//stickyHeader

@@ -89,7 +89,7 @@ val newMakeColInfo: (pagingData: Map<String, List<Any?>>) -> Map<String, NewColu
         } else {
             NewColumnInfo(
                 dataType = data.firstOrNull { it != null }?.let { it::class.simpleName } ?: "UNKNOWN",
-                isContainNull = data.contains(null),
+                isContainNull = data.contains(null)|| data.contains(""),
             )
         }
     }

@@ -88,12 +88,12 @@ fun SeaWaterInformation.toGridData():List<Any?>{
 
     data.add(this.rtmWqWtchDtlDt)
     data.add(this.rtmWqWtchStaName)
-    data.add(this.rtmWtchWtem)
-    data.add(this.ph)
-    data.add(this.rtmWqDoxn)
-    data.add(this.rtmWqTu)
-    data.add(this.rtmWqChpla)
-    data.add(this.rtmWqSlnty)
+    data.add(this.rtmWtchWtem.toFloat())
+    data.add(this.ph.toFloat())
+    data.add(this.rtmWqDoxn.toFloat())
+    data.add(  if(this.rtmWqTu.isBlank() ) -1 else  this.rtmWqTu.toInt() )
+    data.add(this.rtmWqChpla.toFloat())
+    data.add(this.rtmWqSlnty.toFloat())
 
     return data
 }

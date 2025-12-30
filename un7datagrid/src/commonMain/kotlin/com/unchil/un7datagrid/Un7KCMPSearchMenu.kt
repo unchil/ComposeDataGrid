@@ -29,7 +29,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.InternalComposeApi
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -49,13 +48,36 @@ import androidx.compose.ui.unit.dp
 @Composable
 internal fun Un7KCMPSearchMenu(
     columnName:String,
+    columnInfo: NewColumnInfo?,
     onFilter: (String, String, String)-> Unit,
     headerRowContentColor: Color?
 ) {
 
     var expanded by remember { mutableStateOf(false) }
     val filterText = remember { mutableStateOf("") }
-    val operatorText = remember { mutableStateOf(OperatorMenu.Operators.first().toString()) }
+
+    val operatorText = remember { mutableStateOf(
+                columnInfo?.let {
+            when (it.dataType) {
+                "String", "UNKNOWN" -> OperatorMenu.OperatorStrings.first().toString()
+                "Boolean" -> OperatorMenu.OperatorBooleans.first().toString()
+                else -> OperatorMenu.OperatorNumerics.first().toString()
+            }
+        } ?: ""
+
+    ) }
+    val operatorLabel:String = remember {
+        columnInfo?.let {
+            when (it.dataType) {
+                "String", "UNKNOWN" -> {
+                    "String Type..."
+                }
+                "Boolean" -> "Boolean Type..."
+                else -> "Numeric Type..."
+            }
+        } ?: ""
+    }
+
     val scrollState = remember { ScrollState(0) }
     var expandedOperator by remember { mutableStateOf(false) }
 
@@ -63,7 +85,13 @@ internal fun Un7KCMPSearchMenu(
         onFilter.invoke(columnName, filterText.value, operatorText.value)
         expanded = false
         filterText.value = ""
-        operatorText.value = OperatorMenu.Operators.first().toString()
+        operatorText.value =  columnInfo?.let {
+            when (it.dataType) {
+                "String", "UNKNOWN" -> OperatorMenu.OperatorStrings.first().toString()
+                "Boolean" -> OperatorMenu.OperatorBooleans.first().toString()
+                else -> OperatorMenu.OperatorNumerics.first().toString()
+            }
+        } ?: ""
 
     }
 
@@ -98,11 +126,11 @@ internal fun Un7KCMPSearchMenu(
                         value = operatorText.value,
                         readOnly = true,
                         onValueChange = { operatorText.value = it },
-                        label = { Text("Operator...")  },
+                        label = { Text(operatorLabel)  },
                         trailingIcon = {
                             IconButton(onClick = { expandedOperator = !expandedOperator }){
                                 Icon(if(expandedOperator) Icons.Default.ArrowDropUp else Icons.Default.ArrowDropDown,
-                                    contentDescription = "Operator"
+                                    contentDescription = "OperatorString"
                                 )
                             }
                         },
@@ -117,16 +145,52 @@ internal fun Un7KCMPSearchMenu(
                             .background(color=MaterialTheme.colorScheme.secondaryContainer),
                         border = BorderStroke(1.dp, color=MaterialTheme.colorScheme.secondaryFixedDim)
                     ) {
-                        OperatorMenu.Operators.forEach { operator ->
-                            HorizontalDivider()
-                            DropdownMenuItem(
-                                text = { Text(operator.toString()) },
-                                onClick = {
-                                    operatorText.value = operator.toString()
-                                    expandedOperator = false
+
+                        columnInfo?.let {
+                            when(it.dataType){
+                                "String", "UNKNOWN" -> {
+
+                                    OperatorMenu.OperatorStrings.forEach { operator ->
+                                        HorizontalDivider()
+                                        DropdownMenuItem(
+                                            text = { Text(operator.toString()) },
+                                            onClick = {
+                                                operatorText.value = operator.toString()
+                                                expandedOperator = false
+                                            }
+                                        )
+                                    }
                                 }
-                            )
+                                "Boolean" ->{
+                                    OperatorMenu.OperatorBooleans.forEach { operator ->
+                                        HorizontalDivider()
+                                        DropdownMenuItem(
+                                            text = { Text(operator.toString()) },
+                                            onClick = {
+                                                operatorText.value = operator.toString()
+                                                expandedOperator = false
+                                            }
+                                        )
+                                    }
+                                }
+                                else ->{
+
+                                    OperatorMenu.OperatorNumerics.forEach { operator ->
+                                        HorizontalDivider()
+                                        DropdownMenuItem(
+                                            text = { Text(operator.toString()) },
+                                            onClick = {
+                                                operatorText.value = operator.toString()
+                                                expandedOperator = false
+                                            }
+                                        )
+                                    }
+
+                                }
+                            }
                         }
+
+
                     }
                 }
 
