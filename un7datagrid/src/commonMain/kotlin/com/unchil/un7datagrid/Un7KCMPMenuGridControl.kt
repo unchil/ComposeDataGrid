@@ -16,6 +16,8 @@ import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.ArrowDownward
 import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Compress
+import androidx.compose.material.icons.filled.Expand
 import androidx.compose.material.icons.filled.FormatListNumbered
 import androidx.compose.material.icons.filled.MoreHoriz
 import androidx.compose.material3.Icon
@@ -36,6 +38,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 internal fun Un7KCMPMenuGridControl(
     isExpandGridControlMenu: MutableState<Boolean>,
+    isVisibleColumnHeader:MutableState<Boolean>,
     lazyListState: LazyListState,
     allColumns: List<String>,
     selectedColumns: Map<String, MutableState<Boolean>>,
@@ -86,6 +89,26 @@ internal fun Un7KCMPMenuGridControl(
                     )
                 }
 
+                IconButton(
+                    onClick = { isVisibleColumnHeader.value = !isVisibleColumnHeader.value },
+                ) {
+                    SegmentedButtonDefaults.Icon(
+                        active = !isVisibleColumnHeader.value,
+                        activeContent = {
+                            Icon(
+                                Icons.Default.Compress,
+                                contentDescription = ""
+                            )
+                        },
+                        inactiveContent = {
+                            Icon(
+                                Icons.Default.Expand,
+                                contentDescription = ""
+                            )
+                        }
+                    )
+
+                }
 
 
                 IconButton(
@@ -108,6 +131,7 @@ internal fun Un7KCMPMenuGridControl(
                     )
 
                 }
+
 
                 Un7KCMPMenuSelectColumn(
                     allColumns,

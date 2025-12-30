@@ -72,6 +72,9 @@ fun Un7KCMPDataGrid(
     val columnDataSortFlag by viewModel.columnDataSortFlag.collectAsState()
 
     val isVisibleRowNum = remember { mutableStateOf(config.isVisibilityRowNumber) }
+
+    val isVisibleColumnHeader = remember { mutableStateOf(true) }
+
     val rowNumColumnName = remember { config.rowNumberColumnName }
 
     val isExpandPageNavControlMenu = rememberSaveable {mutableStateOf(false) }
@@ -267,11 +270,7 @@ fun Un7KCMPDataGrid(
                             val maxWidthInDp = this.maxWidth
                             val lazyListState =
                                 rememberLazyListState(initialFirstVisibleItemIndex = 0)
-                            val isVisibleColumnHeader by remember {
-                                derivedStateOf {
-                                    lazyListState.firstVisibleItemIndex < 1
-                                }
-                            }
+
 
                             // 1. 각 컬럼의 최소 너비 정의
                             val minColumnWidth = 150.dp
@@ -327,7 +326,7 @@ fun Un7KCMPDataGrid(
                                 ) {
 
                                     stickyHeader {
-                                        AnimatedVisibility(visible = isVisibleColumnHeader) {
+                                        AnimatedVisibility(visible = isVisibleColumnHeader.value) {
                                             Un7KCMPHeaderRow(
                                                 isVisibleRowNum.value,
                                                 rowNumColumnName = rowNumColumnName,
@@ -372,6 +371,7 @@ fun Un7KCMPDataGrid(
                                 ) {
                                 Un7KCMPMenuGridControl(
                                     isExpandPageNavControlMenu,
+                                    isVisibleColumnHeader = isVisibleColumnHeader,
                                     lazyListState,
                                     viewModel.data.keys.toList(),
                                     selectedColumns,
@@ -479,11 +479,7 @@ fun Un7KCMPDataGrid(
                                 val maxWidthInDp = this.maxWidth
                                 val lazyListState =
                                     rememberLazyListState(initialFirstVisibleItemIndex = 0)
-                                val isVisibleColumnHeader by remember {
-                                    derivedStateOf {
-                                        lazyListState.firstVisibleItemIndex < 1
-                                    }
-                                }
+
 
                                 val onListNavHandler: (ListNav) -> Unit = { listNav ->
                                     when (listNav) {
@@ -526,7 +522,7 @@ fun Un7KCMPDataGrid(
                                 ) {
 
                                     stickyHeader {
-                                        AnimatedVisibility(visible = isVisibleColumnHeader) {
+                                        AnimatedVisibility(visible = isVisibleColumnHeader.value) {
                                             Un7KCMPHeaderRow(
                                                 isVisibleRowNum.value,
                                                 rowNumColumnName,
@@ -569,6 +565,7 @@ fun Un7KCMPDataGrid(
                                     ) {
                                     Un7KCMPMenuGridControl(
                                         isExpandPageNavControlMenu,
+                                        isVisibleColumnHeader = isVisibleColumnHeader,
                                         lazyListState,
                                         viewModel.data.keys.toList(),
                                         selectedColumns,
