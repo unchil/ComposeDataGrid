@@ -37,6 +37,20 @@
 - ️Deep Customization: Configure grid options like row number and column header visibility, column titles, and page size items using the `Un7KCMPDataGridConfig` object.
 - Theming: Easily customize the colors of the header, data rows, and content to match your app's theme.
 
+
+###  Advanced Filtering
+
+The search menu for each column supports conditional operators, allowing for more precise data filtering based on the column's data type.
+
+Currently, we are filtering by converting all data to strings.
+
+**Supported Data Types & Operators:**
+
+*   **For `String` data:**
+    *   `Contains`, `Dose Not Contains`, `Equals`, `Dose Not Equals`, `Begins with`, `Ends with`, `Blank`,`Not Blank`
+
+
+
 ##  Installation
 
 ### Step 1: Set up the Repository
