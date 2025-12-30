@@ -20,24 +20,24 @@
 
 
 
-## ✨ Features
+##  Features
 
-- **⚙️ Multiplatform Support**: Works seamlessly on Android, iOS, Desktop, and Web using Kotlin Compose Multiplatform.
-- **📄 Pagination**: Smoothly handles tens of thousands of data entries with horizontal paging using `HorizontalPager`.
-- **↕️ Column Sorting**: Sort data in ascending, descending, or default order by clicking on column headers.
-- **↔️ Column Resizing**: Dynamically adjust the width of each column by dragging the divider between headers.
-- **🔄 Column Reordering**: Easily reorder columns by dragging and dropping the headers.
-- **👁️ Column Visibility Control**: Dynamically show or hide specific columns through a floating menu.
-- **🧊 Sticky Header**: Column headers remain fixed at the top during vertical scrolling, so you never lose context.
-- **🖱️ Horizontal Scrolling**: The page size, which displays all data on one page, is automatically added as ["All"]. Horizontal scrolling is automatically enabled when the page size is set to ["All"] Otherwise, the paging function is enabled.
-- **🎨 Menus & Controls**:
-  - **Grid Control**: A floating menu that includes features for column selection, showing/hiding row numbers, and navigating to the top/bottom of the list.
-  - **Pagination Control**: Navigation controls to change page size and move to the first, previous, next, or last page.
-- **🔔 User Feedback**: Provides intuitive feedback via a `Snackbar` for events like data filtering or page size changes.
-- **🖌️ Deep Customization**: Configure grid options like row number and column header visibility, column titles, and page size items using the `Un7KCMPDataGridConfig` object.
-- 🎨 Theming: Easily customize the colors of the header, data rows, and content to match your app's theme.
+- Multiplatform Support: Works seamlessly on Android, iOS, Desktop, and Web using Kotlin Compose Multiplatform.
+- Pagination: Smoothly handles tens of thousands of data entries with horizontal paging using `HorizontalPager`.
+- Column Sorting: Sort data in ascending, descending, or default order by clicking on column headers.
+- Column Resizing: Dynamically adjust the width of each column by dragging the divider between headers.
+- Column Reordering: Easily reorder columns by dragging and dropping the headers.
+- Column Visibility Control: Dynamically show or hide specific columns through a floating menu.
+- Sticky Header: Column headers remain fixed at the top during vertical scrolling, so you never lose context.
+- Horizontal Scrolling: The page size, which displays all data on one page, is automatically added as ["All"]. Horizontal scrolling is automatically enabled when the page size is set to ["All"] Otherwise, the paging function is enabled.
+- Menus & Controls:
+  - Grid Control: A floating menu that includes features for column selection, showing/hiding row numbers, and navigating to the top/bottom of the list.
+  - Pagination Control: Navigation controls to change page size and move to the first, previous, next, or last page.
+- User Feedback: Provides intuitive feedback via a `Snackbar` for events like data filtering or page size changes.
+- ️Deep Customization: Configure grid options like row number and column header visibility, column titles, and page size items using the `Un7KCMPDataGridConfig` object.
+- Theming: Easily customize the colors of the header, data rows, and content to match your app's theme.
 
-## 🚀 Installation
+##  Installation
 
 ### Step 1: Set up the Repository
 
@@ -86,7 +86,7 @@ kotlin {
 }
 ```
 
-## 💻 Usage
+##  Usage
 
 Using `Un7KCMPDataGrid` is very simple. Just provide the data as a `Map`. You can also provide an optional `config` object to customize its behavior.
 
@@ -124,7 +124,7 @@ fun MyDataScreen() {
 }
 ```
 
-## 🛠️ API
+##  API
 
 | Parameter | Type | Description | Default |
 | --- | --- | --- | --- |
@@ -148,6 +148,6 @@ This data class allows you to configure various aspects of the data grid.
 | `dataRowBackgroundColor` | `Color` | Sets the background color for all data rows. Overridden by odd/even colors if they are specified. | `Color.Transparent` | 
 | `dataRowContentColor` | `Color` | Sets the content color (text) for all data rows. | `Color.Unspecified` |
 
-## 📄 License
+##  License
 
 `Un7-KCMP-DataGrid` is distributed under the [MIT License](https://opensource.org/licenses/MIT).
