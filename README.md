@@ -42,7 +42,7 @@
 
 The search menu for each column supports conditional operators, allowing for more precise data filtering based on the column's data type.
 
-Currently, we are filtering by converting all data to strings.
+Currently, we are filtering by converting all data to String, Int, Float, Double, Long, Boolean.
 
 **Supported Data Types & Operators:**
 
