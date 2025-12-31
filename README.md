@@ -7,16 +7,16 @@
 ## Video
 |                                                       Desktop                                                       |
 |:-------------------------------------------------------------------------------------------------------------------:|
-| [![Alt text](https://github.com/unchil/ComposeDataGrid/blob/main/screenshot/mac.png)](https://youtu.be/b8CSmhNF2OY) | 
+| [![Alt text]()](https://youtu.be/b8CSmhNF2OY) | 
 
 |                                           Web                                           |
 |:---------------------------------------------------------------------------------------:|
-| [![Alt text](https://github.com/unchil/ComposeDataGrid/blob/main/screenshot/web.png)](https://youtu.be/jc0iSYL26hM) |
+| [![Alt text]()](https://youtu.be/jc0iSYL26hM) |
 
 
 |                                                              iOS                                                               |                                             AOS                                             |
 |:------------------------------------------------------------------------------------------------------------------------------:|:-------------------------------------------------------------------------------------------:|
-| [![Alt text](https://github.com/unchil/ComposeDataGrid/blob/main/screenshot/ios.png)](https://youtube.com/shorts/9-LS6tkr84o)  | [![Alt text](https://github.com/unchil/ComposeDataGrid/blob/main/screenshot/android.png)](https://youtube.com/shorts/L58hfEz1siA) |
+| [![Alt text]()](https://youtube.com/shorts/9-LS6tkr84o)  | [![Alt text]()](https://youtube.com/shorts/L58hfEz1siA) |
 
 
 
