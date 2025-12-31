@@ -88,7 +88,7 @@ fun Un7KCMPDataGrid(
     val paddingLazyColumn = remember { PaddingValues(0.dp)}
     val paddingLazyColumnContent = remember { PaddingValues(4.dp)}
 
-    val paddingMenuGridControl = remember{ PaddingValues(bottom = 70.dp, end = 10.dp, start = 4.dp)}
+    val paddingMenuGridControl = remember{ PaddingValues(bottom = 80.dp, start = 10.dp)}
     val paddingMenuPageNavControl = remember{ PaddingValues(all = 10.dp)}
 
     val widthRowNumColumn = remember{ 60.dp}
