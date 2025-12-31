@@ -92,6 +92,9 @@ dependencyResolutionManagement {
 
 Add the dependency to the `build.gradle.kts` file of the module where you will use the library (e.g., `composeApp`).
 
+
+### The package version has been readjusted.
+
 ```kotlin
 // composeApp/build.gradle.kts
 kotlin {
