@@ -98,7 +98,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             // Add Un7KCMPDataGrid library (change to the latest version)
-            implementation("com.github.unchil:un7datagrid:1.0.0")
+            implementation("com.github.unchil:un7datagrid:1.0.7")
         }
     }
 }
@@ -109,9 +109,6 @@ kotlin {
 Using `Un7KCMPDataGrid` is very simple. Just provide the data as a `Map`. You can also provide an optional `config` object to customize its behavior.
 
 ```kotlin
-import androidx.compose.runtime.Composable
-import com.unchil.un7datagrid.Un7KCMPDataGrid
-import com.unchil.un7datagrid.Un7KCMPDataGridConfig
 
 @Composable
 fun MyDataScreen() {
