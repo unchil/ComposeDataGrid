@@ -38,7 +38,10 @@ internal fun Un7KCMPDataRow(
     pagingData: MutableMap<String, List<Any?>>,
     columnWeights:List<Float>,
     dataRowBackgroundColor:Color,
-    dataRowContentColor:Color
+    dataRowContentColor:Color,
+    oddDataRowBackgroundColor:Color?,
+    evenDataRowBackgroundColor:Color?
+
 ){
 
     val paddingDataRow = remember { PaddingValues(top = 2.dp) }
@@ -46,6 +49,11 @@ internal fun Un7KCMPDataRow(
     val borderShapeIn = remember{RoundedCornerShape(0.dp)}
     val heightDataRow = remember{ 30.dp }
 
+    val backgroundColor = if(dataIndex%2 == 0){
+        evenDataRowBackgroundColor ?: dataRowBackgroundColor
+    } else {
+        oddDataRowBackgroundColor ?: dataRowBackgroundColor
+    }
 
     Row(
         modifier = Modifier.padding(paddingDataRow),
@@ -55,7 +63,7 @@ internal fun Un7KCMPDataRow(
         AnimatedVisibility(isVisibleRowNum){
 
             Row(
-                modifier = Modifier.background(color = dataRowBackgroundColor)
+                modifier = Modifier.background(color = backgroundColor)
                     .width(widthRowNumColumn).height(heightDataRow)
                     .border(borderStrokeLightGray, shape = borderShapeIn),
                 horizontalArrangement = Arrangement.Center,
@@ -86,8 +94,10 @@ internal fun Un7KCMPDataRow(
 
         pagingData.keys.forEachIndexed { keyIndex, columnName ->
 
+
+
             Row(
-                modifier = Modifier.background(color = dataRowBackgroundColor)
+                modifier = Modifier.background(color = backgroundColor)
                     .width(dataColumnsWidth * columnWeights.getOrElse(keyIndex) { 0f }).height(heightDataRow)
                     .border(borderStrokeLightGray, shape = borderShapeIn),
                 horizontalArrangement = Arrangement.Center,

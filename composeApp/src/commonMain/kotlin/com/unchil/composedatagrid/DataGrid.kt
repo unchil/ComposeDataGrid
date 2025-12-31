@@ -23,6 +23,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -165,7 +166,12 @@ fun DataGridWithViewModel(
                     Un7KCMPDataGrid(
                         modifier,
                         Pair(columnNames.value, data.value).toMap(),
-                        Un7KCMPDataGridConfig()
+                        Un7KCMPDataGridConfig(
+                            dataRowBackgroundColor = MaterialTheme.colorScheme.surface ,
+                            dataRowContentColor = Color.DarkGray ,
+                            oddDataRowBackgroundColor = Color.White,
+                            evenDataRowBackgroundColor = Color(0xFFF5F5F5)
+                        )
                     )
                 }
 

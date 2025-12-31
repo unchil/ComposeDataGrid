@@ -84,15 +84,15 @@ fun Un7KCMPDataGrid(
     val borderShapeIn = remember{RoundedCornerShape(2.dp)}
 
     val paddingHorizontalPager = remember { PaddingValues(0.dp)}
-    val paddingBoxInHorizontalPager = remember { PaddingValues(6.dp)}
+    val paddingBoxInHorizontalPager = remember { PaddingValues(2.dp)}
     val paddingLazyColumn = remember { PaddingValues(0.dp)}
-    val paddingLazyColumnContent = remember { PaddingValues(10.dp)}
+    val paddingLazyColumnContent = remember { PaddingValues(4.dp)}
 
     val paddingMenuGridControl = remember{ PaddingValues(bottom = 70.dp, end = 10.dp, start = 4.dp)}
     val paddingMenuPageNavControl = remember{ PaddingValues(all = 10.dp)}
 
     val widthRowNumColumn = remember{ 60.dp}
-    val widthDividerThickness = remember{ 6.dp}
+    val widthDividerThickness = remember{ 2.dp}
 
     val isOnePageNav = remember { mutableStateOf(viewModel.selectPageSizeList.lastIndex == viewModel.selectPageSizeIndex.value) }
 
@@ -362,7 +362,9 @@ fun Un7KCMPDataGrid(
                                             pagingData,
                                             columnWeights,
                                             viewModel.config.dataRowBackgroundColor ?:MaterialTheme.colorScheme.surface ,
-                                            viewModel.config.dataRowContentColor ?: MaterialTheme.colorScheme.onSurface
+                                            viewModel.config.dataRowContentColor ?: MaterialTheme.colorScheme.onSurface,
+                                            oddDataRowBackgroundColor = viewModel.config.oddDataRowBackgroundColor ,
+                                            evenDataRowBackgroundColor = viewModel.config.evenDataRowBackgroundColor
                                         )
                                     }
 
@@ -563,7 +565,9 @@ fun Un7KCMPDataGrid(
                                             pagingData,
                                             columnWeights,
                                             viewModel.config.dataRowBackgroundColor ?:MaterialTheme.colorScheme.surface ,
-                                            viewModel.config.dataRowContentColor ?: MaterialTheme.colorScheme.onSurface
+                                            viewModel.config.dataRowContentColor ?: MaterialTheme.colorScheme.onSurface,
+                                            oddDataRowBackgroundColor = viewModel.config.oddDataRowBackgroundColor ,
+                                            evenDataRowBackgroundColor = viewModel.config.evenDataRowBackgroundColor
                                         )
                                     }
 

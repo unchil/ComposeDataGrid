@@ -16,6 +16,8 @@ data class Un7KCMPDataGridConfig(
     val headerRowContentColor: Color? = null ,
     val dataRowBackgroundColor: Color? = null ,
     val dataRowContentColor: Color? = null ,
+    val oddDataRowBackgroundColor: Color? = null,
+    val evenDataRowBackgroundColor: Color? = null
 )
 
 
