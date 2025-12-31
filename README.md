@@ -7,7 +7,7 @@
 ## Video
 |                                                       Desktop                                                       |
 |:-------------------------------------------------------------------------------------------------------------------:|
-| [![Alt text](https://github.com/unchil/ComposeDataGrid/blob/1d2589ea1245a68026e3e0a1705887d91a870cde/mac.png)](https://youtu.be/b8CSmhNF2OY) | 
+| [![Alt text](https://github.com/unchil/ComposeDataGrid/blob/1d2589ea1245a68026e3e0a1705887d91a870cde/mac.png)](https://youtu.be/ah8ss5A-NWI) | 
 
 |                                           Web                                           |
 |:---------------------------------------------------------------------------------------:|
