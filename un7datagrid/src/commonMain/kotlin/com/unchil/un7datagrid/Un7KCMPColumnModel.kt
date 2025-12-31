@@ -1,8 +1,5 @@
-@file:OptIn(InternalComposeApi::class)
-
 package com.unchil.un7datagrid
 
-import androidx.compose.runtime.InternalComposeApi
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.graphics.Color
 
