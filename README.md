@@ -7,16 +7,16 @@
 ## Video
 |                                                       Desktop                                                       |
 |:-------------------------------------------------------------------------------------------------------------------:|
-| [![Alt text](https://github.com/unchil/ComposeDataGrid/blob/1d2589ea1245a68026e3e0a1705887d91a870cde/mac.png)](https://youtu.be/ah8ss5A-NWI) | 
+| [![Alt text](https://github.com/unchil/ComposeDataGrid/blob/333c5cfead044b629a56be258fb5cae382a5e305/screenshot/mac.png)](https://youtu.be/ah8ss5A-NWI) | 
 
 |                                           Web                                           |
 |:---------------------------------------------------------------------------------------:|
-| [![Alt text](https://github.com/unchil/ComposeDataGrid/blob/1bec56b89ee1f19e56f8d0ce7cd67fbe5dbeed7d/web.png)](https://youtu.be/HnijEdQ5RwY) |
+| [![Alt text](https://github.com/unchil/ComposeDataGrid/blob/333c5cfead044b629a56be258fb5cae382a5e305/screenshot/web.png)](https://youtu.be/HnijEdQ5RwY) |
 
 
 |                                                              iOS                                                               |                                             AOS                                             |
 |:------------------------------------------------------------------------------------------------------------------------------:|:-------------------------------------------------------------------------------------------:|
-| [![Alt text](https://github.com/unchil/ComposeDataGrid/blob/5fbc3b3caa9599988738e1a99ee2b1900c105115/android.png)](https://youtube.com/shorts/_vGI8uKhZNw)  | [![Alt text](https://github.com/unchil/ComposeDataGrid/blob/c7e12e922cb29b39b79d7be469e672625007d88d/ios.png)](https://youtube.com/shorts/IUPvkar7cic) |
+| [![Alt text](https://github.com/unchil/ComposeDataGrid/blob/333c5cfead044b629a56be258fb5cae382a5e305/screenshot/ios.png)](https://youtube.com/shorts/_vGI8uKhZNw)  | [![Alt text](https://github.com/unchil/ComposeDataGrid/blob/333c5cfead044b629a56be258fb5cae382a5e305/screenshot/android.png)](https://youtube.com/shorts/IUPvkar7cic) |
 
 
 
