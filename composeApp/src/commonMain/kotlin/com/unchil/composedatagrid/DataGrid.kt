@@ -135,7 +135,7 @@ fun DataGridWithViewModel(
                         Modifier.fillMaxWidth(0.95f).height(400.dp).padding(0.dp)
                     } else {
                         // 세로 모드일 때
-                        Modifier.fillMaxWidth(0.95f).height(800.dp).padding(0.dp)
+                        Modifier.fillMaxWidth(0.95f).height(700.dp).padding(0.dp)
                     }
 
                 }
