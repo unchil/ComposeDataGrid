@@ -229,32 +229,92 @@ fun Un7KCMPDataGrid(
         viewModel.onEvent(Un7KCMPDataGridViewModel.Event.ColumnWeight(columnsWeight))
     }
 
-
     val isResizing = remember { mutableStateOf(false) }
     var resizeIndicatorOffset by remember { mutableStateOf(0.dp) }
     val resizeMinOffset = remember { mutableStateOf(0.dp) }
     val resizeMaxOffset = remember { mutableStateOf(0.dp) }
 
-    val onResizeStart = { totalInitialOffset: Dp, minOffset:Dp, maxOffset: Dp ->
+    val maxWidthInDp = remember { mutableStateOf(0.dp) }
+
+    val columnsAreaWidth = if ( isVisibleRowNum.value) {
+        maxWidthInDp.value - widthRowNumColumn - (widthDividerThickness * (columnNames.size ))
+    } else {
+        maxWidthInDp.value - (widthDividerThickness * (columnNames.size - 1))
+    }
+
+    val onResizeStart = { index:Int ->
+
+        // 최소 너비 제약 조건 정의
+        val minWeight = 0.05f
+        val minColumnWidth = columnsAreaWidth * minWeight
+
+        // 현재 컬럼과 다음 컬럼의 너비 계산
+        val currentColumnWidth = columnsAreaWidth * columnWeights[index]
+        val nextColumnWidth = columnsAreaWidth * columnWeights[index + 1]
+
+        // 드래그 시작 지점의 절대 위치(offset) 계산
+        var currentOffset = 0.dp
+        for (i in 0..index) {
+            currentOffset += columnsAreaWidth * columnWeights.getOrElse(i) { 0f }
+        }
+        val totalInitialOffset = if (isVisibleRowNum.value) {
+            widthRowNumColumn + widthDividerThickness + currentOffset + (widthDividerThickness * (index+1))
+        } else {
+            currentOffset + (widthDividerThickness * (index+1))
+        }
+
+        // 드래그 가능한 최소/최대 위치 계산
+        val maxDragLeft = currentColumnWidth - minColumnWidth
+        val maxDragRight = nextColumnWidth - minColumnWidth
+
+        val minOffset:Dp = totalInitialOffset - maxDragLeft
+        val maxOffset:Dp = totalInitialOffset + maxDragRight
+
         isResizing.value = true
         resizeIndicatorOffset  = totalInitialOffset
         resizeMinOffset.value = minOffset
         resizeMaxOffset.value = maxOffset
+
     }
 
     val onResizeEnd = {
         isResizing.value = false
     }
 
-    val onResize = { dragAmount: Dp ->
+    val onResize = { delta: Float, density:Float, index:Int  ->
+
         if (isResizing.value) {
-            resizeIndicatorOffset = (resizeIndicatorOffset + dragAmount).coerceIn(
+            resizeIndicatorOffset = (resizeIndicatorOffset +  (delta/density).dp).coerceIn(
                 resizeMinOffset.value,
                 resizeMaxOffset.value
             )
+            // 픽셀(px) 단위의 delta를 전체 너비에 대한 가중치 변화량으로 변환합니다.
+            val deltaWeight = delta / (maxWidthInDp.value.value * density)
+            val currentWeight = columnWeights[index]
+            val nextWeight = columnWeights[index + 1]
+
+            // 최소 너비를 5%로 설정 (0.05f)
+            val minWeight = 0.05f
+            // 가중치 변화량을 적용하되, 최소 너비 제약을 준수합니다.
+            val newCurrentWeight = (currentWeight + deltaWeight).coerceIn(
+                minWeight,
+                currentWeight + nextWeight - minWeight
+            )
+
+            val newNextWeight = (currentWeight + nextWeight) - newCurrentWeight
+
+            onUpdateColumnWeight(
+                columnWeights.toMutableList()
+                    .apply {
+                        this[index] =
+                            newCurrentWeight
+                        this[index + 1] =
+                            newNextWeight
+                    }
+            )
+
         }
     }
-
 
     val dataGridContent: @Composable ((MutableMap<String, List<Any?>>, Int) -> Unit) = { pagingData, pageIndex ->
 
@@ -293,12 +353,12 @@ fun Un7KCMPDataGrid(
             val minColumnWidth = 150.dp
             // 2. 모든 컬럼과 구분선을 포함한 전체 너비 계산
             val totalGridWidth = (widthRowNumColumn + (minColumnWidth * columnNames.size) + (widthDividerThickness * (columnNames.size -1)))
-            val maxWidthInDp =  if(isOnePageNav.value) totalGridWidth.coerceAtLeast(this.maxWidth) else this.maxWidth
+            maxWidthInDp.value =  if(isOnePageNav.value) totalGridWidth.coerceAtLeast(this.maxWidth) else this.maxWidth
 
             Box(modifier = if(isOnePageNav.value) Modifier.horizontalScroll(rememberScrollState()) else Modifier ) {
 
                 LazyColumn(
-                    modifier = if(isOnePageNav.value) Modifier.width(maxWidthInDp).fillMaxHeight() else Modifier.fillMaxSize()
+                    modifier = if(isOnePageNav.value) Modifier.width(maxWidthInDp.value).fillMaxHeight() else Modifier.fillMaxSize()
                         .shadow(elevation = 2.dp, shape = shape)
                         .background(
                             color = MaterialTheme.colorScheme.background,
@@ -322,7 +382,7 @@ fun Un7KCMPDataGrid(
                             Un7KCMPHeaderRow(
                                 isVisibleRowNum.value,
                                 rowNumColumnName,
-                                maxWidthInDp,
+                                columnsAreaWidth,
                                 widthDividerThickness,
                                 widthRowNumColumn,
                                 pagingData.keys.toList(),
@@ -331,7 +391,6 @@ fun Un7KCMPDataGrid(
                                 onFilter,
                                 onColumnSort,
                                 columnDataSortFlag,
-                                onUpdateColumnWeight,
                                 viewModel.config.headerRowBackgroundColor
                                     ?: MaterialTheme.colorScheme.secondaryContainer,
                                 viewModel.config.headerRowContentColor
@@ -349,7 +408,7 @@ fun Un7KCMPDataGrid(
                     ) { dataIndex ->
                         Un7KCMPDataRow(
                             isVisibleRowNum.value,
-                            maxWidthInDp,
+                            columnsAreaWidth,
                             widthDividerThickness,
                             widthRowNumColumn,
                             pageIndex,
@@ -363,7 +422,6 @@ fun Un7KCMPDataGrid(
                                 ?: MaterialTheme.colorScheme.onSurface,
                             oddDataRowBackgroundColor = viewModel.config.oddDataRowBackgroundColor,
                             evenDataRowBackgroundColor = viewModel.config.evenDataRowBackgroundColor,
-                            onUpdateColumnWeight,
                             onResize,
                             onResizeStart,
                             onResizeEnd

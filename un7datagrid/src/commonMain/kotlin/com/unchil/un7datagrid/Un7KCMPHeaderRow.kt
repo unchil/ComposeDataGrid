@@ -53,7 +53,7 @@ import kotlin.math.roundToInt
 internal fun Un7KCMPHeaderRow(
     isVisibleRowNum: Boolean,
     rowNumColumnName: String,
-    maxWidthInDp: Dp,
+    columnsAreaWidth: Dp,
     widthDividerThickness:Dp,
     widthRowNumColumn: Dp,
     columnNames:List<String>,
@@ -62,12 +62,11 @@ internal fun Un7KCMPHeaderRow(
     onFilter:(String, String, String) -> Unit,
     onColumnSort:(Int, Int) -> Unit,
     columnDataSortFlag: List<Int>,
-    updateColumnWeight:(List<Float>)->Unit,
     headerRowBackgroundColor:Color,
     headerRowContentColor:Color,
     columnsInfo: Map<String, NewColumnInfo>,
-    onResize:(Dp)->Unit,
-    onResizeStart:(Dp,Dp,Dp)->Unit,
+    onResize:(Float, Float, Int)->Unit,
+    onResizeStart:(Int)->Unit,
     onResizeEnd:()->Unit
 
 ){
@@ -79,7 +78,6 @@ internal fun Un7KCMPHeaderRow(
         verticalAlignment = Alignment.CenterVertically,
 
     ) {
-
 
         AnimatedVisibility(isVisibleRowNum) {
             Row(
@@ -105,11 +103,6 @@ internal fun Un7KCMPHeaderRow(
 
         }
 
-        val columnsAreaWidth = if (isVisibleRowNum) {
-            maxWidthInDp - widthRowNumColumn - (widthDividerThickness * (columnNames.size ))
-        } else {
-            maxWidthInDp - (widthDividerThickness * (columnNames.size - 1))
-        }
 
         columnNames.forEachIndexed { index, columnName ->
 
@@ -210,8 +203,6 @@ internal fun Un7KCMPHeaderRow(
 
             // 마지막 컬럼이 아닐 경우에만 구분선을 표시하고 드래그 가능하게 합니다.
             if (index < columnNames.size - 1) {
-
-
                 val interactionSourceDivider = remember { MutableInteractionSource() }
                 val isHovered = remember { mutableStateOf(false) }
 
@@ -225,73 +216,8 @@ internal fun Un7KCMPHeaderRow(
                 }
 
                 val draggableState = rememberDraggableState { delta ->
-                    // 드래그 중에는 오프셋 변경 이벤트만 전달
-                    onResize( (delta/density).dp  )
-
-                    // 픽셀(px) 단위의 delta를 전체 너비에 대한 가중치 변화량으로 변환합니다.
-                    val deltaWeight = delta / (maxWidthInDp.value * density)
-                    val currentWeight = columnWeights[index]
-                    val nextWeight = columnWeights[index + 1]
-
-                    // 최소 너비를 5%로 설정 (0.05f)
-                    val minWeight = 0.05f
-                    // 가중치 변화량을 적용하되, 최소 너비 제약을 준수합니다.
-                    val newCurrentWeight = (currentWeight + deltaWeight).coerceIn(
-                        minWeight,
-                        currentWeight + nextWeight - minWeight
-                    )
-
-                    val newNextWeight = (currentWeight + nextWeight) - newCurrentWeight
-
-
-                    updateColumnWeight(
-                        columnWeights.toMutableList()
-                            .apply {
-                                this[index] =
-                                    newCurrentWeight
-                                this[index + 1] =
-                                    newNextWeight
-                            }
-                    )
-
-
+                    onResize( delta, density, index )
                 }
-
-                val onDragStarted = {
-                    // 최소 너비 제약 조건 정의
-                    val minWeight = 0.05f
-                    val minColumnWidth = columnsAreaWidth * minWeight
-
-                    // 현재 컬럼과 다음 컬럼의 너비 계산
-                    val currentColumnWidth = columnsAreaWidth * columnWeights[index]
-                    val nextColumnWidth = columnsAreaWidth * columnWeights[index + 1]
-
-                    // 드래그 시작 지점의 절대 위치(offset) 계산
-                    var currentOffset = 0.dp
-                    for (i in 0..index) {
-                        currentOffset += columnsAreaWidth * columnWeights.getOrElse(i) { 0f }
-                    }
-                    val totalInitialOffset = if (isVisibleRowNum) {
-                        widthRowNumColumn + currentOffset + (widthDividerThickness * (index+2))
-                    } else {
-                        currentOffset + (widthDividerThickness * (index+1))
-                    }
-
-                    // 드래그 가능한 최소/최대 위치 계산
-                    val maxDragLeft = currentColumnWidth - minColumnWidth
-                    val maxDragRight = nextColumnWidth - minColumnWidth
-
-                    val minOffset:Dp = totalInitialOffset - maxDragLeft
-                    val maxOffset:Dp = totalInitialOffset + maxDragRight
-
-                    onResizeStart(
-                        totalInitialOffset,
-                        minOffset,
-                        maxOffset
-                    )
-                }
-
-
 
                     VerticalDivider(
                         modifier = Modifier
@@ -300,7 +226,7 @@ internal fun Un7KCMPHeaderRow(
                             .draggable(
                                 orientation = Orientation.Horizontal,
                                 state = draggableState,
-                                onDragStarted = { onDragStarted() },
+                                onDragStarted = { onResizeStart(index) },
                                 onDragStopped = { onResizeEnd() }
                             )
                             .hoverable(interactionSourceDivider) // Make the area hoverable,
