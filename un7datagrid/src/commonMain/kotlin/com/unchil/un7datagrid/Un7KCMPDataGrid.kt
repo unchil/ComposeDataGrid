@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -22,6 +23,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.SwapHoriz
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -32,6 +34,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -41,12 +44,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.Modifier.Companion.then
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -92,7 +97,7 @@ fun Un7KCMPDataGrid(
     val paddingMenuPageNavControl = remember{ PaddingValues(all = 10.dp)}
 
     val widthRowNumColumn = remember{ 60.dp}
-    val widthDividerThickness = remember{ 2.dp}
+    val widthDividerThickness = remember{ 4.dp}
 
     val isOnePageNav = remember { mutableStateOf(viewModel.selectPageSizeList.lastIndex == viewModel.selectPageSizeIndex.value) }
 
@@ -237,7 +242,37 @@ fun Un7KCMPDataGrid(
         viewModel.onEvent(Un7KCMPDataGridViewModel.Event.ColumnWeight(columnsWeight))
     }
 
-        Surface(
+
+    val isResizing = remember { mutableStateOf(false) }
+    var resizeIndicatorOffset by remember { mutableStateOf(0.dp) }
+    val resizeMinOffset = remember { mutableStateOf(0.dp) }
+    val resizeMaxOffset = remember { mutableStateOf(0.dp) }
+
+    val onResizeStart = { totalInitialOffset: Dp, minOffset:Dp, maxOffset: Dp ->
+        isResizing.value = true
+        resizeIndicatorOffset  = totalInitialOffset
+        resizeMinOffset.value = minOffset
+        resizeMaxOffset.value = maxOffset
+    }
+
+    val onResizeEnd = {
+        isResizing.value = false
+    }
+
+    val onResize = { dragAmount: Dp ->
+        if (isResizing.value) {
+
+            resizeIndicatorOffset = (resizeIndicatorOffset + dragAmount).coerceIn(
+                resizeMinOffset.value,
+                resizeMaxOffset.value
+            )
+
+
+        }
+    }
+
+
+    Surface(
             tonalElevation = 6.dp,
             shadowElevation = 4.dp,
             border = BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.primaryFixedDim),
@@ -345,7 +380,10 @@ fun Un7KCMPDataGrid(
                                                 onUpdateColumnWeight,
                                                  viewModel.config.headerRowBackgroundColor ?:MaterialTheme.colorScheme.secondaryContainer ,
                                                  viewModel.config.headerRowContentColor ?: MaterialTheme.colorScheme.onSecondaryContainer,
-                                                viewModel.columnsInfo.value
+                                                viewModel.columnsInfo.value,
+                                                onResize,
+                                                onResizeStart,
+                                                onResizeEnd
                                             )
                                         }//AnimatedVisibility
                                     }//stickyHeader
@@ -369,6 +407,22 @@ fun Un7KCMPDataGrid(
                                     }
 
                                 }//LazyColumn
+
+
+                                // --- 드래그 가이드라인 UI ---
+                                if (isResizing.value) {
+
+                                    VerticalDivider(
+                                        modifier = Modifier
+                                            .fillMaxHeight().padding(vertical = 6.dp)
+                                            .width(widthDividerThickness)
+                                            .offset(x = resizeIndicatorOffset), // offset 상태에 따라 위치 변경
+                                        color =  Color.LightGray ,
+                                        thickness = widthDividerThickness
+                                    )
+
+                                }
+                                // --------------------------
 
                             }
 
@@ -490,7 +544,6 @@ fun Un7KCMPDataGrid(
                                 val lazyListState =
                                     rememberLazyListState(initialFirstVisibleItemIndex = 0)
 
-
                                 val onListNavHandler: (ListNav) -> Unit = { listNav ->
                                     when (listNav) {
                                         ListNav.Top -> {
@@ -511,67 +564,96 @@ fun Un7KCMPDataGrid(
 
                                 val shape = RoundedCornerShape(2.dp)
 
-                                LazyColumn(
-                                    modifier = Modifier
-                                        .shadow(elevation = 2.dp, shape = shape)
-                                        .background(
-                                            color = MaterialTheme.colorScheme.background,
-                                            shape = shape
-                                        )
-                                        .border(
-                                            border = BorderStroke(
-                                                width = 1.dp,
-                                                color = MaterialTheme.colorScheme.secondaryFixedDim
-                                            ),
-                                            shape = shape
-                                        )
-                                        .fillMaxSize()
-                                        .padding(paddingLazyColumn),
-                                    state = lazyListState,
-                                    contentPadding = paddingLazyColumnContent
-                                ) {
+                                Box() {
+                                    LazyColumn(
+                                        modifier = Modifier
+                                            .shadow(elevation = 2.dp, shape = shape)
+                                            .background(
+                                                color = MaterialTheme.colorScheme.background,
+                                                shape = shape
+                                            )
+                                            .border(
+                                                border = BorderStroke(
+                                                    width = 1.dp,
+                                                    color = MaterialTheme.colorScheme.secondaryFixedDim
+                                                ),
+                                                shape = shape
+                                            )
+                                            .fillMaxSize()
+                                            .padding(paddingLazyColumn),
+                                        state = lazyListState,
+                                        contentPadding = paddingLazyColumnContent
+                                    ) {
 
-                                    stickyHeader {
-                                        AnimatedVisibility(visible = isVisibleColumnHeader.value) {
-                                            Un7KCMPHeaderRow(
+                                        stickyHeader {
+                                            AnimatedVisibility(visible = isVisibleColumnHeader.value) {
+                                                Un7KCMPHeaderRow(
+                                                    isVisibleRowNum.value,
+                                                    rowNumColumnName,
+                                                    maxWidthInDp,
+                                                    widthDividerThickness,
+                                                    widthRowNumColumn,
+                                                    pagingData.keys.toList(),
+                                                    columnWeights,
+                                                    onUpdateColumnsOrder,
+                                                    onFilter,
+                                                    onColumnSort,
+                                                    columnDataSortFlag,
+                                                    onUpdateColumnWeight,
+                                                    viewModel.config.headerRowBackgroundColor
+                                                        ?: MaterialTheme.colorScheme.secondaryContainer,
+                                                    viewModel.config.headerRowContentColor
+                                                        ?: MaterialTheme.colorScheme.onSecondaryContainer,
+                                                    viewModel.columnsInfo.value,
+                                                    onResize,
+                                                    onResizeStart,
+                                                    onResizeEnd
+                                                )
+                                            }//AnimatedVisibility
+                                        }//stickyHeader
+
+                                        items(
+                                            pagingData.values.firstOrNull()?.size ?: 0
+                                        ) { dataIndex ->
+                                            Un7KCMPDataRow(
                                                 isVisibleRowNum.value,
-                                                rowNumColumnName,
                                                 maxWidthInDp,
                                                 widthDividerThickness,
                                                 widthRowNumColumn,
-                                                pagingData.keys.toList(),
+                                                pageIndex,
+                                                pageSize,
+                                                dataIndex,
+                                                pagingData,
                                                 columnWeights,
-                                                onUpdateColumnsOrder,
-                                                onFilter,
-                                                onColumnSort,
-                                                columnDataSortFlag,
-                                                onUpdateColumnWeight,
-                                                viewModel.config.headerRowBackgroundColor ?:MaterialTheme.colorScheme.secondaryContainer ,
-                                                viewModel.config.headerRowContentColor ?: MaterialTheme.colorScheme.onSecondaryContainer,
-                                                viewModel.columnsInfo.value
+                                                viewModel.config.dataRowBackgroundColor
+                                                    ?: MaterialTheme.colorScheme.surface,
+                                                viewModel.config.dataRowContentColor
+                                                    ?: MaterialTheme.colorScheme.onSurface,
+                                                oddDataRowBackgroundColor = viewModel.config.oddDataRowBackgroundColor,
+                                                evenDataRowBackgroundColor = viewModel.config.evenDataRowBackgroundColor
                                             )
-                                        }//AnimatedVisibility
-                                    }//stickyHeader
+                                        }
 
-                                    items(pagingData.values.firstOrNull()?.size ?: 0) { dataIndex ->
-                                        Un7KCMPDataRow(
-                                            isVisibleRowNum.value,
-                                            maxWidthInDp,
-                                            widthDividerThickness,
-                                            widthRowNumColumn,
-                                            pageIndex,
-                                            pageSize,
-                                            dataIndex,
-                                            pagingData,
-                                            columnWeights,
-                                            viewModel.config.dataRowBackgroundColor ?:MaterialTheme.colorScheme.surface ,
-                                            viewModel.config.dataRowContentColor ?: MaterialTheme.colorScheme.onSurface,
-                                            oddDataRowBackgroundColor = viewModel.config.oddDataRowBackgroundColor ,
-                                            evenDataRowBackgroundColor = viewModel.config.evenDataRowBackgroundColor
+                                    }//LazyColumn
+
+
+                                    // --- 드래그 가이드라인 UI ---
+                                    if (isResizing.value) {
+
+                                        VerticalDivider(
+                                            modifier = Modifier
+                                                .fillMaxHeight().padding(vertical = 6.dp)
+                                                .width(widthDividerThickness)
+                                                .offset(x = resizeIndicatorOffset), // offset 상태에 따라 위치 변경
+
+                                            color =  Color.LightGray ,
+                                            thickness = widthDividerThickness
                                         )
-                                    }
 
-                                }//LazyColumn
+                                    }
+                                    // --------------------------
+
+                                }
 
                                 Box(
                                     modifier = Modifier
