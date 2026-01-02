@@ -362,7 +362,11 @@ fun Un7KCMPDataGrid(
                             viewModel.config.dataRowContentColor
                                 ?: MaterialTheme.colorScheme.onSurface,
                             oddDataRowBackgroundColor = viewModel.config.oddDataRowBackgroundColor,
-                            evenDataRowBackgroundColor = viewModel.config.evenDataRowBackgroundColor
+                            evenDataRowBackgroundColor = viewModel.config.evenDataRowBackgroundColor,
+                            onUpdateColumnWeight,
+                            onResize,
+                            onResizeStart,
+                            onResizeEnd
                         )
                     }
 
