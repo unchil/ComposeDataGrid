@@ -61,7 +61,7 @@ internal fun Un7KCMPDataRow(
     onResizeEnd:()->Unit
 
 ){
-
+    val density = LocalDensity.current.density
     val paddingDataRow = remember { PaddingValues(top = 2.dp) }
     val borderStrokeLightGray = remember {BorderStroke(width = 1.dp, color = Color.LightGray)}
     val borderShapeIn = remember{RoundedCornerShape(0.dp)}
@@ -79,7 +79,7 @@ internal fun Un7KCMPDataRow(
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        val density = LocalDensity.current.density
+
 
         AnimatedVisibility(isVisibleRowNum){
 
@@ -146,6 +146,7 @@ internal fun Un7KCMPDataRow(
                         }
                     }
                 }
+              
 
                 val draggableState = rememberDraggableState { delta ->
                     // 드래그 중에는 오프셋 변경 이벤트만 전달

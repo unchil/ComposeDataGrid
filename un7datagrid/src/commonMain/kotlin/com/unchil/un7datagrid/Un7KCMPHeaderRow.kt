@@ -15,7 +15,6 @@ import androidx.compose.foundation.hoverable
 import androidx.compose.foundation.interaction.HoverInteraction
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -24,7 +23,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.ArrowDropUp
-import androidx.compose.material.icons.filled.SwapHoriz
 import androidx.compose.material.icons.filled.UnfoldMore
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -34,7 +32,6 @@ import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.InternalComposeApi
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -48,9 +45,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import kotlin.math.roundToInt
 import androidx.compose.ui.zIndex
-
+import kotlin.math.roundToInt
 
 
 @Composable
@@ -75,7 +71,7 @@ internal fun Un7KCMPHeaderRow(
     onResizeEnd:()->Unit
 
 ){
-
+    val density = LocalDensity.current.density
     val heightColumnHeader = remember{ 36.dp }
     val heightColumnHeaderDivider = remember{ 30.dp }
 
@@ -83,7 +79,7 @@ internal fun Un7KCMPHeaderRow(
         verticalAlignment = Alignment.CenterVertically,
 
     ) {
-        val density = LocalDensity.current.density
+
 
         AnimatedVisibility(isVisibleRowNum) {
             Row(
@@ -211,8 +207,10 @@ internal fun Un7KCMPHeaderRow(
                 )
             }
 
+
             // 마지막 컬럼이 아닐 경우에만 구분선을 표시하고 드래그 가능하게 합니다.
             if (index < columnNames.size - 1) {
+
 
                 val interactionSourceDivider = remember { MutableInteractionSource() }
                 val isHovered = remember { mutableStateOf(false) }
