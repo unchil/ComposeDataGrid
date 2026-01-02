@@ -450,9 +450,12 @@ fun Un7KCMPDataGrid(
                         Icon(
                             imageVector = Icons.Default.SwapHoriz,
                             contentDescription = "Resize Column",
-                            tint = Color.DarkGray.copy(alpha = 0.6f),
-                            modifier = Modifier.offset(x = resizeIndicatorOffset - (iconWidth / 2))
-                                .align(Alignment.CenterStart).scale(1.5f),
+                            modifier = Modifier
+                                .offset(x = resizeIndicatorOffset - (iconWidth / 2))
+                                .align(Alignment.CenterStart)
+                                .scale(1.5f)
+                                .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f), CircleShape),
+
                         )
                     }
 
