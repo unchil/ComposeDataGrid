@@ -1,5 +1,6 @@
 package com.unchil.un7datagrid
 
+
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -23,7 +24,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.SwapHoriz
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -38,7 +38,6 @@ import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -64,9 +63,7 @@ fun Un7KCMPDataGrid(
     config: Un7KCMPDataGridConfig = Un7KCMPDataGridConfig()
 ){
     val coroutineScope = rememberCoroutineScope()
-
     val viewModel = remember(data) { Un7KCMPDataGridViewModel(data, config) }
-
     val pageSize by viewModel.pageSize.collectAsState()
     val lastPageIndex by viewModel.lastPageIndex.collectAsState()
     val columnNames by viewModel.columnNames.collectAsState()
@@ -75,32 +72,22 @@ fun Un7KCMPDataGrid(
     val selectPageSizeIndex by viewModel.selectPageSizeIndex.collectAsState()
     val columnWeights by viewModel.columnWeights.collectAsState()
     val columnDataSortFlag by viewModel.columnDataSortFlag.collectAsState()
-
     val isVisibleRowNum = remember { mutableStateOf(config.isVisibilityRowNumber) }
-
     val isVisibleColumnHeader = remember { mutableStateOf(true) }
-
     val rowNumColumnName = remember { config.rowNumberColumnName }
-
     val isExpandPageNavControlMenu = rememberSaveable {mutableStateOf(false) }
-
     val borderStrokeTransparent = remember {BorderStroke(width = 0.dp, color = Color.Transparent)}
     val borderShapeOut = remember{RoundedCornerShape(0.dp)}
     val borderShapeIn = remember{RoundedCornerShape(2.dp)}
-
     val paddingHorizontalPager = remember { PaddingValues(0.dp)}
     val paddingBoxInHorizontalPager = remember { PaddingValues(2.dp)}
     val paddingLazyColumn = remember { PaddingValues(0.dp)}
     val paddingLazyColumnContent = remember { PaddingValues(4.dp)}
-
     val paddingMenuGridControl = remember{ PaddingValues(bottom = 80.dp, start = 10.dp)}
     val paddingMenuPageNavControl = remember{ PaddingValues(all = 10.dp)}
-
     val widthRowNumColumn = remember{ 60.dp}
     val widthDividerThickness = remember{ 4.dp}
-
     val isOnePageNav = remember { mutableStateOf(viewModel.selectPageSizeList.lastIndex == viewModel.selectPageSizeIndex.value) }
-
     //--------------------
     // SnackBar Setting
     //--------------------
@@ -228,13 +215,13 @@ fun Un7KCMPDataGrid(
 
     val onRefresh:()-> Unit = {
         viewModel.onEvent(Un7KCMPDataGridViewModel.Event.Refresh{
-                coroutineScope.launch {
-                    pagerState.animateScrollToPage(0)
-                }
-                channel.trySend(snackBarChannelList.first { item ->
-                    item.channelType == SnackBarChannelType.RELOAD
-                }.channel)
+            coroutineScope.launch {
+                pagerState.animateScrollToPage(0)
             }
+            channel.trySend(snackBarChannelList.first { item ->
+                item.channelType == SnackBarChannelType.RELOAD
+            }.channel)
+        }
         )
     }
 
@@ -261,30 +248,206 @@ fun Un7KCMPDataGrid(
 
     val onResize = { dragAmount: Dp ->
         if (isResizing.value) {
-
             resizeIndicatorOffset = (resizeIndicatorOffset + dragAmount).coerceIn(
                 resizeMinOffset.value,
                 resizeMaxOffset.value
             )
-
-
         }
     }
 
 
-    Surface(
-            tonalElevation = 6.dp,
-            shadowElevation = 4.dp,
-            border = BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.primaryFixedDim),
+    val dataGridContent: @Composable ((MutableMap<String, List<Any?>>, Int) -> Unit) = { pagingData, pageIndex ->
+
+        BoxWithConstraints(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingBoxInHorizontalPager)
+                .border(borderStrokeTransparent, shape = borderShapeIn),
+            contentAlignment = Alignment.Center
         ) {
 
-            if(isOnePageNav.value){
-                Box(
-                    then(modifier)
+            val lazyListState =
+                rememberLazyListState(initialFirstVisibleItemIndex = 0)
+
+            val onListNavHandler: (ListNav) -> Unit = { listNav ->
+                when (listNav) {
+                    ListNav.Top -> {
+                        coroutineScope.launch {
+                            lazyListState.animateScrollToItem(0)
+                        }
+                    }
+
+                    ListNav.Bottom -> {
+                        coroutineScope.launch {
+                            lazyListState.animateScrollToItem(
+                                (pagingData.values.firstOrNull()?.size ?: 1) - 1
+                            )
+                        }
+                    }
+                }
+            }
+
+            val shape = RoundedCornerShape(2.dp)
+
+            // 1. 각 컬럼의 최소 너비 정의
+            val minColumnWidth = 150.dp
+            // 2. 모든 컬럼과 구분선을 포함한 전체 너비 계산
+            val totalGridWidth = (widthRowNumColumn + (minColumnWidth * columnNames.size) + (widthDividerThickness * (columnNames.size -1)))
+            val maxWidthInDp =  if(isOnePageNav.value) totalGridWidth.coerceAtLeast(this.maxWidth) else this.maxWidth
+
+            Box(modifier = if(isOnePageNav.value) Modifier.horizontalScroll(rememberScrollState()) else Modifier ) {
+
+                LazyColumn(
+                    modifier = if(isOnePageNav.value) Modifier.width(maxWidthInDp).fillMaxHeight() else Modifier.fillMaxSize()
+                        .shadow(elevation = 2.dp, shape = shape)
+                        .background(
+                            color = MaterialTheme.colorScheme.background,
+                            shape = shape
+                        )
+                        .border(
+                            border = BorderStroke(
+                                width = 1.dp,
+                                color = MaterialTheme.colorScheme.secondaryFixedDim
+                            ),
+                            shape = shape
+                        )
                         .fillMaxSize()
-                        .border(borderStrokeTransparent, shape = borderShapeOut),
-                    contentAlignment = Alignment.Center,
+                        .padding(paddingLazyColumn),
+                    state = lazyListState,
+                    contentPadding = paddingLazyColumnContent
                 ) {
+
+                    stickyHeader {
+                        AnimatedVisibility(visible = isVisibleColumnHeader.value) {
+                            Un7KCMPHeaderRow(
+                                isVisibleRowNum.value,
+                                rowNumColumnName,
+                                maxWidthInDp,
+                                widthDividerThickness,
+                                widthRowNumColumn,
+                                pagingData.keys.toList(),
+                                columnWeights,
+                                onUpdateColumnsOrder,
+                                onFilter,
+                                onColumnSort,
+                                columnDataSortFlag,
+                                onUpdateColumnWeight,
+                                viewModel.config.headerRowBackgroundColor
+                                    ?: MaterialTheme.colorScheme.secondaryContainer,
+                                viewModel.config.headerRowContentColor
+                                    ?: MaterialTheme.colorScheme.onSecondaryContainer,
+                                viewModel.columnsInfo.value,
+                                onResize,
+                                onResizeStart,
+                                onResizeEnd
+                            )
+                        }//AnimatedVisibility
+                    }//stickyHeader
+
+                    items(
+                        pagingData.values.firstOrNull()?.size ?: 0
+                    ) { dataIndex ->
+                        Un7KCMPDataRow(
+                            isVisibleRowNum.value,
+                            maxWidthInDp,
+                            widthDividerThickness,
+                            widthRowNumColumn,
+                            pageIndex,
+                            pageSize,
+                            dataIndex,
+                            pagingData,
+                            columnWeights,
+                            viewModel.config.dataRowBackgroundColor
+                                ?: MaterialTheme.colorScheme.surface,
+                            viewModel.config.dataRowContentColor
+                                ?: MaterialTheme.colorScheme.onSurface,
+                            oddDataRowBackgroundColor = viewModel.config.oddDataRowBackgroundColor,
+                            evenDataRowBackgroundColor = viewModel.config.evenDataRowBackgroundColor
+                        )
+                    }
+
+                }//LazyColumn
+
+                // --- 드래그 가이드라인 UI ---
+                if (isResizing.value) {
+                    VerticalDivider(
+                        modifier = Modifier
+                            .fillMaxHeight().padding(vertical = 6.dp)
+                            .width(widthDividerThickness)
+                            .offset(x = resizeIndicatorOffset), // offset 상태에 따라 위치 변경
+                        color =  Color.LightGray ,
+                        thickness = widthDividerThickness
+                    )
+                }
+                // --------------------------
+
+            }
+
+            Box(
+                modifier = Modifier
+                    .padding(paddingMenuGridControl)
+                    //    .border(borderStrokeRed, shape = borderShapeIn)
+                    .align(Alignment.BottomStart),
+
+                ) {
+                Un7KCMPMenuGridControl(
+                    isExpandPageNavControlMenu,
+                    isVisibleColumnHeader = isVisibleColumnHeader,
+                    lazyListState,
+                    viewModel.data.keys.toList(),
+                    selectedColumns,
+                    onUpdateColumns,
+                    onListNavHandler,
+                    isVisibleRowNum
+                )
+
+            }//Box  MenuPageNavControl
+
+            SnackbarHost(
+                hostState = snackBarHostState,
+                modifier = Modifier.align(Alignment.Center)
+                    .padding(horizontal = 10.dp)
+            ) { snackBarData ->
+
+                Snackbar(
+                    shape = ShapeDefaults.ExtraSmall,
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    dismissAction = {
+                        if (snackBarData.visuals.withDismissAction) {
+                            IconButton(onClick = { snackBarData.dismiss() }) {
+                                Icon(
+                                    Icons.Default.Close,
+                                    contentDescription = "Dismiss"
+                                )
+                            }
+                        }
+                    }
+                ) {
+                    Text(
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Center,
+                        text = snackBarData.visuals.message
+                    )
+                }
+            }
+
+        }// BoxWithConstraints
+    }
+
+
+    Surface(
+        tonalElevation = 6.dp,
+        shadowElevation = 4.dp,
+        border = BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.primaryFixedDim),
+    ) {
+            Box(
+                then(modifier)
+                    .fillMaxSize()
+                    .border(borderStrokeTransparent, shape = borderShapeOut),
+                contentAlignment = Alignment.Center,
+            ) {
+                if(isOnePageNav.value){
                     makePagingData(
                         topRowIndex(0, pageSize),
                         bottomRowIndex(
@@ -296,220 +459,10 @@ fun Un7KCMPDataGrid(
                         columnNames,
                         dataRows.toList()
                     ).let { pagingData ->
-
-
-                        BoxWithConstraints(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(paddingBoxInHorizontalPager)
-                                .border(borderStrokeTransparent, shape = borderShapeIn),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            val maxWidthInDp = this.maxWidth
-                            val lazyListState =
-                                rememberLazyListState(initialFirstVisibleItemIndex = 0)
-
-
-                            // 1. 각 컬럼의 최소 너비 정의
-                            val minColumnWidth = 150.dp
-                            // 2. 모든 컬럼과 구분선을 포함한 전체 너비 계산
-                            val totalGridWidth = (widthRowNumColumn + (minColumnWidth * columnNames.size) + (widthDividerThickness * (columnNames.size -1)))
-                            // 3. 실제 콘텐츠에 적용할 너비 결정 (화면 너비보다 작아지지 않도록)
-                            val gridContentWidth = totalGridWidth.coerceAtLeast(maxWidthInDp)
-
-
-                            val onListNavHandler: (ListNav) -> Unit = { listNav ->
-                                when (listNav) {
-                                    ListNav.Top -> {
-                                        coroutineScope.launch {
-                                            lazyListState.animateScrollToItem(0)
-                                        }
-                                    }
-
-                                    ListNav.Bottom -> {
-                                        coroutineScope.launch {
-                                            lazyListState.animateScrollToItem(
-                                                (pagingData.values.firstOrNull()?.size ?: 1) - 1
-                                            )
-                                        }
-                                    }
-                                }
-                            }
-
-                            val shape = RoundedCornerShape(2.dp)
-                            val horizontalScrollState = rememberScrollState()
-
-                            Box(modifier = Modifier.horizontalScroll(horizontalScrollState)) {
-
-                                LazyColumn(
-                                    modifier = Modifier
-                                        .shadow(elevation = 2.dp, shape = shape)
-                                        .background(
-                                            color = MaterialTheme.colorScheme.background,
-                                            shape = shape
-                                        )
-                                        .border(
-                                            border = BorderStroke(
-                                                width = 1.dp,
-                                                color = MaterialTheme.colorScheme.secondaryFixedDim
-                                            ),
-                                            shape = shape
-                                        )
-                                        // 4. fillMaxSize() 대신 width와 fillMaxHeight() 사용
-                                        .width(gridContentWidth)
-                                        .fillMaxHeight()
-                                        .padding(paddingLazyColumn),
-                                    state = lazyListState,
-                                    contentPadding = paddingLazyColumnContent
-                                ) {
-
-                                    stickyHeader {
-                                        AnimatedVisibility(visible = isVisibleColumnHeader.value) {
-                                            Un7KCMPHeaderRow(
-                                                isVisibleRowNum.value,
-                                                rowNumColumnName,
-                                                gridContentWidth,
-                                                widthDividerThickness,
-                                                widthRowNumColumn,
-                                                pagingData.keys.toList(),
-                                                columnWeights,
-                                                onUpdateColumnsOrder,
-                                                onFilter,
-                                                onColumnSort,
-                                                columnDataSortFlag,
-                                                onUpdateColumnWeight,
-                                                 viewModel.config.headerRowBackgroundColor ?:MaterialTheme.colorScheme.secondaryContainer ,
-                                                 viewModel.config.headerRowContentColor ?: MaterialTheme.colorScheme.onSecondaryContainer,
-                                                viewModel.columnsInfo.value,
-                                                onResize,
-                                                onResizeStart,
-                                                onResizeEnd
-                                            )
-                                        }//AnimatedVisibility
-                                    }//stickyHeader
-
-                                    items(pagingData.values.firstOrNull()?.size ?: 0) { dataIndex ->
-                                        Un7KCMPDataRow(
-                                            isVisibleRowNum.value,
-                                            gridContentWidth,
-                                            widthDividerThickness,
-                                            widthRowNumColumn,
-                                            0,
-                                            pageSize,
-                                            dataIndex,
-                                            pagingData,
-                                            columnWeights,
-                                            viewModel.config.dataRowBackgroundColor ?:MaterialTheme.colorScheme.surface ,
-                                            viewModel.config.dataRowContentColor ?: MaterialTheme.colorScheme.onSurface,
-                                            oddDataRowBackgroundColor = viewModel.config.oddDataRowBackgroundColor ,
-                                            evenDataRowBackgroundColor = viewModel.config.evenDataRowBackgroundColor
-                                        )
-                                    }
-
-                                }//LazyColumn
-
-
-                                // --- 드래그 가이드라인 UI ---
-                                if (isResizing.value) {
-
-                                    VerticalDivider(
-                                        modifier = Modifier
-                                            .fillMaxHeight().padding(vertical = 6.dp)
-                                            .width(widthDividerThickness)
-                                            .offset(x = resizeIndicatorOffset), // offset 상태에 따라 위치 변경
-                                        color =  Color.LightGray ,
-                                        thickness = widthDividerThickness
-                                    )
-
-                                }
-                                // --------------------------
-
-                            }
-
-                            Box(
-                                modifier = Modifier
-                                    .padding(paddingMenuGridControl)
-                                    //    .border(borderStrokeRed, shape = borderShapeIn)
-                                    .align(Alignment.BottomStart),
-
-                                ) {
-                                Un7KCMPMenuGridControl(
-                                    isExpandPageNavControlMenu,
-                                    isVisibleColumnHeader = isVisibleColumnHeader,
-                                    lazyListState,
-                                    viewModel.data.keys.toList(),
-                                    selectedColumns,
-                                    onUpdateColumns,
-                                    onListNavHandler,
-                                    isVisibleRowNum
-                                )
-
-                            }//Box  MenuPageNavControl
-
-                            SnackbarHost(
-                                hostState = snackBarHostState,
-                                modifier = Modifier.align(Alignment.Center)
-                                    .padding(horizontal = 10.dp)
-                            ) { snackBarData ->
-
-                                Snackbar(
-                                    shape = ShapeDefaults.ExtraSmall,
-                                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                                    dismissAction = {
-                                        if (snackBarData.visuals.withDismissAction) {
-                                            IconButton(onClick = { snackBarData.dismiss() }) {
-                                                Icon(
-                                                    Icons.Default.Close,
-                                                    contentDescription = "Dismiss"
-                                                )
-                                            }
-                                        }
-                                    }
-                                ) {
-                                    Text(
-                                        modifier = Modifier.fillMaxWidth(),
-                                        textAlign = TextAlign.Center,
-                                        text = snackBarData.visuals.message
-                                    )
-                                }
-                            }
-
-                        }// BoxWithConstraints
+                        dataGridContent(pagingData, 0)
                     }//makePagingData
 
-
-                    Box(
-                        modifier = Modifier
-                            .padding(paddingMenuPageNavControl)
-                            //  .border(borderStrokeRed, shape = borderShapeIn)
-                            .align(Alignment.BottomStart)
-                    ) {
-                        Un7KCMPMenuPageNavControl(
-                            isExpandPageNavControlMenu,
-                            onChangePageSize,
-                            viewModel.selectPageSizeList,
-                            selectPageSizeIndex,
-                            onRefresh,
-                            onPageNavHandler,
-                            pagerState,
-                            isOnePageNav.value
-                        )
-                    }//Box  MenuGridSetting
-
-
-                }
-
-
-
-            }else {
-
-                Box(
-                    then(modifier)
-                        .fillMaxSize()
-                        .border(borderStrokeTransparent, shape = borderShapeOut),
-                    contentAlignment = Alignment.Center,
-                ) {
+                } else {
                     HorizontalPager(
                         state = pagerState,
                         modifier = Modifier
@@ -532,203 +485,32 @@ fun Un7KCMPDataGrid(
                             columnNames,
                             dataRows.toList()
                         ).let { pagingData ->
-
-                            BoxWithConstraints(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .padding(paddingBoxInHorizontalPager)
-                                    .border(borderStrokeTransparent, shape = borderShapeIn),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                val maxWidthInDp = this.maxWidth
-                                val lazyListState =
-                                    rememberLazyListState(initialFirstVisibleItemIndex = 0)
-
-                                val onListNavHandler: (ListNav) -> Unit = { listNav ->
-                                    when (listNav) {
-                                        ListNav.Top -> {
-                                            coroutineScope.launch {
-                                                lazyListState.animateScrollToItem(0)
-                                            }
-                                        }
-
-                                        ListNav.Bottom -> {
-                                            coroutineScope.launch {
-                                                lazyListState.animateScrollToItem(
-                                                    (pagingData.values.firstOrNull()?.size ?: 1) - 1
-                                                )
-                                            }
-                                        }
-                                    }
-                                }
-
-                                val shape = RoundedCornerShape(2.dp)
-
-                                Box() {
-                                    LazyColumn(
-                                        modifier = Modifier
-                                            .shadow(elevation = 2.dp, shape = shape)
-                                            .background(
-                                                color = MaterialTheme.colorScheme.background,
-                                                shape = shape
-                                            )
-                                            .border(
-                                                border = BorderStroke(
-                                                    width = 1.dp,
-                                                    color = MaterialTheme.colorScheme.secondaryFixedDim
-                                                ),
-                                                shape = shape
-                                            )
-                                            .fillMaxSize()
-                                            .padding(paddingLazyColumn),
-                                        state = lazyListState,
-                                        contentPadding = paddingLazyColumnContent
-                                    ) {
-
-                                        stickyHeader {
-                                            AnimatedVisibility(visible = isVisibleColumnHeader.value) {
-                                                Un7KCMPHeaderRow(
-                                                    isVisibleRowNum.value,
-                                                    rowNumColumnName,
-                                                    maxWidthInDp,
-                                                    widthDividerThickness,
-                                                    widthRowNumColumn,
-                                                    pagingData.keys.toList(),
-                                                    columnWeights,
-                                                    onUpdateColumnsOrder,
-                                                    onFilter,
-                                                    onColumnSort,
-                                                    columnDataSortFlag,
-                                                    onUpdateColumnWeight,
-                                                    viewModel.config.headerRowBackgroundColor
-                                                        ?: MaterialTheme.colorScheme.secondaryContainer,
-                                                    viewModel.config.headerRowContentColor
-                                                        ?: MaterialTheme.colorScheme.onSecondaryContainer,
-                                                    viewModel.columnsInfo.value,
-                                                    onResize,
-                                                    onResizeStart,
-                                                    onResizeEnd
-                                                )
-                                            }//AnimatedVisibility
-                                        }//stickyHeader
-
-                                        items(
-                                            pagingData.values.firstOrNull()?.size ?: 0
-                                        ) { dataIndex ->
-                                            Un7KCMPDataRow(
-                                                isVisibleRowNum.value,
-                                                maxWidthInDp,
-                                                widthDividerThickness,
-                                                widthRowNumColumn,
-                                                pageIndex,
-                                                pageSize,
-                                                dataIndex,
-                                                pagingData,
-                                                columnWeights,
-                                                viewModel.config.dataRowBackgroundColor
-                                                    ?: MaterialTheme.colorScheme.surface,
-                                                viewModel.config.dataRowContentColor
-                                                    ?: MaterialTheme.colorScheme.onSurface,
-                                                oddDataRowBackgroundColor = viewModel.config.oddDataRowBackgroundColor,
-                                                evenDataRowBackgroundColor = viewModel.config.evenDataRowBackgroundColor
-                                            )
-                                        }
-
-                                    }//LazyColumn
-
-
-                                    // --- 드래그 가이드라인 UI ---
-                                    if (isResizing.value) {
-
-                                        VerticalDivider(
-                                            modifier = Modifier
-                                                .fillMaxHeight().padding(vertical = 6.dp)
-                                                .width(widthDividerThickness)
-                                                .offset(x = resizeIndicatorOffset), // offset 상태에 따라 위치 변경
-
-                                            color =  Color.LightGray ,
-                                            thickness = widthDividerThickness
-                                        )
-
-                                    }
-                                    // --------------------------
-
-                                }
-
-                                Box(
-                                    modifier = Modifier
-                                        .padding(paddingMenuGridControl)
-                                        //    .border(borderStrokeRed, shape = borderShapeIn)
-                                        .align(Alignment.BottomStart),
-
-                                    ) {
-                                    Un7KCMPMenuGridControl(
-                                        isExpandPageNavControlMenu,
-                                        isVisibleColumnHeader = isVisibleColumnHeader,
-                                        lazyListState,
-                                        viewModel.data.keys.toList(),
-                                        selectedColumns,
-                                        onUpdateColumns,
-                                        onListNavHandler,
-                                        isVisibleRowNum
-                                    )
-
-                                }//Box  MenuPageNavControl
-
-                                SnackbarHost(
-                                    hostState = snackBarHostState,
-                                    modifier = Modifier.align(Alignment.Center)
-                                        .padding(horizontal = 10.dp)
-                                ) { snackBarData ->
-
-                                    Snackbar(
-                                        shape = ShapeDefaults.ExtraSmall,
-                                        containerColor = MaterialTheme.colorScheme.primaryContainer,
-                                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                                        dismissAction = {
-                                            if (snackBarData.visuals.withDismissAction) {
-                                                IconButton(onClick = { snackBarData.dismiss() }) {
-                                                    Icon(
-                                                        Icons.Default.Close,
-                                                        contentDescription = "Dismiss"
-                                                    )
-                                                }
-                                            }
-                                        }
-                                    ) {
-                                        Text(
-                                            modifier = Modifier.fillMaxWidth(),
-                                            textAlign = TextAlign.Center,
-                                            text = snackBarData.visuals.message
-                                        )
-                                    }
-                                }
-
-                            }// BoxWithConstraints
+                            dataGridContent(pagingData, pageIndex)
                         }//makePagingData
                     }//HorizontalPager
+                }
 
-                    Box(
-                        modifier = Modifier
-                            .padding(paddingMenuPageNavControl)
-                            //  .border(borderStrokeRed, shape = borderShapeIn)
-                            .align(Alignment.BottomStart)
-                    ) {
-                        Un7KCMPMenuPageNavControl(
-                            isExpandPageNavControlMenu,
-                            onChangePageSize,
-                            viewModel.selectPageSizeList,
-                            selectPageSizeIndex,
-                            onRefresh,
-                            onPageNavHandler,
-                            pagerState,
-                            isOnePageNav.value
-                        )
-                    }//Box  MenuGridSetting
+                Box(
+                    modifier = Modifier
+                        .padding(paddingMenuPageNavControl)
+                        //  .border(borderStrokeRed, shape = borderShapeIn)
+                        .align(Alignment.BottomStart)
+                ) {
+                    Un7KCMPMenuPageNavControl(
+                        isExpandPageNavControlMenu,
+                        onChangePageSize,
+                        viewModel.selectPageSizeList,
+                        selectPageSizeIndex,
+                        onRefresh,
+                        onPageNavHandler,
+                        pagerState,
+                        isOnePageNav.value
+                    )
+                }//Box  MenuGridSetting
 
-                }//Box
             }
 
-        }
 
+
+    }
 }
