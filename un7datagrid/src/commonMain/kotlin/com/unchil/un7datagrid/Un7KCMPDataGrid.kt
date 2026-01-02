@@ -21,9 +21,11 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.SwapHoriz
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -47,6 +49,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.Modifier.Companion.then
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
@@ -233,8 +236,8 @@ fun Un7KCMPDataGrid(
     var resizeIndicatorOffset by remember { mutableStateOf(0.dp) }
     val resizeMinOffset = remember { mutableStateOf(0.dp) }
     val resizeMaxOffset = remember { mutableStateOf(0.dp) }
-
     val maxWidthInDp = remember { mutableStateOf(0.dp) }
+    val iconWidth = 24.dp // Standard icon width
 
     val columnsAreaWidth = if ( isVisibleRowNum.value) {
         maxWidthInDp.value - widthRowNumColumn - (widthDividerThickness * (columnNames.size ))
@@ -430,6 +433,7 @@ fun Un7KCMPDataGrid(
 
                 // --- 드래그 가이드라인 UI ---
                 if (isResizing.value) {
+
                     VerticalDivider(
                         modifier = Modifier
                             .fillMaxHeight().padding(vertical = 6.dp)
@@ -438,6 +442,21 @@ fun Un7KCMPDataGrid(
                         color =  Color.LightGray ,
                         thickness = widthDividerThickness
                     )
+
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.SwapHoriz,
+                            contentDescription = "Resize Column",
+                            tint = Color.DarkGray.copy(alpha = 0.6f),
+                            modifier = Modifier.offset(x = resizeIndicatorOffset - (iconWidth / 2))
+                                .align(Alignment.CenterStart).scale(1.5f),
+                        )
+                    }
+
+
                 }
                 // --------------------------
 
@@ -501,74 +520,62 @@ fun Un7KCMPDataGrid(
         shadowElevation = 4.dp,
         border = BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.primaryFixedDim),
     ) {
-            Box(
-                then(modifier)
-                    .fillMaxSize()
-                    .border(borderStrokeTransparent, shape = borderShapeOut),
-                contentAlignment = Alignment.Center,
-            ) {
-                if(isOnePageNav.value){
+        Box(
+            then(modifier)
+                .fillMaxSize()
+                .border(borderStrokeTransparent, shape = borderShapeOut),
+            contentAlignment = Alignment.Center,
+        ) {
+            if(isOnePageNav.value){
+                makePagingData(
+                    topRowIndex(0, pageSize),
+                    bottomRowIndex( 0, pageSize, true, dataRows.size ),
+                    columnNames,
+                    dataRows.toList()
+                ).let { pagingData ->
+                    dataGridContent(pagingData, 0)
+                }//makePagingData
+            } else {
+                HorizontalPager(
+                    state = pagerState,
+                    modifier = Modifier
+                        .padding(paddingHorizontalPager)
+                        .border(borderStrokeTransparent, shape = borderShapeIn),
+                    flingBehavior = PagerDefaults.flingBehavior(
+                        state = pagerState,
+                        snapPositionalThreshold = 0.7f
+                    )
+                ) { pageIndex ->
                     makePagingData(
-                        topRowIndex(0, pageSize),
-                        bottomRowIndex(
-                            0,
-                            pageSize,
-                            true,
-                            dataRows.size
-                        ),
+                        topRowIndex(pageIndex, pageSize),
+                        bottomRowIndex( pageIndex, pageSize, pageIndex == lastPageIndex,  dataRows.size),
                         columnNames,
                         dataRows.toList()
                     ).let { pagingData ->
-                        dataGridContent(pagingData, 0)
+                        dataGridContent(pagingData, pageIndex)
                     }//makePagingData
-
-                } else {
-                    HorizontalPager(
-                        state = pagerState,
-                        modifier = Modifier
-                            .padding(paddingHorizontalPager)
-                            .border(borderStrokeTransparent, shape = borderShapeIn),
-                        flingBehavior = PagerDefaults.flingBehavior(
-                            state = pagerState,
-                            snapPositionalThreshold = 0.7f
-                        )
-                    ) { pageIndex ->
-
-                        makePagingData(
-                            topRowIndex(pageIndex, pageSize),
-                            bottomRowIndex(
-                                pageIndex,
-                                pageSize,
-                                pageIndex == lastPageIndex,
-                                dataRows.size
-                            ),
-                            columnNames,
-                            dataRows.toList()
-                        ).let { pagingData ->
-                            dataGridContent(pagingData, pageIndex)
-                        }//makePagingData
-                    }//HorizontalPager
-                }
-
-                Box(
-                    modifier = Modifier
-                        .padding(paddingMenuPageNavControl)
-                        //  .border(borderStrokeRed, shape = borderShapeIn)
-                        .align(Alignment.BottomStart)
-                ) {
-                    Un7KCMPMenuPageNavControl(
-                        isExpandPageNavControlMenu,
-                        onChangePageSize,
-                        viewModel.selectPageSizeList,
-                        selectPageSizeIndex,
-                        onRefresh,
-                        onPageNavHandler,
-                        pagerState,
-                        isOnePageNav.value
-                    )
-                }//Box  MenuGridSetting
-
+                }//HorizontalPager
             }
+
+            Box(
+                modifier = Modifier
+                    .padding(paddingMenuPageNavControl)
+                    //  .border(borderStrokeRed, shape = borderShapeIn)
+                    .align(Alignment.BottomStart)
+            ) {
+                Un7KCMPMenuPageNavControl(
+                    isExpandPageNavControlMenu,
+                    onChangePageSize,
+                    viewModel.selectPageSizeList,
+                    selectPageSizeIndex,
+                    onRefresh,
+                    onPageNavHandler,
+                    pagerState,
+                    isOnePageNav.value
+                )
+            }//Box  MenuGridSetting
+
+        }
 
 
 
