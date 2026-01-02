@@ -270,10 +270,11 @@ fun Un7KCMPDataGrid(
         val minOffset:Dp = totalInitialOffset - maxDragLeft
         val maxOffset:Dp = totalInitialOffset + maxDragRight
 
-        isResizing.value = true
         resizeIndicatorOffset  = totalInitialOffset
         resizeMinOffset.value = minOffset
         resizeMaxOffset.value = maxOffset
+
+        isResizing.value = true
 
     }
 
@@ -283,37 +284,34 @@ fun Un7KCMPDataGrid(
 
     val onResize = { delta: Float, density:Float, index:Int  ->
 
-        if (isResizing.value) {
-            resizeIndicatorOffset = (resizeIndicatorOffset +  (delta/density).dp).coerceIn(
-                resizeMinOffset.value,
-                resizeMaxOffset.value
-            )
-            // 픽셀(px) 단위의 delta를 전체 너비에 대한 가중치 변화량으로 변환합니다.
-            val deltaWeight = delta / (maxWidthInDp.value.value * density)
-            val currentWeight = columnWeights[index]
-            val nextWeight = columnWeights[index + 1]
+        resizeIndicatorOffset = (resizeIndicatorOffset +  (delta/density).dp).coerceIn(
+            resizeMinOffset.value,
+            resizeMaxOffset.value
+        )
+        // 픽셀(px) 단위의 delta를 전체 너비에 대한 가중치 변화량으로 변환합니다.
+        val deltaWeight = delta / (maxWidthInDp.value.value * density)
+        val currentWeight = columnWeights[index]
+        val nextWeight = columnWeights[index + 1]
 
-            // 최소 너비를 5%로 설정 (0.05f)
-            val minWeight = 0.05f
-            // 가중치 변화량을 적용하되, 최소 너비 제약을 준수합니다.
-            val newCurrentWeight = (currentWeight + deltaWeight).coerceIn(
-                minWeight,
-                currentWeight + nextWeight - minWeight
-            )
+        // 최소 너비를 5%로 설정 (0.05f)
+        val minWeight = 0.05f
+        // 가중치 변화량을 적용하되, 최소 너비 제약을 준수합니다.
+        val newCurrentWeight = (currentWeight + deltaWeight).coerceIn(
+            minWeight,
+            currentWeight + nextWeight - minWeight
+        )
 
-            val newNextWeight = (currentWeight + nextWeight) - newCurrentWeight
+        val newNextWeight = (currentWeight + nextWeight) - newCurrentWeight
 
-            onUpdateColumnWeight(
-                columnWeights.toMutableList()
-                    .apply {
-                        this[index] =
-                            newCurrentWeight
-                        this[index + 1] =
-                            newNextWeight
-                    }
-            )
-
-        }
+        onUpdateColumnWeight(
+            columnWeights.toMutableList()
+                .apply {
+                    this[index] =
+                        newCurrentWeight
+                    this[index + 1] =
+                        newNextWeight
+                }
+        )
     }
 
     val dataGridContent: @Composable ((MutableMap<String, List<Any?>>, Int) -> Unit) = { pagingData, pageIndex ->
