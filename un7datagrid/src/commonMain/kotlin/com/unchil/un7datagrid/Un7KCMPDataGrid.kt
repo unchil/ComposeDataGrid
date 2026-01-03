@@ -475,7 +475,6 @@ fun Un7KCMPDataGrid(
                             contentDescription = "Resize Column",
                             modifier = Modifier
                                 .offset(x = isCurrentHoveredOffset.value - (iconWidth / 2))
-                                .align(Alignment.CenterStart)
                                 .scale(2.0f)
                                 .background(
                                     MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f),
@@ -500,13 +499,12 @@ fun Un7KCMPDataGrid(
                         thickness = widthDividerThickness
                     )
 
-                    Box(  modifier = Modifier.fillMaxSize(),  contentAlignment = Alignment.Center ) {
+                    Box(  modifier = Modifier.fillMaxSize(),  contentAlignment = Alignment.CenterStart ) {
                         Icon(
                             imageVector = Icons.Default.SwapHoriz,
                             contentDescription = "Resize Column",
                             modifier = Modifier
                                 .offset(x = resizeIndicatorOffset - (iconWidth / 2))
-                                .align(Alignment.CenterStart)
                                 .scale(1.5f)
                                 .background(Color.Transparent),
 
