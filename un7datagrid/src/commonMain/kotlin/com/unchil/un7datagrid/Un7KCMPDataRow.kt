@@ -52,7 +52,9 @@ internal fun Un7KCMPDataRow(
     evenDataRowBackgroundColor:Color?,
     onResize:(Float, Float, Int)->Unit,
     onResizeStart:(Int)->Unit,
-    onResizeEnd:()->Unit
+    onResizeEnd:()->Unit,
+    onDividerHovered: (index: Int) -> Unit,
+    onDividerHoverExit: () -> Unit
 
 ){
     val density = LocalDensity.current.density
@@ -119,13 +121,16 @@ internal fun Un7KCMPDataRow(
             if (index < pagingData.keys.size - 1) {
 
                 val interactionSourceDivider = remember { MutableInteractionSource() }
-                val isHovered = remember { mutableStateOf(false) }
 
                 LaunchedEffect(interactionSourceDivider) {
                     interactionSourceDivider.interactions.collect { interaction ->
                         when (interaction) {
-                            is HoverInteraction.Enter -> isHovered.value = true
-                            is HoverInteraction.Exit -> isHovered.value = false
+                            is HoverInteraction.Enter -> {
+                                onDividerHovered(index)
+                            }
+                            is HoverInteraction.Exit -> {
+                                onDividerHoverExit()
+                            }
                         }
                     }
                 }
@@ -148,21 +153,8 @@ internal fun Un7KCMPDataRow(
                         .hoverable(interactionSourceDivider) // Make the area hoverable,
                     , thickness = widthDividerThickness,
                     // Change color on hover for better visual feedback
-                    color = if (isHovered.value) Color.LightGray else Color.Transparent
+                    color = Color.Transparent
                 )
-
-                /*
-                AnimatedVisibility(isHovered.value) {
-                    Icon(
-                        Icons.Default.SwapHoriz,
-                        contentDescription = "Resize Column",
-                        modifier = Modifier,
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                }
-
-                 */
-
 
             }
         }

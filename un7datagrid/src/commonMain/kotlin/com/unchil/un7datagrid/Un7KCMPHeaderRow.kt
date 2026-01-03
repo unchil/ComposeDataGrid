@@ -67,7 +67,9 @@ internal fun Un7KCMPHeaderRow(
     columnsInfo: Map<String, NewColumnInfo>,
     onResize:(Float, Float, Int)->Unit,
     onResizeStart:(Int)->Unit,
-    onResizeEnd:()->Unit
+    onResizeEnd:()->Unit,
+    onDividerHovered: (index: Int) -> Unit,
+    onDividerHoverExit: () -> Unit
 
 ){
     val density = LocalDensity.current.density
@@ -204,13 +206,16 @@ internal fun Un7KCMPHeaderRow(
             // 마지막 컬럼이 아닐 경우에만 구분선을 표시하고 드래그 가능하게 합니다.
             if (index < columnNames.size - 1) {
                 val interactionSourceDivider = remember { MutableInteractionSource() }
-                val isHovered = remember { mutableStateOf(false) }
 
                 LaunchedEffect(interactionSourceDivider) {
                     interactionSourceDivider.interactions.collect { interaction ->
                         when (interaction) {
-                            is HoverInteraction.Enter -> isHovered.value = true
-                            is HoverInteraction.Exit -> isHovered.value = false
+                            is HoverInteraction.Enter -> {
+                                onDividerHovered(index)
+                            }
+                            is HoverInteraction.Exit -> {
+                                onDividerHoverExit()
+                            }
                         }
                     }
                 }
@@ -232,20 +237,8 @@ internal fun Un7KCMPHeaderRow(
                             .hoverable(interactionSourceDivider) // Make the area hoverable,
                         , thickness = widthDividerThickness,
                         // Change color on hover for better visual feedback
-                        color = if (isHovered.value) Color.LightGray else Color.Transparent
+                        color = Color.Transparent
                     )
-
-/*
-                    // 호버 시에만 나타나는 아이콘
-                    AnimatedVisibility(visible = isHovered.value) {
-                        Icon(
-                            Icons.Default.SwapHoriz,
-                            contentDescription = "Resize Column",
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                    }
-
- */
 
 
             }

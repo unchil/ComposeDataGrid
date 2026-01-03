@@ -317,6 +317,35 @@ fun Un7KCMPDataGrid(
         )
     }
 
+    val isCurrentHovered = remember { mutableStateOf(false) }
+    val isCurrentHoveredOffset = remember { mutableStateOf(0.dp) }
+
+    val onDividerHovered = { index:Int ->
+
+        val columnsAreaWidth = if ( isVisibleRowNum.value) {
+            maxWidthInDp.value - widthRowNumColumn - (widthDividerThickness * (columnNames.size ))
+        } else {
+            maxWidthInDp.value - (widthDividerThickness * (columnNames.size - 1))
+        }
+        // 드래그 시작 지점의 절대 위치(offset) 계산
+        var currentOffset = 0.dp
+        for (i in 0..index) {
+            currentOffset += columnsAreaWidth * columnWeights.getOrElse(i) { 0f }
+        }
+        isCurrentHoveredOffset.value = if (isVisibleRowNum.value) {
+            widthRowNumColumn + widthDividerThickness + currentOffset + (widthDividerThickness * (index+1))
+        } else {
+            currentOffset + (widthDividerThickness * (index+1))
+        }
+
+        isCurrentHovered.value = true
+    }
+    val onDividerHoverExit = {
+        isCurrentHovered.value = false
+        isCurrentHoveredOffset.value = 0.dp
+    }
+
+
     val dataGridContent: @Composable ((MutableMap<String, List<Any?>>, Int) -> Unit) = { pagingData, pageIndex ->
 
         BoxWithConstraints(
@@ -399,7 +428,9 @@ fun Un7KCMPDataGrid(
                                 viewModel.columnsInfo.value,
                                 onResize,
                                 onResizeStart,
-                                onResizeEnd
+                                onResizeEnd,
+                                onDividerHovered,
+                                onDividerHoverExit
                             )
                         }//AnimatedVisibility
                     }//stickyHeader
@@ -425,11 +456,37 @@ fun Un7KCMPDataGrid(
                             evenDataRowBackgroundColor = viewModel.config.evenDataRowBackgroundColor,
                             onResize,
                             onResizeStart,
-                            onResizeEnd
+                            onResizeEnd,
+                            onDividerHovered,
+                            onDividerHoverExit
                         )
                     }
 
                 }//LazyColumn
+
+
+                if(isCurrentHovered.value ) {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.CenterStart
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.SwapHoriz,
+                            contentDescription = "Resize Column",
+                            modifier = Modifier
+                                .offset(x = isCurrentHoveredOffset.value - (iconWidth / 2))
+                                .align(Alignment.CenterStart)
+                                .scale(2.0f)
+                                .background(
+                                    MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f),
+                                    CircleShape
+                                ),
+
+                            )
+                    }
+                }
+
+
 
                 // --- 드래그 가이드라인 UI ---
                 if (isResizing.value) {
@@ -443,10 +500,7 @@ fun Un7KCMPDataGrid(
                         thickness = widthDividerThickness
                     )
 
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
+                    Box(  modifier = Modifier.fillMaxSize(),  contentAlignment = Alignment.Center ) {
                         Icon(
                             imageVector = Icons.Default.SwapHoriz,
                             contentDescription = "Resize Column",
@@ -454,14 +508,14 @@ fun Un7KCMPDataGrid(
                                 .offset(x = resizeIndicatorOffset - (iconWidth / 2))
                                 .align(Alignment.CenterStart)
                                 .scale(1.5f)
-                                .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f), CircleShape),
+                                .background(Color.Transparent),
 
                         )
                     }
-
-
                 }
                 // --------------------------
+
+
 
             }
 
