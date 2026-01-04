@@ -26,7 +26,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Height
-import androidx.compose.material.icons.filled.SwapHoriz
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -92,13 +91,26 @@ fun Un7KCMPDataGrid(
     val paddingMenuPageNavControl = remember{ PaddingValues(all = 10.dp)}
     val widthRowNumColumn = remember{ 60.dp}
     val widthDividerThickness = remember{ 4.dp}
+    val isResizing = remember { mutableStateOf(false) }
+    var resizeIndicatorOffset by remember { mutableStateOf(0.dp) }
+    val resizeMinOffset = remember { mutableStateOf(0.dp) }
+    val resizeMaxOffset = remember { mutableStateOf(0.dp) }
     val isOnePageNav = remember { mutableStateOf(viewModel.selectPageSizeList.lastIndex == viewModel.selectPageSizeIndex.value) }
-    //--------------------
-    // SnackBar Setting
-    //--------------------
+    val isCurrentHovered = remember { mutableStateOf(false) }
+    val isCurrentHoveredOffset = remember { mutableStateOf(0.dp) }
+    val onePageMinColumnWidth = remember { 150.dp }
+    val maxWidthInDp = remember { mutableStateOf(0.dp) }
+    var columnsAreaWidth by remember { mutableStateOf(0.dp) }
+    LaunchedEffect(maxWidthInDp.value){
+        columnsAreaWidth = if ( isVisibleRowNum.value) {
+            maxWidthInDp.value - widthRowNumColumn - (widthDividerThickness * (columnNames.size ))
+        } else {
+            maxWidthInDp.value - (widthDividerThickness * (columnNames.size - 1))
+        }
+    }
+    //--- SnackBar Setting
     val channel = remember { Channel<Int>(Channel.CONFLATED) }
     val snackBarHostState = remember { SnackbarHostState() }
-
     LaunchedEffect(channel) {
         channel.receiveAsFlow().collect { index ->
             val channelData = snackBarChannelList.first {
@@ -148,7 +160,7 @@ fun Un7KCMPDataGrid(
             }
         }
     }
-    //----------
+    //--- SnackBar Setting
 
     val pagerState = rememberPagerState( pageCount = { lastPageIndex +1 })
 
@@ -234,21 +246,20 @@ fun Un7KCMPDataGrid(
         viewModel.onEvent(Un7KCMPDataGridViewModel.Event.ColumnWeight(columnsWeight))
     }
 
-    val isResizing = remember { mutableStateOf(false) }
-    var resizeIndicatorOffset by remember { mutableStateOf(0.dp) }
-    val resizeMinOffset = remember { mutableStateOf(0.dp) }
-    val resizeMaxOffset = remember { mutableStateOf(0.dp) }
-    val maxWidthInDp = remember { mutableStateOf(0.dp) }
-    val iconWidth = 24.dp // Standard icon width
-
-    val columnsAreaWidth = if ( isVisibleRowNum.value) {
-        maxWidthInDp.value - widthRowNumColumn - (widthDividerThickness * (columnNames.size ))
-    } else {
-        maxWidthInDp.value - (widthDividerThickness * (columnNames.size - 1))
+    val currentDp:(Int)->Dp = { index ->
+        // 드래그 시작 지점의 절대 위치(offset) 계산
+        var currentOffset = 0.dp
+        for (i in 0..index) {
+            currentOffset += columnsAreaWidth * columnWeights.getOrElse(i) { 0f }
+        }
+        if (isVisibleRowNum.value) {
+            widthRowNumColumn + widthDividerThickness + currentOffset + (widthDividerThickness * (index+1))
+        } else {
+            currentOffset + (widthDividerThickness * (index+1))
+        }
     }
 
     val onResizeStart = { index:Int ->
-
         // 최소 너비 제약 조건 정의
         val minWeight = 0.05f
         val minColumnWidth = columnsAreaWidth * minWeight
@@ -256,17 +267,7 @@ fun Un7KCMPDataGrid(
         // 현재 컬럼과 다음 컬럼의 너비 계산
         val currentColumnWidth = columnsAreaWidth * columnWeights[index]
         val nextColumnWidth = columnsAreaWidth * columnWeights[index + 1]
-
-        // 드래그 시작 지점의 절대 위치(offset) 계산
-        var currentOffset = 0.dp
-        for (i in 0..index) {
-            currentOffset += columnsAreaWidth * columnWeights.getOrElse(i) { 0f }
-        }
-        val totalInitialOffset = if (isVisibleRowNum.value) {
-            widthRowNumColumn + widthDividerThickness + currentOffset + (widthDividerThickness * (index+1))
-        } else {
-            currentOffset + (widthDividerThickness * (index+1))
-        }
+        val totalInitialOffset = currentDp(index)
 
         // 드래그 가능한 최소/최대 위치 계산
         val maxDragLeft = currentColumnWidth - minColumnWidth
@@ -278,9 +279,7 @@ fun Un7KCMPDataGrid(
         resizeIndicatorOffset  = totalInitialOffset
         resizeMinOffset.value = minOffset
         resizeMaxOffset.value = maxOffset
-
         isResizing.value = true
-
     }
 
     val onResizeEnd = {
@@ -319,34 +318,15 @@ fun Un7KCMPDataGrid(
         )
     }
 
-    val isCurrentHovered = remember { mutableStateOf(false) }
-    val isCurrentHoveredOffset = remember { mutableStateOf(0.dp) }
-
     val onDividerHovered = { index:Int ->
-
-        val columnsAreaWidth = if ( isVisibleRowNum.value) {
-            maxWidthInDp.value - widthRowNumColumn - (widthDividerThickness * (columnNames.size ))
-        } else {
-            maxWidthInDp.value - (widthDividerThickness * (columnNames.size - 1))
-        }
-        // 드래그 시작 지점의 절대 위치(offset) 계산
-        var currentOffset = 0.dp
-        for (i in 0..index) {
-            currentOffset += columnsAreaWidth * columnWeights.getOrElse(i) { 0f }
-        }
-        isCurrentHoveredOffset.value = if (isVisibleRowNum.value) {
-            widthRowNumColumn + widthDividerThickness + currentOffset + (widthDividerThickness * (index+1))
-        } else {
-            currentOffset + (widthDividerThickness * (index+1))
-        }
-
+        isCurrentHoveredOffset.value = currentDp(index)
         isCurrentHovered.value = true
     }
+
     val onDividerHoverExit = {
         isCurrentHovered.value = false
         isCurrentHoveredOffset.value = 0.dp
     }
-
 
     val dataGridContent: @Composable ((MutableMap<String, List<Any?>>, Int) -> Unit) = { pagingData, pageIndex ->
 
@@ -379,29 +359,25 @@ fun Un7KCMPDataGrid(
                 }
             }
 
-            val shape = RoundedCornerShape(2.dp)
-
-            // 1. 각 컬럼의 최소 너비 정의
-            val minColumnWidth = 150.dp
-            // 2. 모든 컬럼과 구분선을 포함한 전체 너비 계산
-            val totalGridWidth = (widthRowNumColumn + (minColumnWidth * columnNames.size) + (widthDividerThickness * (columnNames.size -1)))
-            maxWidthInDp.value =  if(isOnePageNav.value) totalGridWidth.coerceAtLeast(this.maxWidth) else this.maxWidth
+            // 1. 모든 컬럼과 구분선을 포함한 전체 너비 계산
+            val onePageTotalGridWidth = (widthRowNumColumn + (onePageMinColumnWidth * columnNames.size) + (widthDividerThickness * (columnNames.size -1)))
+            maxWidthInDp.value =  if(isOnePageNav.value) onePageTotalGridWidth.coerceAtLeast(this.maxWidth) else this.maxWidth
 
             Box(modifier = if(isOnePageNav.value) Modifier.horizontalScroll(rememberScrollState()) else Modifier ) {
 
                 LazyColumn(
                     modifier = if(isOnePageNav.value) Modifier.width(maxWidthInDp.value).fillMaxHeight() else Modifier.fillMaxSize()
-                        .shadow(elevation = 2.dp, shape = shape)
+                        .shadow(elevation = 2.dp, shape = borderShapeIn)
                         .background(
                             color = MaterialTheme.colorScheme.background,
-                            shape = shape
+                            shape = borderShapeIn
                         )
                         .border(
                             border = BorderStroke(
                                 width = 1.dp,
                                 color = MaterialTheme.colorScheme.secondaryFixedDim
                             ),
-                            shape = shape
+                            shape = borderShapeIn
                         )
                         .fillMaxSize()
                         .padding(paddingLazyColumn),
@@ -466,7 +442,10 @@ fun Un7KCMPDataGrid(
 
                 }//LazyColumn
 
+
+                //----  Column Resize
                 if(isCurrentHovered.value || isResizing.value){
+                    val iconWidth = 24.dp // Standard icon width
                     val offsetValue = if(isResizing.value) resizeIndicatorOffset else isCurrentHoveredOffset.value
                     val scaleValue = if(isResizing.value) 1.0f else 1.1f
                     val bgColor = if(isResizing.value) Color.Transparent else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
@@ -501,9 +480,11 @@ fun Un7KCMPDataGrid(
                     }
 
                 }
+                //----  Column Resize
 
             }
 
+            //--- Box GridControl
             Box(
                 modifier = Modifier
                     .padding(paddingMenuGridControl)
@@ -522,8 +503,11 @@ fun Un7KCMPDataGrid(
                     isVisibleRowNum
                 )
 
-            }//Box  MenuPageNavControl
+            }
+            //--- Box GridControl
 
+
+            //---  Snackbar
             SnackbarHost(
                 hostState = snackBarHostState,
                 modifier = Modifier.align(Alignment.Center)
@@ -552,10 +536,11 @@ fun Un7KCMPDataGrid(
                     )
                 }
             }
+            //---  Snackbar
+
 
         }// BoxWithConstraints
     }
-
 
     Surface(
         tonalElevation = 6.dp,
@@ -599,6 +584,7 @@ fun Un7KCMPDataGrid(
                 }//HorizontalPager
             }
 
+            //---- Box  PageNavControl
             Box(
                 modifier = Modifier
                     .padding(paddingMenuPageNavControl)
@@ -615,7 +601,8 @@ fun Un7KCMPDataGrid(
                     pagerState,
                     isOnePageNav.value
                 )
-            }//Box  MenuGridSetting
+            }
+            //---- Box  PageNavControl
 
         }
 
