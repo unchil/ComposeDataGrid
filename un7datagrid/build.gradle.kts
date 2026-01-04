@@ -52,10 +52,6 @@ kotlin {
     // https://developer.android.com/kotlin/multiplatform/migrate
     val xcfName = "un7datagridKit"
 
-
-
-
-
     listOf(
         iosX64(),
         iosArm64(),

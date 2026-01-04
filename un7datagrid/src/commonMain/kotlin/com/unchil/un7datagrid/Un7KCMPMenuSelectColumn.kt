@@ -17,6 +17,8 @@ import androidx.compose.material.icons.automirrored.filled.PlaylistAdd
 import androidx.compose.material.icons.automirrored.filled.PlaylistAddCheck
 import androidx.compose.material.icons.filled.ToggleOff
 import androidx.compose.material.icons.filled.ToggleOn
+import androidx.compose.material.icons.filled.ViewArray
+import androidx.compose.material.icons.filled.ViewColumn
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -55,20 +57,9 @@ internal fun Un7KCMPMenuSelectColumn(
             modifier = Modifier
                 .clip(CircleShape),
         ) {
-            SegmentedButtonDefaults.Icon(
-                active = expandMenu,
-                activeContent = {
-                    Icon(
-                        Icons.AutoMirrored.Filled.PlaylistAddCheck,
-                        contentDescription = "Open DropDownMenu"
-                    )
-                },
-                inactiveContent = {
-                    Icon(
-                        Icons.AutoMirrored.Filled.PlaylistAdd,
-                        contentDescription = "Close DropDownMenu"
-                    )
-                }
+            Icon(
+                Icons.Default.ViewColumn,
+                contentDescription = "DropDownMenu"
             )
         }
         DropdownMenu(

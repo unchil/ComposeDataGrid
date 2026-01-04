@@ -31,6 +31,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.unit.dp
 
@@ -118,14 +119,16 @@ internal fun Un7KCMPMenuGridControl(
                         active = !isVisibleRowNum.value,
                         activeContent = {
                             Icon(
-                                Icons.AutoMirrored.Filled.List,
-                                contentDescription = ""
+                                Icons.Default.Compress,
+                                contentDescription = "",
+                                modifier = Modifier.rotate(90f)
                             )
                         },
                         inactiveContent = {
                             Icon(
-                                Icons.Default.FormatListNumbered,
-                                contentDescription = ""
+                                Icons.Default.Expand,
+                                contentDescription = "",
+                                modifier = Modifier.rotate(90f)
                             )
                         }
                     )
