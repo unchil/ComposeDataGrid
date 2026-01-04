@@ -25,6 +25,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Height
 import androidx.compose.material.icons.filled.SwapHoriz
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -49,6 +50,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.Modifier.Companion.then
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
@@ -464,56 +466,41 @@ fun Un7KCMPDataGrid(
 
                 }//LazyColumn
 
+                if(isCurrentHovered.value || isResizing.value){
+                    val offsetValue = if(isResizing.value) resizeIndicatorOffset else isCurrentHoveredOffset.value
+                    val scaleValue = if(isResizing.value) 1.0f else 1.1f
+                    val bgColor = if(isResizing.value) Color.Transparent else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
 
-                if(isCurrentHovered.value ) {
+                    if(isCurrentHovered.value){
+                        VerticalDivider(
+                            modifier = Modifier
+                                .fillMaxHeight().padding(vertical = 6.dp)
+                                .width(widthDividerThickness)
+                                .offset(x = offsetValue), // offset 상태에 따라 위치 변경
+                            color =  Color.LightGray ,
+                            thickness = widthDividerThickness
+                        )
+                    }
+
                     Box(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.CenterStart
                     ) {
                         Icon(
-                            imageVector = Icons.Default.SwapHoriz,
+                            imageVector = Icons.Default.Height,
                             contentDescription = "Resize Column",
                             modifier = Modifier
-                                .offset(x = isCurrentHoveredOffset.value - (iconWidth / 2))
-                                .scale(2.0f)
+                                .offset(x = offsetValue - (iconWidth / 2) + (widthDividerThickness/2))
+                                .scale(scaleValue)
+                                .rotate(90f)
                                 .background(
-                                    MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f),
+                                    bgColor,
                                     CircleShape
                                 ),
-
-                            )
-                    }
-                }
-
-
-
-                // --- 드래그 가이드라인 UI ---
-                if (isResizing.value) {
-
-                    VerticalDivider(
-                        modifier = Modifier
-                            .fillMaxHeight().padding(vertical = 6.dp)
-                            .width(widthDividerThickness)
-                            .offset(x = resizeIndicatorOffset), // offset 상태에 따라 위치 변경
-                        color =  Color.LightGray ,
-                        thickness = widthDividerThickness
-                    )
-
-                    Box(  modifier = Modifier.fillMaxSize(),  contentAlignment = Alignment.CenterStart ) {
-                        Icon(
-                            imageVector = Icons.Default.SwapHoriz,
-                            contentDescription = "Resize Column",
-                            modifier = Modifier
-                                .offset(x = resizeIndicatorOffset - (iconWidth / 2))
-                                .scale(1.5f)
-                                .background(Color.Transparent),
-
                         )
                     }
+
                 }
-                // --------------------------
-
-
 
             }
 
