@@ -86,10 +86,16 @@ object OperatorMenu {
     )
 
     enum class OperatorBoolean(private val symbol: String) {
-        Equals("Equals")
+        Is("true"),
+        IsNot("false");
+
+        override fun toString(): String {
+            return symbol
+        }
     }
     val OperatorBooleans = listOf(
-        OperatorBoolean.Equals
+        OperatorBoolean.Is, OperatorBoolean.IsNot
     )
+
 
 }

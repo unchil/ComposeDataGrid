@@ -71,7 +71,7 @@ class Un7KCMPDataGridViewModel(val data: Map<String,List<Any?>>, val config: Un7
         } else {
             config.defaultPageSizeListIndex
         }
-        pageSize.value = selectPageSizeList[selectPageSizeIndex.value].toInt()
+        pageSize.value =  if (selectPageSizeIndex.value == selectPageSizeList.lastIndex) dataRows.value.size else selectPageSizeList[selectPageSizeIndex.value].toInt()
         lastPageIndex.value = getLastPageIndex(dataRows.value.size, pageSize.value)
     }
 
@@ -214,191 +214,242 @@ class Un7KCMPDataGridViewModel(val data: Map<String,List<Any?>>, val config: Un7
                 when(operator){
                     OperatorMenu.OperatorString.Contains.toString() -> {
                         dataRows.value.filter { list ->
-                            list[columnIndex].toString().contains(searchText)
+                            // list[columnIndex]가 null이면 빈 문자열로 처리
+                            list.getOrNull(columnIndex)?.toString()?.contains(searchText) ?: false
                         }
                     }
                     OperatorMenu.OperatorString.DoseNotContains.toString() -> {
                         dataRows.value.filter { list ->
-                            list[columnIndex].toString().contains(searchText).not()
+                            list.getOrNull(columnIndex)?.toString()?.contains(searchText)?.not() ?: false
                         }
                     }
                     OperatorMenu.OperatorString.Equals.toString() -> {
                         dataRows.value.filter { list ->
-                            list[columnIndex].toString().equals(searchText)
+                            list.getOrNull(columnIndex)?.toString()?.equals(searchText) ?: false
                         }
                     }
                     OperatorMenu.OperatorString.DoseNotEquals.toString() -> {
                         dataRows.value.filter { list ->
-                            list[columnIndex].toString().equals(searchText).not()
+                            list.getOrNull(columnIndex)?.toString()?.equals(searchText)?.not() ?: false
                         }
                     }
                     OperatorMenu.OperatorString.BeginsWith.toString() -> {
                         dataRows.value.filter { list ->
-                            list[columnIndex].toString().startsWith(searchText)
+                            list.getOrNull(columnIndex)?.toString()?.startsWith(searchText) ?: false
                         }
                     }
                     OperatorMenu.OperatorString.EndsWith.toString() -> {
                         dataRows.value.filter { list ->
-                            list[columnIndex].toString().endsWith(searchText)
+                            list.getOrNull(columnIndex)?.toString()?.endsWith(searchText) ?: false
                         }
                     }
                     OperatorMenu.OperatorString.Blank.toString() -> {
                         dataRows.value.filter { list ->
-                            list[columnIndex].toString().isBlank()
+                            // isBlank는 null에 대해 true를 반환하므로 ?.isBalnk() 로 충분
+                            list.getOrNull(columnIndex)?.toString().isNullOrBlank()
                         }
                     }
                     OperatorMenu.OperatorString.NotBlank.toString() -> {
                         dataRows.value.filter { list ->
-                            list[columnIndex].toString().isNotBlank()
+                            !list.getOrNull(columnIndex)?.toString().isNullOrBlank()
                         }
                     }
                     else -> { dataRows.value   }
                 }
             }
             "Int" ->{
-                when(operator){
-                    OperatorMenu.OperatorNumeric.Equals.toString() ->{
-                        dataRows.value.filter { list ->
-                            (list[columnIndex] as Int) == searchText.toInt()
+                // searchText가 숫자가 아닐 경우를 대비해 try-catch 또는 toIntOrNull 사용
+                val searchValue = searchText.toIntOrNull()
+                if (searchValue == null) {
+                    dataRows.value // 검색값이 숫자가 아니면 원본 데이터 반환
+                } else {
+                    when(operator){
+                        OperatorMenu.OperatorNumeric.Equals.toString() ->{
+                            dataRows.value.filter { list ->
+                                // as? 로 안전하게 캐스팅하고, null이면 false 반환
+                                (list.getOrNull(columnIndex) as? Int)?.let { it == searchValue } ?: false
+                            }
                         }
-                    }
-                    OperatorMenu.OperatorNumeric.NotEquals.toString() ->{
-                        dataRows.value.filter { list ->
-                            (list[columnIndex] as Int) != searchText.toInt()
+                        OperatorMenu.OperatorNumeric.NotEquals.toString() ->{
+                            dataRows.value.filter { list ->
+                                (list.getOrNull(columnIndex) as? Int)?.let { it != searchValue } ?: false
+                            }
                         }
-                    }
-                    OperatorMenu.OperatorNumeric.GreaterThan.toString() ->{
-                        dataRows.value.filter { list ->
-                            (list[columnIndex] as Int) > searchText.toInt()
+                        OperatorMenu.OperatorNumeric.GreaterThan.toString() ->{
+                            dataRows.value.filter { list ->
+                                // null이 아닌 경우에만 비교 수행
+                                (list.getOrNull(columnIndex) as? Int)?.let { it > searchValue } ?: false
+                            }
                         }
-                    }
-                    OperatorMenu.OperatorNumeric.GreaterThanOrEquals.toString() ->{
-                        dataRows.value.filter { list ->
-                            (list[columnIndex] as Int) >= searchText.toInt()
+                        OperatorMenu.OperatorNumeric.GreaterThanOrEquals.toString() ->{
+                            dataRows.value.filter { list ->
+                                (list.getOrNull(columnIndex) as? Int)?.let { it >= searchValue } ?: false
+                            }
                         }
-                    }
-                    OperatorMenu.OperatorNumeric.LessThan.toString() ->{
-                        dataRows.value.filter { list ->
-                            (list[columnIndex] as Int) < searchText.toInt()
+                        OperatorMenu.OperatorNumeric.LessThan.toString() ->{
+                            dataRows.value.filter { list ->
+                                (list.getOrNull(columnIndex) as? Int)?.let { it < searchValue } ?: false
+                            }
                         }
-                    }
-                    OperatorMenu.OperatorNumeric.LessThanOrEquals.toString() ->{
-                        dataRows.value.filter { list ->
-                            (list[columnIndex] as Int) <= searchText.toInt()
+                        OperatorMenu.OperatorNumeric.LessThanOrEquals.toString() ->{
+                            dataRows.value.filter { list ->
+                                (list.getOrNull(columnIndex) as? Int)?.let { it <= searchValue } ?: false
+                            }
                         }
+                        else -> {dataRows.value}
                     }
-                    else -> {dataRows.value}
                 }
             }
             "Float" ->{
-                when(operator){
-                    OperatorMenu.OperatorNumeric.Equals.toString() ->{
-                        dataRows.value.filter { list ->
-                            (list[columnIndex] as Float) == searchText.toFloat()
+
+                val searchValue = searchText.toFloatOrNull()
+                if (searchValue == null) {
+                    dataRows.value // 검색값이 숫자가 아니면 원본 데이터 반환
+                } else {
+                    when(operator){
+                        OperatorMenu.OperatorNumeric.Equals.toString() ->{
+                            dataRows.value.filter { list ->
+                                (list.getOrNull(columnIndex) as? Float)?.let { it == searchValue } ?: false
+                            }
                         }
-                    }
-                    OperatorMenu.OperatorNumeric.NotEquals.toString() ->{
-                        dataRows.value.filter { list ->
-                            (list[columnIndex] as Float) != searchText.toFloat()
+                        OperatorMenu.OperatorNumeric.NotEquals.toString() ->{
+                            dataRows.value.filter { list ->
+                                (list.getOrNull(columnIndex) as? Float)?.let { it != searchValue } ?: false
+                            }
                         }
-                    }
-                    OperatorMenu.OperatorNumeric.GreaterThan.toString() ->{
-                        dataRows.value.filter { list ->
-                            (list[columnIndex] as Float) > searchText.toFloat()
+                        OperatorMenu.OperatorNumeric.GreaterThan.toString() ->{
+                            dataRows.value.filter { list ->
+                                (list.getOrNull(columnIndex) as? Float)?.let { it > searchValue } ?: false
+                            }
                         }
-                    }
-                    OperatorMenu.OperatorNumeric.GreaterThanOrEquals.toString() ->{
-                        dataRows.value.filter { list ->
-                            (list[columnIndex] as Float) >= searchText.toFloat()
+                        OperatorMenu.OperatorNumeric.GreaterThanOrEquals.toString() ->{
+                            dataRows.value.filter { list ->
+                                (list.getOrNull(columnIndex) as? Float)?.let { it >= searchValue } ?: false
+                            }
                         }
-                    }
-                    OperatorMenu.OperatorNumeric.LessThan.toString() ->{
-                        dataRows.value.filter { list ->
-                            (list[columnIndex] as Float) < searchText.toFloat()
+                        OperatorMenu.OperatorNumeric.LessThan.toString() ->{
+                            dataRows.value.filter { list ->
+                                (list.getOrNull(columnIndex) as? Float)?.let { it < searchValue } ?: false
+                            }
                         }
-                    }
-                    OperatorMenu.OperatorNumeric.LessThanOrEquals.toString() ->{
-                        dataRows.value.filter { list ->
-                            (list[columnIndex] as Float) <= searchText.toFloat()
+                        OperatorMenu.OperatorNumeric.LessThanOrEquals.toString() ->{
+                            dataRows.value.filter { list ->
+                                (list.getOrNull(columnIndex) as? Float)?.let { it <= searchValue } ?: false
+                            }
                         }
+                        else -> {dataRows.value}
                     }
-                    else -> {dataRows.value}
                 }
+
+
             }
             "Double" ->{
-                when(operator){
-                    OperatorMenu.OperatorNumeric.Equals.toString() ->{
-                        dataRows.value.filter { list ->
-                            (list[columnIndex] as Double) == searchText.toDouble()
+
+                val searchValue = searchText.toDoubleOrNull()
+                if (searchValue == null) {
+                    dataRows.value // 검색값이 숫자가 아니면 원본 데이터 반환
+                } else {
+                    when(operator){
+                        OperatorMenu.OperatorNumeric.Equals.toString() ->{
+                            dataRows.value.filter { list ->
+                                (list.getOrNull(columnIndex) as? Double)?.let { it == searchValue } ?: false
+                            }
                         }
-                    }
-                    OperatorMenu.OperatorNumeric.NotEquals.toString() ->{
-                        dataRows.value.filter { list ->
-                            (list[columnIndex] as Double) != searchText.toDouble()
+                        OperatorMenu.OperatorNumeric.NotEquals.toString() ->{
+                            dataRows.value.filter { list ->
+                                (list.getOrNull(columnIndex) as? Double)?.let { it != searchValue } ?: false
+                            }
                         }
-                    }
-                    OperatorMenu.OperatorNumeric.GreaterThan.toString() ->{
-                        dataRows.value.filter { list ->
-                            (list[columnIndex] as Double) > searchText.toDouble()
+                        OperatorMenu.OperatorNumeric.GreaterThan.toString() ->{
+                            dataRows.value.filter { list ->
+                                (list.getOrNull(columnIndex) as? Double)?.let { it > searchValue } ?: false
+                            }
                         }
-                    }
-                    OperatorMenu.OperatorNumeric.GreaterThanOrEquals.toString() ->{
-                        dataRows.value.filter { list ->
-                            (list[columnIndex] as Double) >= searchText.toDouble()
+                        OperatorMenu.OperatorNumeric.GreaterThanOrEquals.toString() ->{
+                            dataRows.value.filter { list ->
+                                (list.getOrNull(columnIndex) as? Double)?.let { it >= searchValue } ?: false
+                            }
                         }
-                    }
-                    OperatorMenu.OperatorNumeric.LessThan.toString() ->{
-                        dataRows.value.filter { list ->
-                            (list[columnIndex] as Double) < searchText.toDouble()
+                        OperatorMenu.OperatorNumeric.LessThan.toString() ->{
+                            dataRows.value.filter { list ->
+                                (list.getOrNull(columnIndex) as? Double)?.let { it < searchValue } ?: false
+                            }
                         }
-                    }
-                    OperatorMenu.OperatorNumeric.LessThanOrEquals.toString() ->{
-                        dataRows.value.filter { list ->
-                            (list[columnIndex] as Double) <= searchText.toDouble()
+                        OperatorMenu.OperatorNumeric.LessThanOrEquals.toString() ->{
+                            dataRows.value.filter { list ->
+                                (list.getOrNull(columnIndex) as? Double)?.let { it <= searchValue } ?: false
+                            }
                         }
+                        else -> {dataRows.value}
                     }
-                    else -> {dataRows.value}
                 }
+
+
+
             }
             "Long" ->{
-                when(operator){
-                    OperatorMenu.OperatorNumeric.Equals.toString() ->{
-                        dataRows.value.filter { list ->
-                            (list[columnIndex] as Long) == searchText.toLong()
+                val searchValue = searchText.toLongOrNull()
+                if (searchValue == null) {
+                    dataRows.value // 검색값이 숫자가 아니면 원본 데이터 반환
+                } else {
+                    when(operator){
+                        OperatorMenu.OperatorNumeric.Equals.toString() ->{
+                            dataRows.value.filter { list ->
+                                (list.getOrNull(columnIndex) as? Long)?.let { it == searchValue } ?: false
+                            }
                         }
-                    }
-                    OperatorMenu.OperatorNumeric.NotEquals.toString() ->{
-                        dataRows.value.filter { list ->
-                            (list[columnIndex] as Long) != searchText.toLong()
+                        OperatorMenu.OperatorNumeric.NotEquals.toString() ->{
+                            dataRows.value.filter { list ->
+                                (list.getOrNull(columnIndex) as? Long)?.let { it != searchValue } ?: false
+                            }
                         }
-                    }
-                    OperatorMenu.OperatorNumeric.GreaterThan.toString() ->{
-                        dataRows.value.filter { list ->
-                            (list[columnIndex] as Long) > searchText.toLong()
+                        OperatorMenu.OperatorNumeric.GreaterThan.toString() ->{
+                            dataRows.value.filter { list ->
+                                (list.getOrNull(columnIndex) as? Long)?.let { it > searchValue } ?: false
+                            }
                         }
-                    }
-                    OperatorMenu.OperatorNumeric.GreaterThanOrEquals.toString() ->{
-                        dataRows.value.filter { list ->
-                            (list[columnIndex] as Long) >= searchText.toLong()
+                        OperatorMenu.OperatorNumeric.GreaterThanOrEquals.toString() ->{
+                            dataRows.value.filter { list ->
+                                (list.getOrNull(columnIndex) as? Long)?.let { it >= searchValue } ?: false
+                            }
                         }
-                    }
-                    OperatorMenu.OperatorNumeric.LessThan.toString() ->{
-                        dataRows.value.filter { list ->
-                            (list[columnIndex] as Long) < searchText.toLong()
+                        OperatorMenu.OperatorNumeric.LessThan.toString() ->{
+                            dataRows.value.filter { list ->
+                                (list.getOrNull(columnIndex) as? Long)?.let { it < searchValue } ?: false
+                            }
                         }
-                    }
-                    OperatorMenu.OperatorNumeric.LessThanOrEquals.toString() ->{
-                        dataRows.value.filter { list ->
-                            (list[columnIndex] as Long) <= searchText.toLong()
+                        OperatorMenu.OperatorNumeric.LessThanOrEquals.toString() ->{
+                            dataRows.value.filter { list ->
+                                (list.getOrNull(columnIndex) as? Long)?.let { it <= searchValue } ?: false
+                            }
                         }
+                        else -> {dataRows.value}
                     }
-                    else -> {dataRows.value}
                 }
+
+
+
+
             }
             "Boolean" -> {
-                dataRows.value.filter { list ->
-                    (list[columnIndex] as Boolean) == searchText.toBoolean()
+
+                when(operator) {
+                    OperatorMenu.OperatorBoolean.Is.toString() -> { // "Is" (true)
+                        dataRows.value.filter { list ->
+                            // 값이 정확히 true인 경우만 필터링
+                            (list.getOrNull(columnIndex) as? Boolean) == true
+                        }
+                    }
+                    OperatorMenu.OperatorBoolean.IsNot.toString() -> { // "Is not" (false)
+                        dataRows.value.filter { list ->
+                            // 값이 정확히 false인 경우만 필터링
+                            (list.getOrNull(columnIndex) as? Boolean) == false
+                        }
+                    }
+                    else -> { dataRows.value }
                 }
+
+
             }
             else -> {
                 dataRows.value
@@ -432,37 +483,40 @@ class Un7KCMPDataGridViewModel(val data: Map<String,List<Any?>>, val config: Un7
 
         // String    "\u0000":NullAtBeginning (ASCII 코드 0),   "":NullAtEnd
 
+
         when(sortType){
             1 -> {
                 val comparator  = when(columnDataType) {
-                    "String" -> compareBy { it.getOrNull(columnIndex) as String }
-                    "Double" -> compareBy { it.getOrNull(columnIndex) as Double }
-                    "Float" -> compareBy { it.getOrNull(columnIndex) as Float }
-                    "Int" -> compareBy { it.getOrNull(columnIndex) as Int }
-                    "Long" -> compareBy { it.getOrNull(columnIndex) as Long }
-                    else ->  compareBy<List<Any?>> { it[columnIndex] as String }
+                    "String" -> compareBy { it.getOrNull(columnIndex) as? String }
+                    "Double" -> compareBy { it.getOrNull(columnIndex) as? Double }
+                    "Float" -> compareBy { it.getOrNull(columnIndex) as? Float }
+                    "Int" -> compareBy { it.getOrNull(columnIndex) as? Int }
+                    "Long" -> compareBy { it.getOrNull(columnIndex) as? Long }
+                    "Boolean" -> compareBy { it.getOrNull(columnIndex) as? Boolean }
+                    else ->  compareBy<List<Any?>> { it.getOrNull(columnIndex)?.toString() }
                 }
                 dataRows.value = if(isFilteringData.value) {
-                    dataFilterApplied.value.sortedWith(comparator)
+                    dataFilterApplied.value.sortedWith(nullsLast(comparator))
                 } else {
-                    dataColumnOrderApplied.value.sortedWith(comparator)
+                    dataColumnOrderApplied.value.sortedWith(nullsLast(comparator))
                 }
 
             }
             -1 -> {
                 val comparator  = when(columnDataType) {
-                    "String" -> compareByDescending { it.getOrNull(columnIndex) as String }
-                    "Double" -> compareByDescending { it.getOrNull(columnIndex) as Double }
-                    "Float" -> compareByDescending { it.getOrNull(columnIndex) as Float }
-                    "Int" -> compareByDescending { it.getOrNull(columnIndex) as Int }
-                    "Long" -> compareByDescending { it.getOrNull(columnIndex) as Long }
-                    else ->  compareByDescending<List<Any?>>  { it[columnIndex] as String }
+                    "String" -> compareByDescending { it.getOrNull(columnIndex) as? String }
+                    "Double" -> compareByDescending { it.getOrNull(columnIndex) as? Double }
+                    "Float" -> compareByDescending { it.getOrNull(columnIndex) as? Float }
+                    "Int" -> compareByDescending { it.getOrNull(columnIndex) as? Int }
+                    "Long" -> compareByDescending { it.getOrNull(columnIndex) as? Long }
+                    "Boolean" -> compareByDescending { it.getOrNull(columnIndex) as? Boolean }
+                    else ->  compareByDescending<List<Any?>>  { it.getOrNull(columnIndex)?.toString() }
                 }
 
                 dataRows.value = if(isFilteringData.value) {
-                    dataFilterApplied.value.sortedWith(comparator)
+                    dataFilterApplied.value.sortedWith(nullsLast(comparator))
                 } else {
-                    dataColumnOrderApplied.value.sortedWith(comparator)
+                    dataColumnOrderApplied.value.sortedWith(nullsLast(comparator))
                 }
 
             }

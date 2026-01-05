@@ -23,11 +23,19 @@ fun makeData():Map<String, List<Any?>>{
     val url2 = "http://localhost:7788/nifs/seawaterinfo/current"
     val data = DataFrame.readJson(url2)
 
-    return data.toMap()
+   // return data.toMap()
+    return    mapOf(
+        "ID" to listOf(1, 2, 3, 4, 5),
+        "Product Name" to listOf("Keyboard", "null", "Monitor", "Webcam", "Speaker"),
+        "Price" to listOf(75.50, 25.00, 350.99, 89.90, null),
+        "In Stock" to listOf(true, true, false, true, false)
+    )
 }
 
 
 fun main() = application {
+
+
 
     Window(
         onCloseRequest = ::exitApplication,
@@ -36,8 +44,8 @@ fun main() = application {
     ) {
         CompositionLocalProvider( LocalPlatform provides getPlatform() ) {
 
-           // DataGrid(makeData())
-            DataGridWithViewModel()
+            DataGrid(makeData() )
+            //DataGridWithViewModel()
 
         }
     }

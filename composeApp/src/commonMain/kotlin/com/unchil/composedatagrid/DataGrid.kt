@@ -41,6 +41,7 @@ val LocalPlatform = compositionLocalOf<Platform> { error("No Platform found!") }
 fun DataGrid( data:Map<String, List<Any?>> ){
 
     val platform = LocalPlatform.current
+    var isVisible by remember { mutableStateOf(data.values.first().size > 0) }
 
     val modifier = when(platform.alias){
         PlatformAlias.ANDROID -> {
@@ -72,7 +73,9 @@ fun DataGrid( data:Map<String, List<Any?>> ){
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold
             )
-            Un7KCMPDataGrid(modifier, data)
+            if (isVisible) {
+                Un7KCMPDataGrid(modifier, data)
+            }
         }
     }
 
