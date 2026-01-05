@@ -45,6 +45,27 @@ data class ColumnInfo(
 
 
 object OperatorMenu {
+
+    enum class OperatorChar(private val symbol: String) {
+        Equals("(=) Equals"),
+        NotEquals("(!=) NotEquals"),
+        GreaterThan("(>) GreaterThan"),
+        GreaterThanOrEquals("(>=) GreaterThanOrEquals"),
+        LessThan("(<) LessThan"),
+        LessThanOrEquals("(<=) LessThanOrEquals");
+
+        override fun toString(): String {
+            return symbol
+        }
+    }
+
+    val OperatorsChar = listOf(
+        OperatorChar.Equals, OperatorChar.NotEquals,
+        OperatorChar.GreaterThan, OperatorChar.GreaterThanOrEquals,
+        OperatorChar.LessThan, OperatorChar.LessThanOrEquals
+    )
+
+
     enum class OperatorString(private val symbol: String) {
         Contains( "Contains"),
         DoseNotContains("Dose Not Contains"),
@@ -59,7 +80,7 @@ object OperatorMenu {
             return symbol
         }
     }
-    val OperatorStrings = listOf(
+    val OperatorsString = listOf(
         OperatorString.Contains, OperatorString.DoseNotContains,
         OperatorString.Equals, OperatorString.DoseNotEquals,
         OperatorString.BeginsWith, OperatorString.EndsWith,
@@ -79,7 +100,7 @@ object OperatorMenu {
         }
     }
 
-    val OperatorNumerics = listOf(
+    val OperatorsNumeric = listOf(
         OperatorNumeric.Equals, OperatorNumeric.NotEquals,
         OperatorNumeric.GreaterThan, OperatorNumeric.GreaterThanOrEquals,
         OperatorNumeric.LessThan, OperatorNumeric.LessThanOrEquals
@@ -93,7 +114,7 @@ object OperatorMenu {
             return symbol
         }
     }
-    val OperatorBooleans = listOf(
+    val OperatorsBoolean = listOf(
         OperatorBoolean.Is, OperatorBoolean.IsNot
     )
 

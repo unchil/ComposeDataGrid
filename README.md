@@ -36,7 +36,7 @@
 - User Feedback: Provides intuitive feedback via a `Snackbar` for events like data filtering or page size changes.
 - ️Deep Customization: Configure grid options like row number and column header visibility, column titles, and page size items using the `Un7KCMPDataGridConfig` object.
 - Theming: Easily customize the colors of the header, data rows (including separate colors for odd/even rows), and content to match your app's theme.
-- The currently supported column data types are List<String?>, List<Int?>,  List<Float?>, List<Double?>, List<Long?>, List<Boolean?>.
+- The currently supported column data types are List<Char?>, List<String?>, List<Byte?>, List<Short?>, List<Int?>,  List<Float?>, List<Double?>, List<Long?>, List<Boolean?>.
 
 ###  Advanced Filtering
 
@@ -46,7 +46,7 @@ The search menu for each column supports conditional operators, allowing for mor
 
 *   **For `String` data:**
     *   `Contains`, `Dose Not Contains`, `Equals`, `Dose Not Equals`, `Begins with`, `Ends with`, `Blank`,`Not Blank`
-*   **For `Int`, `Float`, `Double`, `Long` data:**
+*   **For `Char`,`Byte`,`Short`,`Int`, `Float`, `Double`, `Long` data:**
     *   `=`, `!=`, `>`, `>=`, `<`, `<=`
 *   **For `Boolean` data:**
     *   `Is`, `IsNot`
@@ -115,10 +115,12 @@ Using `Un7KCMPDataGrid` is very simple. Just provide the data as a `Map`. You ca
 fun MyDataScreen() {
     // Column-oriented data map
     val myData: Map<String, List<Any?>> = mapOf(
-        "ID" to listOf(1, 2, 3, 4, 5),
-        "Product Name" to listOf("Keyboard", "Mouse", "Monitor", "Webcam", "Speaker"),
-        "Price" to listOf(75.50, 25.00, 350.99, 89.90, null),
-        "In Stock" to listOf(true, true, false, true, false)
+        "ID" to listOf<Int?>(1, 2, 3, 4, 5, 6, 7, 8),
+        "Product Code" to listOf<Char?>('K', null, 'M', 'W', 'S', 'T', 'L', 'a'),
+        "Product Name" to listOf<String?>("Keyboard", "Mouse", "Monitor", "Webcam", "Speaker", "Trackpad", "Luck7", ""),
+        "PriceDouble" to listOf<Double?>(75.50, 25.00, null, 89.90, 100.0, 100.0, 100.0, 0.0 ),
+        "PriceFloat" to listOf<Float?>(75.50f, 25.00f, null, 89.90f, 100.0f, 100.0f, 100.0f, 0.0f ),
+        "In Stock" to listOf<Boolean?>(true, false, true, true, true, true, true,true)
     )
 
     // Configure optional grid features

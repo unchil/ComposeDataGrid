@@ -205,11 +205,51 @@ class Un7KCMPDataGridViewModel(val data: Map<String,List<Any?>>, val config: Un7
             = { columnName, searchText, operator, closerFunc ->
 
         isFilteringData.value = true
-
         val columnIndex = columnNames.value.indexOf(columnName)
-
-
         val result =  when(columnsInfo.value[columnName]?.dataType){
+            "Char" -> {
+                // 검색 텍스트의 첫 글자만 사용하거나, 비어있으면 null 처리
+                val searchValue = searchText.firstOrNull()
+                if (searchValue == null) {
+                    dataRows.value // 검색값이 비어있으면 원본 데이터 반환
+                } else {
+                    when(operator){
+                        OperatorMenu.OperatorChar.Equals.toString() ->{
+                            dataRows.value.filter { list ->
+                                // as? 로 안전하게 캐스팅하고, null이면 false 반환
+                                (list.getOrNull(columnIndex) as? Char)?.let { it == searchValue } ?: false
+                            }
+                        }
+                        OperatorMenu.OperatorChar.NotEquals.toString() ->{
+                            dataRows.value.filter { list ->
+                                (list.getOrNull(columnIndex) as? Char)?.let { it != searchValue } ?: false
+                            }
+                        }
+                        OperatorMenu.OperatorChar.GreaterThan.toString() -> {
+                            dataRows.value.filter { list ->
+                                (list.getOrNull(columnIndex) as? Char)?.let { it > searchValue } ?: false
+                            }
+                        }
+                        OperatorMenu.OperatorChar.GreaterThanOrEquals.toString() ->{
+                            dataRows.value.filter { list ->
+                                (list.getOrNull(columnIndex) as? Char)?.let { it >= searchValue } ?: false
+                            }
+                        }
+                        OperatorMenu.OperatorChar.LessThan.toString() -> {
+                            dataRows.value.filter { list ->
+                                (list.getOrNull(columnIndex) as? Char)?.let { it < searchValue } ?: false
+                            }
+                        }
+                        OperatorMenu.OperatorChar.LessThanOrEquals.toString() ->{
+                            dataRows.value.filter { list ->
+                                (list.getOrNull(columnIndex) as? Char)?.let { it <= searchValue } ?: false
+                            }
+                        }
+                        // 필요에 따라 GreaterThanOrEquals, LessThanOrEquals 추가
+                        else -> { dataRows.value }
+                    }
+                }
+            }
             "String","UNKNOWN" ->{
                 when(operator){
                     OperatorMenu.OperatorString.Contains.toString() -> {
@@ -257,6 +297,90 @@ class Un7KCMPDataGridViewModel(val data: Map<String,List<Any?>>, val config: Un7
                     else -> { dataRows.value   }
                 }
             }
+            "Byte" ->{
+                val searchValue = searchText.toByteOrNull()
+                if (searchValue == null) {
+                    dataRows.value // 검색값이 숫자가 아니면 원본 데이터 반환
+                } else {
+                    when(operator){
+                        OperatorMenu.OperatorNumeric.Equals.toString() ->{
+                            dataRows.value.filter { list ->
+                                // as? 로 안전하게 캐스팅하고, null이면 false 반환
+                                (list.getOrNull(columnIndex) as? Byte)?.let { it == searchValue } ?: false
+                            }
+                        }
+                        OperatorMenu.OperatorNumeric.NotEquals.toString() ->{
+                            dataRows.value.filter { list ->
+                                (list.getOrNull(columnIndex) as? Byte)?.let { it != searchValue } ?: false
+                            }
+                        }
+                        OperatorMenu.OperatorNumeric.GreaterThan.toString() ->{
+                            dataRows.value.filter { list ->
+                                // null이 아닌 경우에만 비교 수행
+                                (list.getOrNull(columnIndex) as? Byte)?.let { it > searchValue } ?: false
+                            }
+                        }
+                        OperatorMenu.OperatorNumeric.GreaterThanOrEquals.toString() ->{
+                            dataRows.value.filter { list ->
+                                (list.getOrNull(columnIndex) as? Byte)?.let { it >= searchValue } ?: false
+                            }
+                        }
+                        OperatorMenu.OperatorNumeric.LessThan.toString() ->{
+                            dataRows.value.filter { list ->
+                                (list.getOrNull(columnIndex) as? Byte)?.let { it < searchValue } ?: false
+                            }
+                        }
+                        OperatorMenu.OperatorNumeric.LessThanOrEquals.toString() ->{
+                            dataRows.value.filter { list ->
+                                (list.getOrNull(columnIndex) as? Byte)?.let { it <= searchValue } ?: false
+                            }
+                        }
+                        else -> {dataRows.value}
+                    }
+                }
+            }
+            "Short" ->{
+                val searchValue = searchText.toShortOrNull()
+                if (searchValue == null) {
+                    dataRows.value // 검색값이 숫자가 아니면 원본 데이터 반환
+                } else {
+                    when(operator){
+                        OperatorMenu.OperatorNumeric.Equals.toString() ->{
+                            dataRows.value.filter { list ->
+                                // as? 로 안전하게 캐스팅하고, null이면 false 반환
+                                (list.getOrNull(columnIndex) as? Short)?.let { it == searchValue } ?: false
+                            }
+                        }
+                        OperatorMenu.OperatorNumeric.NotEquals.toString() ->{
+                            dataRows.value.filter { list ->
+                                (list.getOrNull(columnIndex) as? Short)?.let { it != searchValue } ?: false
+                            }
+                        }
+                        OperatorMenu.OperatorNumeric.GreaterThan.toString() ->{
+                            dataRows.value.filter { list ->
+                                // null이 아닌 경우에만 비교 수행
+                                (list.getOrNull(columnIndex) as? Short)?.let { it > searchValue } ?: false
+                            }
+                        }
+                        OperatorMenu.OperatorNumeric.GreaterThanOrEquals.toString() ->{
+                            dataRows.value.filter { list ->
+                                (list.getOrNull(columnIndex) as? Short)?.let { it >= searchValue } ?: false
+                            }
+                        }
+                        OperatorMenu.OperatorNumeric.LessThan.toString() ->{
+                            dataRows.value.filter { list ->
+                                (list.getOrNull(columnIndex) as? Short)?.let { it < searchValue } ?: false
+                            }
+                        }
+                        OperatorMenu.OperatorNumeric.LessThanOrEquals.toString() ->{
+                            dataRows.value.filter { list ->
+                                (list.getOrNull(columnIndex) as? Short)?.let { it <= searchValue } ?: false
+                            }
+                        }
+                        else -> {dataRows.value}
+                    }
+                }
+            }
             "Int" ->{
                 // searchText가 숫자가 아닐 경우를 대비해 try-catch 또는 toIntOrNull 사용
                 val searchValue = searchText.toIntOrNull()
@@ -299,6 +423,50 @@ class Un7KCMPDataGridViewModel(val data: Map<String,List<Any?>>, val config: Un7
                         else -> {dataRows.value}
                     }
                 }
+            }
+            "Long" ->{
+                val searchValue = searchText.toLongOrNull()
+                if (searchValue == null) {
+                    dataRows.value // 검색값이 숫자가 아니면 원본 데이터 반환
+                } else {
+                    when(operator){
+                        OperatorMenu.OperatorNumeric.Equals.toString() ->{
+                            dataRows.value.filter { list ->
+                                (list.getOrNull(columnIndex) as? Long)?.let { it == searchValue } ?: false
+                            }
+                        }
+                        OperatorMenu.OperatorNumeric.NotEquals.toString() ->{
+                            dataRows.value.filter { list ->
+                                (list.getOrNull(columnIndex) as? Long)?.let { it != searchValue } ?: false
+                            }
+                        }
+                        OperatorMenu.OperatorNumeric.GreaterThan.toString() ->{
+                            dataRows.value.filter { list ->
+                                (list.getOrNull(columnIndex) as? Long)?.let { it > searchValue } ?: false
+                            }
+                        }
+                        OperatorMenu.OperatorNumeric.GreaterThanOrEquals.toString() ->{
+                            dataRows.value.filter { list ->
+                                (list.getOrNull(columnIndex) as? Long)?.let { it >= searchValue } ?: false
+                            }
+                        }
+                        OperatorMenu.OperatorNumeric.LessThan.toString() ->{
+                            dataRows.value.filter { list ->
+                                (list.getOrNull(columnIndex) as? Long)?.let { it < searchValue } ?: false
+                            }
+                        }
+                        OperatorMenu.OperatorNumeric.LessThanOrEquals.toString() ->{
+                            dataRows.value.filter { list ->
+                                (list.getOrNull(columnIndex) as? Long)?.let { it <= searchValue } ?: false
+                            }
+                        }
+                        else -> {dataRows.value}
+                    }
+                }
+
+
+
+
             }
             "Float" ->{
 
@@ -387,50 +555,6 @@ class Un7KCMPDataGridViewModel(val data: Map<String,List<Any?>>, val config: Un7
 
 
             }
-            "Long" ->{
-                val searchValue = searchText.toLongOrNull()
-                if (searchValue == null) {
-                    dataRows.value // 검색값이 숫자가 아니면 원본 데이터 반환
-                } else {
-                    when(operator){
-                        OperatorMenu.OperatorNumeric.Equals.toString() ->{
-                            dataRows.value.filter { list ->
-                                (list.getOrNull(columnIndex) as? Long)?.let { it == searchValue } ?: false
-                            }
-                        }
-                        OperatorMenu.OperatorNumeric.NotEquals.toString() ->{
-                            dataRows.value.filter { list ->
-                                (list.getOrNull(columnIndex) as? Long)?.let { it != searchValue } ?: false
-                            }
-                        }
-                        OperatorMenu.OperatorNumeric.GreaterThan.toString() ->{
-                            dataRows.value.filter { list ->
-                                (list.getOrNull(columnIndex) as? Long)?.let { it > searchValue } ?: false
-                            }
-                        }
-                        OperatorMenu.OperatorNumeric.GreaterThanOrEquals.toString() ->{
-                            dataRows.value.filter { list ->
-                                (list.getOrNull(columnIndex) as? Long)?.let { it >= searchValue } ?: false
-                            }
-                        }
-                        OperatorMenu.OperatorNumeric.LessThan.toString() ->{
-                            dataRows.value.filter { list ->
-                                (list.getOrNull(columnIndex) as? Long)?.let { it < searchValue } ?: false
-                            }
-                        }
-                        OperatorMenu.OperatorNumeric.LessThanOrEquals.toString() ->{
-                            dataRows.value.filter { list ->
-                                (list.getOrNull(columnIndex) as? Long)?.let { it <= searchValue } ?: false
-                            }
-                        }
-                        else -> {dataRows.value}
-                    }
-                }
-
-
-
-
-            }
             "Boolean" -> {
 
                 when(operator) {
@@ -456,14 +580,12 @@ class Un7KCMPDataGridViewModel(val data: Map<String,List<Any?>>, val config: Un7
             }
         }
 
-
         onFilterResultCnt.value = result.size
         dataRows.value = result.ifEmpty {
             dataRows.value
         }
 
         dataFilterApplied.value =  dataRows.value
-
         lastPageIndex.value = getLastPageIndex(dataRows.value.size, pageSize.value)
 
         closerFunc()
@@ -488,10 +610,13 @@ class Un7KCMPDataGridViewModel(val data: Map<String,List<Any?>>, val config: Un7
             1 -> {
                 val comparator  = when(columnDataType) {
                     "String" -> compareBy { it.getOrNull(columnIndex) as? String }
-                    "Double" -> compareBy { it.getOrNull(columnIndex) as? Double }
-                    "Float" -> compareBy { it.getOrNull(columnIndex) as? Float }
+                    "Char" -> compareBy { it.getOrNull(columnIndex) as? Char }
+                    "Byte" -> compareBy { it.getOrNull(columnIndex) as? Byte }
+                    "Short" -> compareBy { it.getOrNull(columnIndex) as? Short }
                     "Int" -> compareBy { it.getOrNull(columnIndex) as? Int }
                     "Long" -> compareBy { it.getOrNull(columnIndex) as? Long }
+                    "Float" -> compareBy { it.getOrNull(columnIndex) as? Float }
+                    "Double" -> compareBy { it.getOrNull(columnIndex) as? Double }
                     "Boolean" -> compareBy { it.getOrNull(columnIndex) as? Boolean }
                     else ->  compareBy<List<Any?>> { it.getOrNull(columnIndex)?.toString() }
                 }
@@ -505,10 +630,13 @@ class Un7KCMPDataGridViewModel(val data: Map<String,List<Any?>>, val config: Un7
             -1 -> {
                 val comparator  = when(columnDataType) {
                     "String" -> compareByDescending { it.getOrNull(columnIndex) as? String }
-                    "Double" -> compareByDescending { it.getOrNull(columnIndex) as? Double }
-                    "Float" -> compareByDescending { it.getOrNull(columnIndex) as? Float }
+                    "Char" -> compareByDescending { it.getOrNull(columnIndex) as? Char }
+                    "Byte" -> compareByDescending { it.getOrNull(columnIndex) as? Byte }
+                    "Short" -> compareByDescending { it.getOrNull(columnIndex) as? Short }
                     "Int" -> compareByDescending { it.getOrNull(columnIndex) as? Int }
                     "Long" -> compareByDescending { it.getOrNull(columnIndex) as? Long }
+                    "Float" -> compareByDescending { it.getOrNull(columnIndex) as? Float }
+                    "Double" -> compareByDescending { it.getOrNull(columnIndex) as? Double }
                     "Boolean" -> compareByDescending { it.getOrNull(columnIndex) as? Boolean }
                     else ->  compareByDescending<List<Any?>>  { it.getOrNull(columnIndex)?.toString() }
                 }

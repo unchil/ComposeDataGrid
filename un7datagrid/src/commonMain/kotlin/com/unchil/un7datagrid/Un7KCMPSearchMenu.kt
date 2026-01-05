@@ -124,9 +124,21 @@ internal fun Un7KCMPSearchMenu(
 
                         columnInfo?.let {
                             when(it.dataType){
-                                "String", "UNKNOWN" -> {
+                                "Char" -> {
+                                    OperatorMenu.OperatorsChar.forEach { operator ->
+                                        HorizontalDivider()
+                                        DropdownMenuItem(
+                                            text = { Text(operator.toString()) },
+                                            onClick = {
+                                                operatorText.value = operator.toString()
+                                                expandedOperator = false
+                                            }
+                                        )
+                                    }
+                                }
 
-                                    OperatorMenu.OperatorStrings.forEach { operator ->
+                                "String", "UNKNOWN" -> {
+                                    OperatorMenu.OperatorsString.forEach { operator ->
                                         HorizontalDivider()
                                         DropdownMenuItem(
                                             text = { Text(operator.toString()) },
@@ -141,7 +153,7 @@ internal fun Un7KCMPSearchMenu(
                                     }
                                 }
                                 "Boolean" ->{
-                                    OperatorMenu.OperatorBooleans.forEach { operator ->
+                                    OperatorMenu.OperatorsBoolean.forEach { operator ->
                                         HorizontalDivider()
                                         DropdownMenuItem(
                                             text = { Text(operator.toString()) },
@@ -155,7 +167,7 @@ internal fun Un7KCMPSearchMenu(
                                 }
                                 else ->{
 
-                                    OperatorMenu.OperatorNumerics.forEach { operator ->
+                                    OperatorMenu.OperatorsNumeric.forEach { operator ->
                                         HorizontalDivider()
                                         DropdownMenuItem(
                                             text = { Text(operator.toString()) },

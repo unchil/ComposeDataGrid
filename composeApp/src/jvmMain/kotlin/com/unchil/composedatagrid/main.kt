@@ -25,10 +25,12 @@ fun makeData():Map<String, List<Any?>>{
 
    // return data.toMap()
     return    mapOf(
-        "ID" to listOf(1, 2, 3, 4, 5, 6, 7),
-        "Product Name" to listOf("Keyboard", "Mouse", "Monitor", "Webcam", "Speaker", "", "Luck7"),
-        "Price" to listOf(75.50, 25.00, 350.99, 89.90, 100, null, 100 ),
-        "In Stock" to listOf(true, true, false, true, false, null, true)
+        "ID" to listOf<Int?>(1, 2, 3, 4, 5, 6, 7, 8),
+        "Product Code" to listOf<Char?>('K', null, 'M', 'W', 'S', 'T', 'L', 'a'),
+        "Product Name" to listOf<String?>("Keyboard", "Mouse", "Monitor", "Webcam", "Speaker", "Trackpad", "Luck7", ""),
+        "PriceDouble" to listOf<Double?>(75.50, 25.00, null, 89.90, 100.0, 100.0, 100.0, 0.0 ),
+        "PriceFloat" to listOf<Float?>(75.50f, 25.00f, null, 89.90f, 100.0f, 100.0f, 100.0f, 0.0f ),
+        "In Stock" to listOf<Boolean?>(true, false, true, true, true, true, true,true)
     )
 }
 
