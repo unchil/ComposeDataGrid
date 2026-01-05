@@ -137,7 +137,7 @@ internal fun Un7KCMPSearchMenu(
                                     }
                                 }
 
-                                "String", "UNKNOWN" -> {
+                                "String", "UNKNOWN", "Any" -> {
                                     OperatorMenu.OperatorsString.forEach { operator ->
                                         HorizontalDivider()
                                         DropdownMenuItem(
@@ -187,7 +187,7 @@ internal fun Un7KCMPSearchMenu(
                 }
 
                 columnInfo?.let {
-                    if(it.dataType != "Boolean"){
+                    if(it.dataType != "Boolean" && !operatorText.value.equals("Select...")){
                         OutlinedTextField(
                             modifier = Modifier
                                 .padding(horizontal = 8.dp)
