@@ -99,15 +99,18 @@ fun Un7KCMPDataGrid(
     val isCurrentHovered = remember { mutableStateOf(false) }
     val isCurrentHoveredOffset = remember { mutableStateOf(0.dp) }
     val onePageMinColumnWidth = remember { 150.dp }
+
     val maxWidthInDp = remember { mutableStateOf(0.dp) }
     var columnsAreaWidth by remember { mutableStateOf(0.dp) }
-    LaunchedEffect(maxWidthInDp.value){
+    LaunchedEffect( isVisibleRowNum.value, maxWidthInDp.value){
         columnsAreaWidth = if ( isVisibleRowNum.value) {
             maxWidthInDp.value - widthRowNumColumn - (widthDividerThickness * (columnNames.size ))
         } else {
             maxWidthInDp.value - (widthDividerThickness * (columnNames.size - 1))
         }
     }
+
+
     //--- SnackBar Setting
     val channel = remember { Channel<Int>(Channel.CONFLATED) }
     val snackBarHostState = remember { SnackbarHostState() }

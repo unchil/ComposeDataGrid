@@ -48,7 +48,7 @@ fun main() = application {
 
             DataGrid(makeData() )
 
-         //   DataGridWithViewModel()
+            //DataGridWithViewModel()
 
         }
     }
