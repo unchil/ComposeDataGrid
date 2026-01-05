@@ -36,7 +36,7 @@
 - User Feedback: Provides intuitive feedback via a `Snackbar` for events like data filtering or page size changes.
 - ️Deep Customization: Configure grid options like row number and column header visibility, column titles, and page size items using the `Un7KCMPDataGridConfig` object.
 - Theming: Easily customize the colors of the header, data rows (including separate colors for odd/even rows), and content to match your app's theme.
-- The currently supported column data types are String, Int, Float, Double, Long, Boolean.
+- The currently supported column data types are List<String?>, List<Int?>,  List<Float?>, List<Double?>, List<Long?>, List<Boolean?>.
 
 ###  Advanced Filtering
 
