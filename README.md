@@ -51,7 +51,7 @@ Currently, we are filtering by converting all data to String, Int, Float, Double
 *   **For `Int`, `Float`, `Double`, `Long` data:**
     *   `=`, `!=`, `>`, `>=`, `<`, `<=`
 *   **For `Boolean` data:**
-    *   `Equals (true or false)`
+    *   `Is`, `IsNot`
 
 
 

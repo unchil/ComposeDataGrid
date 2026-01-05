@@ -86,8 +86,8 @@ object OperatorMenu {
     )
 
     enum class OperatorBoolean(private val symbol: String) {
-        Is("true"),
-        IsNot("false");
+        Is("(Is) true"),
+        IsNot("(IsNot) false");
 
         override fun toString(): String {
             return symbol
