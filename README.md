@@ -25,7 +25,7 @@
 - Multiplatform Support: Works seamlessly on Android, iOS, Desktop, and Web using Kotlin Compose Multiplatform.
 - Pagination: Smoothly handles tens of thousands of data entries with horizontal paging using `HorizontalPager`.
 - Column Sorting: Sort data in ascending, descending, or default order by clicking on column headers.
-- Column Resizing: Dynamically adjust the width of each column by dragging the divider between headers.
+- Column Resizing: Dynamically adjust the width of each column by dragging the divider between columns.
 - Column Reordering: Easily reorder columns by dragging and dropping the headers.
 - Column Visibility Control: Dynamically show or hide specific columns through a floating menu.
 - Sticky Header: Column headers remain fixed at the top during vertical scrolling, so you never lose context.
