@@ -56,43 +56,19 @@ internal fun Un7KCMPSearchMenu(
     var expanded by remember { mutableStateOf(false) }
     val filterText = remember { mutableStateOf("") }
 
-    val operatorText = remember { mutableStateOf(
-                columnInfo?.let {
-            when (it.dataType) {
-                "String", "UNKNOWN" -> OperatorMenu.OperatorStrings.first().toString()
-                "Boolean" -> OperatorMenu.OperatorBooleans.first().toString()
-                else -> OperatorMenu.OperatorNumerics.first().toString()
-            }
-        } ?: ""
-
-    ) }
-    val operatorLabel:String = remember {
-        columnInfo?.let {
-            when (it.dataType) {
-                "String", "UNKNOWN" -> {
-                    "String Type..."
-                }
-                "Boolean" -> "Boolean Type..."
-                else -> "Numeric Type..."
-            }
-        } ?: ""
-    }
+    val operatorText = remember { mutableStateOf("Select..." ) }
+    val operatorLabel:String = remember { "Operator" }
 
     val scrollState = remember { ScrollState(0) }
     var expandedOperator by remember { mutableStateOf(false) }
 
     val onSearch: () -> Unit = {
-        onFilter.invoke(columnName, filterText.value, operatorText.value)
-        expanded = false
-        filterText.value = ""
-        operatorText.value =  columnInfo?.let {
-            when (it.dataType) {
-                "String", "UNKNOWN" -> OperatorMenu.OperatorStrings.first().toString()
-                "Boolean" -> OperatorMenu.OperatorBooleans.first().toString()
-                else -> OperatorMenu.OperatorNumerics.first().toString()
-            }
-        } ?: ""
-
+        if(!operatorText.value.equals("Select...")){
+            onFilter.invoke(columnName, filterText.value, operatorText.value)
+            expanded = false
+            filterText.value = ""
+            operatorText.value =  "Select..."
+        }
     }
 
 
@@ -157,6 +133,9 @@ internal fun Un7KCMPSearchMenu(
                                             onClick = {
                                                 operatorText.value = operator.toString()
                                                 expandedOperator = false
+                                                if( operatorText.value.equals("Blank")|| operatorText.value.equals("Not Blank")){
+                                                    onSearch()
+                                                }
                                             }
                                         )
                                     }
@@ -169,6 +148,7 @@ internal fun Un7KCMPSearchMenu(
                                             onClick = {
                                                 operatorText.value = operator.toString()
                                                 expandedOperator = false
+                                                onSearch()
                                             }
                                         )
                                     }
@@ -194,41 +174,48 @@ internal fun Un7KCMPSearchMenu(
                     }
                 }
 
-                OutlinedTextField(
-                    modifier = Modifier
-                        .padding(horizontal = 8.dp)
-                        .onKeyEvent { event ->
-                            // 데스크탑 및 하드웨어 키보드의 Enter 키 입력을 처리합니다.
-                            if (event.key == Key.Enter && event.type == KeyEventType.KeyDown) {
-                                onSearch()
-                                true
-                            } else false
-                        } ,
-                    value = filterText.value,
-                    onValueChange = { filterText.value = it  },
-                    label = { Text("Search...")  },
-                    trailingIcon = {
-                        IconButton(
-                            onClick = {
-                                filterText.value = ""
-                            }
-                        ) {
-                            Icon(Icons.Default.Clear,
-                                contentDescription = "Clear",
-                                tint =  MaterialTheme.colorScheme.onSurface
+                columnInfo?.let {
+                    if(it.dataType != "Boolean"){
+                        OutlinedTextField(
+                            modifier = Modifier
+                                .padding(horizontal = 8.dp)
+                                .onKeyEvent { event ->
+                                    // 데스크탑 및 하드웨어 키보드의 Enter 키 입력을 처리합니다.
+                                    if (event.key == Key.Enter && event.type == KeyEventType.KeyDown) {
+                                        onSearch()
+                                        true
+                                    } else false
+                                } ,
+                            value = filterText.value,
+                            onValueChange = { filterText.value = it  },
+                            label = { Text("")  },
+                            trailingIcon = {
+                                IconButton(
+                                    onClick = {
+                                        filterText.value = ""
+                                    }
+                                ) {
+                                    Icon(Icons.Default.Clear,
+                                        contentDescription = "Clear",
+                                        tint =  MaterialTheme.colorScheme.onSurface
+                                    )
+                                }
+                            },
+                            singleLine = true,
+                            keyboardOptions = KeyboardOptions(
+                                imeAction = ImeAction.Search
+                            ),
+                            keyboardActions = KeyboardActions(
+                                onSearch = {
+                                    onSearch()
+                                }
                             )
-                        }
-                    },
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions(
-                        imeAction = ImeAction.Search
-                    ),
-                    keyboardActions = KeyboardActions(
-                        onSearch = {
-                            onSearch()
-                        }
-                    )
-                )
+                        )
+                    }
+                }
+
+
+
             }
 
         }

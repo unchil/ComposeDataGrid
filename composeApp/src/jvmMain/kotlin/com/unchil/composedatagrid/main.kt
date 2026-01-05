@@ -26,7 +26,7 @@ fun makeData():Map<String, List<Any?>>{
    // return data.toMap()
     return    mapOf(
         "ID" to listOf(1, 2, 3, 4, 5),
-        "Product Name" to listOf("Keyboard", "null", "Monitor", "Webcam", "Speaker"),
+        "Product Name" to listOf("Keyboard", "Mouse", "Monitor", "Webcam", "Speaker"),
         "Price" to listOf(75.50, 25.00, 350.99, 89.90, null),
         "In Stock" to listOf(true, true, false, true, false)
     )
