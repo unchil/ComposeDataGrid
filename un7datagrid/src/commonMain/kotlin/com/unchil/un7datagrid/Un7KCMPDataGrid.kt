@@ -210,8 +210,8 @@ fun Un7KCMPDataGrid(
 
     }
 
-    val onColumnSort:( Int, Int) -> Unit = { columnIndex, sortType ->
-        viewModel.onEvent(Un7KCMPDataGridViewModel.Event.ColumnSort(columnIndex, sortType ))
+    val onColumnSort:( Int, Int, String) -> Unit = { columnIndex, sortType, columnName ->
+        viewModel.onEvent(Un7KCMPDataGridViewModel.Event.ColumnSort(columnIndex, sortType, columnName ))
     }
 
     val onUpdateColumns:()->Unit = {

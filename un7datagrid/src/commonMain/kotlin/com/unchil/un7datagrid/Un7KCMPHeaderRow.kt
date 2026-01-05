@@ -60,7 +60,7 @@ internal fun Un7KCMPHeaderRow(
     columnWeights:List<Float>,
     onUpdateColumnsOrder:(Int, Int)->Unit,
     onFilter:(String, String, String) -> Unit,
-    onColumnSort:(Int, Int) -> Unit,
+    onColumnSort:(Int, Int, String) -> Unit,
     columnDataSortFlag: List<Int>,
     headerRowBackgroundColor:Color,
     headerRowContentColor:Color,
@@ -172,7 +172,7 @@ internal fun Un7KCMPHeaderRow(
                             -1 -> 0
                             else -> {0}
                         }
-                        onColumnSort( index, iconFlag)
+                        onColumnSort( index, iconFlag, columnName)
                     },
                 ){
                     Icon(

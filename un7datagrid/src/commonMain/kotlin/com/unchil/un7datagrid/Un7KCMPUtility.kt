@@ -87,9 +87,19 @@ val newMakeColInfo: (pagingData: Map<String, List<Any?>>) -> Map<String, NewColu
         if (data.isEmpty()) {
             NewColumnInfo()
         } else {
+            // 1. null을 제외한 모든 요소들의 고유한 타입(KClass)을 Set으로 수집합니다.
+            val distinctTypes = data.mapNotNull { it?.let { value -> value::class } }.toSet()
+
+            // 2. 고유한 타입의 개수에 따라 대표 타입을 결정합니다.
+            val representativeType = when {
+                distinctTypes.isEmpty() -> "UNKNOWN" // 모든 요소가 null이거나 리스트가 비어있음
+                distinctTypes.size > 1 -> "Any"     // 고유한 타입이 2개 이상이면 'Any'로 결정
+                else -> distinctTypes.first().simpleName ?: "UNKNOWN" // 고유 타입이 1개이면 해당 타입 이름 사용
+            }
+
             NewColumnInfo(
-                dataType = data.firstOrNull { it != null }?.let { it::class.simpleName } ?: "UNKNOWN",
-                isContainNull = data.contains(null)|| data.contains(""),
+                dataType = representativeType,
+                isContainNull = data.contains(null) || data.contains(""),
             )
         }
     }

@@ -26,6 +26,7 @@ fun makeData():Map<String, List<Any?>>{
    // return data.toMap()
     return    mapOf(
         "ID" to listOf<Int?>(1, 2, 3, 4, 5, 6, 7, 8),
+        "Product Any" to listOf<Any?>( 1234, 1234.0, 1234.0f, '1', true, 1234567890L, null, "1234"),
         "Product Code" to listOf<Char?>('K', null, 'M', 'W', 'S', 'T', 'L', 'a'),
         "Product Name" to listOf<String?>("Keyboard", "Mouse", "Monitor", "Webcam", "Speaker", "Trackpad", "Luck7", ""),
         "PriceDouble" to listOf<Double?>(75.50, 25.00, null, 89.90, 100.0, 100.0, 100.0, 0.0 ),

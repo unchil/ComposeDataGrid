@@ -100,7 +100,8 @@ class Un7KCMPDataGridViewModel(val data: Map<String,List<Any?>>, val config: Un7
             is Event.ColumnSort -> {
                 onColumnSort(
                     event.columnIndex,
-                    event.sortType
+                    event.sortType,
+                    event.columnName
                 )
             }
             is Event.Filter -> {
@@ -250,7 +251,7 @@ class Un7KCMPDataGridViewModel(val data: Map<String,List<Any?>>, val config: Un7
                     }
                 }
             }
-            "String","UNKNOWN" ->{
+            "String", "Any", "UNKNOWN" -> {
                 when(operator){
                     OperatorMenu.OperatorString.Contains.toString() -> {
                         dataRows.value.filter { list ->
@@ -591,7 +592,7 @@ class Un7KCMPDataGridViewModel(val data: Map<String,List<Any?>>, val config: Un7
         closerFunc()
     }
 
-    val onColumnSort:( Int, Int) -> Unit = { columnIndex, sortType ->
+    val onColumnSort:( Int, Int, String) -> Unit = { columnIndex, sortType, columnName ->
 
         val newSortFlag =  MutableList(columnDataSortFlag.value.size) { 0 }.apply {
             this[columnIndex] = sortType
@@ -599,17 +600,14 @@ class Un7KCMPDataGridViewModel(val data: Map<String,List<Any?>>, val config: Un7
 
         columnDataSortFlag.value = newSortFlag
 
-        val columnDataType = dataColumnOrderApplied.value.first { firstRow ->
-            firstRow.elementAt(columnIndex) != null
-        }[columnIndex]?.let {  it::class.simpleName.toString() } ?: "UNKNOWN"
+        val columnDataType = columnsInfo.value[columnName]?.dataType ?: "String"
 
         // String    "\u0000":NullAtBeginning (ASCII 코드 0),   "":NullAtEnd
-
 
         when(sortType){
             1 -> {
                 val comparator  = when(columnDataType) {
-                    "String" -> compareBy { it.getOrNull(columnIndex) as? String }
+                    "String", "Any" -> compareBy { it.getOrNull(columnIndex) as? String }
                     "Char" -> compareBy { it.getOrNull(columnIndex) as? Char }
                     "Byte" -> compareBy { it.getOrNull(columnIndex) as? Byte }
                     "Short" -> compareBy { it.getOrNull(columnIndex) as? Short }
@@ -629,7 +627,7 @@ class Un7KCMPDataGridViewModel(val data: Map<String,List<Any?>>, val config: Un7
             }
             -1 -> {
                 val comparator  = when(columnDataType) {
-                    "String" -> compareByDescending { it.getOrNull(columnIndex) as? String }
+                    "String", "Any"  -> compareByDescending { it.getOrNull(columnIndex) as? String }
                     "Char" -> compareByDescending { it.getOrNull(columnIndex) as? Char }
                     "Byte" -> compareByDescending { it.getOrNull(columnIndex) as? Byte }
                     "Short" -> compareByDescending { it.getOrNull(columnIndex) as? Short }
@@ -712,7 +710,8 @@ class Un7KCMPDataGridViewModel(val data: Map<String,List<Any?>>, val config: Un7
 
         data class ColumnSort(
             val columnIndex:Int,
-            val sortType:Int
+            val sortType:Int,
+            val columnName:String
         ):Event()
 
         data class ColumnWeight(
