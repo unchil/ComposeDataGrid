@@ -111,7 +111,7 @@ internal fun Un7KCMPHeaderRow(
         columnNames.forEachIndexed { index, columnName ->
 
             val offset = remember { mutableStateOf(IntOffset.Zero) }
-            val animatedAlpha by animateFloatAsState(if (offset.value == IntOffset.Zero) 1f else 0.6f)
+            val animatedAlpha by animateFloatAsState(if (offset.value == IntOffset.Zero) 1f else 0.8f)
             val onDragEnd: () -> Unit = {
                 // --- 드롭 시점에 구분선 위치를 동적으로 계산 ---
                 val currentDividerPositions = mutableListOf<Dp>()
@@ -151,9 +151,6 @@ internal fun Un7KCMPHeaderRow(
                     .background(color = headerRowBackgroundColor)
                     .width(columnsAreaWidth * columnWeights.getOrElse( index ) { 0f })
                     .height(heightColumnHeader)
-                    .border(
-                        border = BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.secondaryFixedDim),
-                        shape = RoundedCornerShape(2.dp))
                     .pointerInput(Unit) {
                         detectDragGestures(
                             onDragEnd = onDragEnd,
@@ -168,7 +165,10 @@ internal fun Un7KCMPHeaderRow(
                             }
                         )}
                     .offset { offset.value }
-                    .alpha(animatedAlpha),
+                    .alpha(animatedAlpha)
+                    .border(
+                        border = BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.secondaryFixedDim),
+                        shape = RoundedCornerShape(2.dp)),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
 
