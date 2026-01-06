@@ -6,6 +6,7 @@ import androidx.compose.runtime.InternalComposeApi
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.unit.IntOffset
 import kotlinx.coroutines.flow.MutableStateFlow
 
 class Un7KCMPDataGridViewModel(val data: Map<String,List<Any?>>, val config: Un7KCMPDataGridConfig) {
@@ -33,6 +34,9 @@ class Un7KCMPDataGridViewModel(val data: Map<String,List<Any?>>, val config: Un7
 
     val columnWeights: MutableStateFlow<List<Float>>
        = MutableStateFlow(emptyList())
+
+    val columnsOffset: MutableStateFlow<List<IntOffset>>
+            = MutableStateFlow(emptyList())
 
     val columnDataSortFlag: MutableStateFlow<List<Int>>
             = MutableStateFlow(emptyList())
@@ -62,6 +66,7 @@ class Un7KCMPDataGridViewModel(val data: Map<String,List<Any?>>, val config: Un7
         dataColumnOrderApplied.value = dataRows.value
         dataFilterApplied.value = dataRows.value
         columnWeights.value = List(columnNames.value.size) { 1f / columnNames.value.size }
+        columnsOffset.value = List(columnNames.value.size){IntOffset.Zero}
         columnDataSortFlag.value = List(columnNames.value.size) {0}
         selectedColumns.value = data.keys.associateWith { mutableStateOf(true) }
         selectPageSizeList = config.pageSizeList.toMutableList()
@@ -116,7 +121,15 @@ class Un7KCMPDataGridViewModel(val data: Map<String,List<Any?>>, val config: Un7
            is Event.ColumnWeight -> {
                onColumnWeight(event.columnWeight)
            }
+
+            is Event.UpdateColumnOffset -> {
+                onUpdateColumnOffset( event.offsetList)
+            }
         }
+    }
+
+    val onUpdateColumnOffset = { offsetList: List<IntOffset> ->
+        columnsOffset.value = offsetList
     }
 
     val onColumnWeight:(List<Float>)->Unit = { it ->
@@ -126,8 +139,6 @@ class Un7KCMPDataGridViewModel(val data: Map<String,List<Any?>>, val config: Un7
     val onUpdateColumns:( )->Unit = {
         Pair(selectedColumns.value, data.toMutableMap()).toSelectedColumnsData().let { result ->
 
-
-
             columnNames.value = result.first
             dataRows.value = result.second
 
@@ -136,6 +147,7 @@ class Un7KCMPDataGridViewModel(val data: Map<String,List<Any?>>, val config: Un7
             isFilteringData.value = false
 
             columnWeights.value = List(columnNames.value.size) { 1f / columnNames.value.size }
+            columnsOffset.value = List(columnNames.value.size){ IntOffset.Zero }
         }
     }
 
@@ -716,6 +728,10 @@ class Un7KCMPDataGridViewModel(val data: Map<String,List<Any?>>, val config: Un7
 
         data class ColumnWeight(
             val columnWeight: List<Float>
+        ):Event()
+
+        data class UpdateColumnOffset(
+            val offsetList: List<IntOffset>
         ):Event()
     }
 

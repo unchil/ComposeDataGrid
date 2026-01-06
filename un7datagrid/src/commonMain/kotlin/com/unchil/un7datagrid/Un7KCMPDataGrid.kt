@@ -55,6 +55,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -75,6 +76,7 @@ fun Un7KCMPDataGrid(
     val selectedColumns by viewModel.selectedColumns.collectAsState()
     val selectPageSizeIndex by viewModel.selectPageSizeIndex.collectAsState()
     val columnWeights by viewModel.columnWeights.collectAsState()
+    val columnOffsetList by viewModel.columnsOffset.collectAsState()
     val columnDataSortFlag by viewModel.columnDataSortFlag.collectAsState()
     val isVisibleRowNum = remember { mutableStateOf(config.isVisibilityRowNumber) }
     val isVisibleColumnHeader = remember { mutableStateOf(true) }
@@ -331,6 +333,13 @@ fun Un7KCMPDataGrid(
         isCurrentHoveredOffset.value = 0.dp
     }
 
+    val onDragColumn = { index:Int, offset: IntOffset ->
+        viewModel.onEvent(Un7KCMPDataGridViewModel.Event.UpdateColumnOffset(
+            columnOffsetList.toMutableList().apply { this[index] = offset  }
+        ))
+    }
+
+
     val dataGridContent: @Composable ((MutableMap<String, List<Any?>>, Int) -> Unit) = { pagingData, pageIndex ->
 
         BoxWithConstraints(
@@ -411,7 +420,8 @@ fun Un7KCMPDataGrid(
                                 onResizeStart,
                                 onResizeEnd,
                                 onDividerHovered,
-                                onDividerHoverExit
+                                onDividerHoverExit,
+                                onDragColumn
                             )
                         }//AnimatedVisibility
                     }//stickyHeader
@@ -429,6 +439,7 @@ fun Un7KCMPDataGrid(
                             dataIndex,
                             pagingData,
                             columnWeights,
+                            columnOffsetList,
                             viewModel.config.dataRowBackgroundColor
                                 ?: MaterialTheme.colorScheme.surface,
                             viewModel.config.dataRowContentColor

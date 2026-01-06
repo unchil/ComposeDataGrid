@@ -69,8 +69,8 @@ internal fun Un7KCMPHeaderRow(
     onResizeStart:(Int)->Unit,
     onResizeEnd:()->Unit,
     onDividerHovered: (index: Int) -> Unit,
-    onDividerHoverExit: () -> Unit
-
+    onDividerHoverExit: () -> Unit,
+    onDragColumn:(Int, IntOffset)->Unit,
 ){
     val density = LocalDensity.current.density
     val heightColumnHeader = remember{ 36.dp }
@@ -109,7 +109,7 @@ internal fun Un7KCMPHeaderRow(
         columnNames.forEachIndexed { index, columnName ->
 
             val offset = remember { mutableStateOf(IntOffset.Zero) }
-            val animatedAlpha by animateFloatAsState(if (offset.value == IntOffset.Zero) 1f else 0.5f)
+            val animatedAlpha by animateFloatAsState(if (offset.value == IntOffset.Zero) 1f else 0.6f)
             val onDragEnd: () -> Unit = {
                 // --- 드롭 시점에 구분선 위치를 동적으로 계산 ---
                 val currentDividerPositions = mutableListOf<Dp>()
@@ -137,6 +137,8 @@ internal fun Un7KCMPHeaderRow(
 
                 onUpdateColumnsOrder( index, targetIndex )
                 offset.value = IntOffset.Zero
+
+                onDragColumn(index, IntOffset.Zero)
             }
 
 
@@ -153,10 +155,14 @@ internal fun Un7KCMPHeaderRow(
                     .pointerInput(Unit) {
                         detectDragGestures(
                             onDragEnd = onDragEnd,
-                            onDragCancel = { offset.value = IntOffset.Zero },
+                            onDragCancel = {
+                                offset.value = IntOffset.Zero
+                                onDragColumn(index, IntOffset.Zero)
+                            },
                             onDrag = { change, dragAmount ->
                                 change.consume()
                                 offset.value += IntOffset( dragAmount.x.roundToInt(), 0)
+                                onDragColumn(index, offset.value)
                             }
                         )}
                     .offset { offset.value }
