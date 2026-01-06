@@ -465,7 +465,7 @@ fun Un7KCMPDataGrid(
 
                     Box(
                         modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
+                        contentAlignment = Alignment.CenterStart
                     ) {
                         Icon(
                             imageVector = Icons.Default.Height,
