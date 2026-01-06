@@ -90,7 +90,7 @@ fun Un7KCMPDataGrid(
     val paddingMenuGridControl = remember{ PaddingValues(bottom = 80.dp, start = 10.dp)}
     val paddingMenuPageNavControl = remember{ PaddingValues(all = 10.dp)}
     val widthRowNumColumn = remember{ 60.dp}
-    val widthDividerThickness = remember{ 4.dp}
+    val widthDividerThickness = remember{ 2.dp}
     val isResizing = remember { mutableStateOf(false) }
     var resizeIndicatorOffset by remember { mutableStateOf(0.dp) }
     val resizeMinOffset = remember { mutableStateOf(0.dp) }
@@ -256,9 +256,9 @@ fun Un7KCMPDataGrid(
             currentOffset += columnsAreaWidth * columnWeights.getOrElse(i) { 0f }
         }
         if (isVisibleRowNum.value) {
-            widthRowNumColumn + widthDividerThickness + currentOffset + (widthDividerThickness * (index+1))
+            widthRowNumColumn + widthDividerThickness + currentOffset + (widthDividerThickness * (index+1)) + widthDividerThickness/2
         } else {
-            currentOffset + (widthDividerThickness * (index+1))
+            currentOffset + (widthDividerThickness * (index+1)) +  widthDividerThickness/2
         }
     }
 
@@ -457,8 +457,7 @@ fun Un7KCMPDataGrid(
                         VerticalDivider(
                             modifier = Modifier
                                 .fillMaxHeight().padding(vertical = 6.dp)
-                                .width(widthDividerThickness)
-                                .offset(x = offsetValue), // offset 상태에 따라 위치 변경
+                                .offset(x = offsetValue ), // offset 상태에 따라 위치 변경
                             color =  Color.LightGray ,
                             thickness = widthDividerThickness
                         )
@@ -466,13 +465,13 @@ fun Un7KCMPDataGrid(
 
                     Box(
                         modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.CenterStart
+                        contentAlignment = Alignment.Center
                     ) {
                         Icon(
                             imageVector = Icons.Default.Height,
                             contentDescription = "Resize Column",
                             modifier = Modifier
-                                .offset(x = offsetValue - (iconWidth / 2) + (widthDividerThickness/2))
+                                .offset(x = offsetValue - (iconWidth / 2) )
                                 .scale(scaleValue)
                                 .rotate(90f)
                                 .background(
