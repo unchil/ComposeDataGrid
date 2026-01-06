@@ -23,6 +23,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.ArrowDropUp
+import androidx.compose.material.icons.filled.ImportExport
+import androidx.compose.material.icons.filled.SwapVert
 import androidx.compose.material.icons.filled.UnfoldMore
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -185,7 +187,6 @@ internal fun Un7KCMPHeaderRow(
                         imageVector = when(columnDataSortFlag[index]){
                             -1 ->  Icons.Default.ArrowDropDown
                             1 ->  Icons.Default.ArrowDropUp
-                            0 -> Icons.Default.UnfoldMore
                             else -> Icons.Default.UnfoldMore
                         },
                         contentDescription = "Sort",
