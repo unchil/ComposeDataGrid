@@ -40,6 +40,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
@@ -70,7 +71,7 @@ internal fun Un7KCMPHeaderRow(
     onResize:(Float, Float, Int)->Unit,
     onResizeStart:(Int)->Unit,
     onResizeEnd:()->Unit,
-    onDividerHovered: (index: Int) -> Unit,
+    onDividerHovered: (index: Int, indexY: Int) -> Unit,
     onDividerHoverExit: () -> Unit,
     onDragColumn:(Int, IntOffset)->Unit,
 ){
@@ -218,7 +219,7 @@ internal fun Un7KCMPHeaderRow(
                     interactionSourceDivider.interactions.collect { interaction ->
                         when (interaction) {
                             is HoverInteraction.Enter -> {
-                                onDividerHovered(index)
+                                onDividerHovered(index, -1)
                             }
                             is HoverInteraction.Exit -> {
                                 onDividerHoverExit()

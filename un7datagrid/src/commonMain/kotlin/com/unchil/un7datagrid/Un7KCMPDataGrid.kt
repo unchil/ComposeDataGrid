@@ -99,11 +99,15 @@ fun Un7KCMPDataGrid(
     val resizeMaxOffset = remember { mutableStateOf(0.dp) }
     val isOnePageNav = remember { mutableStateOf(viewModel.selectPageSizeList.lastIndex == viewModel.selectPageSizeIndex.value) }
     val isCurrentHovered = remember { mutableStateOf(false) }
-    val isCurrentHoveredOffset = remember { mutableStateOf(0.dp) }
+    val hoveredOffsetX = remember { mutableStateOf(0.dp) }
+    val hoveredOffsetY = remember { mutableStateOf(0.dp) }
     val onePageMinColumnWidth = remember { 150.dp }
 
     val maxWidthInDp = remember { mutableStateOf(0.dp) }
+    val maxHeightInDp = remember { mutableStateOf(0.dp) }
+
     var columnsAreaWidth by remember { mutableStateOf(0.dp) }
+
     LaunchedEffect( isVisibleRowNum.value, maxWidthInDp.value){
         columnsAreaWidth = if ( isVisibleRowNum.value) {
             maxWidthInDp.value - widthRowNumColumn - (widthDividerThickness * (columnNames.size ))
@@ -264,6 +268,19 @@ fun Un7KCMPDataGrid(
         }
     }
 
+    val currentDpY:(Int)->Dp = {index ->
+        var currentOffsetY = 0.dp
+        val borderStrokeDp = 2.dp
+        //val heightDataRow = remember{ 30.dp }   val heightColumnHeader = remember{ 36.dp }
+        // val borderStrokeLightGray = remember {BorderStroke(width = 1.dp, color = Color.LightGray)}
+        if(index != -1 ) {
+            for (i in 0..index) {
+                currentOffsetY += (if(i==0) 36.dp else 30.dp) + borderStrokeDp
+            }
+        }
+        currentOffsetY
+    }
+
     val onResizeStart = { index:Int ->
         // 최소 너비 제약 조건 정의
         val minWeight = 0.05f
@@ -323,14 +340,16 @@ fun Un7KCMPDataGrid(
         )
     }
 
-    val onDividerHovered = { index:Int ->
-        isCurrentHoveredOffset.value = currentDp(index)
+    val onDividerHovered = { index:Int, indexY: Int ->
+        hoveredOffsetX.value = currentDp(index)
+        hoveredOffsetY.value = currentDpY(indexY)
         isCurrentHovered.value = true
     }
 
     val onDividerHoverExit = {
         isCurrentHovered.value = false
-        isCurrentHoveredOffset.value = 0.dp
+        hoveredOffsetX.value = 0.dp
+
     }
 
     val onDragColumn = { index:Int, offset: IntOffset ->
@@ -374,6 +393,7 @@ fun Un7KCMPDataGrid(
             // 1. 모든 컬럼과 구분선을 포함한 전체 너비 계산
             val onePageTotalGridWidth = (widthRowNumColumn + (onePageMinColumnWidth * columnNames.size) + (widthDividerThickness * (columnNames.size -1)))
             maxWidthInDp.value =  if(isOnePageNav.value) onePageTotalGridWidth.coerceAtLeast(this.maxWidth) else this.maxWidth
+            maxHeightInDp.value = this.maxHeight
 
             Box(modifier = if(isOnePageNav.value) Modifier.horizontalScroll(rememberScrollState()) else Modifier ) {
 
@@ -460,7 +480,8 @@ fun Un7KCMPDataGrid(
                 //----  Column Resize
                 if(isCurrentHovered.value || isResizing.value){
                     val iconWidth = 24.dp // Standard icon width
-                    val offsetValue = if(isResizing.value) resizeIndicatorOffset else isCurrentHoveredOffset.value
+                    val offsetValueX = if(isResizing.value) resizeIndicatorOffset else hoveredOffsetX.value
+                    val offsetValueY =  hoveredOffsetY.value + (iconWidth/3 )
                     val scaleValue = if(isResizing.value) 1.0f else 1.1f
                     val bgColor = if(isResizing.value) Color.Transparent else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
 
@@ -468,7 +489,7 @@ fun Un7KCMPDataGrid(
                         VerticalDivider(
                             modifier = Modifier
                                 .fillMaxHeight().padding(vertical = 6.dp)
-                                .offset(x = offsetValue ), // offset 상태에 따라 위치 변경
+                                .offset(x = offsetValueX ), // offset 상태에 따라 위치 변경
                             color =  Color.LightGray ,
                             thickness = widthDividerThickness
                         )
@@ -476,13 +497,13 @@ fun Un7KCMPDataGrid(
 
                     Box(
                         modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.CenterStart
+                        contentAlignment = Alignment.TopStart
                     ) {
                         Icon(
                             imageVector = Icons.Default.Height,
                             contentDescription = "Resize Column",
                             modifier = Modifier
-                                .offset(x = offsetValue - (iconWidth / 2) )
+                                .offset(x = offsetValueX - (iconWidth / 2), y = offsetValueY )
                                 .scale(scaleValue)
                                 .rotate(90f)
                                 .background(

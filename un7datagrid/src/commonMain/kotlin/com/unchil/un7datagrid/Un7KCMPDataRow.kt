@@ -27,7 +27,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.InternalComposeApi
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -60,7 +59,7 @@ internal fun Un7KCMPDataRow(
     onResize:(Float, Float, Int)->Unit,
     onResizeStart:(Int)->Unit,
     onResizeEnd:()->Unit,
-    onDividerHovered: (index: Int) -> Unit,
+    onDividerHovered: (index: Int, indexY: Int) -> Unit,
     onDividerHoverExit: () -> Unit
 
 ){
@@ -141,7 +140,7 @@ internal fun Un7KCMPDataRow(
                     interactionSourceDivider.interactions.collect { interaction ->
                         when (interaction) {
                             is HoverInteraction.Enter -> {
-                                onDividerHovered(index)
+                                onDividerHovered(index, dataIndex)
                             }
                             is HoverInteraction.Exit -> {
                                 onDividerHoverExit()
