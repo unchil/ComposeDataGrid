@@ -273,20 +273,7 @@ fun Un7KCMPDataGrid(
         }
     }
 
-    val currentDpY:(Int)->Dp = {index ->
-        var currentOffsetY = 0.dp
-        val borderStrokeDp = widthBorderStroke * 2
-        if(index != -1 ) {
-            for (i in 0..index) {
-                currentOffsetY += (if(i==0) heightColumnHeader else heightColumnData) + borderStrokeDp
-            }
-        }
-        if(isVisibleColumnHeader.value){
-            currentOffsetY
-        } else {
-            currentOffsetY - heightColumnHeader
-        }
-    }
+
 
     val heightVerticalDivider:(Int)->Dp = { count ->
         var currentOffsetY = 0.dp
@@ -363,11 +350,7 @@ fun Un7KCMPDataGrid(
         )
     }
 
-    val onDividerHovered = { index:Int, indexY: Int ->
-        hoveredOffsetX.value = currentDp(index)
-        hoveredOffsetY.value = currentDpY(indexY)
-        isCurrentHovered.value = true
-    }
+
 
     val onDividerHoverExit = {
         isCurrentHovered.value = false
@@ -382,6 +365,43 @@ fun Un7KCMPDataGrid(
     }
 
 
+    val lazyListState =
+        rememberLazyListState(initialFirstVisibleItemIndex = 0)
+
+
+
+    val currentDpY:(Int)->Dp = {index ->
+        var currentOffsetY = 0.dp
+        val borderStrokeDp = widthBorderStroke * 2
+
+        if(index >= 0 ) {
+
+            for (i in 0..index) {
+                currentOffsetY += (if(i==0) heightColumnHeader else heightColumnData) + borderStrokeDp
+            }
+            if(lazyListState.firstVisibleItemIndex > 0 ){
+                // 스크롤되어 보이지 않는 아이템들의 전체 높이를 한 번에 계산하여 뺍니다.
+                val scrolledOutHeight = (heightColumnData + borderStrokeDp) * lazyListState.firstVisibleItemIndex
+                currentOffsetY -= scrolledOutHeight
+            } else{
+                if(!isVisibleColumnHeader.value) currentOffsetY -= heightColumnHeader
+            }
+        }else{
+            if(!isVisibleColumnHeader.value)  currentOffsetY -= heightColumnHeader
+        }
+
+        currentOffsetY
+    }
+
+
+    val onDividerHovered = { index:Int, indexY: Int ->
+        hoveredOffsetX.value = currentDp(index)
+        hoveredOffsetY.value = currentDpY(indexY)
+        isCurrentHovered.value = true
+    }
+
+
+
     val dataGridContent: @Composable ((MutableMap<String, List<Any?>>, Int) -> Unit) = { pagingData, pageIndex ->
 
         BoxWithConstraints(
@@ -392,8 +412,6 @@ fun Un7KCMPDataGrid(
             contentAlignment = Alignment.Center
         ) {
 
-            val lazyListState =
-                rememberLazyListState(initialFirstVisibleItemIndex = 0)
 
             val onListNavHandler: (ListNav) -> Unit = { listNav ->
                 when (listNav) {
