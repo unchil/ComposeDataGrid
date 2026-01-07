@@ -60,14 +60,16 @@ internal fun Un7KCMPDataRow(
     onResizeStart:(Int)->Unit,
     onResizeEnd:()->Unit,
     onDividerHovered: (index: Int, indexY: Int) -> Unit,
-    onDividerHoverExit: () -> Unit
+    onDividerHoverExit: () -> Unit,
+    heightColumnData:Dp,
+    widthBorderStroke:Dp
 
 ){
     val density = LocalDensity.current.density
     val paddingDataRow = remember { PaddingValues(top = 2.dp) }
-    val borderStrokeLightGray = remember {BorderStroke(width = 1.dp, color = Color.LightGray)}
+    val borderStrokeLightGray = remember {BorderStroke(width = widthBorderStroke, color = Color.LightGray)}
     val borderShapeIn = remember{RoundedCornerShape(0.dp)}
-    val heightDataRow = remember{ 30.dp }
+
 
     val backgroundColor = if(dataIndex%2 == 0){
         evenDataRowBackgroundColor ?: dataRowBackgroundColor
@@ -85,7 +87,7 @@ internal fun Un7KCMPDataRow(
 
             Row(
                 modifier = Modifier.background(color = backgroundColor)
-                    .width(widthRowNumColumn).height(heightDataRow)
+                    .width(widthRowNumColumn).height(heightColumnData)
                     .border(borderStrokeLightGray, shape = borderShapeIn),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically,
@@ -116,7 +118,7 @@ internal fun Un7KCMPDataRow(
                     .zIndex(zIndex)
                     .background(color = backgroundColor)
                     .width(columnsAreaWidth * columnWeights.getOrElse(index) { 0f })
-                    .height(heightDataRow)
+                    .height(heightColumnData)
                     .offset { columnOffset ?: IntOffset.Zero }
                     .alpha(animatedAlpha)
                     .border(borderStrokeLightGray, shape = borderShapeIn),
@@ -156,7 +158,7 @@ internal fun Un7KCMPDataRow(
 
                 VerticalDivider(
                     modifier = Modifier
-                        .height(heightDataRow)
+                        .height(heightColumnData)
                         .width(widthDividerThickness) // Give it a clear width for interaction
                         .draggable(
                             orientation = Orientation.Horizontal,

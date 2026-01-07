@@ -23,8 +23,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.ArrowDropUp
-import androidx.compose.material.icons.filled.ImportExport
-import androidx.compose.material.icons.filled.SwapVert
 import androidx.compose.material.icons.filled.UnfoldMore
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -40,7 +38,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
@@ -74,9 +71,10 @@ internal fun Un7KCMPHeaderRow(
     onDividerHovered: (index: Int, indexY: Int) -> Unit,
     onDividerHoverExit: () -> Unit,
     onDragColumn:(Int, IntOffset)->Unit,
+    heightColumnHeader:Dp,
+    widthBorderStroke:Dp
 ){
     val density = LocalDensity.current.density
-    val heightColumnHeader = remember{ 36.dp }
     val heightColumnHeaderDivider = remember{ 30.dp }
 
     Row(
@@ -90,7 +88,7 @@ internal fun Un7KCMPHeaderRow(
                     .background(color = headerRowBackgroundColor)
                     .height(heightColumnHeader)
                     .width(widthRowNumColumn)
-                    .border(border = BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.secondaryFixedDim),
+                    .border(border = BorderStroke(width = widthBorderStroke, color = MaterialTheme.colorScheme.secondaryFixedDim),
                         shape = RoundedCornerShape(2.dp)),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically,

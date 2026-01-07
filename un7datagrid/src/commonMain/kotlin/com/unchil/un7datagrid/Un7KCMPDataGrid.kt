@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -102,6 +103,10 @@ fun Un7KCMPDataGrid(
     val hoveredOffsetX = remember { mutableStateOf(0.dp) }
     val hoveredOffsetY = remember { mutableStateOf(0.dp) }
     val onePageMinColumnWidth = remember { 150.dp }
+
+    val heightColumnHeader = 36.dp
+    val heightColumnData = 30.dp
+    val widthBorderStroke = 1.dp
 
     val maxWidthInDp = remember { mutableStateOf(0.dp) }
     val maxHeightInDp = remember { mutableStateOf(0.dp) }
@@ -270,15 +275,33 @@ fun Un7KCMPDataGrid(
 
     val currentDpY:(Int)->Dp = {index ->
         var currentOffsetY = 0.dp
-        val borderStrokeDp = 2.dp
-        //val heightDataRow = remember{ 30.dp }   val heightColumnHeader = remember{ 36.dp }
-        // val borderStrokeLightGray = remember {BorderStroke(width = 1.dp, color = Color.LightGray)}
+        val borderStrokeDp = widthBorderStroke * 2
         if(index != -1 ) {
             for (i in 0..index) {
-                currentOffsetY += (if(i==0) 36.dp else 30.dp) + borderStrokeDp
+                currentOffsetY += (if(i==0) heightColumnHeader else heightColumnData) + borderStrokeDp
             }
         }
-        currentOffsetY
+        if(isVisibleColumnHeader.value){
+            currentOffsetY
+        } else {
+            currentOffsetY - heightColumnHeader
+        }
+    }
+
+    val heightVerticalDivider:(Int)->Dp = { count ->
+        var currentOffsetY = 0.dp
+        val borderStrokeDp = widthBorderStroke * 2
+
+        for (i in 1..count) {
+            currentOffsetY += heightColumnData + borderStrokeDp
+        }
+
+        if(isVisibleColumnHeader.value){
+            currentOffsetY + heightColumnHeader
+        } else {
+            currentOffsetY
+        }
+
     }
 
     val onResizeStart = { index:Int ->
@@ -441,7 +464,9 @@ fun Un7KCMPDataGrid(
                                 onResizeEnd,
                                 onDividerHovered,
                                 onDividerHoverExit,
-                                onDragColumn
+                                onDragColumn,
+                                heightColumnHeader,
+                                widthBorderStroke
                             )
                         }//AnimatedVisibility
                     }//stickyHeader
@@ -470,7 +495,9 @@ fun Un7KCMPDataGrid(
                             onResizeStart,
                             onResizeEnd,
                             onDividerHovered,
-                            onDividerHoverExit
+                            onDividerHoverExit,
+                            heightColumnData,
+                            widthBorderStroke
                         )
                     }
 
@@ -484,13 +511,15 @@ fun Un7KCMPDataGrid(
                     val offsetValueY =  hoveredOffsetY.value + (iconWidth/3 )
                     val scaleValue = if(isResizing.value) 1.0f else 1.1f
                     val bgColor = if(isResizing.value) Color.Transparent else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
+                    val rowCount: Int = if( pagingData.values.first().size  < pageSize) pagingData.values.first().size else pageSize
 
                     if(isCurrentHovered.value){
                         VerticalDivider(
                             modifier = Modifier
-                                .fillMaxHeight().padding(vertical = 6.dp)
-                                .offset(x = offsetValueX ), // offset 상태에 따라 위치 변경
-                            color =  Color.LightGray ,
+                                .height(heightVerticalDivider(rowCount))
+                                .padding(vertical = 4.dp)
+                                .offset(x = offsetValueX ),
+                            color =  Color.Gray.copy(alpha = 0.5f) ,
                             thickness = widthDividerThickness
                         )
                     }
