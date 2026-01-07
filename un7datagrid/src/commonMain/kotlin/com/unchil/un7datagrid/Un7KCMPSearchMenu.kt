@@ -52,25 +52,32 @@ internal fun Un7KCMPSearchMenu(
     onFilter: (String, String, String)-> Unit,
     headerRowContentColor: Color?
 ) {
-
     var expanded by remember { mutableStateOf(false) }
     val filterText = remember { mutableStateOf("") }
-
-    val operatorText = remember { mutableStateOf("Select..." ) }
+    val operatorConstText = "Select..."
+    val operatorText = remember { mutableStateOf(operatorConstText ) }
     val operatorLabel:String = remember { "Operator" }
-
     val scrollState = remember { ScrollState(0) }
     var expandedOperator by remember { mutableStateOf(false) }
+    val dropDownWidth = 200.dp
+    val dropDownHeight = if (columnInfo?.dataType.equals("Boolean")) 100.dp else 150.dp
+    val textFieldHorizontalPadding = 6.dp
 
     val onSearch: () -> Unit = {
-        if(!operatorText.value.equals("Select...")){
+        if(!operatorText.value.equals(operatorConstText)){
             onFilter.invoke(columnName, filterText.value, operatorText.value)
             expanded = false
             filterText.value = ""
-            operatorText.value =  "Select..."
+            operatorText.value =  operatorConstText
         }
     }
 
+    val onDismiss:() -> Unit = {
+        expanded = false
+        expandedOperator = false
+        filterText.value = ""
+        operatorText.value =  operatorConstText
+    }
 
     Box(
         contentAlignment = Alignment.Center,
@@ -84,11 +91,8 @@ internal fun Un7KCMPSearchMenu(
 
         DropdownMenu(
             expanded = expanded,
-            onDismissRequest = {
-                expanded = false
-                filterText.value = ""
-            },
-            modifier = Modifier.width(180.dp)
+            onDismissRequest = onDismiss,
+            modifier = Modifier.width(dropDownWidth)
                 .background(color=MaterialTheme.colorScheme.secondaryContainer),
             border = BorderStroke(1.dp, color=MaterialTheme.colorScheme.secondaryFixedDim)
         ) {
@@ -98,7 +102,7 @@ internal fun Un7KCMPSearchMenu(
                 Box(contentAlignment = Alignment.Center){
 
                     OutlinedTextField(
-                        modifier = Modifier.padding(horizontal = 8.dp),
+                        modifier = Modifier.padding(horizontal = textFieldHorizontalPadding),
                         value = operatorText.value,
                         readOnly = true,
                         onValueChange = { operatorText.value = it },
@@ -115,9 +119,9 @@ internal fun Un7KCMPSearchMenu(
 
                     DropdownMenu(
                         expanded = expandedOperator,
-                        onDismissRequest = { expandedOperator = false },
+                        onDismissRequest = onDismiss,
                         scrollState = scrollState,
-                        modifier = Modifier.width(200.dp).height(160.dp)
+                        modifier = Modifier.width(dropDownWidth).height(dropDownHeight)
                             .background(color=MaterialTheme.colorScheme.secondaryContainer),
                         border = BorderStroke(1.dp, color=MaterialTheme.colorScheme.secondaryFixedDim)
                     ) {
@@ -187,10 +191,10 @@ internal fun Un7KCMPSearchMenu(
                 }
 
                 columnInfo?.let {
-                    if(it.dataType != "Boolean" && !operatorText.value.equals("Select...")){
+                    if(it.dataType != "Boolean" && !operatorText.value.equals(operatorConstText)){
                         OutlinedTextField(
                             modifier = Modifier
-                                .padding(horizontal = 8.dp)
+                                .padding(horizontal = textFieldHorizontalPadding)
                                 .onKeyEvent { event ->
                                     // 데스크탑 및 하드웨어 키보드의 Enter 키 입력을 처리합니다.
                                     if (event.key == Key.Enter && event.type == KeyEventType.KeyDown) {

@@ -110,17 +110,17 @@ internal fun Un7KCMPDataRow(
         pagingData.keys.forEachIndexed { index, columnName ->
 
             val columnOffset = columnOffsetList.getOrNull(index)
-            val animatedAlpha by animateFloatAsState(if (columnOffset == IntOffset.Zero) 1f else 0.8f)
+            val animatedAlpha by animateFloatAsState(if (columnOffset == IntOffset.Zero) 1f else 0.5f)
             val zIndex = if (columnOffset == IntOffset.Zero) 0f else 1f
             Row(
                 modifier = Modifier
                     .zIndex(zIndex)
                     .background(color = backgroundColor)
-                    .width(columnsAreaWidth * columnWeights.getOrElse(index) { 0f }).height(heightDataRow)
+                    .width(columnsAreaWidth * columnWeights.getOrElse(index) { 0f })
+                    .height(heightDataRow)
                     .offset { columnOffset ?: IntOffset.Zero }
                     .alpha(animatedAlpha)
-                    .border(borderStrokeLightGray, shape = borderShapeIn)
-                ,
+                    .border(borderStrokeLightGray, shape = borderShapeIn),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically,
             ) {

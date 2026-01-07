@@ -111,7 +111,7 @@ internal fun Un7KCMPHeaderRow(
         columnNames.forEachIndexed { index, columnName ->
 
             val offset = remember { mutableStateOf(IntOffset.Zero) }
-            val animatedAlpha by animateFloatAsState(if (offset.value == IntOffset.Zero) 1f else 0.8f)
+            val animatedAlpha by animateFloatAsState(if (offset.value == IntOffset.Zero) 1f else 0.5f)
             val onDragEnd: () -> Unit = {
                 // --- 드롭 시점에 구분선 위치를 동적으로 계산 ---
                 val currentDividerPositions = mutableListOf<Dp>()
@@ -159,7 +159,7 @@ internal fun Un7KCMPHeaderRow(
                                 onDragColumn(index, IntOffset.Zero)
                             },
                             onDrag = { change, dragAmount ->
-                                change.consume()
+                                change.consume()// 이벤트를 소비하여 다른 제스처와 충돌 방지
                                 offset.value += IntOffset( dragAmount.x.roundToInt(), 0)
                                 onDragColumn(index, offset.value)
                             }
