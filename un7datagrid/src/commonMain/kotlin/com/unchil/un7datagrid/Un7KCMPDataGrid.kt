@@ -68,50 +68,51 @@ fun Un7KCMPDataGrid(
     data:Map<String, List<Any?>>,
     config: Un7KCMPDataGridConfig = Un7KCMPDataGridConfig()
 ){
+
     val coroutineScope = rememberCoroutineScope()
     val viewModel = remember(data) { Un7KCMPDataGridViewModel(data, config) }
-    val pageSize by viewModel.pageSize.collectAsState()
     val lastPageIndex by viewModel.lastPageIndex.collectAsState()
-    val columnNames by viewModel.columnNames.collectAsState()
+    val isOnePageNav = remember { mutableStateOf(viewModel.selectPageSizeList.lastIndex == viewModel.selectPageSizeIndex.value) }
     val dataRows by viewModel.dataRows.collectAsState()
-    val selectedColumns by viewModel.selectedColumns.collectAsState()
+    val pageSize by viewModel.pageSize.collectAsState()
+    val columnNames by viewModel.columnNames.collectAsState()
     val selectPageSizeIndex by viewModel.selectPageSizeIndex.collectAsState()
+    val borderStrokeTransparent = remember {BorderStroke(width = 0.dp, color = Color.Transparent)}
+    val borderShapeOut = remember{RoundedCornerShape(0.dp)}
+    val paddingHorizontalPager = remember { PaddingValues(0.dp)}
+    val borderShapeIn = remember{RoundedCornerShape(2.dp)}
+    val paddingMenuPageNavControl = remember{ PaddingValues(all = 10.dp)}
+    val isExpandPageNavControlMenu = rememberSaveable {mutableStateOf(false) }
+    val selectedColumns by viewModel.selectedColumns.collectAsState()
     val columnWeights by viewModel.columnWeights.collectAsState()
+
     val columnOffsetList by viewModel.columnsOffset.collectAsState()
+
     val columnDataSortFlag by viewModel.columnDataSortFlag.collectAsState()
     val isVisibleRowNum = remember { mutableStateOf(config.isVisibilityRowNumber) }
     val isVisibleColumnHeader = remember { mutableStateOf(true) }
     val rowNumColumnName = remember { config.rowNumberColumnName }
-    val isExpandPageNavControlMenu = rememberSaveable {mutableStateOf(false) }
-    val borderStrokeTransparent = remember {BorderStroke(width = 0.dp, color = Color.Transparent)}
-    val borderShapeOut = remember{RoundedCornerShape(0.dp)}
-    val borderShapeIn = remember{RoundedCornerShape(2.dp)}
-    val paddingHorizontalPager = remember { PaddingValues(0.dp)}
     val paddingBoxInHorizontalPager = remember { PaddingValues(2.dp)}
     val paddingLazyColumn = remember { PaddingValues(0.dp)}
     val paddingLazyColumnContent = remember { PaddingValues(4.dp)}
     val paddingMenuGridControl = remember{ PaddingValues(bottom = 80.dp, start = 10.dp)}
-    val paddingMenuPageNavControl = remember{ PaddingValues(all = 10.dp)}
     val widthRowNumColumn = remember{ 60.dp}
     val widthDividerThickness = remember{ 2.dp}
     val isResizing = remember { mutableStateOf(false) }
     var resizeIndicatorOffset by remember { mutableStateOf(0.dp) }
     val resizeMinOffset = remember { mutableStateOf(0.dp) }
     val resizeMaxOffset = remember { mutableStateOf(0.dp) }
-    val isOnePageNav = remember { mutableStateOf(viewModel.selectPageSizeList.lastIndex == viewModel.selectPageSizeIndex.value) }
     val isCurrentHovered = remember { mutableStateOf(false) }
     val hoveredOffsetX = remember { mutableStateOf(0.dp) }
     val hoveredOffsetY = remember { mutableStateOf(0.dp) }
     val onePageMinColumnWidth = remember { 150.dp }
-
     val heightColumnHeader = 36.dp
     val heightColumnData = 30.dp
     val widthBorderStroke = 1.dp
-
     val maxWidthInDp = remember { mutableStateOf(0.dp) }
     val maxHeightInDp = remember { mutableStateOf(0.dp) }
-
     var columnsAreaWidth by remember { mutableStateOf(0.dp) }
+
 
     LaunchedEffect( isVisibleRowNum.value, maxWidthInDp.value){
         columnsAreaWidth = if ( isVisibleRowNum.value) {
@@ -120,7 +121,6 @@ fun Un7KCMPDataGrid(
             maxWidthInDp.value - (widthDividerThickness * (columnNames.size - 1))
         }
     }
-
 
     //--- SnackBar Setting
     val channel = remember { Channel<Int>(Channel.CONFLATED) }
@@ -177,7 +177,6 @@ fun Un7KCMPDataGrid(
     //--- SnackBar Setting
 
     val pagerState = rememberPagerState( pageCount = { lastPageIndex +1 })
-
     val onPageNavHandler:(PageNav)->Unit = { pageNav ->
         when(pageNav){
             PageNav.Prev -> {
@@ -203,38 +202,9 @@ fun Un7KCMPDataGrid(
         }
     }
 
-    val onUpdateColumnsOrder:(Int, Int)->Unit = { beforeIndex, targetIndex ->
-        viewModel.onEvent(Un7KCMPDataGridViewModel.Event.UpdateColumnsOrder(beforeIndex, targetIndex))
-    }
-
-    val onFilter:(columnName:String, searchText:String, operator:String) -> Unit ={ columnName, searchText, operator ->
-
-        viewModel.onEvent(Un7KCMPDataGridViewModel.Event.Filter(columnName, searchText, operator){
-            coroutineScope.launch {
-                pagerState.animateScrollToPage(0)
-            }
-            channel.trySend(snackBarChannelList.first { item ->
-                item.channelType == SnackBarChannelType.SEARCH_RESULT
-            }.channel)
-        })
-
-
-    }
-
-    val onColumnSort:( Int, Int, String) -> Unit = { columnIndex, sortType, columnName ->
-        viewModel.onEvent(Un7KCMPDataGridViewModel.Event.ColumnSort(columnIndex, sortType, columnName ))
-    }
-
-    val onUpdateColumns:()->Unit = {
-        viewModel.onEvent(Un7KCMPDataGridViewModel.Event.UpdateColumns)
-    }
-
     val onChangePageSize:(Int)->Unit = { pageSize ->
-
         viewModel.onEvent(Un7KCMPDataGridViewModel.Event.ChangePageSize(pageSize){ resultCnt ->
-
             isOnePageNav.value = resultCnt >= dataRows.size
-
             coroutineScope.launch {
                 pagerState.animateScrollToPage(0)
             }
@@ -246,20 +216,39 @@ fun Un7KCMPDataGrid(
 
     val onRefresh:()-> Unit = {
         viewModel.onEvent(Un7KCMPDataGridViewModel.Event.Refresh{
+            isOnePageNav.value = viewModel.selectPageSizeList.lastIndex == viewModel.selectPageSizeIndex.value
             coroutineScope.launch {
                 pagerState.animateScrollToPage(0)
             }
             channel.trySend(snackBarChannelList.first { item ->
                 item.channelType == SnackBarChannelType.RELOAD
             }.channel)
-        }
-        )
+        } )
     }
 
+    val onUpdateColumnsOrder:(Int, Int)->Unit = { beforeIndex, targetIndex ->
+        viewModel.onEvent(Un7KCMPDataGridViewModel.Event.UpdateColumnsOrder(beforeIndex, targetIndex))
+    }
+    val onFilter:(columnName:String, searchText:String, operator:String) -> Unit ={ columnName, searchText, operator ->
+        viewModel.onEvent(Un7KCMPDataGridViewModel.Event.Filter(columnName, searchText, operator){
+            isOnePageNav.value = viewModel.pageSize.value >= viewModel.onFilterResultCnt.value
+            coroutineScope.launch {
+                pagerState.animateScrollToPage(0)
+            }
+            channel.trySend(snackBarChannelList.first { item ->
+                item.channelType == SnackBarChannelType.SEARCH_RESULT
+            }.channel)
+        })
+    }
+    val onColumnSort:( Int, Int, String) -> Unit = { columnIndex, sortType, columnName ->
+        viewModel.onEvent(Un7KCMPDataGridViewModel.Event.ColumnSort(columnIndex, sortType, columnName ))
+    }
+    val onUpdateColumns:()->Unit = {
+        viewModel.onEvent(Un7KCMPDataGridViewModel.Event.UpdateColumns)
+    }
     val onUpdateColumnWeight:(List<Float>)->Unit = { columnsWeight ->
         viewModel.onEvent(Un7KCMPDataGridViewModel.Event.ColumnWeight(columnsWeight))
     }
-
     val currentDp:(Int)->Dp = { index ->
         // 드래그 시작 지점의 절대 위치(offset) 계산
         var currentOffset = 0.dp
@@ -272,9 +261,6 @@ fun Un7KCMPDataGrid(
             currentOffset + (widthDividerThickness * (index+1)) +  widthDividerThickness/2
         }
     }
-
-
-
     val heightVerticalDivider:(Int)->Dp = { count ->
         var currentOffsetY = 0.dp
         val borderStrokeDp = widthBorderStroke * 2
@@ -290,7 +276,6 @@ fun Un7KCMPDataGrid(
         }
 
     }
-
     val onResizeStart = { index:Int ->
         // 최소 너비 제약 조건 정의
         val minWeight = 0.05f
@@ -313,11 +298,9 @@ fun Un7KCMPDataGrid(
         resizeMaxOffset.value = maxOffset
         isResizing.value = true
     }
-
     val onResizeEnd = {
         isResizing.value = false
     }
-
     val onResize = { delta: Float, density:Float, index:Int  ->
 
         resizeIndicatorOffset = (resizeIndicatorOffset +  (delta/density).dp).coerceIn(
@@ -349,58 +332,19 @@ fun Un7KCMPDataGrid(
                 }
         )
     }
-
-
-
     val onDividerHoverExit = {
         isCurrentHovered.value = false
         hoveredOffsetX.value = 0.dp
 
     }
-
     val onDragColumn = { index:Int, offset: IntOffset ->
+        val newList = columnOffsetList.toMutableList().apply {
+            this[index] = offset
+        }
         viewModel.onEvent(Un7KCMPDataGridViewModel.Event.UpdateColumnOffset(
-            columnOffsetList.toMutableList().apply { this[index] = offset  }
+            newList
         ))
     }
-
-
-    val lazyListState =
-        rememberLazyListState(initialFirstVisibleItemIndex = 0)
-
-
-
-    val currentDpY:(Int)->Dp = {index ->
-        var currentOffsetY = 0.dp
-        val borderStrokeDp = widthBorderStroke * 2
-
-        if(index >= 0 ) {
-
-            for (i in 0..index) {
-                currentOffsetY += (if(i==0) heightColumnHeader else heightColumnData) + borderStrokeDp
-            }
-            if(lazyListState.firstVisibleItemIndex > 0 ){
-                // 스크롤되어 보이지 않는 아이템들의 전체 높이를 한 번에 계산하여 뺍니다.
-                val scrolledOutHeight = (heightColumnData + borderStrokeDp) * lazyListState.firstVisibleItemIndex
-                currentOffsetY -= scrolledOutHeight
-            } else{
-                if(!isVisibleColumnHeader.value) currentOffsetY -= heightColumnHeader
-            }
-        }else{
-            if(!isVisibleColumnHeader.value)  currentOffsetY -= heightColumnHeader
-        }
-
-        currentOffsetY
-    }
-
-
-    val onDividerHovered = { index:Int, indexY: Int ->
-        hoveredOffsetX.value = currentDp(index)
-        hoveredOffsetY.value = currentDpY(indexY)
-        isCurrentHovered.value = true
-    }
-
-
 
     val dataGridContent: @Composable ((MutableMap<String, List<Any?>>, Int) -> Unit) = { pagingData, pageIndex ->
 
@@ -412,6 +356,36 @@ fun Un7KCMPDataGrid(
             contentAlignment = Alignment.Center
         ) {
 
+            val lazyListState =
+                rememberLazyListState(initialFirstVisibleItemIndex = 0)
+
+            val currentDpY:(Int)->Dp = {index ->
+                var currentOffsetY = 0.dp
+                val borderStrokeDp = widthBorderStroke * 2
+
+                if(index >= 0 ) {
+                    for (i in 0..index) {
+                        currentOffsetY += (if(i==0) heightColumnHeader else heightColumnData) + borderStrokeDp
+                    }
+                    if(lazyListState.firstVisibleItemIndex > 0 ){
+                        repeat(lazyListState.firstVisibleItemIndex+1){
+                            currentOffsetY -= (heightColumnData + borderStrokeDp)
+                        }
+                        currentOffsetY += heightColumnData/3
+                    } else{
+                        if(!isVisibleColumnHeader.value) currentOffsetY -= heightColumnHeader
+                    }
+                }else{
+                    if(!isVisibleColumnHeader.value)  currentOffsetY -= heightColumnHeader
+                }
+
+                currentOffsetY
+            }
+            val onDividerHovered = { index:Int, indexY: Int ->
+                hoveredOffsetX.value = currentDp(index)
+                hoveredOffsetY.value = currentDpY(indexY)
+                isCurrentHovered.value = true
+            }
 
             val onListNavHandler: (ListNav) -> Unit = { listNav ->
                 when (listNav) {
@@ -623,6 +597,8 @@ fun Un7KCMPDataGrid(
         }// BoxWithConstraints
     }
 
+
+
     Surface(
         tonalElevation = 6.dp,
         shadowElevation = 4.dp,
@@ -684,10 +660,7 @@ fun Un7KCMPDataGrid(
                 )
             }
             //---- Box  PageNavControl
-
         }
-
-
-
     }
+
 }

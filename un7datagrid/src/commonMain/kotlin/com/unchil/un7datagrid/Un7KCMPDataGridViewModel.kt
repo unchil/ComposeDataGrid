@@ -153,42 +153,49 @@ class Un7KCMPDataGridViewModel(val data: Map<String,List<Any?>>, val config: Un7
 
     val onUpdateColumnsOrder:(Int, Int)->Unit = { beforeIndex, targetIndex ->
         // 변경된 리스트로 상태 변수를 업데이트하여 Recomposition을 트리거합니다.
-        val newColumnOrder =  columnNames.value.toMutableList().apply {
-            add(targetIndex, removeAt(beforeIndex))
-        }
-        columnNames.value = newColumnOrder
 
-        val newData = dataRows.value.map { row  ->
-            row.toMutableList().apply {
+
+            val newColumnOrder =  columnNames.value.toMutableList().apply {
                 add(targetIndex, removeAt(beforeIndex))
             }
-        }
-        dataRows.value = newData
+            columnNames.value = newColumnOrder
 
-        val newDataColumnOrderApplied = dataColumnOrderApplied.value.map { row ->
-            row.toMutableList().apply {
+
+            val newData = dataRows.value.map { row  ->
+                row.toMutableList().apply {
+                    add(targetIndex, removeAt(beforeIndex))
+                }
+            }
+            dataRows.value = newData
+
+            val newDataColumnOrderApplied = dataColumnOrderApplied.value.map { row ->
+                row.toMutableList().apply {
+                    add(targetIndex, removeAt(beforeIndex))
+                }
+            }
+            dataColumnOrderApplied.value = newDataColumnOrderApplied
+
+
+
+            val newDataFilterApplied = dataFilterApplied.value.map { row ->
+                row.toMutableList().apply {
+                    add(targetIndex, removeAt(beforeIndex))
+                }
+            }
+
+            dataFilterApplied.value = newDataFilterApplied
+
+            val newWeights = columnWeights.value.toMutableList().apply {
                 add(targetIndex, removeAt(beforeIndex))
             }
-        }
-        dataColumnOrderApplied.value = newDataColumnOrderApplied
+            columnWeights.value = newWeights
 
-        val newDataFilterApplied = dataFilterApplied.value.map { row ->
-            row.toMutableList().apply {
-                add(targetIndex, removeAt(beforeIndex))
+            val beforeSortType = columnDataSortFlag.value[beforeIndex]
+            val newSortFlag =  MutableList(columnDataSortFlag.value.size) { 0 }.apply {
+                this[targetIndex] = beforeSortType
             }
-        }
-        dataFilterApplied.value = newDataFilterApplied
+            columnDataSortFlag.value = newSortFlag
 
-        val newWeights = columnWeights.value.toMutableList().apply {
-            add(targetIndex, removeAt(beforeIndex))
-        }
-        columnWeights.value = newWeights
-
-        val beforeSortType = columnDataSortFlag.value[beforeIndex]
-        val newSortFlag =  MutableList(columnDataSortFlag.value.size) { 0 }.apply {
-            this[targetIndex] = beforeSortType
-        }
-        columnDataSortFlag.value = newSortFlag
 
     }
 
@@ -682,6 +689,7 @@ class Un7KCMPDataGridViewModel(val data: Map<String,List<Any?>>, val config: Un7
         dataColumnOrderApplied.value =  dataRows.value
         columnNames.value = data.keys.toList()
         columnWeights.value = List(columnNames.value.size) { 1f / columnNames.value.size  }
+        columnsOffset.value = List(columnNames.value.size){ IntOffset.Zero }
         columnDataSortFlag.value = List(columnNames.value.size) { 0  }
         lastPageIndex.value = getLastPageIndex(dataRows.value.size, pageSize.value)
         pageSize.value = if(selectPageSizeList.get(selectPageSizeIndex.value).equals("All")){
@@ -689,6 +697,7 @@ class Un7KCMPDataGridViewModel(val data: Map<String,List<Any?>>, val config: Un7
         }else {
             selectPageSizeList.get(selectPageSizeIndex.value).toInt()
         }
+        dataFilterApplied.value = dataRows.value
 
         closerFunc()
     }
