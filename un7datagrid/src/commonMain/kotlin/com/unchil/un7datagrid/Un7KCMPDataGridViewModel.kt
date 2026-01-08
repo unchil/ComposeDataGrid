@@ -154,12 +154,11 @@ class Un7KCMPDataGridViewModel(val data: Map<String,List<Any?>>, val config: Un7
     val onUpdateColumnsOrder:(Int, Int)->Unit = { beforeIndex, targetIndex ->
         // 변경된 리스트로 상태 변수를 업데이트하여 Recomposition을 트리거합니다.
 
-
+        try {
             val newColumnOrder =  columnNames.value.toMutableList().apply {
                 add(targetIndex, removeAt(beforeIndex))
             }
             columnNames.value = newColumnOrder
-
 
             val newData = dataRows.value.map { row  ->
                 row.toMutableList().apply {
@@ -174,8 +173,6 @@ class Un7KCMPDataGridViewModel(val data: Map<String,List<Any?>>, val config: Un7
                 }
             }
             dataColumnOrderApplied.value = newDataColumnOrderApplied
-
-
 
             val newDataFilterApplied = dataFilterApplied.value.map { row ->
                 row.toMutableList().apply {
@@ -196,6 +193,9 @@ class Un7KCMPDataGridViewModel(val data: Map<String,List<Any?>>, val config: Un7
             }
             columnDataSortFlag.value = newSortFlag
 
+        } catch (e: Exception){
+            val msg = e.stackTraceToString()
+        }
 
     }
 
