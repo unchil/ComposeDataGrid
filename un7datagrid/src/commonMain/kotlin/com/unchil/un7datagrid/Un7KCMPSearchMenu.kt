@@ -54,9 +54,9 @@ internal fun Un7KCMPSearchMenu(
 ) {
     var expanded by remember { mutableStateOf(false) }
     val filterText = remember { mutableStateOf("") }
-    val operatorConstText = "Select..."
+    val operatorConstText = "Operator..."
     val operatorText = remember { mutableStateOf(operatorConstText ) }
-    val operatorLabel:String = remember { "Operator" }
+    val operatorLabel:String = remember { (columnInfo?.dataType ?: "") + " Type" }
     val scrollState = remember { ScrollState(0) }
     var expandedOperator by remember { mutableStateOf(false) }
     val dropDownWidth = 200.dp
