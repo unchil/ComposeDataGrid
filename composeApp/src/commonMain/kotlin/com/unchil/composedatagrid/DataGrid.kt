@@ -169,12 +169,15 @@ fun DataGridWithViewModel(
                     Un7KCMPDataGrid(
                         modifier,
                         Pair(columnNames.value, data.value).toMap(),
+                        /*
                         Un7KCMPDataGridConfig(
                             dataRowBackgroundColor = MaterialTheme.colorScheme.surface ,
                             dataRowContentColor = Color.DarkGray ,
                             oddDataRowBackgroundColor = Color.White,
                             evenDataRowBackgroundColor = Color(0xFFF5F5F5)
                         )
+
+                         */
                     )
                 }
 

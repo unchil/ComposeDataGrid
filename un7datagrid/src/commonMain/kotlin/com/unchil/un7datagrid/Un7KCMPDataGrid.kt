@@ -187,10 +187,10 @@ fun Un7KCMPDataGrid(
 
     val dataGridContent: @Composable ((MutableMap<String, List<Any?>>, Int) -> Unit) = { pagingData, pageIndex ->
 
-        val columnWeights by viewModel.columnWeights.collectAsState()
         val selectedColumns by viewModel.selectedColumns.collectAsState()
         val columnOffsetList by viewModel.columnsOffset.collectAsState()
         val columnDataSortFlag by viewModel.columnDataSortFlag.collectAsState()
+        val columnWeights by viewModel.columnWeights.collectAsState()
         val isVisibleRowNum = remember { mutableStateOf(config.isVisibilityRowNumber) }
         val isVisibleColumnHeader = remember { mutableStateOf(true) }
         val rowNumColumnName = remember { config.rowNumberColumnName }
@@ -222,8 +222,9 @@ fun Un7KCMPDataGrid(
                 maxWidthInDp.value - (widthDividerThickness * (columnNames.size - 1))
             }
         }
-        val onUpdateColumnsOrder:(Int, Int)->Unit = { beforeIndex, targetIndex ->
-            viewModel.onEvent(Un7KCMPDataGridViewModel.Event.UpdateColumnsOrder(beforeIndex, targetIndex))
+
+        val onUpdateColumnsOrder:(Float, Float, Int, Int)->Unit = { totalWidthPx, density, index, columnsAreaWidth ->
+            viewModel.onEvent(Un7KCMPDataGridViewModel.Event.UpdateColumnsOrder(totalWidthPx, density, index, columnsAreaWidth ))
         }
         val onFilter:(columnName:String, searchText:String, operator:String) -> Unit ={ columnName, searchText, operator ->
             viewModel.onEvent(Un7KCMPDataGridViewModel.Event.Filter(columnName, searchText, operator){
@@ -239,6 +240,7 @@ fun Un7KCMPDataGrid(
         val onColumnSort:( Int, Int, String) -> Unit = { columnIndex, sortType, columnName ->
             viewModel.onEvent(Un7KCMPDataGridViewModel.Event.ColumnSort(columnIndex, sortType, columnName ))
         }
+
         val onUpdateColumns:()->Unit = {
             viewModel.onEvent(Un7KCMPDataGridViewModel.Event.UpdateColumns)
         }
@@ -435,7 +437,7 @@ fun Un7KCMPDataGrid(
                                 columnsAreaWidth,
                                 widthDividerThickness,
                                 widthRowNumColumn,
-                                pagingData.keys.toList(),
+                                columnNames,
                                 columnWeights,
                                 onUpdateColumnsOrder,
                                 onFilter,

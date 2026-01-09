@@ -58,7 +58,7 @@ internal fun Un7KCMPHeaderRow(
     widthRowNumColumn: Dp,
     columnNames:List<String>,
     columnWeights:List<Float>,
-    onUpdateColumnsOrder:(Int, Int)->Unit,
+    onUpdateColumnsOrder:(Float, Float, Int, Int)->Unit,
     onFilter:(String, String, String) -> Unit,
     onColumnSort:(Int, Int, String) -> Unit,
     columnDataSortFlag: List<Int>,
@@ -111,34 +111,11 @@ internal fun Un7KCMPHeaderRow(
 
             val offset = remember { mutableStateOf(IntOffset.Zero) }
             val animatedAlpha by animateFloatAsState(if (offset.value == IntOffset.Zero) 1f else 0.5f)
+
             val onDragEnd: () -> Unit = {
-                // --- 드롭 시점에 구분선 위치를 동적으로 계산 ---
-                val currentDividerPositions = mutableListOf<Dp>()
-                var accumulatedWidth = 0f
                 val totalWidthPx =  (density * columnsAreaWidth.value)
-                // divider 의 갯수는 column 갯수 - 1
-                columnWeights.dropLast(1).forEach { weight ->
-                    accumulatedWidth += totalWidthPx * weight
-                    currentDividerPositions.add((accumulatedWidth / density).dp)
-                }
-                // -----------------------------------------
-
-
-                var startOffsetPx = 0f
-                for (i in 0 until index) {
-                    startOffsetPx += totalWidthPx * columnWeights[i]
-                }
-
-                val currentCellWidthPx = totalWidthPx * columnWeights[index]
-                val dropPositionPx = startOffsetPx + offset.value.x + (currentCellWidthPx / 2)
-                val targetIndex = findIndexFromDividerPositions(
-                    (dropPositionPx / density).dp,
-                    currentDividerPositions
-                )
-
-                onUpdateColumnsOrder( index, targetIndex )
+                onUpdateColumnsOrder(totalWidthPx, density, index, offset.value.x)
                 offset.value = IntOffset.Zero
-
                 onDragColumn(index, IntOffset.Zero)
             }
 

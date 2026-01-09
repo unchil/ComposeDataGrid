@@ -4,9 +4,10 @@ package com.unchil.un7datagrid
 
 import androidx.compose.runtime.InternalComposeApi
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.flow.MutableStateFlow
 
 class Un7KCMPDataGridViewModel(val data: Map<String,List<Any?>>, val config: Un7KCMPDataGridConfig) {
@@ -90,12 +91,6 @@ class Un7KCMPDataGridViewModel(val data: Map<String,List<Any?>>, val config: Un7
             is Event.UpdateColumns -> {
                 onUpdateColumns()
             }
-            is Event.UpdateColumnsOrder -> {
-                onUpdateColumnsOrder(
-                    event.beforeIndex,
-                    event.targetIndex
-                )
-            }
             is Event.ChangePageSize -> {
                 onChangePageSize(
                     event.pageSize,
@@ -125,8 +120,19 @@ class Un7KCMPDataGridViewModel(val data: Map<String,List<Any?>>, val config: Un7
             is Event.UpdateColumnOffset -> {
                 onUpdateColumnOffset( event.offsetList)
             }
+
+            is Event.UpdateColumnsOrder -> {
+                onUpdateColumnsOrder(
+                    event.totalWidthPx,
+                    event.density,
+                    event.index,
+                    event.offsetX
+                )
+            }
         }
     }
+
+
 
     val onUpdateColumnOffset = { offsetList: List<IntOffset> ->
         columnsOffset.value = offsetList
@@ -140,54 +146,74 @@ class Un7KCMPDataGridViewModel(val data: Map<String,List<Any?>>, val config: Un7
         Pair(selectedColumns.value, data.toMutableMap()).toSelectedColumnsData().let { result ->
 
             columnNames.value = result.first
-            dataRows.value = result.second
+            columnWeights.value = List( result.first.size) { 1f / result.first.size }
+            columnsOffset.value = List( result.first.size){ IntOffset.Zero }
 
+            dataRows.value = result.second
             dataColumnOrderApplied.value = result.second
             dataFilterApplied.value = result.second
-            isFilteringData.value = false
 
-            columnWeights.value = List(columnNames.value.size) { 1f / columnNames.value.size }
-            columnsOffset.value = List(columnNames.value.size){ IntOffset.Zero }
+            isFilteringData.value = false
         }
     }
 
-    val onUpdateColumnsOrder:(Int, Int)->Unit = { beforeIndex, targetIndex ->
-        // 변경된 리스트로 상태 변수를 업데이트하여 Recomposition을 트리거합니다.
+    val onUpdateColumnsOrder:(Float, Float, Int, Int)-> Unit = {  totalWidthPx, density, index, offsetX->
+        val currentDividerPositions = mutableListOf<Dp>()
+        var accumulatedWidth = 0f
+        // divider 의 갯수는 column 갯수 - 1
+        columnWeights.value.dropLast(1).forEach { weight ->
+            accumulatedWidth += totalWidthPx * weight
+            currentDividerPositions.add((accumulatedWidth / density).dp)
+        }
+        // -----------------------------------------
+        var startOffsetPx = 0f
+        for (i in 0 until index) {
+            startOffsetPx += totalWidthPx * columnWeights.value[i]
+        }
+        val currentCellWidthPx = totalWidthPx * columnWeights.value[index]
+        val dropPositionPx = startOffsetPx + offsetX + (currentCellWidthPx / 2)
+        val targetIndex = findIndexFromDividerPositions(
+            (dropPositionPx / density).dp,
+            currentDividerPositions
+        )
 
         try {
             val newColumnOrder =  columnNames.value.toMutableList().apply {
-                add(targetIndex, removeAt(beforeIndex))
+                add(targetIndex, removeAt(index))
             }
             columnNames.value = newColumnOrder
 
+
+            val newWeights = columnWeights.value.toMutableList().apply {
+                add(targetIndex, removeAt(index))
+            }
+            columnWeights.value = newWeights
+
+
+
             val newData = dataRows.value.map { row  ->
                 row.toMutableList().apply {
-                    add(targetIndex, removeAt(beforeIndex))
+                    add(targetIndex, removeAt(index))
                 }
             }
             dataRows.value = newData
 
             val newDataColumnOrderApplied = dataColumnOrderApplied.value.map { row ->
                 row.toMutableList().apply {
-                    add(targetIndex, removeAt(beforeIndex))
+                    add(targetIndex, removeAt(index))
                 }
             }
             dataColumnOrderApplied.value = newDataColumnOrderApplied
 
             val newDataFilterApplied = dataFilterApplied.value.map { row ->
                 row.toMutableList().apply {
-                    add(targetIndex, removeAt(beforeIndex))
+                    add(targetIndex, removeAt(index))
                 }
             }
 
             dataFilterApplied.value = newDataFilterApplied
 
-            val newWeights = columnWeights.value.toMutableList().apply {
-                add(targetIndex, removeAt(beforeIndex))
-            }
-            columnWeights.value = newWeights
-
-            val beforeSortType = columnDataSortFlag.value[beforeIndex]
+            val beforeSortType = columnDataSortFlag.value[index]
             val newSortFlag =  MutableList(columnDataSortFlag.value.size) { 0 }.apply {
                 this[targetIndex] = beforeSortType
             }
@@ -198,6 +224,7 @@ class Un7KCMPDataGridViewModel(val data: Map<String,List<Any?>>, val config: Un7
         }
 
     }
+
 
     val onChangePageSize:(Int, (Int)->Unit)->Unit = { size, closerFunc ->
         val result = if(size == 0){
@@ -712,9 +739,12 @@ class Un7KCMPDataGridViewModel(val data: Map<String,List<Any?>>, val config: Un7
         object UpdateColumns:Event()
 
         data class  UpdateColumnsOrder(
-            val beforeIndex:Int,
-            val targetIndex:Int
+            val totalWidthPx:Float,
+            val density:Float,
+            val index:Int,
+            val offsetX:Int
         ): Event()
+
 
 
         data class ChangePageSize(
