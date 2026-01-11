@@ -39,6 +39,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextAlign
@@ -110,7 +111,6 @@ internal fun Un7KCMPHeaderRow(
         columnNames.forEachIndexed { index, columnName ->
 
             val offset = remember { mutableStateOf(IntOffset.Zero) }
-            val animatedAlpha by animateFloatAsState(if (offset.value == IntOffset.Zero) 1f else 0.5f)
 
             val onDragEnd: () -> Unit = {
                 onUpdateColumnsOrder(columnsAreaWidth, density, index, offset.value.x)
@@ -139,7 +139,9 @@ internal fun Un7KCMPHeaderRow(
                             }
                         )}
                     .offset { offset.value }
-                    .alpha(animatedAlpha)
+                    .graphicsLayer {
+                        alpha = if ( offset.value  == IntOffset.Zero) 1f else 0.5f
+                    }
                     .border(
                         border = BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.secondaryFixedDim),
                         shape = RoundedCornerShape(2.dp)),
