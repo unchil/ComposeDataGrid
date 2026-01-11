@@ -118,12 +118,12 @@ class Un7KCMPDataGridViewModel(val data: Map<String,List<Any?>>, val config: Un7
            }
 
             is Event.UpdateColumnOffset -> {
-                onUpdateColumnOffset( event.offsetList)
+                onUpdateColumnOffset( event.index, event.offset)
             }
 
             is Event.UpdateColumnsOrder -> {
                 onUpdateColumnsOrder(
-                    event.totalWidthPx,
+                    event.columnsAreaWidth,
                     event.density,
                     event.index,
                     event.offsetX
@@ -134,8 +134,11 @@ class Un7KCMPDataGridViewModel(val data: Map<String,List<Any?>>, val config: Un7
 
 
 
-    val onUpdateColumnOffset = { offsetList: List<IntOffset> ->
-        columnsOffset.value = offsetList
+    val onUpdateColumnOffset = { index:Int, offset: IntOffset->
+        val newList = columnsOffset.value.toMutableList().apply {
+            this[index] = offset
+        }
+        columnsOffset.value = newList
     }
 
     val onColumnWeight:(List<Float>)->Unit = { it ->
@@ -157,7 +160,8 @@ class Un7KCMPDataGridViewModel(val data: Map<String,List<Any?>>, val config: Un7
         }
     }
 
-    val onUpdateColumnsOrder:(Float, Float, Int, Int)-> Unit = {  totalWidthPx, density, index, offsetX->
+    val onUpdateColumnsOrder:(Dp, Float, Int, Int)-> Unit = {  columnsAreaWidth, density, index, offsetX->
+        val totalWidthPx =  (density * columnsAreaWidth.value)
         val currentDividerPositions = mutableListOf<Dp>()
         var accumulatedWidth = 0f
         // divider 의 갯수는 column 갯수 - 1
@@ -218,6 +222,11 @@ class Un7KCMPDataGridViewModel(val data: Map<String,List<Any?>>, val config: Un7
                 this[targetIndex] = beforeSortType
             }
             columnDataSortFlag.value = newSortFlag
+
+            val newList = columnsOffset.value.toMutableList().apply {
+                this[index] = IntOffset.Zero
+            }
+            columnsOffset.value = newList
 
         } catch (e: Exception){
             val msg = e.stackTraceToString()
@@ -739,7 +748,7 @@ class Un7KCMPDataGridViewModel(val data: Map<String,List<Any?>>, val config: Un7
         object UpdateColumns:Event()
 
         data class  UpdateColumnsOrder(
-            val totalWidthPx:Float,
+            val columnsAreaWidth:Dp,
             val density:Float,
             val index:Int,
             val offsetX:Int
@@ -770,7 +779,8 @@ class Un7KCMPDataGridViewModel(val data: Map<String,List<Any?>>, val config: Un7
         ):Event()
 
         data class UpdateColumnOffset(
-            val offsetList: List<IntOffset>
+            val index:Int,
+            val offset: IntOffset
         ):Event()
     }
 

@@ -58,7 +58,7 @@ internal fun Un7KCMPHeaderRow(
     widthRowNumColumn: Dp,
     columnNames:List<String>,
     columnWeights:List<Float>,
-    onUpdateColumnsOrder:(Float, Float, Int, Int)->Unit,
+    onUpdateColumnsOrder:(Dp, Float, Int, Int)->Unit,
     onFilter:(String, String, String) -> Unit,
     onColumnSort:(Int, Int, String) -> Unit,
     columnDataSortFlag: List<Int>,
@@ -113,10 +113,8 @@ internal fun Un7KCMPHeaderRow(
             val animatedAlpha by animateFloatAsState(if (offset.value == IntOffset.Zero) 1f else 0.5f)
 
             val onDragEnd: () -> Unit = {
-                val totalWidthPx =  (density * columnsAreaWidth.value)
-                onUpdateColumnsOrder(totalWidthPx, density, index, offset.value.x)
+                onUpdateColumnsOrder(columnsAreaWidth, density, index, offset.value.x)
                 offset.value = IntOffset.Zero
-                onDragColumn(index, IntOffset.Zero)
             }
 
 

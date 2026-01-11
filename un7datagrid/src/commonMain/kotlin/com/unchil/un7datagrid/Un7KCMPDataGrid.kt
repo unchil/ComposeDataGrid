@@ -223,8 +223,8 @@ fun Un7KCMPDataGrid(
             }
         }
 
-        val onUpdateColumnsOrder:(Float, Float, Int, Int)->Unit = { totalWidthPx, density, index, columnsAreaWidth ->
-            viewModel.onEvent(Un7KCMPDataGridViewModel.Event.UpdateColumnsOrder(totalWidthPx, density, index, columnsAreaWidth ))
+        val onUpdateColumnsOrder:(Dp, Float, Int, Int)->Unit = { columnsAreaWidth, density, index, offsetX ->
+            viewModel.onEvent(Un7KCMPDataGridViewModel.Event.UpdateColumnsOrder(columnsAreaWidth, density, index, offsetX ))
         }
         val onFilter:(columnName:String, searchText:String, operator:String) -> Unit ={ columnName, searchText, operator ->
             viewModel.onEvent(Un7KCMPDataGridViewModel.Event.Filter(columnName, searchText, operator){
@@ -336,14 +336,10 @@ fun Un7KCMPDataGrid(
 
         }
         val onDragColumn = { index:Int, offset: IntOffset ->
-            val newList = columnOffsetList.toMutableList().apply {
-                this[index] = offset
-            }
             viewModel.onEvent(Un7KCMPDataGridViewModel.Event.UpdateColumnOffset(
-                newList
+                index, offset
             ))
         }
-
 
         BoxWithConstraints(
             modifier = Modifier
@@ -554,7 +550,6 @@ fun Un7KCMPDataGrid(
                     onListNavHandler,
                     isVisibleRowNum
                 )
-
             }
             //--- Box GridControl
 
@@ -565,7 +560,6 @@ fun Un7KCMPDataGrid(
                 modifier = Modifier.align(Alignment.Center)
                     .padding(horizontal = 10.dp)
             ) { snackBarData ->
-
                 Snackbar(
                     shape = ShapeDefaults.ExtraSmall,
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
