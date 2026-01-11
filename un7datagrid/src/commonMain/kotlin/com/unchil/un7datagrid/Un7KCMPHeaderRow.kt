@@ -57,7 +57,7 @@ internal fun Un7KCMPHeaderRow(
     widthDividerThickness:Dp,
     widthRowNumColumn: Dp,
     columnNames:List<String>,
-    columnWeights:List<Float>,
+    onColumnWeightProvider:(Int)->Float,
     onUpdateColumnsOrder:(Dp, Float, Int, Int)->Unit,
     onFilter:(String, String, String) -> Unit,
     onColumnSort:(Int, Int, String) -> Unit,
@@ -123,7 +123,7 @@ internal fun Un7KCMPHeaderRow(
                     // zIndex를 추가하여 드래그 중인 아이템이 항상 위에 그려지도록 합니다.
                     .zIndex(if (offset.value == IntOffset.Zero) 0f else 1f)
                     .background(color = headerRowBackgroundColor)
-                    .width(columnsAreaWidth * columnWeights.getOrElse( index ) { 0f })
+                    .width(columnsAreaWidth * onColumnWeightProvider(index))
                     .height(heightColumnHeader)
                     .pointerInput(Unit) {
                         detectDragGestures(

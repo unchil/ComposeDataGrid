@@ -185,12 +185,13 @@ fun Un7KCMPDataGrid(
         } )
     }
 
+
     val dataGridContent: @Composable ((MutableMap<String, List<Any?>>, Int) -> Unit) = { pagingData, pageIndex ->
 
         val selectedColumns by viewModel.selectedColumns.collectAsState()
+        val columnWeights by viewModel.columnWeights.collectAsState()
         val columnOffsetList by viewModel.columnsOffset.collectAsState()
         val columnDataSortFlag by viewModel.columnDataSortFlag.collectAsState()
-        val columnWeights by viewModel.columnWeights.collectAsState()
         val isVisibleRowNum = remember { mutableStateOf(config.isVisibilityRowNumber) }
         val isVisibleColumnHeader = remember { mutableStateOf(true) }
         val rowNumColumnName = remember { config.rowNumberColumnName }
@@ -340,6 +341,13 @@ fun Un7KCMPDataGrid(
                 index, offset
             ))
         }
+        val onColumnOffsetProvider = { index:Int ->
+            columnOffsetList.getOrNull(index) ?:  IntOffset.Zero
+        }
+        val onColumnWeightProvider = { index:Int ->
+            columnWeights.getOrNull(index) ?:  0f
+        }
+
 
         BoxWithConstraints(
             modifier = Modifier
@@ -434,7 +442,7 @@ fun Un7KCMPDataGrid(
                                 widthDividerThickness,
                                 widthRowNumColumn,
                                 columnNames,
-                                columnWeights,
+                                onColumnWeightProvider,
                                 onUpdateColumnsOrder,
                                 onFilter,
                                 onColumnSort,
@@ -468,8 +476,8 @@ fun Un7KCMPDataGrid(
                             pageSize,
                             dataIndex,
                             pagingData,
-                            columnWeights,
-                            columnOffsetList,
+                            onColumnWeightProvider,
+                            onColumnOffsetProvider,
                             viewModel.config.dataRowBackgroundColor
                                 ?: MaterialTheme.colorScheme.surface,
                             viewModel.config.dataRowContentColor
