@@ -194,7 +194,6 @@ fun Un7KCMPDataGrid(
         val columnDataSortFlag by viewModel.columnDataSortFlag.collectAsState()
         val isVisibleRowNum = remember { mutableStateOf(config.isVisibilityRowNumber) }
         val isVisibleColumnHeader = remember { mutableStateOf(true) }
-        val rowNumColumnName = remember { config.rowNumberColumnName }
         val paddingBoxInHorizontalPager = remember { PaddingValues(2.dp)}
         val paddingLazyColumn = remember { PaddingValues(0.dp)}
         val paddingLazyColumnContent = remember { PaddingValues(4.dp)}
@@ -211,9 +210,9 @@ fun Un7KCMPDataGrid(
         val onePageMinColumnWidth = remember { 150.dp }
         val heightColumnHeader = 36.dp
         val heightColumnData = 30.dp
+        val heightColumnHeaderDivider =  30.dp
         val widthBorderStroke = 1.dp
         val maxWidthInDp = remember { mutableStateOf(0.dp) }
-        val maxHeightInDp = remember { mutableStateOf(0.dp) }
         var columnsAreaWidth by remember { mutableStateOf(0.dp) }
 
         LaunchedEffect( isVisibleRowNum.value, maxWidthInDp.value){
@@ -224,9 +223,6 @@ fun Un7KCMPDataGrid(
             }
         }
 
-        val onUpdateColumnsOrder:(Dp, Float, Int, Int)->Unit = { columnsAreaWidth, density, index, offsetX ->
-            viewModel.onEvent(Un7KCMPDataGridViewModel.Event.UpdateColumnsOrder(columnsAreaWidth, density, index, offsetX ))
-        }
         val onFilter:(columnName:String, searchText:String, operator:String) -> Unit ={ columnName, searchText, operator ->
             viewModel.onEvent(Un7KCMPDataGridViewModel.Event.Filter(columnName, searchText, operator){
                 isOnePageNav.value = viewModel.pageSize.value >= viewModel.onFilterResultCnt.value
@@ -238,15 +234,8 @@ fun Un7KCMPDataGrid(
                 }.channel)
             })
         }
-        val onColumnSort:( Int, Int, String) -> Unit = { columnIndex, sortType, columnName ->
-            viewModel.onEvent(Un7KCMPDataGridViewModel.Event.ColumnSort(columnIndex, sortType, columnName ))
-        }
-
         val onUpdateColumns:()->Unit = {
             viewModel.onEvent(Un7KCMPDataGridViewModel.Event.UpdateColumns)
-        }
-        val onUpdateColumnWeight:(List<Float>)->Unit = { columnsWeight ->
-            viewModel.onEvent(Un7KCMPDataGridViewModel.Event.ColumnWeight(columnsWeight))
         }
         val currentDp:(Int)->Dp = { index ->
             // 드래그 시작 지점의 절대 위치(offset) 계산
@@ -310,7 +299,6 @@ fun Un7KCMPDataGrid(
             val deltaWeight = delta / (maxWidthInDp.value.value * density)
             val currentWeight = columnWeights[index]
             val nextWeight = columnWeights[index + 1]
-
             // 최소 너비를 5%로 설정 (0.05f)
             val minWeight = 0.05f
             // 가중치 변화량을 적용하되, 최소 너비 제약을 준수합니다.
@@ -318,10 +306,9 @@ fun Un7KCMPDataGrid(
                 minWeight,
                 currentWeight + nextWeight - minWeight
             )
-
             val newNextWeight = (currentWeight + nextWeight) - newCurrentWeight
 
-            onUpdateColumnWeight(
+            viewModel.onEvent(Un7KCMPDataGridViewModel.Event.ColumnWeight(
                 columnWeights.toMutableList()
                     .apply {
                         this[index] =
@@ -329,17 +316,12 @@ fun Un7KCMPDataGrid(
                         this[index + 1] =
                             newNextWeight
                     }
-            )
+            ))
+
         }
         val onDividerHoverExit = {
             isCurrentHovered.value = false
             hoveredOffsetX.value = 0.dp
-
-        }
-        val onDragColumn = { index:Int, offset: IntOffset ->
-            viewModel.onEvent(Un7KCMPDataGridViewModel.Event.UpdateColumnOffset(
-                index, offset
-            ))
         }
         val onColumnOffsetProvider = { index:Int ->
             columnOffsetList.getOrNull(index) ?:  IntOffset.Zero
@@ -348,6 +330,24 @@ fun Un7KCMPDataGrid(
             columnWeights.getOrNull(index) ?:  0f
         }
 
+        val gridColorSet:Map<String, Color> = mapOf(
+            "headerRowBackgroundColor" to (viewModel.config.headerRowBackgroundColor ?: MaterialTheme.colorScheme.secondaryContainer),
+            "headerRowContentColor" to (viewModel.config.headerRowContentColor ?: MaterialTheme.colorScheme.onSecondaryContainer),
+            "dataRowBackgroundColor" to (viewModel.config.dataRowBackgroundColor ?: MaterialTheme.colorScheme.surface),
+            "dataRowContentColor" to (viewModel.config.dataRowContentColor ?: MaterialTheme.colorScheme.onSurface),
+            "oddDataRowBackgroundColor" to (viewModel.config.oddDataRowBackgroundColor ?: MaterialTheme.colorScheme.surface),
+            "evenDataRowBackgroundColor" to (viewModel.config.evenDataRowBackgroundColor ?: MaterialTheme.colorScheme.surface)
+        )
+
+        val gridDpSet:Map<String, Dp> = mapOf(
+            "columnsAreaWidth" to columnsAreaWidth,
+            "widthDividerThickness" to widthDividerThickness,
+            "widthRowNumColumn" to widthRowNumColumn,
+            "heightColumnHeader" to heightColumnHeader,
+            "heightColumnHeaderDivider" to heightColumnHeaderDivider,
+            "heightColumnData" to heightColumnData,
+            "widthBorderStroke" to widthBorderStroke
+        )
 
         BoxWithConstraints(
             modifier = Modifier
@@ -387,7 +387,6 @@ fun Un7KCMPDataGrid(
                 hoveredOffsetY.value = currentDpY(indexY)
                 isCurrentHovered.value = true
             }
-
             val onListNavHandler: (ListNav) -> Unit = { listNav ->
                 when (listNav) {
                     ListNav.Top -> {
@@ -406,10 +405,17 @@ fun Un7KCMPDataGrid(
                 }
             }
 
-            // 1. 모든 컬럼과 구분선을 포함한 전체 너비 계산
+            val gridHandlerSet:Map<String, Any> = mapOf(
+                "onResizeStart" to onResizeStart,
+                "onResize" to onResize,
+                "onResizeEnd" to onResizeEnd,
+                "onDividerHovered" to onDividerHovered,
+                "onDividerHoverExit" to onDividerHoverExit
+            )
+
+
             val onePageTotalGridWidth = (widthRowNumColumn + (onePageMinColumnWidth * columnNames.size) + (widthDividerThickness * (columnNames.size -1)))
             maxWidthInDp.value =  if(isOnePageNav.value) onePageTotalGridWidth.coerceAtLeast(this.maxWidth) else this.maxWidth
-            maxHeightInDp.value = this.maxHeight
 
             Box(modifier = if(isOnePageNav.value) Modifier.horizontalScroll(rememberScrollState()) else Modifier ) {
 
@@ -436,30 +442,17 @@ fun Un7KCMPDataGrid(
                     stickyHeader {
                         AnimatedVisibility(visible = isVisibleColumnHeader.value) {
                             Un7KCMPHeaderRow(
+                                viewModel::onEvent,
                                 isVisibleRowNum.value,
-                                rowNumColumnName,
-                                columnsAreaWidth,
-                                widthDividerThickness,
-                                widthRowNumColumn,
-                                columnNames,
-                                onColumnWeightProvider,
-                                onUpdateColumnsOrder,
+                                gridDpSet,
+                                gridColorSet,
+                                gridHandlerSet,
                                 onFilter,
-                                onColumnSort,
+                                onColumnWeightProvider,
+                                config.rowNumberColumnName,
+                                columnNames,
                                 columnDataSortFlag,
-                                viewModel.config.headerRowBackgroundColor
-                                    ?: MaterialTheme.colorScheme.secondaryContainer,
-                                viewModel.config.headerRowContentColor
-                                    ?: MaterialTheme.colorScheme.onSecondaryContainer,
                                 viewModel.columnsInfo.value,
-                                onResize,
-                                onResizeStart,
-                                onResizeEnd,
-                                onDividerHovered,
-                                onDividerHoverExit,
-                                onDragColumn,
-                                heightColumnHeader,
-                                widthBorderStroke
                             )
                         }//AnimatedVisibility
                     }//stickyHeader
@@ -469,28 +462,15 @@ fun Un7KCMPDataGrid(
                     ) { dataIndex ->
                         Un7KCMPDataRow(
                             isVisibleRowNum.value,
-                            columnsAreaWidth,
-                            widthDividerThickness,
-                            widthRowNumColumn,
+                            gridDpSet,
+                            gridColorSet,
+                            gridHandlerSet,
                             pageIndex,
                             pageSize,
                             dataIndex,
                             pagingData,
                             onColumnWeightProvider,
                             onColumnOffsetProvider,
-                            viewModel.config.dataRowBackgroundColor
-                                ?: MaterialTheme.colorScheme.surface,
-                            viewModel.config.dataRowContentColor
-                                ?: MaterialTheme.colorScheme.onSurface,
-                            oddDataRowBackgroundColor = viewModel.config.oddDataRowBackgroundColor,
-                            evenDataRowBackgroundColor = viewModel.config.evenDataRowBackgroundColor,
-                            onResize,
-                            onResizeStart,
-                            onResizeEnd,
-                            onDividerHovered,
-                            onDividerHoverExit,
-                            heightColumnData,
-                            widthBorderStroke
                         )
                     }
 

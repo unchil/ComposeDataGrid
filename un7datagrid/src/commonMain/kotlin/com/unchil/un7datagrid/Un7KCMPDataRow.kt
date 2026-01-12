@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
@@ -41,38 +42,30 @@ import androidx.compose.ui.zIndex
 @Composable
 internal fun Un7KCMPDataRow(
     isVisibleRowNum: Boolean,
-    columnsAreaWidth: Dp,
-    widthDividerThickness:Dp,
-    widthRowNumColumn: Dp,
+    gridDpSet: Map<String, Dp>,
+    gridColorSet:Map<String,Color>,
+    gridHandlerSet:Map<String, Any>,
     pageIndex:Int,
     pageSize:Int,
     dataIndex:Int,
     pagingData: MutableMap<String, List<Any?>>,
     columnWeightProvider:(Int)->Float,
     columnOffsetProvider:(Int)->IntOffset,
-    dataRowBackgroundColor:Color,
-    dataRowContentColor:Color,
-    oddDataRowBackgroundColor:Color?,
-    evenDataRowBackgroundColor:Color?,
-    onResize:(Float, Float, Int)->Unit,
-    onResizeStart:(Int)->Unit,
-    onResizeEnd:()->Unit,
-    onDividerHovered: (index: Int, indexY: Int) -> Unit,
-    onDividerHoverExit: () -> Unit,
-    heightColumnData:Dp,
-    widthBorderStroke:Dp
-
 ){
     val density = LocalDensity.current.density
     val paddingDataRow = remember { PaddingValues(top = 2.dp) }
-    val borderStrokeLightGray = remember {BorderStroke(width = widthBorderStroke, color = Color.LightGray)}
+    val borderStrokeLightGray = remember {BorderStroke(width =  gridDpSet["widthBorderStroke"] ?: 0.dp, color = Color.LightGray)}
     val borderShapeIn = remember{RoundedCornerShape(0.dp)}
 
 
     val backgroundColor = if(dataIndex%2 == 0){
-        evenDataRowBackgroundColor ?: dataRowBackgroundColor
+        gridColorSet["evenDataRowBackgroundColor"]
+            ?: gridColorSet["dataRowBackgroundColor"]
+            ?: MaterialTheme.colorScheme.secondaryContainer
     } else {
-        oddDataRowBackgroundColor ?: dataRowBackgroundColor
+        gridColorSet["oddDataRowBackgroundColor"]
+            ?: gridColorSet["dataRowBackgroundColor"]
+            ?: MaterialTheme.colorScheme.secondaryContainer
     }
 
     Row(
@@ -85,7 +78,7 @@ internal fun Un7KCMPDataRow(
 
             Row(
                 modifier = Modifier.background(color = backgroundColor)
-                    .width(widthRowNumColumn).height(heightColumnData)
+                    .width( gridDpSet["widthRowNumColumn"] ?: 0.dp).height( gridDpSet["heightColumnData"] ?: 0.dp)
                     .border(borderStrokeLightGray, shape = borderShapeIn),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically,
@@ -95,25 +88,43 @@ internal fun Un7KCMPDataRow(
                     text = getRowNumber(pageIndex, pageSize, dataIndex).toString(),
                     textAlign = TextAlign.Center,
                     maxLines = 1,
-                    color = dataRowContentColor
+                    color = gridColorSet["dataRowContentColor"] ?: MaterialTheme.colorScheme.onSurface
                 )
             }
         }
         if(isVisibleRowNum) {
             VerticalDivider(
-                thickness = widthDividerThickness,
+                thickness =  gridDpSet["widthDividerThickness"] ?: 0.dp,
                 color = Color.Transparent
             )
         }
 
+        // 특정 블록이나 변수 선언에만 경고 억제 적용
+        @Suppress("UNCHECKED_CAST")
         pagingData.keys.forEachIndexed { index, columnName ->
+            //-------
+            /*
+                1.Composition (구성): 무엇을 그릴지 결정 (가장 비용이 높음)
+                2.Layout (배치): 어디에 그릴지 결정
+                3.Drawing (그리기): 어떻게 그릴지 결정 (가장 비용이 낮음)
+
+                •기존 방식: columnOffsetList가 변할 때마다 1단계(Composition)부터 다시 시작합니다.
+                    모든 텍스트와 UI 구조를 다시 계산합니다.
+                •개선된 방식 (.offset { } 사용): 람다를 사용하면 1단계를 건너뛰고 2단계(Layout)부터 즉시 시작합니다.
+                    텍스트나 보더 등은 다시 계산하지 않고 위치만 바꿉니다.
+                •추가 팁 (graphicsLayer 사용): alpha나 scale 등을 graphicsLayer 블록 안에서 처리하면
+                    1, 2단계를 건너뛰고 3단계(Drawing)에서 하드웨어 가속을 받아 처리됩니다.
+            */
+            //-------
             Row(
                 modifier = Modifier
-                    .zIndex( if (columnOffsetProvider(index) == IntOffset.Zero) 0f else 1f)
+                    .zIndex( if ( columnOffsetProvider(index) == IntOffset.Zero) 0f else 1f)
                     .background(color = backgroundColor)
-                    .width(columnsAreaWidth * columnWeightProvider(index))
-                    .height(heightColumnData)
-                    .offset{ columnOffsetProvider(index) }
+                    .width(   (gridDpSet["columnsAreaWidth"] ?: 0.dp) * columnWeightProvider(index) )
+                    .height( gridDpSet["heightColumnData"] ?: 0.dp)
+                    .offset{
+                        columnOffsetProvider(index)
+                    }
                     .graphicsLayer {
                         val offset = columnOffsetProvider(index)
                         alpha = if (offset == IntOffset.Zero) 1f else 0.5f
@@ -127,7 +138,7 @@ internal fun Un7KCMPDataRow(
                     text = (pagingData[columnName] as List<*>)[dataIndex].toString(),
                     textAlign = TextAlign.Center,
                     maxLines = 1,
-                    color = dataRowContentColor
+                    color =  gridColorSet["dataRowContentColor"] ?: MaterialTheme.colorScheme.onSurface
                 )
             }
 
@@ -139,10 +150,10 @@ internal fun Un7KCMPDataRow(
                     interactionSourceDivider.interactions.collect { interaction ->
                         when (interaction) {
                             is HoverInteraction.Enter -> {
-                                onDividerHovered(index, dataIndex)
+                                (gridHandlerSet["onDividerHovered"] as? (Int, Int) -> Unit)?.invoke(index, dataIndex)
                             }
                             is HoverInteraction.Exit -> {
-                                onDividerHoverExit()
+                                (gridHandlerSet["onDividerHoverExit"] as? () -> Unit)?.invoke()
                             }
                         }
                     }
@@ -150,21 +161,21 @@ internal fun Un7KCMPDataRow(
 
 
                 val draggableState = rememberDraggableState { delta ->
-                    onResize( delta, density, index )
+                    (gridHandlerSet["onResize"] as? (Float, Float, Int) -> Unit)?.invoke(delta, density, index )
                 }
 
                 VerticalDivider(
                     modifier = Modifier
-                        .height(heightColumnData)
-                        .width(widthDividerThickness) // Give it a clear width for interaction
+                        .height( gridDpSet["heightColumnData"] ?: 0.dp)
+                        .width( gridDpSet["widthDividerThickness"] ?: 0.dp) // Give it a clear width for interaction
                         .draggable(
                             orientation = Orientation.Horizontal,
                             state = draggableState,
-                            onDragStarted = { onResizeStart(index) },
-                            onDragStopped = { onResizeEnd() }
+                            onDragStarted = {   (gridHandlerSet["onResizeStart"] as? (Int) -> Unit)?.invoke(index ) },
+                            onDragStopped = {  (gridHandlerSet["onResizeEnd"] as? () -> Unit)?.invoke( ) }
                         )
                         .hoverable(interactionSourceDivider) // Make the area hoverable,
-                    , thickness = widthDividerThickness,
+                    , thickness =  gridDpSet["widthDividerThickness"] ?: 0.dp,
                     // Change color on hover for better visual feedback
                     color = Color.Transparent
                 )

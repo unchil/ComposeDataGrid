@@ -48,7 +48,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 internal fun Un7KCMPSearchMenu(
     columnName:String,
-    columnInfo: NewColumnInfo?,
+    columnsInfo: Map<String, NewColumnInfo>,
     onFilter: (String, String, String)-> Unit,
     headerRowContentColor: Color?
 ) {
@@ -56,11 +56,9 @@ internal fun Un7KCMPSearchMenu(
     val filterText = remember { mutableStateOf("") }
     val operatorConstText = "Operator..."
     val operatorText = remember { mutableStateOf(operatorConstText ) }
-    val operatorLabel:String = remember { (columnInfo?.dataType ?: "") + " Type" }
     val scrollState = remember { ScrollState(0) }
     var expandedOperator by remember { mutableStateOf(false) }
     val dropDownWidth = 200.dp
-    val dropDownHeight = if (columnInfo?.dataType.equals("Boolean")) 100.dp else 150.dp
     val textFieldHorizontalPadding = 6.dp
 
     val onSearch: () -> Unit = {
@@ -106,7 +104,8 @@ internal fun Un7KCMPSearchMenu(
                         value = operatorText.value,
                         readOnly = true,
                         onValueChange = { operatorText.value = it },
-                        label = { Text(operatorLabel)  },
+                        label = {
+                            Text(columnsInfo[columnName]?.dataType ?: ""  )  },
                         trailingIcon = {
                             IconButton(onClick = { expandedOperator = !expandedOperator }){
                                 Icon(if(expandedOperator) Icons.Default.ArrowDropUp else Icons.Default.ArrowDropDown,
@@ -121,12 +120,14 @@ internal fun Un7KCMPSearchMenu(
                         expanded = expandedOperator,
                         onDismissRequest = onDismiss,
                         scrollState = scrollState,
-                        modifier = Modifier.width(dropDownWidth).height(dropDownHeight)
+                        modifier = Modifier.width(dropDownWidth).height(
+                            if (columnsInfo[columnName]?.dataType.equals("Boolean")) 100.dp else 150.dp
+                        )
                             .background(color=MaterialTheme.colorScheme.secondaryContainer),
                         border = BorderStroke(1.dp, color=MaterialTheme.colorScheme.secondaryFixedDim)
                     ) {
 
-                        columnInfo?.let {
+                        columnsInfo[columnName]?.let {
                             when(it.dataType){
                                 "Char" -> {
                                     OperatorMenu.OperatorsChar.forEach { operator ->
@@ -190,7 +191,7 @@ internal fun Un7KCMPSearchMenu(
                     }
                 }
 
-                columnInfo?.let {
+                columnsInfo[columnName]?.let {
                     if(it.dataType != "Boolean" && !operatorText.value.equals(operatorConstText)){
                         OutlinedTextField(
                             modifier = Modifier

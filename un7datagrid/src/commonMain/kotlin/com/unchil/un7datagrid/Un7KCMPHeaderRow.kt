@@ -3,7 +3,6 @@
 package com.unchil.un7datagrid
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -32,12 +31,10 @@ import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.InternalComposeApi
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
@@ -52,90 +49,82 @@ import kotlin.math.roundToInt
 
 @Composable
 internal fun Un7KCMPHeaderRow(
+    onEvent: (Un7KCMPDataGridViewModel.Event) -> Unit,
     isVisibleRowNum: Boolean,
+    gridDpSet: Map<String, Dp>,
+    gridColorSet:Map<String,Color>,
+    gridHandlerSet:Map<String, Any>,
+    onFilter:(String, String, String)->Unit,
+    onColumnWeightProvider: (Int) -> Float,
     rowNumColumnName: String,
-    columnsAreaWidth: Dp,
-    widthDividerThickness:Dp,
-    widthRowNumColumn: Dp,
-    columnNames:List<String>,
-    onColumnWeightProvider:(Int)->Float,
-    onUpdateColumnsOrder:(Dp, Float, Int, Int)->Unit,
-    onFilter:(String, String, String) -> Unit,
-    onColumnSort:(Int, Int, String) -> Unit,
+    columnNames: List<String>,
     columnDataSortFlag: List<Int>,
-    headerRowBackgroundColor:Color,
-    headerRowContentColor:Color,
     columnsInfo: Map<String, NewColumnInfo>,
-    onResize:(Float, Float, Int)->Unit,
-    onResizeStart:(Int)->Unit,
-    onResizeEnd:()->Unit,
-    onDividerHovered: (index: Int, indexY: Int) -> Unit,
-    onDividerHoverExit: () -> Unit,
-    onDragColumn:(Int, IntOffset)->Unit,
-    heightColumnHeader:Dp,
-    widthBorderStroke:Dp
+
 ){
     val density = LocalDensity.current.density
-    val heightColumnHeaderDivider = remember{ 30.dp }
 
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-
-    ) {
+    Row( verticalAlignment = Alignment.CenterVertically ) {
 
         AnimatedVisibility(isVisibleRowNum) {
             Row(
                 modifier = Modifier
-                    .background(color = headerRowBackgroundColor)
-                    .height(heightColumnHeader)
-                    .width(widthRowNumColumn)
-                    .border(border = BorderStroke(width = widthBorderStroke, color = MaterialTheme.colorScheme.secondaryFixedDim),
+                    .background(color = gridColorSet["headerRowBackgroundColor"]
+                        ?: MaterialTheme.colorScheme.secondaryContainer )
+                    .height(gridDpSet["heightColumnHeader"] ?: 0.dp)
+                    .width(gridDpSet["widthRowNumColumn"] ?: 0.dp)
+                    .border(border = BorderStroke(width = gridDpSet["widthBorderStroke"] ?: 0.dp, color = MaterialTheme.colorScheme.secondaryFixedDim),
                         shape = RoundedCornerShape(2.dp)),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Text(rowNumColumnName, color= headerRowContentColor)
+                Text(rowNumColumnName,
+                    color= gridColorSet["headerRowContentColor"]
+                    ?: MaterialTheme.colorScheme.onSecondaryContainer)
             }
         }
         if (isVisibleRowNum) {
             VerticalDivider(
                 modifier = Modifier
-                    .height(heightColumnHeaderDivider),
-                thickness = widthDividerThickness,
+                    .height( gridDpSet["heightColumnHeaderDivider"] ?: 0.dp),
+                thickness =  gridDpSet["widthDividerThickness"] ?: 0.dp,
                 color = Color.Transparent
             )
 
         }
 
-
+        // 특정 블록이나 변수 선언에만 경고 억제 적용
+        @Suppress("UNCHECKED_CAST")
         columnNames.forEachIndexed { index, columnName ->
-
             val offset = remember { mutableStateOf(IntOffset.Zero) }
-
             val onDragEnd: () -> Unit = {
-                onUpdateColumnsOrder(columnsAreaWidth, density, index, offset.value.x)
+                onEvent(Un7KCMPDataGridViewModel.Event.UpdateColumnsOrder( gridDpSet["columnsAreaWidth"] ?: 0.dp, density, index, offset.value.x ))
                 offset.value = IntOffset.Zero
             }
-
-
             Row(
                 modifier = Modifier
                     // zIndex를 추가하여 드래그 중인 아이템이 항상 위에 그려지도록 합니다.
                     .zIndex(if (offset.value == IntOffset.Zero) 0f else 1f)
-                    .background(color = headerRowBackgroundColor)
-                    .width(columnsAreaWidth * onColumnWeightProvider(index))
-                    .height(heightColumnHeader)
+                    .background(color = gridColorSet["headerRowBackgroundColor"]
+                        ?: MaterialTheme.colorScheme.secondaryContainer)
+                    .width((gridDpSet["columnsAreaWidth"] ?: 0.dp) * onColumnWeightProvider(index))
+
+                    .height( gridDpSet["heightColumnHeader"] ?: 0.dp)
                     .pointerInput(Unit) {
                         detectDragGestures(
                             onDragEnd = onDragEnd,
                             onDragCancel = {
                                 offset.value = IntOffset.Zero
-                                onDragColumn(index, IntOffset.Zero)
+                                onEvent(Un7KCMPDataGridViewModel.Event.UpdateColumnOffset(
+                                    index, IntOffset.Zero
+                                ))
                             },
                             onDrag = { change, dragAmount ->
                                 change.consume()// 이벤트를 소비하여 다른 제스처와 충돌 방지
                                 offset.value += IntOffset( dragAmount.x.roundToInt(), 0)
-                                onDragColumn(index, offset.value)
+                                onEvent(Un7KCMPDataGridViewModel.Event.UpdateColumnOffset(
+                                    index, offset.value
+                                ))
                             }
                         )}
                     .offset { offset.value }
@@ -156,7 +145,7 @@ internal fun Un7KCMPHeaderRow(
                             -1 -> 0
                             else -> {0}
                         }
-                        onColumnSort( index, iconFlag, columnName)
+                        onEvent(Un7KCMPDataGridViewModel.Event.ColumnSort(index, iconFlag, columnName ))
                     },
                 ){
                     Icon(
@@ -166,22 +155,25 @@ internal fun Un7KCMPHeaderRow(
                             else -> Icons.Default.UnfoldMore
                         },
                         contentDescription = "Sort",
-                        tint = headerRowContentColor
+                        tint = gridColorSet["headerRowContentColor"]
+                            ?: MaterialTheme.colorScheme.onSecondaryContainer
                     )
                 }
 
                 Text(columnName,
                     modifier=Modifier.weight(1f),
-                    color= headerRowContentColor,
+                    color= gridColorSet["headerRowContentColor"]
+                        ?: MaterialTheme.colorScheme.onSecondaryContainer,
                     textAlign = TextAlign.Center,
                     maxLines = 1
                 )
 
                 Un7KCMPSearchMenu(
                     columnName,
-                    columnsInfo[columnName],
+                    columnsInfo,
                     onFilter,
-                    headerRowContentColor
+                    gridColorSet["headerRowContentColor"]
+                        ?: MaterialTheme.colorScheme.onSecondaryContainer
                 )
             }
 
@@ -194,31 +186,35 @@ internal fun Un7KCMPHeaderRow(
                     interactionSourceDivider.interactions.collect { interaction ->
                         when (interaction) {
                             is HoverInteraction.Enter -> {
-                                onDividerHovered(index, -1)
+                                (gridHandlerSet["onDividerHovered"] as? (Int, Int) -> Unit)?.invoke(index, -1)
                             }
                             is HoverInteraction.Exit -> {
-                                onDividerHoverExit()
+                                (gridHandlerSet["onDividerHoverExit"] as? () -> Unit)?.invoke()
                             }
                         }
                     }
                 }
 
                 val draggableState = rememberDraggableState { delta ->
-                    onResize( delta, density, index )
+                    (gridHandlerSet["onResize"] as? (Float, Float, Int) -> Unit)?.invoke(delta, density, index )
                 }
 
                     VerticalDivider(
                         modifier = Modifier
-                            .height(heightColumnHeaderDivider)
-                            .width(widthDividerThickness) // Give it a clear width for interaction
+                            .height( gridDpSet["heightColumnHeaderDivider"] ?: 0.dp)
+                            .width( gridDpSet["widthDividerThickness"] ?: 0.dp) // Give it a clear width for interaction
                             .draggable(
                                 orientation = Orientation.Horizontal,
                                 state = draggableState,
-                                onDragStarted = { onResizeStart(index) },
-                                onDragStopped = { onResizeEnd() }
+                                onDragStarted = {
+                                    (gridHandlerSet["onResizeStart"] as? (Int) -> Unit)?.invoke(index )
+                                },
+                                onDragStopped = {
+                                    (gridHandlerSet["onResizeEnd"] as? () -> Unit)?.invoke( )
+                                }
                             )
                             .hoverable(interactionSourceDivider) // Make the area hoverable,
-                        , thickness = widthDividerThickness,
+                        , thickness =  gridDpSet["widthDividerThickness"] ?: 0.dp,
                         // Change color on hover for better visual feedback
                         color = Color.Transparent
                     )

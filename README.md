@@ -127,11 +127,11 @@ fun MyDataScreen() {
 
     // Configure optional grid features
     val gridConfig = Un7KCMPDataGridConfig(
-        isVisibleRowNum = true,
-        rowNumColumnTitle = "No.",
-        pageSizeItems = listOf("10", "25", "50", "100"),
-        pageSizeItemInitIndex = 2, // Initial page size will be "50"
-        headerRowBackgroundColor = Color(0xFFE0E0E0), 
+        isVisibilityRowNumber = true,
+        rowNumberColumnName = "No.",
+        pageSizeList = listOf("10", "25", "50", "100"),
+        defaultPageSizeListIndex = 2, // Initial page size will be "50"
+        headerRowBackgroundColor = Color(0xFFE0E0E0),
         headerRowContentColor = Color.DarkGray,
         dataRowBackgroundColor = Color.White,
         dataRowContentColor = Color.DarkGray,
