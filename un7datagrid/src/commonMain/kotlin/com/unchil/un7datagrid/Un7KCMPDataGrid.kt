@@ -83,7 +83,7 @@ fun Un7KCMPDataGrid(
     val paddingHorizontalPager = remember { PaddingValues(0.dp)}
     val borderShapeIn = remember{RoundedCornerShape(2.dp)}
     val paddingMenuPageNavControl = remember{ PaddingValues(all = 10.dp)}
-    
+
     //--- SnackBar Setting
     val channel = remember { Channel<Int>(Channel.CONFLATED) }
     val snackBarHostState = remember { SnackbarHostState() }
@@ -235,16 +235,7 @@ fun Un7KCMPDataGrid(
         var columnsAreaWidth by remember { mutableStateOf(0.dp) }
         val borderStrokeTransparent = remember {BorderStroke(width = 0.dp, color = Color.Transparent)}
         val borderShapeIn = remember{RoundedCornerShape(2.dp)}
-
-        LaunchedEffect( isVisibleRowNum.value, maxWidthInDp.value){
-            columnsAreaWidth = if ( isVisibleRowNum.value) {
-                maxWidthInDp.value - widthRowNumColumn - (widthDividerThickness * (columnNames.size ))
-            } else {
-                maxWidthInDp.value - (widthDividerThickness * (columnNames.size - 1))
-            }
-        }
-
-
+        val lazyListState = rememberLazyListState(initialFirstVisibleItemIndex = 0)
         val currentDp:(Int)->Dp = { index ->
             // 드래그 시작 지점의 절대 위치(offset) 계산
             var currentOffset = 0.dp
@@ -256,6 +247,28 @@ fun Un7KCMPDataGrid(
             } else {
                 currentOffset + (widthDividerThickness * (index+1)) +  widthDividerThickness/2
             }
+        }
+        val currentDpY:(Int)->Dp = {index ->
+            var currentOffsetY = 0.dp
+            val borderStrokeDp = widthBorderStroke * 2
+
+            if(index >= 0 ) {
+                for (i in 0..index) {
+                    currentOffsetY += (if(i==0) heightColumnHeader else heightColumnData) + borderStrokeDp
+                }
+                if(lazyListState.firstVisibleItemIndex > 0 ){
+                    repeat(lazyListState.firstVisibleItemIndex+1){
+                        currentOffsetY -= (heightColumnData + borderStrokeDp)
+                    }
+                    currentOffsetY += heightColumnData/3
+                } else{
+                    if(!isVisibleColumnHeader.value) currentOffsetY -= heightColumnHeader
+                }
+            }else{
+                if(!isVisibleColumnHeader.value)  currentOffsetY -= heightColumnHeader
+            }
+
+            currentOffsetY
         }
         val heightVerticalDivider:(Int)->Dp = { count ->
             var currentOffsetY = 0.dp
@@ -271,6 +284,23 @@ fun Un7KCMPDataGrid(
                 currentOffsetY
             }
 
+        }
+        val onListNavHandler: (ListNav) -> Unit = { listNav ->
+            when (listNav) {
+                ListNav.Top -> {
+                    coroutineScope.launch {
+                        lazyListState.animateScrollToItem(0)
+                    }
+                }
+
+                ListNav.Bottom -> {
+                    coroutineScope.launch {
+                        lazyListState.animateScrollToItem(
+                            (pagingData.values.firstOrNull()?.size ?: 1) - 1
+                        )
+                    }
+                }
+            }
         }
         val onResizeStart = { index:Int ->
             // 최소 너비 제약 조건 정의
@@ -327,6 +357,11 @@ fun Un7KCMPDataGrid(
             ))
 
         }
+        val onDividerHovered = { index:Int, indexY: Int ->
+            hoveredOffsetX.value = currentDp(index)
+            hoveredOffsetY.value = currentDpY(indexY)
+            isCurrentHovered.value = true
+        }
         val onDividerHoverExit = {
             isCurrentHovered.value = false
             hoveredOffsetX.value = 0.dp
@@ -337,7 +372,6 @@ fun Un7KCMPDataGrid(
         val onColumnWeightProvider = { index:Int ->
             columnWeights.getOrNull(index) ?:  0f
         }
-
         val gridColorSet:Map<String, Color> = mapOf(
             "headerRowBackgroundColor" to (viewModel.config.headerRowBackgroundColor ?: MaterialTheme.colorScheme.secondaryContainer),
             "headerRowContentColor" to (viewModel.config.headerRowContentColor ?: MaterialTheme.colorScheme.onSecondaryContainer),
@@ -346,7 +380,6 @@ fun Un7KCMPDataGrid(
             "oddDataRowBackgroundColor" to (viewModel.config.oddDataRowBackgroundColor ?: MaterialTheme.colorScheme.surface),
             "evenDataRowBackgroundColor" to (viewModel.config.evenDataRowBackgroundColor ?: MaterialTheme.colorScheme.surface)
         )
-
         val gridDpSet:Map<String, Dp> = mapOf(
             "columnsAreaWidth" to columnsAreaWidth,
             "widthDividerThickness" to widthDividerThickness,
@@ -356,55 +389,6 @@ fun Un7KCMPDataGrid(
             "heightColumnData" to heightColumnData,
             "widthBorderStroke" to widthBorderStroke
         )
-
-        val lazyListState =
-            rememberLazyListState(initialFirstVisibleItemIndex = 0)
-
-        val currentDpY:(Int)->Dp = {index ->
-            var currentOffsetY = 0.dp
-            val borderStrokeDp = widthBorderStroke * 2
-
-            if(index >= 0 ) {
-                for (i in 0..index) {
-                    currentOffsetY += (if(i==0) heightColumnHeader else heightColumnData) + borderStrokeDp
-                }
-                if(lazyListState.firstVisibleItemIndex > 0 ){
-                    repeat(lazyListState.firstVisibleItemIndex+1){
-                        currentOffsetY -= (heightColumnData + borderStrokeDp)
-                    }
-                    currentOffsetY += heightColumnData/3
-                } else{
-                    if(!isVisibleColumnHeader.value) currentOffsetY -= heightColumnHeader
-                }
-            }else{
-                if(!isVisibleColumnHeader.value)  currentOffsetY -= heightColumnHeader
-            }
-
-            currentOffsetY
-        }
-        val onDividerHovered = { index:Int, indexY: Int ->
-            hoveredOffsetX.value = currentDp(index)
-            hoveredOffsetY.value = currentDpY(indexY)
-            isCurrentHovered.value = true
-        }
-        val onListNavHandler: (ListNav) -> Unit = { listNav ->
-            when (listNav) {
-                ListNav.Top -> {
-                    coroutineScope.launch {
-                        lazyListState.animateScrollToItem(0)
-                    }
-                }
-
-                ListNav.Bottom -> {
-                    coroutineScope.launch {
-                        lazyListState.animateScrollToItem(
-                            (pagingData.values.firstOrNull()?.size ?: 1) - 1
-                        )
-                    }
-                }
-            }
-        }
-
         val gridHandlerSet:Map<String, Any> = mapOf(
             "onResizeStart" to onResizeStart,
             "onResize" to onResize,
@@ -413,6 +397,13 @@ fun Un7KCMPDataGrid(
             "onDividerHoverExit" to onDividerHoverExit
         )
 
+        LaunchedEffect( isVisibleRowNum.value, maxWidthInDp.value){
+            columnsAreaWidth = if ( isVisibleRowNum.value) {
+                maxWidthInDp.value - widthRowNumColumn - (widthDividerThickness * (columnNames.size ))
+            } else {
+                maxWidthInDp.value - (widthDividerThickness * (columnNames.size - 1))
+            }
+        }
 
         BoxWithConstraints(
             modifier = Modifier
@@ -421,8 +412,11 @@ fun Un7KCMPDataGrid(
                 .border(borderStrokeTransparent, shape = borderShapeIn),
             contentAlignment = Alignment.Center
         ) {
-            val onePageTotalGridWidth = (widthRowNumColumn + (onePageMinColumnWidth * columnNames.size) + (widthDividerThickness * (columnNames.size -1)))
-            maxWidthInDp.value =  if(isOnePageNav.value) onePageTotalGridWidth.coerceAtLeast(this.maxWidth) else this.maxWidth
+
+            maxWidthInDp.value =  if(isOnePageNav.value) {
+                (widthRowNumColumn + (onePageMinColumnWidth * columnNames.size) + (widthDividerThickness * (columnNames.size -1)))
+                    .coerceAtLeast(this.maxWidth)
+            } else this.maxWidth
 
             Box(modifier = if(isOnePageNav.value) Modifier.horizontalScroll(rememberScrollState()) else Modifier ) {
 
