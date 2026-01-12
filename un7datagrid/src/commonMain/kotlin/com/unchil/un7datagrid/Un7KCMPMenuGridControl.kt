@@ -8,18 +8,13 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.ArrowDownward
 import androidx.compose.material.icons.filled.ArrowUpward
-import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Compress
 import androidx.compose.material.icons.filled.Expand
-import androidx.compose.material.icons.filled.FormatListNumbered
-import androidx.compose.material.icons.filled.MoreHoriz
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -27,9 +22,6 @@ import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.InternalComposeApi
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
@@ -38,12 +30,12 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 internal fun Un7KCMPMenuGridControl(
+    onEvent: (Un7KCMPDataGridViewModel.Event) -> Unit,
     isExpandGridControlMenu: MutableState<Boolean>,
     isVisibleColumnHeader:MutableState<Boolean>,
     lazyListState: LazyListState,
     allColumns: List<String>,
     selectedColumns: Map<String, MutableState<Boolean>>,
-    onUpdateColumns: () -> Unit,
     onListNavHandler: (ListNav) -> Unit,
     isVisibleRowNum: MutableState<Boolean>
 ) {
@@ -139,7 +131,7 @@ internal fun Un7KCMPMenuGridControl(
                 Un7KCMPMenuSelectColumn(
                     allColumns,
                     selectedColumns,
-                    onUpdateColumns,
+                    onEvent
                 )
 
             }

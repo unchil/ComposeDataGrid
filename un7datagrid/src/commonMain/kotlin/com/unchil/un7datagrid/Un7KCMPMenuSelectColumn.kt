@@ -3,7 +3,6 @@
 package com.unchil.un7datagrid
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -13,11 +12,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.PlaylistAdd
-import androidx.compose.material.icons.automirrored.filled.PlaylistAddCheck
 import androidx.compose.material.icons.filled.ToggleOff
 import androidx.compose.material.icons.filled.ToggleOn
-import androidx.compose.material.icons.filled.ViewArray
 import androidx.compose.material.icons.filled.ViewColumn
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -41,9 +37,9 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 internal fun Un7KCMPMenuSelectColumn(
-    allColumns:List<String>,
+    allColumns: List<String>,
     selectedColumns: Map<String, MutableState<Boolean>>,
-    onUpdateColumns: ()->Unit,
+    onEvent: (Un7KCMPDataGridViewModel.Event) -> Unit
 ){
     Box(modifier= Modifier.background(Color.Transparent)){
         val widthColumnSelectDropDownMenu = 180.dp
@@ -84,7 +80,9 @@ internal fun Un7KCMPMenuSelectColumn(
                             selectedColumns[columnName]?.let { it->
                                 it.value = !it.value
                             }
-                            onUpdateColumns()
+                         //   onUpdateColumns()
+                            onEvent(Un7KCMPDataGridViewModel.Event.UpdateColumns)
+
                         }) {
                             SegmentedButtonDefaults.Icon(
                                 active = selectedColumns.getValue(columnName).value,
@@ -109,7 +107,8 @@ internal fun Un7KCMPMenuSelectColumn(
                         selectedColumns[columnName]?.let { it->
                             it.value = !it.value
                         }
-                        onUpdateColumns()
+                     //   onUpdateColumns()
+                        onEvent(Un7KCMPDataGridViewModel.Event.UpdateColumns)
                     }
                 )
             }

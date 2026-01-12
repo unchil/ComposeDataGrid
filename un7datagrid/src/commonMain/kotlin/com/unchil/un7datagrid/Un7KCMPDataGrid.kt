@@ -40,6 +40,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -70,19 +71,19 @@ fun Un7KCMPDataGrid(
 ){
     val coroutineScope = rememberCoroutineScope()
     val viewModel = remember(data) { Un7KCMPDataGridViewModel(data, config) }
+    val isExpandPageNavControlMenu = rememberSaveable {mutableStateOf(false) }
     val lastPageIndex by viewModel.lastPageIndex.collectAsState()
     val isOnePageNav = remember { mutableStateOf(viewModel.selectPageSizeList.lastIndex == viewModel.selectPageSizeIndex.value) }
     val dataRows by viewModel.dataRows.collectAsState()
     val pageSize by viewModel.pageSize.collectAsState()
     val columnNames by viewModel.columnNames.collectAsState()
     val selectPageSizeIndex by viewModel.selectPageSizeIndex.collectAsState()
-    val isExpandPageNavControlMenu = rememberSaveable {mutableStateOf(false) }
     val borderStrokeTransparent = remember {BorderStroke(width = 0.dp, color = Color.Transparent)}
     val borderShapeOut = remember{RoundedCornerShape(0.dp)}
     val paddingHorizontalPager = remember { PaddingValues(0.dp)}
     val borderShapeIn = remember{RoundedCornerShape(2.dp)}
     val paddingMenuPageNavControl = remember{ PaddingValues(all = 10.dp)}
-
+    
     //--- SnackBar Setting
     val channel = remember { Channel<Int>(Channel.CONFLATED) }
     val snackBarHostState = remember { SnackbarHostState() }
@@ -184,14 +185,32 @@ fun Un7KCMPDataGrid(
             }.channel)
         } )
     }
+    val onFilter:(columnName:String, searchText:String, operator:String) -> Unit ={ columnName, searchText, operator ->
+        viewModel.onEvent(Un7KCMPDataGridViewModel.Event.Filter(columnName, searchText, operator) { onePageNav ->
+            isOnePageNav.value = onePageNav
+            coroutineScope.launch {
+                pagerState.animateScrollToPage(0)
+            }
+            channel.trySend(snackBarChannelList.first { item ->
+                item.channelType == SnackBarChannelType.SEARCH_RESULT
+            }.channel)
+        })
+    }
 
 
-    val dataGridContent: @Composable ((MutableMap<String, List<Any?>>, Int) -> Unit) = { pagingData, pageIndex ->
+    val dataGridContent: @Composable (
+        ( pagingData:MutableMap<String, List<Any?>>, pageIndex:Int, viewModel:Un7KCMPDataGridViewModel,
+          isExpandPageNavControlMenu:MutableState<Boolean>, onFilter:( String, String, String)->Unit ,
+          isOnePageNav:MutableState<Boolean>) -> Unit  ) = {
+              pagingData, pageIndex, viewModel, isExpandPageNavControlMenu, onFilter, isOnePageNav ->
 
+        val coroutineScope = rememberCoroutineScope()
         val selectedColumns by viewModel.selectedColumns.collectAsState()
         val columnWeights by viewModel.columnWeights.collectAsState()
         val columnOffsetList by viewModel.columnsOffset.collectAsState()
         val columnDataSortFlag by viewModel.columnDataSortFlag.collectAsState()
+        val columnNames by viewModel.columnNames.collectAsState()
+        val pageSize by viewModel.pageSize.collectAsState()
         val isVisibleRowNum = remember { mutableStateOf(config.isVisibilityRowNumber) }
         val isVisibleColumnHeader = remember { mutableStateOf(true) }
         val paddingBoxInHorizontalPager = remember { PaddingValues(2.dp)}
@@ -214,6 +233,8 @@ fun Un7KCMPDataGrid(
         val widthBorderStroke = 1.dp
         val maxWidthInDp = remember { mutableStateOf(0.dp) }
         var columnsAreaWidth by remember { mutableStateOf(0.dp) }
+        val borderStrokeTransparent = remember {BorderStroke(width = 0.dp, color = Color.Transparent)}
+        val borderShapeIn = remember{RoundedCornerShape(2.dp)}
 
         LaunchedEffect( isVisibleRowNum.value, maxWidthInDp.value){
             columnsAreaWidth = if ( isVisibleRowNum.value) {
@@ -223,20 +244,7 @@ fun Un7KCMPDataGrid(
             }
         }
 
-        val onFilter:(columnName:String, searchText:String, operator:String) -> Unit ={ columnName, searchText, operator ->
-            viewModel.onEvent(Un7KCMPDataGridViewModel.Event.Filter(columnName, searchText, operator){
-                isOnePageNav.value = viewModel.pageSize.value >= viewModel.onFilterResultCnt.value
-                coroutineScope.launch {
-                    pagerState.animateScrollToPage(0)
-                }
-                channel.trySend(snackBarChannelList.first { item ->
-                    item.channelType == SnackBarChannelType.SEARCH_RESULT
-                }.channel)
-            })
-        }
-        val onUpdateColumns:()->Unit = {
-            viewModel.onEvent(Un7KCMPDataGridViewModel.Event.UpdateColumns)
-        }
+
         val currentDp:(Int)->Dp = { index ->
             // 드래그 시작 지점의 절대 위치(offset) 계산
             var currentOffset = 0.dp
@@ -349,6 +357,63 @@ fun Un7KCMPDataGrid(
             "widthBorderStroke" to widthBorderStroke
         )
 
+        val lazyListState =
+            rememberLazyListState(initialFirstVisibleItemIndex = 0)
+
+        val currentDpY:(Int)->Dp = {index ->
+            var currentOffsetY = 0.dp
+            val borderStrokeDp = widthBorderStroke * 2
+
+            if(index >= 0 ) {
+                for (i in 0..index) {
+                    currentOffsetY += (if(i==0) heightColumnHeader else heightColumnData) + borderStrokeDp
+                }
+                if(lazyListState.firstVisibleItemIndex > 0 ){
+                    repeat(lazyListState.firstVisibleItemIndex+1){
+                        currentOffsetY -= (heightColumnData + borderStrokeDp)
+                    }
+                    currentOffsetY += heightColumnData/3
+                } else{
+                    if(!isVisibleColumnHeader.value) currentOffsetY -= heightColumnHeader
+                }
+            }else{
+                if(!isVisibleColumnHeader.value)  currentOffsetY -= heightColumnHeader
+            }
+
+            currentOffsetY
+        }
+        val onDividerHovered = { index:Int, indexY: Int ->
+            hoveredOffsetX.value = currentDp(index)
+            hoveredOffsetY.value = currentDpY(indexY)
+            isCurrentHovered.value = true
+        }
+        val onListNavHandler: (ListNav) -> Unit = { listNav ->
+            when (listNav) {
+                ListNav.Top -> {
+                    coroutineScope.launch {
+                        lazyListState.animateScrollToItem(0)
+                    }
+                }
+
+                ListNav.Bottom -> {
+                    coroutineScope.launch {
+                        lazyListState.animateScrollToItem(
+                            (pagingData.values.firstOrNull()?.size ?: 1) - 1
+                        )
+                    }
+                }
+            }
+        }
+
+        val gridHandlerSet:Map<String, Any> = mapOf(
+            "onResizeStart" to onResizeStart,
+            "onResize" to onResize,
+            "onResizeEnd" to onResizeEnd,
+            "onDividerHovered" to onDividerHovered,
+            "onDividerHoverExit" to onDividerHoverExit
+        )
+
+
         BoxWithConstraints(
             modifier = Modifier
                 .fillMaxSize()
@@ -356,64 +421,6 @@ fun Un7KCMPDataGrid(
                 .border(borderStrokeTransparent, shape = borderShapeIn),
             contentAlignment = Alignment.Center
         ) {
-
-            val lazyListState =
-                rememberLazyListState(initialFirstVisibleItemIndex = 0)
-
-            val currentDpY:(Int)->Dp = {index ->
-                var currentOffsetY = 0.dp
-                val borderStrokeDp = widthBorderStroke * 2
-
-                if(index >= 0 ) {
-                    for (i in 0..index) {
-                        currentOffsetY += (if(i==0) heightColumnHeader else heightColumnData) + borderStrokeDp
-                    }
-                    if(lazyListState.firstVisibleItemIndex > 0 ){
-                        repeat(lazyListState.firstVisibleItemIndex+1){
-                            currentOffsetY -= (heightColumnData + borderStrokeDp)
-                        }
-                        currentOffsetY += heightColumnData/3
-                    } else{
-                        if(!isVisibleColumnHeader.value) currentOffsetY -= heightColumnHeader
-                    }
-                }else{
-                    if(!isVisibleColumnHeader.value)  currentOffsetY -= heightColumnHeader
-                }
-
-                currentOffsetY
-            }
-            val onDividerHovered = { index:Int, indexY: Int ->
-                hoveredOffsetX.value = currentDp(index)
-                hoveredOffsetY.value = currentDpY(indexY)
-                isCurrentHovered.value = true
-            }
-            val onListNavHandler: (ListNav) -> Unit = { listNav ->
-                when (listNav) {
-                    ListNav.Top -> {
-                        coroutineScope.launch {
-                            lazyListState.animateScrollToItem(0)
-                        }
-                    }
-
-                    ListNav.Bottom -> {
-                        coroutineScope.launch {
-                            lazyListState.animateScrollToItem(
-                                (pagingData.values.firstOrNull()?.size ?: 1) - 1
-                            )
-                        }
-                    }
-                }
-            }
-
-            val gridHandlerSet:Map<String, Any> = mapOf(
-                "onResizeStart" to onResizeStart,
-                "onResize" to onResize,
-                "onResizeEnd" to onResizeEnd,
-                "onDividerHovered" to onDividerHovered,
-                "onDividerHoverExit" to onDividerHoverExit
-            )
-
-
             val onePageTotalGridWidth = (widthRowNumColumn + (onePageMinColumnWidth * columnNames.size) + (widthDividerThickness * (columnNames.size -1)))
             maxWidthInDp.value =  if(isOnePageNav.value) onePageTotalGridWidth.coerceAtLeast(this.maxWidth) else this.maxWidth
 
@@ -529,18 +536,97 @@ fun Un7KCMPDataGrid(
 
                 ) {
                 Un7KCMPMenuGridControl(
+                    viewModel::onEvent,
                     isExpandPageNavControlMenu,
                     isVisibleColumnHeader = isVisibleColumnHeader,
                     lazyListState,
                     viewModel.data.keys.toList(),
                     selectedColumns,
-                    onUpdateColumns,
                     onListNavHandler,
                     isVisibleRowNum
                 )
             }
             //--- Box GridControl
 
+        }// BoxWithConstraints
+    }
+
+
+    Surface(
+        tonalElevation = 6.dp,
+        shadowElevation = 4.dp,
+        border = BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.primaryFixedDim),
+    ) {
+        Box(
+            then(modifier)
+                .fillMaxSize()
+                .border(borderStrokeTransparent, shape = borderShapeOut),
+            contentAlignment = Alignment.Center,
+        ) {
+            if(isOnePageNav.value){
+                makePagingData(
+                    topRowIndex(0, pageSize),
+                    bottomRowIndex( 0, pageSize, true, dataRows.size ),
+                    columnNames,
+                    dataRows.toList()
+                ).let { pagingData ->
+                    dataGridContent(
+                        pagingData,
+                        0,
+                        viewModel,
+                        isExpandPageNavControlMenu,
+                        onFilter,
+                        isOnePageNav
+                    )
+                }//makePagingData
+            } else {
+                HorizontalPager(
+                    state = pagerState,
+                    modifier = Modifier
+                        .padding(paddingHorizontalPager)
+                        .border(borderStrokeTransparent, shape = borderShapeIn),
+                    flingBehavior = PagerDefaults.flingBehavior(
+                        state = pagerState,
+                        snapPositionalThreshold = 0.7f
+                    )
+                ) { pageIndex ->
+                    makePagingData(
+                        topRowIndex(pageIndex, pageSize),
+                        bottomRowIndex( pageIndex, pageSize, pageIndex == lastPageIndex,  dataRows.size),
+                        columnNames,
+                        dataRows.toList()
+                    ).let { pagingData ->
+                        dataGridContent(
+                            pagingData,
+                            pageIndex,
+                            viewModel,
+                            isExpandPageNavControlMenu,
+                            onFilter,
+                            isOnePageNav
+                        )
+                    }//makePagingData
+                }//HorizontalPager
+            }
+
+            //---- Box  PageNavControl
+            Box(
+                modifier = Modifier
+                    .padding(paddingMenuPageNavControl)
+                    //  .border(borderStrokeRed, shape = borderShapeIn)
+                    .align(Alignment.BottomStart)
+            ) {
+                Un7KCMPMenuPageNavControl(
+                    isExpandPageNavControlMenu,
+                    onChangePageSize,
+                    viewModel.selectPageSizeList,
+                    selectPageSizeIndex,
+                    onRefresh,
+                    onPageNavHandler,
+                    pagerState,
+                    isOnePageNav.value
+                )
+            }
+            //---- Box  PageNavControl
 
             //---  Snackbar
             SnackbarHost(
@@ -572,73 +658,6 @@ fun Un7KCMPDataGrid(
             }
             //---  Snackbar
 
-
-        }// BoxWithConstraints
-    }
-
-
-
-    Surface(
-        tonalElevation = 6.dp,
-        shadowElevation = 4.dp,
-        border = BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.primaryFixedDim),
-    ) {
-        Box(
-            then(modifier)
-                .fillMaxSize()
-                .border(borderStrokeTransparent, shape = borderShapeOut),
-            contentAlignment = Alignment.Center,
-        ) {
-            if(isOnePageNav.value){
-                makePagingData(
-                    topRowIndex(0, pageSize),
-                    bottomRowIndex( 0, pageSize, true, dataRows.size ),
-                    columnNames,
-                    dataRows.toList()
-                ).let { pagingData ->
-                    dataGridContent(pagingData, 0)
-                }//makePagingData
-            } else {
-                HorizontalPager(
-                    state = pagerState,
-                    modifier = Modifier
-                        .padding(paddingHorizontalPager)
-                        .border(borderStrokeTransparent, shape = borderShapeIn),
-                    flingBehavior = PagerDefaults.flingBehavior(
-                        state = pagerState,
-                        snapPositionalThreshold = 0.7f
-                    )
-                ) { pageIndex ->
-                    makePagingData(
-                        topRowIndex(pageIndex, pageSize),
-                        bottomRowIndex( pageIndex, pageSize, pageIndex == lastPageIndex,  dataRows.size),
-                        columnNames,
-                        dataRows.toList()
-                    ).let { pagingData ->
-                        dataGridContent(pagingData, pageIndex)
-                    }//makePagingData
-                }//HorizontalPager
-            }
-
-            //---- Box  PageNavControl
-            Box(
-                modifier = Modifier
-                    .padding(paddingMenuPageNavControl)
-                    //  .border(borderStrokeRed, shape = borderShapeIn)
-                    .align(Alignment.BottomStart)
-            ) {
-                Un7KCMPMenuPageNavControl(
-                    isExpandPageNavControlMenu,
-                    onChangePageSize,
-                    viewModel.selectPageSizeList,
-                    selectPageSizeIndex,
-                    onRefresh,
-                    onPageNavHandler,
-                    pagerState,
-                    isOnePageNav.value
-                )
-            }
-            //---- Box  PageNavControl
         }
     }
 

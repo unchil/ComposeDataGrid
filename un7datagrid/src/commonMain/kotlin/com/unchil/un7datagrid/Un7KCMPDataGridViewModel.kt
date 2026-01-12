@@ -257,7 +257,7 @@ class Un7KCMPDataGridViewModel(val data: Map<String,List<Any?>>, val config: Un7
     }
 
 
-    val onFilter:(columnName:String, searchText:String, operator:String, ()->Unit ) -> Unit
+    val onFilter:(columnName:String, searchText:String, operator:String, (Boolean)->Unit ) -> Unit
             = { columnName, searchText, operator, closerFunc ->
 
         isFilteringData.value = true
@@ -644,7 +644,7 @@ class Un7KCMPDataGridViewModel(val data: Map<String,List<Any?>>, val config: Un7
         dataFilterApplied.value =  dataRows.value
         lastPageIndex.value = getLastPageIndex(dataRows.value.size, pageSize.value)
 
-        closerFunc()
+        closerFunc( pageSize.value >= onFilterResultCnt.value)
     }
 
     val onColumnSort:( Int, Int, String) -> Unit = { columnIndex, sortType, columnName ->
@@ -765,7 +765,7 @@ class Un7KCMPDataGridViewModel(val data: Map<String,List<Any?>>, val config: Un7
             val columnName:String,
             val searchText:String,
             val operator:String,
-            val closerFunc:()->Unit
+            val closerFunc:(Boolean)->Unit
         ):Event()
 
         data class ColumnSort(
