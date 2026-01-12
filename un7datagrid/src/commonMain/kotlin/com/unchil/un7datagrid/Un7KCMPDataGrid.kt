@@ -200,9 +200,10 @@ fun Un7KCMPDataGrid(
 
     val dataGridContent: @Composable (
         ( pagingData:MutableMap<String, List<Any?>>, pageIndex:Int, viewModel:Un7KCMPDataGridViewModel,
-          isExpandPageNavControlMenu:MutableState<Boolean>, onFilter:( String, String, String)->Unit ,
-          isOnePageNav:MutableState<Boolean>) -> Unit  ) = {
-              pagingData, pageIndex, viewModel, isExpandPageNavControlMenu, onFilter, isOnePageNav ->
+          isExpandPageNavControlMenu:MutableState<Boolean>,
+          onFilter:(String, String, String)->Unit, isOnePageNav:MutableState<Boolean>
+        ) -> Unit
+    ) = { pagingData, pageIndex, viewModel, isExpandPageNavControlMenu, onFilter, isOnePageNav ->
 
         val coroutineScope = rememberCoroutineScope()
         val selectedColumns by viewModel.selectedColumns.collectAsState()
@@ -227,10 +228,10 @@ fun Un7KCMPDataGrid(
         val hoveredOffsetX = remember { mutableStateOf(0.dp) }
         val hoveredOffsetY = remember { mutableStateOf(0.dp) }
         val onePageMinColumnWidth = remember { 150.dp }
-        val heightColumnHeader = 36.dp
-        val heightColumnData = 30.dp
-        val heightColumnHeaderDivider =  30.dp
-        val widthBorderStroke = 1.dp
+        val heightColumnHeader = remember{ 36.dp }
+        val heightColumnData = remember{ 30.dp }
+        val heightColumnHeaderDivider = remember{ 30.dp }
+        val widthBorderStroke = remember { 1.dp }
         val maxWidthInDp = remember { mutableStateOf(0.dp) }
         var columnsAreaWidth by remember { mutableStateOf(0.dp) }
         val borderStrokeTransparent = remember {BorderStroke(width = 0.dp, color = Color.Transparent)}
@@ -459,7 +460,10 @@ fun Un7KCMPDataGrid(
                     }//stickyHeader
 
                     items(
-                        pagingData.values.firstOrNull()?.size ?: 0
+                        pagingData.values.firstOrNull()?.size ?: 0,
+                        key = { index ->
+                            getRowNumber(pageIndex, pageSize, index)
+                        }
                     ) { dataIndex ->
                         Un7KCMPDataRow(
                             isVisibleRowNum.value,
