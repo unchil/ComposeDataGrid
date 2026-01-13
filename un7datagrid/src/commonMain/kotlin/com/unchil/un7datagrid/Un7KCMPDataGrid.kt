@@ -278,19 +278,11 @@ fun Un7KCMPDataGrid(
             currentOffsetY
         }
         val heightVerticalDivider:(Int)->Dp = { count ->
-            var currentOffsetY = 0.dp
-            val borderStrokeDp = widthBorderStroke * 2
-
-            for (i in 1..count) {
-                currentOffsetY += heightColumnData + borderStrokeDp
-            }
-
             if(isVisibleColumnHeader.value){
-                currentOffsetY + heightColumnHeader
+                ((heightColumnData + (widthBorderStroke * 2) ) * count) + heightColumnHeader
             } else {
-                currentOffsetY
+                (heightColumnData + (widthBorderStroke * 2) ) * count
             }
-
         }
         val onListNavHandler: (ListNav) -> Unit = { listNav ->
             when (listNav) {
