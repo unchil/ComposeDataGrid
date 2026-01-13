@@ -52,7 +52,13 @@ The search menu for each column supports conditional operators, allowing for mor
 *   **For `Boolean` data:**
     *   `Is`, `IsNot`
 
-
+| Type | Sort | Filter | Null-Safety |
+| --- | --- | --- | --- |
+| String | ✅ | ✅ | ✅ | 
+| Int / Long | ✅ | ✅ | ✅ | 
+| Float / Double | ✅ | ✅ | ✅ | 
+| Boolean | ✅ | ✅ | ✅ | 
+| Char | ✅ | ✅ | ✅ |
 
 ##  Installation
 
