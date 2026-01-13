@@ -85,6 +85,8 @@ fun Un7KCMPDataGrid(
     val paddingHorizontalPager = remember { PaddingValues(0.dp)}
     val borderShapeIn = remember{RoundedCornerShape(2.dp)}
     val paddingMenuPageNavControl = remember{ PaddingValues(all = 10.dp)}
+    val isVisibleRowNum = remember { mutableStateOf(config.isVisibilityRowNumber) }
+    val isVisibleColumnHeader = remember { mutableStateOf(true) }
 
     //--- SnackBar Setting
     val channel = remember { Channel<Int>(Channel.CONFLATED) }
@@ -139,7 +141,7 @@ fun Un7KCMPDataGrid(
         }
     }
     //--- SnackBar Setting
-    
+
     val pagerState = rememberPagerState( pageCount = { lastPageIndex +1 })
     val onPageNavHandler:(PageNav)->Unit = { pageNav ->
         when(pageNav){
@@ -199,7 +201,6 @@ fun Un7KCMPDataGrid(
         })
     }
 
-
     val dataGridContent: @Composable (
         ( pagingData:MutableMap<String, List<Any?>>,
           pageIndex:Int,
@@ -216,8 +217,6 @@ fun Un7KCMPDataGrid(
         val columnDataSortFlag by viewModel.columnDataSortFlag.collectAsState()
         val columnNames by viewModel.columnNames.collectAsState()
         val pageSize by viewModel.pageSize.collectAsState()
-        val isVisibleRowNum = remember { mutableStateOf(config.isVisibilityRowNumber) }
-        val isVisibleColumnHeader = remember { mutableStateOf(true) }
         val paddingBoxInHorizontalPager = remember { PaddingValues(2.dp)}
         val paddingLazyColumn = remember { PaddingValues(0.dp)}
         val paddingLazyColumnContent = remember { PaddingValues(4.dp)}
@@ -488,7 +487,7 @@ fun Un7KCMPDataGrid(
                     val offsetValueX = if(isResizing.value) resizeIndicatorOffset else hoveredOffsetX.value
                     val rowCount: Int = if( pagingData.values.first().size  < pageSize) pagingData.values.first().size else pageSize
 
-                    // Android/iOS는 호버(Hover) 이벤트를 지원하지 않음.
+                    // Android/iOS do not support (Hover) events.
                     if(isCurrentHovered.value && listOf(PlatformAlias.JVM, PlatformAlias.WASM).contains(platform)){
                         VerticalDivider(
                             modifier = Modifier
