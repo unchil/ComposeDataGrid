@@ -69,6 +69,8 @@ fun Un7KCMPDataGrid(
     data:Map<String, List<Any?>>,
     config: Un7KCMPDataGridConfig = Un7KCMPDataGridConfig()
 ){
+
+    val platform = remember { platform() }
     val coroutineScope = rememberCoroutineScope()
     val viewModel = remember(data) { Un7KCMPDataGridViewModel(data, config) }
     val isExpandPageNavControlMenu = rememberSaveable {mutableStateOf(false) }
@@ -199,13 +201,15 @@ fun Un7KCMPDataGrid(
 
 
     val dataGridContent: @Composable (
-        ( pagingData:MutableMap<String, List<Any?>>, pageIndex:Int, viewModel:Un7KCMPDataGridViewModel,
+        ( pagingData:MutableMap<String, List<Any?>>,
+          pageIndex:Int,
+          viewModel:Un7KCMPDataGridViewModel,
           isExpandPageNavControlMenu:MutableState<Boolean>,
-          onFilter:(String, String, String)->Unit, isOnePageNav:MutableState<Boolean>
-        ) -> Unit
-    ) = { pagingData, pageIndex, viewModel, isExpandPageNavControlMenu, onFilter, isOnePageNav ->
+          onFilter:(String, String, String)->Unit,
+          isOnePageNav:MutableState<Boolean> ) -> Unit ) = {
+        pagingData, pageIndex, viewModel, isExpandPageNavControlMenu, onFilter, isOnePageNav ->
 
-        val coroutineScope = rememberCoroutineScope()
+        val coroutineScopeDataGridContent = rememberCoroutineScope()
         val selectedColumns by viewModel.selectedColumns.collectAsState()
         val columnWeights by viewModel.columnWeights.collectAsState()
         val columnOffsetList by viewModel.columnsOffset.collectAsState()
@@ -233,10 +237,12 @@ fun Un7KCMPDataGrid(
         val heightColumnHeaderDivider = remember{ 30.dp }
         val widthBorderStroke = remember { 1.dp }
         val maxWidthInDp = remember { mutableStateOf(0.dp) }
+        val maxHeightInDp = remember { mutableStateOf(0.dp) }
         var columnsAreaWidth by remember { mutableStateOf(0.dp) }
         val borderStrokeTransparent = remember {BorderStroke(width = 0.dp, color = Color.Transparent)}
         val borderShapeIn = remember{RoundedCornerShape(2.dp)}
         val lazyListState = rememberLazyListState(initialFirstVisibleItemIndex = 0)
+
         val currentDp:(Int)->Dp = { index ->
             // 드래그 시작 지점의 절대 위치(offset) 계산
             var currentOffset = 0.dp
@@ -289,13 +295,13 @@ fun Un7KCMPDataGrid(
         val onListNavHandler: (ListNav) -> Unit = { listNav ->
             when (listNav) {
                 ListNav.Top -> {
-                    coroutineScope.launch {
+                    coroutineScopeDataGridContent.launch {
                         lazyListState.animateScrollToItem(0)
                     }
                 }
 
                 ListNav.Bottom -> {
-                    coroutineScope.launch {
+                    coroutineScopeDataGridContent.launch {
                         lazyListState.animateScrollToItem(
                             (pagingData.values.firstOrNull()?.size ?: 1) - 1
                         )
@@ -419,6 +425,8 @@ fun Un7KCMPDataGrid(
                     .coerceAtLeast(this.maxWidth)
             } else this.maxWidth
 
+            maxHeightInDp.value = this.maxHeight
+
             Box(modifier = if(isOnePageNav.value) Modifier.horizontalScroll(rememberScrollState()) else Modifier ) {
 
                 LazyColumn(
@@ -483,15 +491,13 @@ fun Un7KCMPDataGrid(
 
 
                 //----  Column Resize
-                if(isCurrentHovered.value || isResizing.value){
-                    val iconWidth = 24.dp // Standard icon width
+                if(isCurrentHovered.value || isResizing.value) {
+                    val iconWidth = remember {24.dp} // Standard icon width
                     val offsetValueX = if(isResizing.value) resizeIndicatorOffset else hoveredOffsetX.value
-                    val offsetValueY =  hoveredOffsetY.value + (iconWidth/3 )
-                    val scaleValue = if(isResizing.value) 1.0f else 1.1f
-                    val bgColor = if(isResizing.value) Color.Transparent else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
                     val rowCount: Int = if( pagingData.values.first().size  < pageSize) pagingData.values.first().size else pageSize
 
-                    if(isCurrentHovered.value){
+                    // Android/iOS는 호버(Hover) 이벤트를 지원하지 않음.
+                    if(isCurrentHovered.value && listOf(PlatformAlias.JVM, PlatformAlias.WASM).contains(platform)){
                         VerticalDivider(
                             modifier = Modifier
                                 .height(heightVerticalDivider(rowCount))
@@ -500,6 +506,17 @@ fun Un7KCMPDataGrid(
                             color =  Color.Gray.copy(alpha = 0.5f) ,
                             thickness = widthDividerThickness
                         )
+                    }
+
+                    val scaleValue = if(isResizing.value) 1.0f else 1.1f
+                    val bgColor = if(isResizing.value) Color.Transparent else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
+                    val offsetValueY = when (platform) {
+                        PlatformAlias.JVM, PlatformAlias.WASM -> {
+                            hoveredOffsetY.value + (iconWidth/3 )
+                        }
+                        PlatformAlias.ANDROID, PlatformAlias.IOS -> {
+                            maxHeightInDp.value / 2
+                        }
                     }
 
                     Box(
@@ -519,9 +536,9 @@ fun Un7KCMPDataGrid(
                                 ),
                         )
                     }
+                }//----  Column Resize
 
-                }
-                //----  Column Resize
+
 
             }
 
