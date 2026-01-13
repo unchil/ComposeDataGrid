@@ -106,7 +106,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             // Add Un7KCMPDataGrid library (change to the latest version)
-            implementation("com.github.unchil:un7datagrid:0.0.10-3")
+            implementation("com.github.unchil:un7datagrid:0.0.10-7")
         }
     }
 }
