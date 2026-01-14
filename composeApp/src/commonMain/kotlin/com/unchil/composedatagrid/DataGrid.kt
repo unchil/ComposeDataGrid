@@ -4,10 +4,13 @@ package com.unchil.composedatagrid
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawingPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
@@ -25,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -103,7 +107,6 @@ fun DataGridWithViewModel(
     val data = remember { mutableStateOf(emptyList<List<Any?>>()) }
 
     LaunchedEffect(seaWaterInfo.value){
-
         isVisible = seaWaterInfo.value.isNotEmpty()
         if(isVisible){
             columnNames.value = seaWaterInfo.value.first().makeGridColumns()
@@ -114,33 +117,19 @@ fun DataGridWithViewModel(
     }
 
 
-
     AppTheme(enableDarkMode=false){
         BoxWithConstraints(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize().safeDrawingPadding() // Android/iOS의 Safe Area(상태바 등)를 자동으로 계산하여 패딩 추가
         ) {
             val isLandscape = maxWidth > maxHeight
-
+            val titleVerticalPadding = remember {  mutableStateOf(10.dp) }
+            val titleAreaHeight = remember {  mutableStateOf(24.dp + titleVerticalPadding.value*2) }
             val modifier = when(platform.alias){
                 PlatformAlias.ANDROID -> {
-                    if (isLandscape) {
-                        // 가로 모드일 때
-                        Modifier.fillMaxWidth(0.95f).height(400.dp).padding(0.dp)
-                    } else {
-                        // 세로 모드일 때
-                        Modifier.fillMaxWidth(0.95f).height(700.dp).padding(0.dp)
-                    }
-
+                    Modifier.width(maxWidth ).height(maxHeight - titleAreaHeight.value  )
                 }
                 PlatformAlias.IOS -> {
-                    if (isLandscape) {
-                        // 가로 모드일 때
-                        Modifier.fillMaxWidth(0.95f).height(400.dp).padding(0.dp)
-                    } else {
-                        // 세로 모드일 때
-                        Modifier.fillMaxWidth(0.95f).height(700.dp).padding(0.dp)
-                    }
-
+                    Modifier.width(maxWidth).height(maxHeight - titleAreaHeight.value  )
                 }
                 PlatformAlias.JVM -> {
                     Modifier.fillMaxWidth(0.95f).height(600.dp ).padding(0.dp)
@@ -152,14 +141,14 @@ fun DataGridWithViewModel(
 
             Column(
                 modifier = Modifier.fillMaxSize()
-                    .background(MaterialTheme.colorScheme.background)
-                    .verticalScroll(rememberScrollState()),
+                    .background(MaterialTheme.colorScheme.background),
+                 //   .verticalScroll(rememberScrollState()),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
 
                 Text(
                     "Un7 Data Grid for Compose Multiplatform",
-                    modifier = Modifier.padding( 10.dp),
+                    modifier = Modifier.padding( vertical = titleVerticalPadding.value),
                     color = MaterialTheme.colorScheme.onBackground,
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold
@@ -169,20 +158,17 @@ fun DataGridWithViewModel(
                     Un7KCMPDataGrid(
                         modifier,
                         Pair(columnNames.value, data.value).toMap(),
-
                         Un7KCMPDataGridConfig(
                             dataRowBackgroundColor = MaterialTheme.colorScheme.surface ,
                             dataRowContentColor = Color.DarkGray ,
                             oddDataRowBackgroundColor = Color.White,
                             evenDataRowBackgroundColor = Color(0xFFF5F5F5)
                         )
-
-
                     )
                 }
 
-            }
-        }
+            } //--- Column
+        } //--- BoxWithConstraints
     }
 
 }

@@ -7,7 +7,7 @@ import androidx.compose.ui.graphics.Color
 data class Un7KCMPDataGridConfig(
     val isVisibilityRowNumber: Boolean = true,
     val rowNumberColumnName: String = "No",
-    val pageSizeList: List<String> = listOf("10", "25", "50", "100"),
+    val pageSizeList: List<String> = listOf("10", "20", "50", "100"),
     val defaultPageSizeListIndex: Int = pageSizeList.lastIndex,
     val headerRowBackgroundColor: Color? = null ,
     val headerRowContentColor: Color? = null ,
