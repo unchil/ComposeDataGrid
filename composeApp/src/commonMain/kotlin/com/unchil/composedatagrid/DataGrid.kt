@@ -4,7 +4,6 @@ package com.unchil.composedatagrid
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -28,7 +27,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -132,7 +130,7 @@ fun DataGridWithViewModel(
                     Modifier.width(maxWidth).height(maxHeight - titleAreaHeight.value  )
                 }
                 PlatformAlias.JVM -> {
-                    Modifier.fillMaxWidth(0.95f).height(600.dp ).padding(0.dp)
+                    Modifier.fillMaxWidth(0.95f).height(700.dp ).padding(0.dp)
                 }
                 PlatformAlias.WASM -> {
                     Modifier.fillMaxWidth(0.95f).height(700.dp ).padding(0.dp)
