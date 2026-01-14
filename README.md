@@ -16,7 +16,7 @@
 
 |                       iOS                        |                                                                                 AOS                                                                                 |
 |:------------------------------------------------:|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
-| ![iOS](https://github.com/unchil/ComposeDataGrid/blob/78f7a69708bd040804652f73ce1b1875332635df/screenshot/un7datagrid_ios.gif) | ![Android](https://github.com/unchil/ComposeDataGrid/blob/78f7a69708bd040804652f73ce1b1875332635df/screenshot/un7datagrid_android.gif) |
+| ![iOS](https://github.com/unchil/ComposeDataGrid/blob/fbc14da63b84327d18f78efb04cfacc8c542b15f/screenshot/ios.gif) | ![Android](https://github.com/unchil/ComposeDataGrid/blob/78f7a69708bd040804652f73ce1b1875332635df/screenshot/un7datagrid_android.gif) |
 
 
 
