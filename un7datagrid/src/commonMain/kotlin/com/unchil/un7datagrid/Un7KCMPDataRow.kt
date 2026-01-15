@@ -54,7 +54,7 @@ internal fun Un7KCMPDataRow(
 ){
     val density = LocalDensity.current.density
     val paddingDataRow = remember { PaddingValues(top = 2.dp) }
-    val borderStrokeLightGray = remember {BorderStroke(width =  gridDpSet["widthBorderStroke"] ?: 0.dp, color = Color.LightGray)}
+    val borderStrokeLightGray = remember {BorderStroke(width =  gridDpSet["widthBorderStroke"] ?: 1.dp, color = Color.LightGray)}
     val borderShapeIn = remember{RoundedCornerShape(0.dp)}
 
 

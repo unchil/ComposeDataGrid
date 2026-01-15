@@ -84,7 +84,7 @@ fun Un7KCMPDataGridContent (
     val heightColumnHeader = remember{ 36.dp }
     val heightColumnData = remember{ 30.dp }
     val heightColumnHeaderDivider = remember{ 30.dp }
-    val widthBorderStroke = remember { 1.dp }
+    val widthBorderStroke = remember { 0.5.dp }
     val maxWidthInDp = remember { mutableStateOf(0.dp) }
     val maxHeightInDp = remember { mutableStateOf(0.dp) }
     var columnsAreaWidth by remember { mutableStateOf(0.dp) }

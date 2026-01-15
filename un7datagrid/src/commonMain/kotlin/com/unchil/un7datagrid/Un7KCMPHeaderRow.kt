@@ -64,6 +64,8 @@ internal fun Un7KCMPHeaderRow(
 ){
     val density = LocalDensity.current.density
 
+    val borderStrokeLightGray = remember {BorderStroke(width =  gridDpSet["widthBorderStroke"] ?: 1.dp, color = Color.LightGray)}
+
     Row( verticalAlignment = Alignment.CenterVertically ) {
 
         AnimatedVisibility(isVisibleRowNum) {
@@ -73,7 +75,7 @@ internal fun Un7KCMPHeaderRow(
                         ?: MaterialTheme.colorScheme.secondaryContainer )
                     .height(gridDpSet["heightColumnHeader"] ?: 0.dp)
                     .width(gridDpSet["widthRowNumColumn"] ?: 0.dp)
-                    .border(border = BorderStroke(width = gridDpSet["widthBorderStroke"] ?: 0.dp, color = MaterialTheme.colorScheme.secondaryFixedDim),
+                    .border(border = borderStrokeLightGray,
                         shape = RoundedCornerShape(2.dp)),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically,
@@ -132,7 +134,7 @@ internal fun Un7KCMPHeaderRow(
                         alpha = if ( offset.value  == IntOffset.Zero) 1f else 0.5f
                     }
                     .border(
-                        border = BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.secondaryFixedDim),
+                        border = borderStrokeLightGray,
                         shape = RoundedCornerShape(2.dp)),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
