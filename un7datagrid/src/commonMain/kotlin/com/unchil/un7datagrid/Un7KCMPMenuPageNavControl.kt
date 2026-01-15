@@ -34,7 +34,7 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 internal fun Un7KCMPMenuPageNavControl(
-    isExpandPageNavControlMenu: MutableState<Boolean>,
+    isExpandMenu: MutableState<Boolean>,
     onChangePageSize:(Int)->Unit,
     selectPageSizeList: List<String>,
     selectPageSizeIndex:Int,
@@ -59,10 +59,10 @@ internal fun Un7KCMPMenuPageNavControl(
         verticalAlignment = Alignment.CenterVertically) {
 
         IconButton(
-            onClick = { isExpandPageNavControlMenu.value = !isExpandPageNavControlMenu.value },
+            onClick = { isExpandMenu.value = !isExpandMenu.value },
         ) {
             SegmentedButtonDefaults.Icon(
-                active = !isExpandPageNavControlMenu.value,
+                active = !isExpandMenu.value,
                 activeContent = {
                     Icon(
                         Icons.Default.ZoomInMap,
@@ -78,7 +78,7 @@ internal fun Un7KCMPMenuPageNavControl(
             )
         }
 
-        AnimatedVisibility(visible = isExpandPageNavControlMenu.value) {
+        AnimatedVisibility(visible = isExpandMenu.value) {
 
             Row(
                 verticalAlignment = Alignment.CenterVertically

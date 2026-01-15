@@ -31,8 +31,8 @@ import androidx.compose.ui.unit.dp
 @Composable
 internal fun Un7KCMPMenuGridControl(
     onEvent: (Un7KCMPDataGridViewModel.Event) -> Unit,
-    isExpandGridControlMenu: MutableState<Boolean>,
-    isVisibleColumnHeader:MutableState<Boolean>,
+    isExpandMenu: MutableState<Boolean>,
+    isVisibleHeader:MutableState<Boolean>,
     lazyListState: LazyListState,
     allColumns: List<String>,
     selectedColumns: Map<String, MutableState<Boolean>>,
@@ -59,7 +59,7 @@ internal fun Un7KCMPMenuGridControl(
         verticalArrangement = Arrangement.Bottom
     ) {
 
-        AnimatedVisibility(visible = isExpandGridControlMenu.value) {
+        AnimatedVisibility(visible = isExpandMenu.value) {
 
             Column {
                 IconButton(
@@ -83,10 +83,10 @@ internal fun Un7KCMPMenuGridControl(
                 }
 
                 IconButton(
-                    onClick = { isVisibleColumnHeader.value = !isVisibleColumnHeader.value },
+                    onClick = { isVisibleHeader.value = !isVisibleHeader.value },
                 ) {
                     SegmentedButtonDefaults.Icon(
-                        active = !isVisibleColumnHeader.value,
+                        active = !isVisibleHeader.value,
                         activeContent = {
                             Icon(
                                 Icons.Default.Compress,

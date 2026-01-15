@@ -73,7 +73,7 @@ fun Un7KCMPDataGrid(
     val platform = remember { platform() }
     val coroutineScope = rememberCoroutineScope()
     val viewModel = remember(data) { Un7KCMPDataGridViewModel(data, config) }
-    val isExpandPageNavControlMenu = rememberSaveable {mutableStateOf(false) }
+    val isExpandMenu = rememberSaveable {mutableStateOf(false) }
     val lastPageIndex by viewModel.lastPageIndex.collectAsState()
     val isOnePageNav = remember { mutableStateOf(viewModel.selectPageSizeList.lastIndex == viewModel.selectPageSizeIndex.value) }
     val dataRows by viewModel.dataRows.collectAsState()
@@ -86,7 +86,7 @@ fun Un7KCMPDataGrid(
     val borderShapeIn = remember{RoundedCornerShape(2.dp)}
     val paddingMenuPageNavControl = remember{ PaddingValues(all = 10.dp)}
     val isVisibleRowNum = remember { mutableStateOf(config.isVisibilityRowNumber) }
-    val isVisibleColumnHeader = remember { mutableStateOf(true) }
+    val isVisibleHeader = remember { mutableStateOf(true) }
 
     //--- SnackBar Setting
     val channel = remember { Channel<Int>(Channel.CONFLATED) }
@@ -202,13 +202,15 @@ fun Un7KCMPDataGrid(
     }
 
     val dataGridContent: @Composable (
-        ( pagingData:MutableMap<String, List<Any?>>,
-          pageIndex:Int,
-          viewModel:Un7KCMPDataGridViewModel,
-          isExpandPageNavControlMenu:MutableState<Boolean>,
-          onFilter:(String, String, String)->Unit,
-          isOnePageNav:MutableState<Boolean> ) -> Unit ) = {
-        pagingData, pageIndex, viewModel, isExpandPageNavControlMenu, onFilter, isOnePageNav ->
+        (pagingData:MutableMap<String, List<Any?>>,
+         pageIndex:Int,
+         viewModel:Un7KCMPDataGridViewModel,
+         isExpandMenu:MutableState<Boolean>,
+         onFilter:(String, String, String)->Unit,
+         isOnePageNav:MutableState<Boolean>,
+         isVisibleRowNum:MutableState<Boolean>,
+         isVisibleHeader:MutableState<Boolean>) -> Unit ) = {
+        pagingData, pageIndex, viewModel, isExpandMenu, onFilter, isOnePageNav, isVisibleRowNum, isVisibleHeader ->
 
         val coroutineScopeDataGridContent = rememberCoroutineScope()
         val selectedColumns by viewModel.selectedColumns.collectAsState()
@@ -268,16 +270,16 @@ fun Un7KCMPDataGrid(
                     }
                     currentOffsetY += heightColumnData/3
                 } else{
-                    if(!isVisibleColumnHeader.value) currentOffsetY -= heightColumnHeader
+                    if(!isVisibleHeader.value) currentOffsetY -= heightColumnHeader
                 }
             }else{
-                if(!isVisibleColumnHeader.value)  currentOffsetY -= heightColumnHeader
+                if(!isVisibleHeader.value)  currentOffsetY -= heightColumnHeader
             }
 
             currentOffsetY
         }
         val heightVerticalDivider:(Int)->Dp = { count ->
-            if(isVisibleColumnHeader.value){
+            if(isVisibleHeader.value){
                 ((heightColumnData + (widthBorderStroke * 2) ) * count) + heightColumnHeader
             } else {
                 (heightColumnData + (widthBorderStroke * 2) ) * count
@@ -441,7 +443,7 @@ fun Un7KCMPDataGrid(
                 ) {
 
                     stickyHeader {
-                        AnimatedVisibility(visible = isVisibleColumnHeader.value) {
+                        AnimatedVisibility(visible = isVisibleHeader.value) {
                             Un7KCMPHeaderRow(
                                 viewModel::onEvent,
                                 isVisibleRowNum.value,
@@ -543,8 +545,8 @@ fun Un7KCMPDataGrid(
                 ) {
                 Un7KCMPMenuGridControl(
                     viewModel::onEvent,
-                    isExpandPageNavControlMenu,
-                    isVisibleColumnHeader = isVisibleColumnHeader,
+                    isExpandMenu,
+                    isVisibleHeader = isVisibleHeader,
                     lazyListState,
                     viewModel.data.keys.toList(),
                     selectedColumns,
@@ -580,9 +582,11 @@ fun Un7KCMPDataGrid(
                         pagingData,
                         0,
                         viewModel,
-                        isExpandPageNavControlMenu,
+                        isExpandMenu,
                         onFilter,
-                        isOnePageNav
+                        isOnePageNav,
+                        isVisibleRowNum,
+                        isVisibleHeader
                     )
                 }//makePagingData
             } else {
@@ -606,9 +610,11 @@ fun Un7KCMPDataGrid(
                             pagingData,
                             pageIndex,
                             viewModel,
-                            isExpandPageNavControlMenu,
+                            isExpandMenu,
                             onFilter,
-                            isOnePageNav
+                            isOnePageNav,
+                            isVisibleRowNum,
+                            isVisibleHeader
                         )
                     }//makePagingData
                 }//HorizontalPager
@@ -622,7 +628,7 @@ fun Un7KCMPDataGrid(
                     .align(Alignment.BottomStart)
             ) {
                 Un7KCMPMenuPageNavControl(
-                    isExpandPageNavControlMenu,
+                    isExpandMenu,
                     onChangePageSize,
                     viewModel.selectPageSizeList,
                     selectPageSizeIndex,
