@@ -70,7 +70,7 @@ fun Un7KCMPDataGridContent (
     val paddingBoxInHorizontalPager = remember { PaddingValues(2.dp)}
     val paddingLazyColumn = remember { PaddingValues(0.dp)}
     val paddingLazyColumnContent = remember { PaddingValues(4.dp)}
-    val paddingMenuGridControl = remember{ PaddingValues(bottom = 60.dp, start = 10.dp)}
+    val paddingMenuGridControl = remember{ PaddingValues(bottom = 60.dp, start = 12.dp)}
     val widthRowNumColumn = remember{ 60.dp}
     val widthDividerThickness = remember{ 2.dp}
     val isResizing = remember { mutableStateOf(false) }
@@ -272,14 +272,13 @@ fun Un7KCMPDataGridContent (
 
             LazyColumn(
                 modifier = if(isOnePageNav.value) Modifier.width(maxWidthInDp.value).fillMaxHeight() else Modifier.fillMaxSize()
-                    .shadow(elevation = 2.dp, shape = borderShapeIn)
                     .background(
                         color = MaterialTheme.colorScheme.background,
                         shape = borderShapeIn
                     )
                     .border(
                         border = BorderStroke(
-                            width = 1.dp,
+                            width = 0.dp,
                             color = MaterialTheme.colorScheme.secondaryFixedDim
                         ),
                         shape = borderShapeIn

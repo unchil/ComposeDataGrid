@@ -63,7 +63,7 @@ fun Un7KCMPDataGrid(
     val borderShapeOut = remember{RoundedCornerShape(0.dp)}
     val paddingHorizontalPager = remember { PaddingValues(0.dp)}
     val borderShapeIn = remember{RoundedCornerShape(2.dp)}
-    val paddingMenuPageNavControl = remember{ PaddingValues(all = 10.dp)}
+    val paddingMenuPageNavControl = remember{ PaddingValues(start = 12.dp, end = 10.dp, top = 10.dp, bottom = 10.dp)}
     val isVisibleRowNum = remember { mutableStateOf(config.isVisibilityRowNumber) }
     val isVisibleHeader = remember { mutableStateOf(true) }
 
@@ -185,11 +185,7 @@ fun Un7KCMPDataGrid(
     }
 
 
-    Surface(
-        tonalElevation = 6.dp,
-        shadowElevation = 4.dp,
-        border = BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.primaryFixedDim),
-    ) {
+    Surface{
         Box(
             then(modifier)
                 .fillMaxSize()

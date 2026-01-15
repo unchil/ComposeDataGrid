@@ -29,8 +29,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -127,8 +130,10 @@ internal fun Un7KCMPPageSizePicker(
 
                     },
                 text = dataList[page].toString(),
-                fontWeight = FontWeight.Bold,
+                fontStyle=  FontStyle.Italic,
+                fontWeight = FontWeight.ExtraBold,
                 textAlign = TextAlign.Center,
+                textDecoration = TextDecoration.Underline
             )
         }
 

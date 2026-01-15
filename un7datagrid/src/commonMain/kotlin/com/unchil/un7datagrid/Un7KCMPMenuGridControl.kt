@@ -40,18 +40,18 @@ internal fun Un7KCMPMenuGridControl(
     isVisibleRowNum: MutableState<Boolean>
 ) {
 
-    val shape = RoundedCornerShape(10.dp)
+    val shape = RoundedCornerShape(4.dp)
 
     Column(
         modifier = Modifier
-            .shadow(elevation = 4.dp, shape = shape)
+            .shadow(elevation = 2.dp, shape = shape)
             .background(
                 color = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.9f),
                 shape = shape
             )
             .border(
                 border = BorderStroke(
-                    width = 1.dp,
+                    width = 0.dp,
                     color = MaterialTheme.colorScheme.secondaryFixedDim
                 ),
                 shape = shape
