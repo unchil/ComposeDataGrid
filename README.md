@@ -11,7 +11,7 @@
 
 |                                                                        Web                                                                        |
 |:-------------------------------------------------------------------------------------------------------------------------------------------------:|
-| ![Web](https://github.com/unchil/ComposeDataGrid/blob/30736374e30f9827dba48340d919f6de002c8756/screenshot/wasm.gif) |
+| ![Web](https://github.com/unchil/ComposeDataGrid/blob/2a3e2607a064c6cbf8f3df718b46a8fcdd6dfc7d/screenshot/wasm.gif) |
 
 
 |                       iOS                        |                                                                                 AOS                                                                                 |
