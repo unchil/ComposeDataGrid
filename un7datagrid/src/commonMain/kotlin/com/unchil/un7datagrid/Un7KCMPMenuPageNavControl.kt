@@ -87,9 +87,6 @@ internal fun Un7KCMPMenuPageNavControl(
                 Un7KCMPPageSizePicker(
                     selectPageSizeList,
                     selectPageSizeIndex,
-                    50.dp,
-                    20.dp,
-                    3,
                     onChangePageSize
                 )
 
