@@ -80,6 +80,42 @@ fun Map<String,List<Any?>>.toGridList():List<List<Any?>>{
     return data
 }
 
+/**
+ * Map<String, List<Any?>> 데이터를 CSV 형식의 문자열로 변환합니다.
+ */
+fun Map<String, List<Any?>>.toCsvString(): String {
+    val columnNames = this.keys.toList()
+    val rowCount = this.values.firstOrNull()?.size ?: 0
+
+    if (columnNames.isEmpty()) return ""
+
+    val csvBuilder = StringBuilder()
+
+    // 1. 헤더 작성 (컬럼 이름)
+    csvBuilder.append(columnNames.joinToString(",") { "\"$it\"" })
+    csvBuilder.append("\n")
+
+    // 2. 데이터 행 작성
+    for (rowIndex in 0 until rowCount) {
+        val rowData = columnNames.map { columnName ->
+            val value = this[columnName]?.getOrNull(rowIndex)
+
+            // null 처리 및 특수문자(쉼표, 따옴표) 처리
+            when (value) {
+                null -> ""
+                is String -> {
+                    // 문자열 내의 큰따옴표를 이중으로 처리하고 전체를 큰따옴표로 감쌈
+                    "\"${value.replace("\"", "\"\"")}\""
+                }
+                else -> value.toString()
+            }
+        }
+        csvBuilder.append(rowData.joinToString(","))
+        csvBuilder.append("\n")
+    }
+
+    return csvBuilder.toString()
+}
 
 
 val newMakeColInfo: (pagingData: Map<String, List<Any?>>) -> Map<String, NewColumnInfo> = { pagingData ->

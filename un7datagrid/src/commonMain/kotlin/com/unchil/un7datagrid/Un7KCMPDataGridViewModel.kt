@@ -129,9 +129,19 @@ class Un7KCMPDataGridViewModel(val data: Map<String,List<Any?>>, val config: Un7
                     event.offsetX
                 )
             }
+
+            is Event.ExportCSV -> {
+                exportCSV(
+                    event.closerFunc
+                )
+            }
         }
     }
 
+    val exportCSV = {closerFunc:()->Unit ->
+        saveFile("un7_data_grid.csv", data.toCsvString())
+        closerFunc()
+    }
 
 
     val onUpdateColumnOffset = { index:Int, offset: IntOffset->
@@ -747,6 +757,10 @@ class Un7KCMPDataGridViewModel(val data: Map<String,List<Any?>>, val config: Un7
 
         object UpdateColumns:Event()
 
+        data class ExportCSV(
+            val closerFunc:()->Unit
+        ):Event()
+
         data class  UpdateColumnsOrder(
             val columnsAreaWidth:Dp,
             val density:Float,
@@ -783,6 +797,7 @@ class Un7KCMPDataGridViewModel(val data: Map<String,List<Any?>>, val config: Un7
             val offset: IntOffset
         ):Event()
     }
+
 
 
 }

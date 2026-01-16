@@ -15,6 +15,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.automirrored.filled.LastPage
+import androidx.compose.material.icons.filled.FileDownload
 import androidx.compose.material.icons.filled.FirstPage
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.ZoomInMap
@@ -26,6 +27,7 @@ import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.InternalComposeApi
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -34,6 +36,7 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 internal fun Un7KCMPMenuPageNavControl(
+    onExportCSV:() -> Unit,
     isExpandMenu: MutableState<Boolean>,
     onChangePageSize:(Int)->Unit,
     selectPageSizeList: List<String>,
@@ -43,6 +46,8 @@ internal fun Un7KCMPMenuPageNavControl(
     pagerState: PagerState,
     isOnePageNav: Boolean
 ){
+
+    val platform = remember { platform() }
     val shape = RoundedCornerShape(4.dp)
 
     Row (
@@ -89,6 +94,18 @@ internal fun Un7KCMPMenuPageNavControl(
                     selectPageSizeIndex,
                     onChangePageSize
                 )
+
+                if(platform != PlatformAlias.ANDROID){
+                    IconButton(
+                        onClick = onExportCSV ,
+                    ) {
+                        Icon(
+                            Icons.Default.FileDownload,
+                            contentDescription = "Export CSV"
+                        )
+                    }
+
+                }
 
 
                 IconButton(

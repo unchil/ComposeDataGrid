@@ -5,3 +5,5 @@ enum class PlatformAlias {
 }
 
 expect fun platform(): PlatformAlias
+
+expect fun saveFile(fileName:String, content:String)

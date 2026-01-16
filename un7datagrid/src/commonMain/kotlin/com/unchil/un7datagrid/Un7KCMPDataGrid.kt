@@ -12,10 +12,6 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ShapeDefaults
 import androidx.compose.material3.Snackbar
@@ -24,6 +20,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -42,12 +39,14 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
+
 @Composable
 fun Un7KCMPDataGrid(
     modifier:Modifier = Modifier,
     data:Map<String, List<Any?>>,
     config: Un7KCMPDataGridConfig = Un7KCMPDataGridConfig()
 ){
+    val platform = remember { platform() }
     val coroutineScope = rememberCoroutineScope()
     val viewModel = remember(data) { Un7KCMPDataGridViewModel(data, config) }
     val isExpandMenu = rememberSaveable {mutableStateOf(false) }
@@ -66,6 +65,7 @@ fun Un7KCMPDataGrid(
     val paddingMenuPageNavControl = remember{ PaddingValues(start = 12.dp, end = 10.dp, top = 10.dp, bottom = 10.dp)}
     val isVisibleRowNum = remember { mutableStateOf(config.isVisibilityRowNumber) }
     val isVisibleHeader = remember { mutableStateOf(true) }
+
 
     //--- SnackBar Setting
     val channel = remember { Channel<Int>(Channel.CONFLATED) }
@@ -111,6 +111,9 @@ fun Un7KCMPDataGrid(
                     //----------
                     when (channelData.channelType) {
                         SnackBarChannelType.SEARCH_RESULT -> { }
+                        SnackBarChannelType.EXPORT_CSV ->{
+                            viewModel.onEvent(Un7KCMPDataGridViewModel.Event.ExportCSV{}  )
+                        }
                         else -> { }
                     }
                     //----------
@@ -184,6 +187,11 @@ fun Un7KCMPDataGrid(
         )
     }
 
+    val onExportCSV:()->Unit = {
+        channel.trySend(snackBarChannelList.first { item ->
+            item.channelType == SnackBarChannelType.EXPORT_CSV
+        }.channel)
+    }
 
     Surface{
         Box(
@@ -251,6 +259,7 @@ fun Un7KCMPDataGrid(
                     .align(Alignment.BottomStart)
             ) {
                 Un7KCMPMenuPageNavControl(
+                    onExportCSV,
                     isExpandMenu,
                     onChangePageSize,
                     viewModel.selectPageSizeList,
@@ -269,17 +278,26 @@ fun Un7KCMPDataGrid(
                 modifier = Modifier.align(Alignment.Center)
                     .padding(horizontal = 10.dp)
             ) { snackBarData ->
+
                 Snackbar(
                     shape = ShapeDefaults.ExtraSmall,
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    action = {
+                        if(!snackBarData.visuals.actionLabel.isNullOrBlank()){
+                            TextButton(
+                                onClick = { snackBarData.performAction()}
+                            ){
+                                Text( text = snackBarData.visuals.actionLabel ?: "" )
+                            }
+                        }
+                    },
                     dismissAction = {
                         if (snackBarData.visuals.withDismissAction) {
-                            IconButton(onClick = { snackBarData.dismiss() }) {
-                                Icon(
-                                    Icons.Default.Close,
-                                    contentDescription = "Dismiss"
-                                )
+                            TextButton(
+                                onClick = {  snackBarData.dismiss()   }
+                            ){
+                                Text(  text = "Close")
                             }
                         }
                     }

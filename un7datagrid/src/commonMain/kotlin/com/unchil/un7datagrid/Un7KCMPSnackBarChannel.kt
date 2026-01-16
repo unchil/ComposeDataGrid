@@ -10,7 +10,10 @@ enum class SnackBarChannelType {
     SEARCH_RESULT,
     RELOAD,
     MIN_SELECT_COLUMN,
-    CHANGE_PAGE_SIZE
+    CHANGE_PAGE_SIZE,
+    EXPORT_CSV,
+
+    DOWNLOAD_COMPLETE
 }
 
 data class SnackBarChannelData(
@@ -54,6 +57,24 @@ val snackBarChannelList = listOf<SnackBarChannelData>(
         channelType = SnackBarChannelType.CHANGE_PAGE_SIZE,
         channel = 4,
         message = "",
+        duration = SnackbarDuration.Short,
+        actionLabel = null,
+        withDismissAction = true,
+    ),
+
+    SnackBarChannelData(
+        channelType = SnackBarChannelType.EXPORT_CSV,
+        channel = 5,
+        message = "Download the data as a [un7_data_grid.csv] file.",
+        duration = SnackbarDuration.Short,
+        actionLabel = "Ok",
+        withDismissAction = true,
+    ),
+
+    SnackBarChannelData(
+        channelType = SnackBarChannelType.DOWNLOAD_COMPLETE,
+        channel = 6,
+        message = "The file download is complete.",
         duration = SnackbarDuration.Short,
         actionLabel = null,
         withDismissAction = true,
