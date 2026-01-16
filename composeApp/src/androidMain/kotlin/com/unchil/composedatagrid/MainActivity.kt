@@ -17,7 +17,6 @@ import java.io.OutputStreamWriter
 import com.unchil.un7datagrid.FileSaveHandler
 
 class MainActivity : ComponentActivity() {
-
     //------------
     /**
     // 1. ActivityResultLauncher를 미리 등록합니다. (onCreate 이전에 정의되어야 함)
@@ -50,9 +49,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             CompositionLocalProvider( LocalPlatform provides getPlatform() ){
-
                 Column{
-
                     TextButton( onClick = {
 
                         //------------

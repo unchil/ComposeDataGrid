@@ -38,6 +38,17 @@
 - Theming: Easily customize the colors of the header, data rows (including separate colors for odd/even rows), and content to match your app's theme.
 - The currently supported column data types are `List<Char?>`, `List<String?>`, `List<Byte?>`, `List<Short?>`, `List<Int?>`, `List<Float?>`, `List<Double?>`, `List<Long?>`, `List<Boolean?>`, `List<Any?>`.
 - `Any` Type is casting to String type and then filtered and sorted.
+- Export to CSV: Effortlessly export your grid data to a CSV file. This feature is supported across all platforms (Android, iOS, Desktop, and Web) using platform-specific file saving mechanisms.
+
+
+## Platform-specific File Saving
+
+- The library uses an expect/actual function saveFile(fileName: String, content: String) to handle data exports.
+- Desktop (JVM): Saves the CSV file directly to the user's local file system via a file picker or a default path.
+- Web (WasmJs): Triggers a browser download of the CSV file.
+- iOS: Utilizes UIActivityViewController or similar sharing mechanisms to save or share the file.
+- Android: Due to Android's scoped storage and security model, the implementation is specialized. The library handles the core CSV generation, but ensure your androidMain in the application module is configured to handle file URIs or storage permissions if required by your specific implementation.
+
 
 ###  Advanced Filtering
 
@@ -150,6 +161,82 @@ fun MyDataScreen() {
         config = gridConfig
     )
 }
+```
+
+Exporting Data
+- You can trigger the CSV export through the built-in menu in the Un7KCMPDataGrid. The library will automatically:
+  - Generates a CSV format string from the initially loaded data.
+  - Call the platform's native file-saving dialog.
+
+
+Special Note for Android Users
+
+```kotlin
+class MainActivity : ComponentActivity() {
+    //------------
+    /**
+    // 1. Pre-register ActivityResultLauncher (must be defined before onCreate)
+    */
+    private val saveFileLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val uri = result.data?.data ?: return@registerForActivityResult
+            FileSaveHandler.applicationContext?.contentResolver?.openOutputStream(uri)?.use { outputStream ->
+                BufferedWriter(OutputStreamWriter(outputStream)).use { writer ->
+                    writer.write(FileSaveHandler.pendingContent)
+                }
+            }
+        }
+    }
+    //------------
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+
+        //------------
+        /**
+        // 2. Initialize FileSaveHandler once
+        */
+        FileSaveHandler.initialize(this)
+        //------------
+
+        enableEdgeToEdge()
+        super.onCreate(savedInstanceState)
+
+        setContent {
+            CompositionLocalProvider( LocalPlatform provides getPlatform() ){
+                Column{
+                    TextButton( onClick = {
+                        //------------
+                        /**
+                        //4. Call launchSaveFileIntent
+                        */
+                        FileSaveHandler.intent?.let { launchSaveFileIntent(it) }
+                        //------------
+
+                    } ) {
+                        Text("ExportData")
+                    }
+
+                    DataGridWithViewModel()
+                }
+
+            }
+        }
+    }
+
+    //------------
+    /**
+     * 3. Exposes a function that runs the launcher.
+     * launchSaveFileIntent(FileSaveHandler.intent)
+     */
+    fun launchSaveFileIntent(intent: Intent) {
+        saveFileLauncher.launch(intent)
+    }
+    //------------
+}
+
+
 ```
 
 ##  API
