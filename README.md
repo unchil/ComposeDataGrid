@@ -217,8 +217,14 @@ class MainActivity : ComponentActivity() {
                     } ) {
                         Text("ExportData")
                     }
-
-                    DataGridWithViewModel()
+                    
+                    Un7KCMPDataGrid(
+                        mapOf(
+                            "ID" to listOf<Int?>(1, 2, 3, 4, 5, 6, 7, 8),
+                            "Product String" to listOf<String?>("Keyboard", "Mouse", "Monitor", "Webcam", "Speaker", "Trackpad", "Luck7", ""),
+                            "Price Double" to listOf<Double?>(75.50, 25.00, null, 89.90, 100.0, 100.0, 100.0, 0.0 )
+                        )
+                    )
                 }
 
             }
