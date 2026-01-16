@@ -118,9 +118,7 @@ fun Un7KCMPDataGrid(
                     //----------
                     when (channelData.channelType) {
                         SnackBarChannelType.SEARCH_RESULT -> { }
-                        SnackBarChannelType.EXPORT_CSV ->{
-                            viewModel.onEvent(Un7KCMPDataGridViewModel.Event.ExportCSV{}  )
-                        }
+                        SnackBarChannelType.EXPORT_CSV ->{ }
                         else -> { }
                     }
                     //----------
@@ -195,9 +193,7 @@ fun Un7KCMPDataGrid(
     }
 
     val onExportCSV:()->Unit = {
-        channel.trySend(snackBarChannelList.first { item ->
-            item.channelType == SnackBarChannelType.EXPORT_CSV
-        }.channel)
+        viewModel.onEvent(Un7KCMPDataGridViewModel.Event.ExportCSV{}  )
     }
 
     Surface{
