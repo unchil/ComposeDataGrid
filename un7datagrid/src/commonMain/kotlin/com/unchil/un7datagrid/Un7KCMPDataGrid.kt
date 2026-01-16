@@ -66,6 +66,13 @@ fun Un7KCMPDataGrid(
     val isVisibleRowNum = remember { mutableStateOf(config.isVisibilityRowNumber) }
     val isVisibleHeader = remember { mutableStateOf(true) }
 
+    // For ANDROID, create FileSaveHandler.pendingContent and FileSaveHandler.intent in advance.
+    when(platform){
+        PlatformAlias.ANDROID -> {
+            viewModel.onEvent(Un7KCMPDataGridViewModel.Event.ExportCSV{}  )
+        }
+        else -> {}
+    }
 
     //--- SnackBar Setting
     val channel = remember { Channel<Int>(Channel.CONFLATED) }

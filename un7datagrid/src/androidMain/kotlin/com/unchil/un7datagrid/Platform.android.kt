@@ -1,24 +1,30 @@
 package com.unchil.un7datagrid
 
-import android.app.Activity
+import android.content.Context
+import android.content.Intent
 
 
 actual fun platform() = PlatformAlias.ANDROID
 
 
-actual fun saveFile(fileName: String, content: String) {
-    /*
-    val activity = context as? Activity ?: return
-    // Downloads 폴더 경로 얻기
-    val file = java.io.File(activity.getExternalFilesDir(android.os.Environment.DIRECTORY_DOWNLOADS), fileName)
+object FileSaveHandler {
+    var applicationContext: Context? = null
 
-    try {
-        file.writeText(content)
-        // 토스트 알림 등으로 알림
-    } catch (e: Exception) {
-        e.printStackTrace()
+    fun initialize(context: Context) {
+        applicationContext = context.applicationContext
+    }
+    var pendingContent: String = ""
+    var intent: Intent? = null
+}
+
+actual fun saveFile(fileName: String, content: String) {
+    FileSaveHandler.pendingContent = content
+
+    FileSaveHandler.intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
+        addCategory(Intent.CATEGORY_OPENABLE)
+        type = "text/csv"
+        putExtra(Intent.EXTRA_TITLE, fileName)
     }
 
-     */
 }
 
