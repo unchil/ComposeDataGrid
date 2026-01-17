@@ -7,3 +7,6 @@ enum class PlatformAlias {
 expect fun platform(): PlatformAlias
 
 expect fun saveFile(fileName:String, content:String)
+
+
+expect fun performHapticFeedback(isUsableHaptic: Boolean)

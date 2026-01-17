@@ -53,6 +53,7 @@ internal fun Un7KCMPSearchMenu(
     headerRowContentColor: Color?
 ) {
     val isUsableTooltips= LocalIsUsableTooltips.current
+    val isUsableHaptic= LocalIsUsableHaptic.current
     var expanded by remember { mutableStateOf(false) }
     val filterText = remember { mutableStateOf("") }
     val operatorConstText = "Operator..."
@@ -85,7 +86,10 @@ internal fun Un7KCMPSearchMenu(
         TooltipIconButton(
             isUsableTooltips=isUsableTooltips,
             tooltipText = "Filter",
-            onClick = {  expanded = !expanded }
+            onClick = {
+                performHapticFeedback(isUsableHaptic)
+                expanded = !expanded
+            }
         ) {
             Icon(Icons.AutoMirrored.Filled.ManageSearch,
                 contentDescription = "Filter",
@@ -115,7 +119,10 @@ internal fun Un7KCMPSearchMenu(
                             TooltipIconButton(
                                 isUsableTooltips=isUsableTooltips,
                                 tooltipText = "Operator",
-                                onClick = { expandedOperator = !expandedOperator }
+                                onClick = {
+                                    performHapticFeedback(isUsableHaptic)
+                                    expandedOperator = !expandedOperator
+                                }
                             ){
                                 Icon(if(expandedOperator) Icons.Default.ArrowDropUp else Icons.Default.ArrowDropDown,
                                     contentDescription = "OperatorString"
@@ -144,6 +151,7 @@ internal fun Un7KCMPSearchMenu(
                                         DropdownMenuItem(
                                             text = { Text(operator.toString()) },
                                             onClick = {
+                                                performHapticFeedback(isUsableHaptic)
                                                 operatorText.value = operator.toString()
                                                 expandedOperator = false
                                             }
@@ -157,6 +165,7 @@ internal fun Un7KCMPSearchMenu(
                                         DropdownMenuItem(
                                             text = { Text(operator.toString()) },
                                             onClick = {
+                                                performHapticFeedback(isUsableHaptic)
                                                 operatorText.value = operator.toString()
                                                 expandedOperator = false
                                                 if( operatorText.value.equals("Blank")|| operatorText.value.equals("Not Blank")){
@@ -172,6 +181,7 @@ internal fun Un7KCMPSearchMenu(
                                         DropdownMenuItem(
                                             text = { Text(operator.toString()) },
                                             onClick = {
+                                                performHapticFeedback(isUsableHaptic)
                                                 operatorText.value = operator.toString()
                                                 expandedOperator = false
                                                 onSearch()
@@ -186,6 +196,7 @@ internal fun Un7KCMPSearchMenu(
                                         DropdownMenuItem(
                                             text = { Text(operator.toString()) },
                                             onClick = {
+                                                performHapticFeedback(isUsableHaptic)
                                                 operatorText.value = operator.toString()
                                                 expandedOperator = false
                                             }
@@ -218,6 +229,7 @@ internal fun Un7KCMPSearchMenu(
                             trailingIcon = {
                                 IconButton(
                                     onClick = {
+                                        performHapticFeedback(isUsableHaptic)
                                         filterText.value = ""
                                     }
                                 ) {
@@ -233,6 +245,7 @@ internal fun Un7KCMPSearchMenu(
                             ),
                             keyboardActions = KeyboardActions(
                                 onSearch = {
+                                    performHapticFeedback(isUsableHaptic)
                                     onSearch()
                                 }
                             )

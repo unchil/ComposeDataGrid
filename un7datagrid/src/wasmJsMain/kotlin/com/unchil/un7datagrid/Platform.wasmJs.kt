@@ -55,3 +55,7 @@ private fun Array<String>.toJsArray(): JsArray<JsAny?> {
     }
     return array
 }
+
+actual fun performHapticFeedback(isUsableHaptic: Boolean) {
+
+}

@@ -49,6 +49,7 @@ internal fun Un7KCMPMenuPageNavControl(
     val platform = remember { platform() }
     val shape = RoundedCornerShape(4.dp)
     val isUsableTooltips = LocalIsUsableTooltips.current
+    val isUsableHaptic = LocalIsUsableHaptic.current
 
     Row (
         modifier= Modifier
@@ -66,7 +67,9 @@ internal fun Un7KCMPMenuPageNavControl(
         TooltipIconButton(
             isUsableTooltips = isUsableTooltips,
             tooltipText = if (isExpandMenu.value) "Collapse Menu" else "Expand Menu",
-            onClick = { isExpandMenu.value = !isExpandMenu.value },
+            onClick = {
+                performHapticFeedback(isUsableHaptic)
+                isExpandMenu.value = !isExpandMenu.value },
         ) {
             SegmentedButtonDefaults.Icon(
                 active = !isExpandMenu.value,

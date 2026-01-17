@@ -5,6 +5,7 @@ import androidx.compose.ui.graphics.Color
 
 
 data class Un7KCMPDataGridConfig(
+    val isUsableHaptic:Boolean = true,
     val isUsableTooltips:Boolean = true,
     val isVisibilityRowNumber: Boolean = true,
     val rowNumberColumnName: String = "No.",

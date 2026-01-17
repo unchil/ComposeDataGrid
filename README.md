@@ -39,6 +39,7 @@
 - `Any` Type is casting to String type and then filtered and sorted.
 - Export to CSV: Effortlessly export your grid data to a CSV file. This feature is supported across all platforms (Android, iOS, Desktop, and Web) using platform-specific file saving mechanisms.
 - Interactive Tooltips: Descriptive tooltips now appear when hovering over control buttons (Pagination, Refresh, Export, etc.), providing immediate visual guidance and improving accessibility on Desktop and Web platforms.
+- Haptic Feedback: Provides tactile feedback for critical user interactions, such as column reordering, sorting, and long-press actions, enhancing the overall mobile user experience.
 
 ## User Interface Enhancements
 ### Tooltips
@@ -53,6 +54,17 @@ The tooltips are designed to be non-intrusive and are positioned optimally above
 |---------| --- | --- | 
 | Tooltips | Hover detection on Desktop/Web & Long-press on Mobile | Android, iOS, Desktop, Web |
 
+### Haptic Feedback
+To provide a more tactile and engaging experience on mobile devices (Android & iOS), Un7-KCMP-DataGrid now supports haptic feedback.
+**When does it trigger?**
+- Column Reordering: A subtle vibration when a column is successfully dragged and dropped.
+- Sorting & Filtering: Feedback when a new sort order is applied or a search is performed.
+- Menu Interactions: Tactile response when toggling menus, selecting columns, or changing page sizes.
+- Navigation: Feedback when switching between pages.
+**Multiplatform Support:**
+- Android: Utilizes performHapticFeedback on the DecorView.
+- iOS: Uses UIImpactFeedbackGenerator.
+- Desktop/Web: Gracefully degrades (no effect) while maintaining code compatibility.
 
 
 ## Platform-specific File Saving
@@ -124,7 +136,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             // Add Un7KCMPDataGrid library (change to the latest version)
-            implementation("com.github.unchil:un7datagrid:0.2.2")
+            implementation("com.github.unchil:un7datagrid:0.2.3")
         }
     }
 }
@@ -149,6 +161,7 @@ fun MyDataScreen() {
 
     // Configure optional grid features
     val gridConfig = Un7KCMPDataGridConfig(
+        isUsableHaptic = true,
         isUsableTooltips = true,
         isVisibilityRowNumber = true,
         rowNumberColumnName = "No.",
@@ -261,19 +274,20 @@ class MainActivity : ComponentActivity() {
 
 **This data class allows you to configure various aspects of the data grid.**
 
-| Parameter | Type | Description                                                                                     | Default                           |
-| --- | --- |-------------------------------------------------------------------------------------------------|-----------------------------------|
-| `isUsableTooltips` | `Boolean` | Toggles the usable of tooltips.         | `true`                            |
-| `isVisibleRowNum` | `Boolean` | Toggles the visibility of the row number column.                                                | `true`                            |
-| `rowNumColumnTitle` | `String` | The title for the row number column.                                                            | `"Num"`                           |
-| `pageSizeItems` | `List<String>` | The list of page size options available in the pagination menu.                                 | `listOf("10", "20", "50", "100")` |
-| `pageSizeItemInitIndex` | `Int` | The initial selected index for the `pageSizeItems` list.                                        | `2` (which defaults to "50")      |
-| `headerRowBackgroundColor` | `Color` | Sets the background color of the header row.                                                    | `null`               | 
-| `headerRowContentColor` | `Color` | Sets the content color (text, icons) of the header row.                                         | `null`               | 
+| Parameter | Type | Description                                                                                       | Default                           |
+| --- | --- |---------------------------------------------------------------------------------------------------|-----------------------------------|
+| `isUsableHaptic` | `Boolean` | Toggles the usable of haptic feedback.                                                                          | `true`                            |
+| `isUsableTooltips` | `Boolean` | Toggles the usable of tooltips.                                                                   | `true`                            |
+| `isVisibleRowNum` | `Boolean` | Toggles the visibility of the row number column.                                                  | `true`                            |
+| `rowNumColumnTitle` | `String` | The title for the row number column.                                                              | `"Num"`                           |
+| `pageSizeItems` | `List<String>` | The list of page size options available in the pagination menu.                                   | `listOf("10", "20", "50", "100")` |
+| `pageSizeItemInitIndex` | `Int` | The initial selected index for the `pageSizeItems` list.                                          | `2` (which defaults to "50")      |
+| `headerRowBackgroundColor` | `Color` | Sets the background color of the header row.                                                      | `null`               | 
+| `headerRowContentColor` | `Color` | Sets the content color (text, icons) of the header row.                                           | `null`               | 
 | `dataRowBackgroundColor` | `Color` | Sets the background color for all data rows. Overridden by odd/even colors if they are specified. | `null`               | 
-| `dataRowContentColor` | `Color` | Sets the content color (text) for all data rows.                                                | `null`               |
-| `oddDataRowBackgroundColor` | `Color` | Sets the background color for odd-numbered data rows.                                           | `null`               | 
-| `evenDataRowBackgroundColor`| `Color` | Sets the background color for even-numbered data rows.                                          | `null`                            |
+| `dataRowContentColor` | `Color` | Sets the content color (text) for all data rows.                                                  | `null`               |
+| `oddDataRowBackgroundColor` | `Color` | Sets the background color for odd-numbered data rows.                                             | `null`               | 
+| `evenDataRowBackgroundColor`| `Color` | Sets the background color for even-numbered data rows.                                            | `null`                            |
 
 
 ##  License

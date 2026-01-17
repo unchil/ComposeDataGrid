@@ -41,6 +41,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
+val LocalIsUsableHaptic = compositionLocalOf{ true }
 val LocalIsUsableTooltips = compositionLocalOf{ true }
 @Composable
 fun Un7KCMPDataGrid(
@@ -48,210 +49,207 @@ fun Un7KCMPDataGrid(
     data:Map<String, List<Any?>>,
     config: Un7KCMPDataGridConfig = Un7KCMPDataGridConfig()
 ){
-    val platform = remember { platform() }
-    val coroutineScope = rememberCoroutineScope()
-    val viewModel = remember(data) { Un7KCMPDataGridViewModel(data, config) }
-    val isExpandMenu = rememberSaveable {mutableStateOf(false) }
-    val lastPageIndex by viewModel.lastPageIndex.collectAsState()
-    val isOnePageNav = remember {  mutableStateOf(
-            viewModel.selectPageSizeList.lastIndex == viewModel.selectPageSizeIndex.value
-    )}
-    val dataRows by viewModel.dataRows.collectAsState()
-    val pageSize by viewModel.pageSize.collectAsState()
-    val columnNames by viewModel.columnNames.collectAsState()
-    val selectPageSizeIndex by viewModel.selectPageSizeIndex.collectAsState()
-    val borderStrokeTransparent = remember {BorderStroke(width = 0.dp, color = Color.Transparent)}
-    val borderShapeOut = remember{RoundedCornerShape(0.dp)}
-    val paddingHorizontalPager = remember { PaddingValues(0.dp)}
-    val borderShapeIn = remember{RoundedCornerShape(2.dp)}
-    val paddingMenuPageNavControl = remember{ PaddingValues(start = 12.dp, end = 10.dp, top = 10.dp, bottom = 10.dp)}
-    val isVisibleRowNum = remember { mutableStateOf(config.isVisibilityRowNumber) }
-    val isVisibleHeader = remember { mutableStateOf(true) }
+    CompositionLocalProvider(
+        LocalIsUsableTooltips provides config.isUsableTooltips,
+        LocalIsUsableHaptic provides config.isUsableHaptic
+    ) {
+        val isUsableTooltips = LocalIsUsableTooltips.current
+        val isUsableHaptic = LocalIsUsableHaptic.current
 
-    // For ANDROID, create FileSaveHandler.pendingContent and FileSaveHandler.intent in advance.
-    when(platform){
-        PlatformAlias.ANDROID -> {
-            viewModel.onEvent(Un7KCMPDataGridViewModel.Event.ExportCSV{}  )
-        }
-        else -> {}
-    }
-
-    //--- SnackBar Setting
-    val channel = remember { Channel<Int>(Channel.CONFLATED) }
-    val snackBarHostState = remember { SnackbarHostState() }
-    LaunchedEffect(channel) {
-        channel.receiveAsFlow().collect { index ->
-            val channelData = snackBarChannelList.first {
-                it.channel == index
-            }
-            //----------
-            val message:String = when (channelData.channelType) {
-                SnackBarChannelType.SEARCH_RESULT -> {
-                    if (viewModel.onFilterResultCnt.value == 0) {
-                        "No data was found."
-                    } else {
-                        "${viewModel.onFilterResultCnt.value} data items were found."
-                    }
-                }
-                SnackBarChannelType.CHANGE_PAGE_SIZE -> {
-                    "${viewModel.pageSize.value} data items are displayed on one page."
-                }
-
-                SnackBarChannelType.RELOAD -> {
-                    "${data.values.firstOrNull()?.size ?:0 } ${channelData.message}"
-                }
-                else -> {
-                    channelData.message
-                }
-            }
-            val actionLabel = if (channelData.channelType == SnackBarChannelType.SEARCH_RESULT ) {
-                ""
-            } else {
-                channelData.actionLabel
-            }
-            val result = snackBarHostState.showSnackbar(
-                message = message,
-                actionLabel = actionLabel,
-                withDismissAction = channelData.withDismissAction,
-                duration = channelData.duration
+        val viewModel = remember(data) { Un7KCMPDataGridViewModel(data, config) }
+        val platform = remember { platform() }
+        val coroutineScope = rememberCoroutineScope()
+        val isExpandMenu = rememberSaveable { mutableStateOf(false) }
+        val lastPageIndex by viewModel.lastPageIndex.collectAsState()
+        val isOnePageNav = remember {
+            mutableStateOf(
+                viewModel.selectPageSizeList.lastIndex == viewModel.selectPageSizeIndex.value
             )
-            when (result) {
-                SnackbarResult.ActionPerformed -> {
-                    //----------
-                    when (channelData.channelType) {
-                        SnackBarChannelType.SEARCH_RESULT -> { }
-                        SnackBarChannelType.EXPORT_CSV ->{ }
-                        else -> { }
-                    }
-                    //----------
-                }
-                SnackbarResult.Dismissed -> {  }
-            }
         }
-    }
-    //--- SnackBar Setting
+        val dataRows by viewModel.dataRows.collectAsState()
+        val pageSize by viewModel.pageSize.collectAsState()
+        val columnNames by viewModel.columnNames.collectAsState()
+        val selectPageSizeIndex by viewModel.selectPageSizeIndex.collectAsState()
+        val borderStrokeTransparent =
+            remember { BorderStroke(width = 0.dp, color = Color.Transparent) }
+        val borderShapeOut = remember { RoundedCornerShape(0.dp) }
+        val paddingHorizontalPager = remember { PaddingValues(0.dp) }
+        val borderShapeIn = remember { RoundedCornerShape(2.dp) }
+        val paddingMenuPageNavControl =
+            remember { PaddingValues(start = 12.dp, end = 10.dp, top = 10.dp, bottom = 10.dp) }
+        val isVisibleRowNum = remember { mutableStateOf(config.isVisibilityRowNumber) }
+        val isVisibleHeader = remember { mutableStateOf(true) }
 
-    val pagerState = rememberPagerState( pageCount = { lastPageIndex +1 })
-    val onPageNavHandler:(PageNav)->Unit = { pageNav ->
-        when(pageNav){
-            PageNav.Prev -> {
-                coroutineScope.launch {
-                    pagerState.animateScrollToPage(pagerState.currentPage-1)
-                }
+        // For ANDROID, create FileSaveHandler.pendingContent and FileSaveHandler.intent in advance.
+        when (platform) {
+            PlatformAlias.ANDROID -> {
+                viewModel.onEvent(Un7KCMPDataGridViewModel.Event.ExportCSV {})
             }
-            PageNav.Next -> {
-                coroutineScope.launch {
-                    pagerState.animateScrollToPage(pagerState.currentPage+1)
+
+            else -> {}
+        }
+
+        //--- SnackBar Setting
+        val channel = remember { Channel<Int>(Channel.CONFLATED) }
+        val snackBarHostState = remember { SnackbarHostState() }
+        LaunchedEffect(channel) {
+            channel.receiveAsFlow().collect { index ->
+                val channelData = snackBarChannelList.first {
+                    it.channel == index
                 }
-            }
-            PageNav.First -> {
-                coroutineScope.launch {
-                    pagerState.animateScrollToPage(0)
+                //----------
+                val message: String = when (channelData.channelType) {
+                    SnackBarChannelType.SEARCH_RESULT -> {
+                        if (viewModel.onFilterResultCnt.value == 0) {
+                            "No data was found."
+                        } else {
+                            "${viewModel.onFilterResultCnt.value} data items were found."
+                        }
+                    }
+
+                    SnackBarChannelType.CHANGE_PAGE_SIZE -> {
+                        "${viewModel.pageSize.value} data items are displayed on one page."
+                    }
+
+                    SnackBarChannelType.RELOAD -> {
+                        "${data.values.firstOrNull()?.size ?: 0} ${channelData.message}"
+                    }
+
+                    else -> {
+                        channelData.message
+                    }
                 }
-            }
-            PageNav.Last -> {
-                coroutineScope.launch {
-                    pagerState.animateScrollToPage(pagerState.pageCount-1)
+                val actionLabel =
+                    if (channelData.channelType == SnackBarChannelType.SEARCH_RESULT) {
+                        ""
+                    } else {
+                        channelData.actionLabel
+                    }
+                val result = snackBarHostState.showSnackbar(
+                    message = message,
+                    actionLabel = actionLabel,
+                    withDismissAction = channelData.withDismissAction,
+                    duration = channelData.duration
+                )
+                when (result) {
+                    SnackbarResult.ActionPerformed -> {
+                        //----------
+                        when (channelData.channelType) {
+                            SnackBarChannelType.SEARCH_RESULT -> {}
+                            SnackBarChannelType.EXPORT_CSV -> {}
+                            else -> {}
+                        }
+                        //----------
+                    }
+
+                    SnackbarResult.Dismissed -> {}
                 }
             }
         }
-    }
-    val onChangePageSize:(Int)->Unit = { pageSize ->
-        viewModel.onEvent(Un7KCMPDataGridViewModel.Event.ChangePageSize(pageSize){ resultCnt ->
-            isOnePageNav.value = resultCnt >= dataRows.size
-            coroutineScope.launch {
-                pagerState.animateScrollToPage(0)
+        //--- SnackBar Setting
+
+        val pagerState = rememberPagerState(pageCount = { lastPageIndex + 1 })
+        val onPageNavHandler: (PageNav) -> Unit = { pageNav ->
+            when (pageNav) {
+                PageNav.Prev -> {
+                    coroutineScope.launch {
+                        pagerState.animateScrollToPage(pagerState.currentPage - 1)
+                    }
+                }
+
+                PageNav.Next -> {
+                    coroutineScope.launch {
+                        pagerState.animateScrollToPage(pagerState.currentPage + 1)
+                    }
+                }
+
+                PageNav.First -> {
+                    coroutineScope.launch {
+                        pagerState.animateScrollToPage(0)
+                    }
+                }
+
+                PageNav.Last -> {
+                    coroutineScope.launch {
+                        pagerState.animateScrollToPage(pagerState.pageCount - 1)
+                    }
+                }
             }
-            channel.trySend(snackBarChannelList.first { item ->
-                item.channelType == SnackBarChannelType.CHANGE_PAGE_SIZE
-            }.channel)
-        })
-    }
-    val onRefresh:()-> Unit = {
-        viewModel.onEvent(Un7KCMPDataGridViewModel.Event.Refresh{
-            isOnePageNav.value = viewModel.selectPageSizeList.lastIndex == viewModel.selectPageSizeIndex.value
-            coroutineScope.launch {
-                pagerState.animateScrollToPage(0)
-            }
-            channel.trySend(snackBarChannelList.first { item ->
-                item.channelType == SnackBarChannelType.RELOAD
-            }.channel)
-        } )
-    }
-    val onFilter:(columnName:String, searchText:String, operator:String) -> Unit ={
-        columnName, searchText, operator ->
-        viewModel.onEvent(
-            Un7KCMPDataGridViewModel.Event.Filter(columnName, searchText, operator) {
-                onePageNav ->
-                isOnePageNav.value = onePageNav
+        }
+        val onChangePageSize: (Int) -> Unit = { pageSize ->
+            performHapticFeedback(isUsableHaptic)
+            viewModel.onEvent(Un7KCMPDataGridViewModel.Event.ChangePageSize(pageSize) { resultCnt ->
+                isOnePageNav.value = resultCnt >= dataRows.size
                 coroutineScope.launch {
                     pagerState.animateScrollToPage(0)
                 }
                 channel.trySend(snackBarChannelList.first { item ->
-                    item.channelType == SnackBarChannelType.SEARCH_RESULT
+                    item.channelType == SnackBarChannelType.CHANGE_PAGE_SIZE
                 }.channel)
+            })
+        }
+        val onRefresh: () -> Unit = {
+            performHapticFeedback(isUsableHaptic)
+            viewModel.onEvent(Un7KCMPDataGridViewModel.Event.Refresh {
+                isOnePageNav.value =
+                    viewModel.selectPageSizeList.lastIndex == viewModel.selectPageSizeIndex.value
+                coroutineScope.launch {
+                    pagerState.animateScrollToPage(0)
+                }
+                channel.trySend(snackBarChannelList.first { item ->
+                    item.channelType == SnackBarChannelType.RELOAD
+                }.channel)
+            })
+        }
+        val onFilter: (columnName: String, searchText: String, operator: String) -> Unit =
+            { columnName, searchText, operator ->
+                performHapticFeedback(isUsableHaptic)
+                viewModel.onEvent(
+                    Un7KCMPDataGridViewModel.Event.Filter(
+                        columnName,
+                        searchText,
+                        operator
+                    ) { onePageNav ->
+                        isOnePageNav.value = onePageNav
+                        coroutineScope.launch {
+                            pagerState.animateScrollToPage(0)
+                        }
+                        channel.trySend(snackBarChannelList.first { item ->
+                            item.channelType == SnackBarChannelType.SEARCH_RESULT
+                        }.channel)
+                    }
+                )
             }
-        )
-    }
 
-    val onExportCSV:()->Unit = {
-        viewModel.onEvent(Un7KCMPDataGridViewModel.Event.ExportCSV{}  )
-    }
+        val onExportCSV: () -> Unit = {
+            performHapticFeedback(isUsableHaptic)
+            viewModel.onEvent(Un7KCMPDataGridViewModel.Event.ExportCSV {})
+        }
 
-    CompositionLocalProvider(
-        LocalIsUsableTooltips provides config.isUsableTooltips
-    ) {
-        Surface {
-            Box(
-                then(modifier)
-                    .fillMaxSize()
-                    .border(borderStrokeTransparent, shape = borderShapeOut),
-                contentAlignment = Alignment.Center,
-            ) {
-                if (isOnePageNav.value) {
-                    makePagingData(
-                        topRowIndex(0, pageSize),
-                        bottomRowIndex(0, pageSize, true, dataRows.size),
-                        columnNames,
-                        dataRows.toList()
-                    ).let { pagingData ->
-                        Un7KCMPDataGridContent(
-                            pagingData,
-                            0,
-                            viewModel,
-                            isExpandMenu,
-                            onFilter,
-                            isOnePageNav,
-                            isVisibleRowNum,
-                            isVisibleHeader,
-                            config.rowNumberColumnName
-                        )
-                    }//makePagingData
-                } else {
-                    HorizontalPager(
-                        state = pagerState,
-                        modifier = Modifier
-                            .padding(paddingHorizontalPager)
-                            .border(borderStrokeTransparent, shape = borderShapeIn),
-                        flingBehavior = PagerDefaults.flingBehavior(
-                            state = pagerState,
-                            snapPositionalThreshold = 0.7f
-                        )
-                    ) { pageIndex ->
+        LaunchedEffect(pagerState.isScrollInProgress){
+            if(pagerState.isScrollInProgress){
+                performHapticFeedback(isUsableHaptic)
+            }
+        }
+
+
+            Surface {
+                Box(
+                    then(modifier)
+                        .fillMaxSize()
+                        .border(borderStrokeTransparent, shape = borderShapeOut),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    if (isOnePageNav.value) {
                         makePagingData(
-                            topRowIndex(pageIndex, pageSize),
-                            bottomRowIndex(
-                                pageIndex,
-                                pageSize,
-                                pageIndex == lastPageIndex,
-                                dataRows.size
-                            ),
+                            topRowIndex(0, pageSize),
+                            bottomRowIndex(0, pageSize, true, dataRows.size),
                             columnNames,
                             dataRows.toList()
                         ).let { pagingData ->
                             Un7KCMPDataGridContent(
                                 pagingData,
-                                pageIndex,
+                                0,
                                 viewModel,
                                 isExpandMenu,
                                 onFilter,
@@ -261,71 +259,112 @@ fun Un7KCMPDataGrid(
                                 config.rowNumberColumnName
                             )
                         }//makePagingData
-                    }//HorizontalPager
-                }
+                    } else {
+                        HorizontalPager(
+                            state = pagerState,
+                            modifier = Modifier
+                                .padding(paddingHorizontalPager)
+                                .border(borderStrokeTransparent, shape = borderShapeIn),
+                            flingBehavior = PagerDefaults.flingBehavior(
+                                state = pagerState,
+                                snapPositionalThreshold = 0.7f
+                            )
+                        ) { pageIndex ->
+                            makePagingData(
+                                topRowIndex(pageIndex, pageSize),
+                                bottomRowIndex(
+                                    pageIndex,
+                                    pageSize,
+                                    pageIndex == lastPageIndex,
+                                    dataRows.size
+                                ),
+                                columnNames,
+                                dataRows.toList()
+                            ).let { pagingData ->
+                                Un7KCMPDataGridContent(
+                                    pagingData,
+                                    pageIndex,
+                                    viewModel,
+                                    isExpandMenu,
+                                    onFilter,
+                                    isOnePageNav,
+                                    isVisibleRowNum,
+                                    isVisibleHeader,
+                                    config.rowNumberColumnName
+                                )
+                            }//makePagingData
+                        }//HorizontalPager
+                    }
 
-                //---- Box  PageNavControl
-                Box(
-                    modifier = Modifier
-                        .padding(paddingMenuPageNavControl)
-                        //  .border(borderStrokeRed, shape = borderShapeIn)
-                        .align(Alignment.BottomStart)
-                ) {
-                    Un7KCMPMenuPageNavControl(
-                        onExportCSV,
-                        isExpandMenu,
-                        onChangePageSize,
-                        viewModel.selectPageSizeList,
-                        selectPageSizeIndex,
-                        onRefresh,
-                        onPageNavHandler,
-                        pagerState,
-                        isOnePageNav.value
-                    )
-                }
-                //---- Box  PageNavControl
-
-                //---  Snackbar
-                SnackbarHost(
-                    hostState = snackBarHostState,
-                    modifier = Modifier.align(Alignment.Center)
-                        .padding(horizontal = 10.dp)
-                ) { snackBarData ->
-
-                    Snackbar(
-                        shape = ShapeDefaults.ExtraSmall,
-                        containerColor = MaterialTheme.colorScheme.primaryContainer,
-                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                        action = {
-                            if (!snackBarData.visuals.actionLabel.isNullOrBlank()) {
-                                TextButton(
-                                    onClick = { snackBarData.performAction() }
-                                ) {
-                                    Text(text = snackBarData.visuals.actionLabel ?: "")
-                                }
-                            }
-                        },
-                        dismissAction = {
-                            if (snackBarData.visuals.withDismissAction) {
-                                TextButton(
-                                    onClick = { snackBarData.dismiss() }
-                                ) {
-                                    Text(text = "Close")
-                                }
-                            }
-                        }
+                    //---- Box  PageNavControl
+                    Box(
+                        modifier = Modifier
+                            .padding(paddingMenuPageNavControl)
+                            //  .border(borderStrokeRed, shape = borderShapeIn)
+                            .align(Alignment.BottomStart)
                     ) {
-                        Text(
-                            modifier = Modifier.fillMaxWidth(),
-                            textAlign = TextAlign.Center,
-                            text = snackBarData.visuals.message
+                        Un7KCMPMenuPageNavControl(
+                            onExportCSV,
+                            isExpandMenu,
+                            onChangePageSize,
+                            viewModel.selectPageSizeList,
+                            selectPageSizeIndex,
+                            onRefresh,
+                            onPageNavHandler,
+                            pagerState,
+                            isOnePageNav.value
                         )
                     }
-                }
-                //---  Snackbar
+                    //---- Box  PageNavControl
 
+                    //---  Snackbar
+                    SnackbarHost(
+                        hostState = snackBarHostState,
+                        modifier = Modifier.align(Alignment.Center)
+                            .padding(horizontal = 10.dp)
+                    ) { snackBarData ->
+
+                        Snackbar(
+                            shape = ShapeDefaults.ExtraSmall,
+                            containerColor = MaterialTheme.colorScheme.primaryContainer,
+                            contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                            action = {
+                                if (!snackBarData.visuals.actionLabel.isNullOrBlank()) {
+                                    TextButton(
+                                        onClick = {
+                                            performHapticFeedback(isUsableHaptic)
+                                            snackBarData.performAction()
+                                        }
+                                    ) {
+                                        Text(text = snackBarData.visuals.actionLabel ?: "")
+                                    }
+                                }
+                            },
+                            dismissAction = {
+                                if (snackBarData.visuals.withDismissAction) {
+                                    TextButton(
+                                        onClick = {
+                                            performHapticFeedback(isUsableHaptic)
+                                            snackBarData.dismiss()
+                                        }
+                                    ) {
+                                        Text(text = "Close")
+                                    }
+                                }
+                            }
+                        ) {
+                            Text(
+                                modifier = Modifier.fillMaxWidth(),
+                                textAlign = TextAlign.Center,
+                                text = snackBarData.visuals.message
+                            )
+                        }
+                    }
+                    //---  Snackbar
+
+                }
             }
-        }
+
     }
 }
 

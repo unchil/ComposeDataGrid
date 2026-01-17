@@ -40,6 +40,7 @@ internal fun Un7KCMPMenuGridControl(
     isVisibleRowNum: MutableState<Boolean>
 ) {
     val isUsableTooltips = LocalIsUsableTooltips.current
+    val isUsableHaptic = LocalIsUsableHaptic.current
 
     val shape = RoundedCornerShape(4.dp)
 
@@ -90,7 +91,10 @@ internal fun Un7KCMPMenuGridControl(
                 TooltipIconButton(
                     isUsableTooltips = isUsableTooltips,
                     tooltipText = if (isVisibleHeader.value) "UnVisible Header" else "Visible Header",
-                    onClick = { isVisibleHeader.value = !isVisibleHeader.value },
+                    onClick = {
+                        performHapticFeedback(isUsableHaptic)
+                        isVisibleHeader.value = !isVisibleHeader.value
+                              },
                 ) {
                     SegmentedButtonDefaults.Icon(
                         active = !isVisibleHeader.value,
@@ -114,7 +118,10 @@ internal fun Un7KCMPMenuGridControl(
                 TooltipIconButton(
                     isUsableTooltips = isUsableTooltips,
                     tooltipText = if (isVisibleRowNum.value) "UnVisible RowNum" else "Visible RowNum",
-                    onClick = { isVisibleRowNum.value = !isVisibleRowNum.value },
+                    onClick = {
+                        performHapticFeedback(isUsableHaptic)
+                        isVisibleRowNum.value = !isVisibleRowNum.value
+                              },
                 ) {
                     SegmentedButtonDefaults.Icon(
                         active = !isVisibleRowNum.value,

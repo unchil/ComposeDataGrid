@@ -48,6 +48,7 @@ internal fun Un7KCMPPageSizePicker(
     onChangePageSize:(Int)-> Unit ){
 
     val isUsableTooltips = LocalIsUsableTooltips.current
+    val isUsableHaptic = LocalIsUsableHaptic.current
 
     val pickerWidth = remember { 48.dp}
     val beforePage = remember { mutableStateOf(selectPageSizeIndex) }
@@ -59,6 +60,10 @@ internal fun Un7KCMPPageSizePicker(
 
 
     LaunchedEffect(pagerState.currentPage , key2 =  pagerState.isScrollInProgress){
+
+        if(pagerState.isScrollInProgress){
+            performHapticFeedback(isUsableHaptic)
+        }
 
         if (!pagerState.isScrollInProgress && (beforePage.value  != pagerState.currentPage)){
             beforePage.value = pagerState.currentPage

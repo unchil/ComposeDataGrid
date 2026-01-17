@@ -64,6 +64,7 @@ internal fun Un7KCMPHeaderRow(
 ){
 
     val isUsableTooltips = LocalIsUsableTooltips.current
+    val isUsableHaptic = LocalIsUsableHaptic.current
     val density = LocalDensity.current.density
 
     val borderStrokeLightGray = remember {BorderStroke(width =  gridDpSet["widthBorderStroke"] ?: 1.dp, color = Color.LightGray)}
@@ -116,8 +117,12 @@ internal fun Un7KCMPHeaderRow(
                     .height( gridDpSet["heightColumnHeader"] ?: 0.dp)
                     .pointerInput(Unit) {
                         detectDragGestures(
-                            onDragEnd = onDragEnd,
+                            onDragEnd = {
+                                performHapticFeedback(isUsableHaptic)
+                                onDragEnd.invoke()
+                            },
                             onDragCancel = {
+                                performHapticFeedback(isUsableHaptic)
                                 offset.value = IntOffset.Zero
                                 onEvent(Un7KCMPDataGridViewModel.Event.UpdateColumnOffset(
                                     index, IntOffset.Zero
@@ -129,6 +134,9 @@ internal fun Un7KCMPHeaderRow(
                                 onEvent(Un7KCMPDataGridViewModel.Event.UpdateColumnOffset(
                                     index, offset.value
                                 ))
+                            },
+                            onDragStart = {
+                                performHapticFeedback(isUsableHaptic)
                             }
                         )}
                     .offset { offset.value }
@@ -146,6 +154,7 @@ internal fun Un7KCMPHeaderRow(
                     isUsableTooltips=isUsableTooltips,
                     tooltipText = "Sort",
                     onClick = {
+                        performHapticFeedback(isUsableHaptic)
                         val iconFlag = when(columnDataSortFlag[index]){
                             0 -> 1
                             1 -> -1

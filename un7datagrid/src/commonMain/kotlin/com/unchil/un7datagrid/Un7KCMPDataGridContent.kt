@@ -91,6 +91,7 @@ fun Un7KCMPDataGridContent (
     val borderStrokeTransparent = remember {BorderStroke(width = 0.dp, color = Color.Transparent)}
     val borderShapeIn = remember{RoundedCornerShape(2.dp)}
     val lazyListState = rememberLazyListState(initialFirstVisibleItemIndex = 0)
+    val isUsableHaptic = LocalIsUsableHaptic.current
 
     val currentDp:(Int)->Dp = { index ->
         // 드래그 시작 지점의 절대 위치(offset) 계산
@@ -134,6 +135,7 @@ fun Un7KCMPDataGridContent (
         }
     }
     val onListNavHandler: (ListNav) -> Unit = { listNav ->
+        performHapticFeedback(isUsableHaptic)
         when (listNav) {
             ListNav.Top -> {
                 coroutineScopeDataGridContent.launch {
@@ -176,7 +178,7 @@ fun Un7KCMPDataGridContent (
         isResizing.value = false
     }
     val onResize = { delta: Float, density:Float, index:Int  ->
-
+        performHapticFeedback(isUsableHaptic)
         resizeIndicatorOffset = (resizeIndicatorOffset +  (delta/density).dp).coerceIn(
             resizeMinOffset.value,
             resizeMaxOffset.value
@@ -206,6 +208,7 @@ fun Un7KCMPDataGridContent (
 
     }
     val onDividerHovered = { index:Int, indexY: Int ->
+        performHapticFeedback(isUsableHaptic)
         hoveredOffsetX.value = currentDp(index)
         hoveredOffsetY.value = currentDpY(indexY)
         isCurrentHovered.value = true

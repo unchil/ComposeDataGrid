@@ -24,6 +24,7 @@ import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.InternalComposeApi
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -43,6 +44,7 @@ internal fun Un7KCMPMenuSelectColumn(
 ){
 
     val isUsableTooltips = LocalIsUsableTooltips.current
+    val isUsableHaptic = LocalIsUsableHaptic.current
 
     Box(modifier= Modifier.background(Color.Transparent)){
         val widthColumnSelectDropDownMenu = 180.dp
@@ -50,10 +52,15 @@ internal fun Un7KCMPMenuSelectColumn(
         var expandMenu by remember { mutableStateOf(false) }
         val scrollState = rememberScrollState()
 
+
+
         TooltipIconButton(
             isUsableTooltips = isUsableTooltips,
             tooltipText = "Column Select",
-            onClick = { expandMenu = !expandMenu },
+            onClick = {
+                performHapticFeedback(isUsableHaptic)
+                expandMenu = !expandMenu
+                      },
         ) {
             Icon(
                 Icons.Default.ViewColumn,
@@ -63,6 +70,7 @@ internal fun Un7KCMPMenuSelectColumn(
         DropdownMenu(
             expanded = expandMenu,
             onDismissRequest = {
+                performHapticFeedback(isUsableHaptic)
                 expandMenu = false
             },
             scrollState = scrollState,
@@ -78,6 +86,7 @@ internal fun Un7KCMPMenuSelectColumn(
                     text = { Text(columnName) },
                     trailingIcon = {
                         IconButton(onClick = {
+                            performHapticFeedback(isUsableHaptic)
                             selectedColumns[columnName]?.let { it->
                                 it.value = !it.value
                             }
@@ -104,6 +113,7 @@ internal fun Un7KCMPMenuSelectColumn(
 
                     },
                     onClick = {
+                        performHapticFeedback(isUsableHaptic)
                         selectedColumns[columnName]?.let { it->
                             it.value = !it.value
                         }

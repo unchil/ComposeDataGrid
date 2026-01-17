@@ -24,3 +24,7 @@ actual fun saveFile(fileName: String, content: String) {
         // 에러 처리
     }
 }
+
+actual fun performHapticFeedback(isUsableHaptic: Boolean) {
+
+}

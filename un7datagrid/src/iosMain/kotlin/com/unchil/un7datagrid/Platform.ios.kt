@@ -9,6 +9,8 @@ import platform.Foundation.NSUTF8StringEncoding
 import platform.Foundation.writeToURL
 import platform.UIKit.UIActivityViewController
 import platform.UIKit.UIApplication
+import platform.UIKit.UIImpactFeedbackGenerator
+import platform.UIKit.UIImpactFeedbackStyle
 import platform.UIKit.popoverPresentationController
 
 actual fun platform() = PlatformAlias.IOS
@@ -58,5 +60,13 @@ actual fun saveFile(fileName: String, content: String) {
             animated = true,
             completion = null
         )
+    }
+}
+
+actual fun performHapticFeedback(isUsableHaptic: Boolean) {
+    if(isUsableHaptic) {
+        val generator = UIImpactFeedbackGenerator(UIImpactFeedbackStyle.UIImpactFeedbackStyleMedium)
+        generator.prepare()
+        generator.impactOccurred()
     }
 }
