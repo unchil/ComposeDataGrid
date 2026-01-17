@@ -7,7 +7,7 @@
 ##  Un7-KCMP-DataGrid Demo
 |                                                       Desktop                                                        |
 |:--------------------------------------------------------------------------------------------------------------------:|
-| ![MacOS](https://github.com/unchil/ComposeDataGrid/blob/8976d46f326e02f3272536ad34cfdeaee92909a6/screenshot/mac.gif) | 
+| ![MacOS](https://github.com/unchil/ComposeDataGrid/blob/d8b058db62316f36101eef08e14f6aba8280a949/screenshot/mac.gif) | 
 
 |                                                                        Web                                                                        |
 |:-------------------------------------------------------------------------------------------------------------------------------------------------:|
