@@ -52,6 +52,7 @@ internal fun Un7KCMPSearchMenu(
     onFilter: (String, String, String)-> Unit,
     headerRowContentColor: Color?
 ) {
+    val isUsableTooltips= LocalIsUsableTooltips.current
     var expanded by remember { mutableStateOf(false) }
     val filterText = remember { mutableStateOf("") }
     val operatorConstText = "Operator..."
@@ -82,6 +83,7 @@ internal fun Un7KCMPSearchMenu(
     ){
 
         TooltipIconButton(
+            isUsableTooltips=isUsableTooltips,
             tooltipText = "Filter",
             onClick = {  expanded = !expanded }
         ) {
@@ -111,6 +113,7 @@ internal fun Un7KCMPSearchMenu(
                             Text(columnsInfo[columnName]?.dataType ?: ""  )  },
                         trailingIcon = {
                             TooltipIconButton(
+                                isUsableTooltips=isUsableTooltips,
                                 tooltipText = "Operator",
                                 onClick = { expandedOperator = !expandedOperator }
                             ){

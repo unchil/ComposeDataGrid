@@ -21,7 +21,6 @@
 
 
 ##  Features
-
 - Multiplatform Support: Works seamlessly on Android, iOS, Desktop, and Web using Kotlin Compose Multiplatform.
 - Pagination: Smoothly handles tens of thousands of data entries with horizontal paging using `HorizontalPager`.
 - Column Sorting: Sort data in ascending, descending, or default order by clicking on column headers.
@@ -39,10 +38,24 @@
 - The currently supported column data types are `List<Char?>`, `List<String?>`, `List<Byte?>`, `List<Short?>`, `List<Int?>`, `List<Float?>`, `List<Double?>`, `List<Long?>`, `List<Boolean?>`, `List<Any?>`.
 - `Any` Type is casting to String type and then filtered and sorted.
 - Export to CSV: Effortlessly export your grid data to a CSV file. This feature is supported across all platforms (Android, iOS, Desktop, and Web) using platform-specific file saving mechanisms.
+- Interactive Tooltips: Descriptive tooltips now appear when hovering over control buttons (Pagination, Refresh, Export, etc.), providing immediate visual guidance and improving accessibility on Desktop and Web platforms.
+
+## User Interface Enhancements
+### Tooltips
+**To provide a more intuitive experience, Un7-KCMP-DataGrid now includes built-in tooltips for all major action components:**
+- Navigation Controls: Tooltips like "First Page", "Previous Page", "Next Page", and "Last Page".
+- Grid Actions: Descriptions for "Refresh", "Export CSV", and "Column Selector".
+- Menu Controls: Dynamic tooltips that change based on state (e.g., "Expand Menu" vs. "Collapse Menu").
+
+The tooltips are designed to be non-intrusive and are positioned optimally above the buttons to ensure clear visibility without obstructing the data.
+
+| Feature | Description | Support Platform | 
+|---------| --- | --- | 
+| Tooltips | Hover detection on Desktop/Web & Long-press on Mobile | Android, iOS, Desktop, Web |
+
 
 
 ## Platform-specific File Saving
-
 - The library uses an expect/actual function saveFile(fileName: String, content: String) to handle data exports.
 - Desktop (JVM): Saves the CSV file directly to the user's local file system via a file picker or a default path.
 - Web (WasmJs): Triggers a browser download of the CSV file.
@@ -50,8 +63,7 @@
 - Android: Due to Android's scoped storage and security model, the implementation is specialized. The library handles the core CSV generation, but ensure your androidMain in the application module is configured to handle file URIs or storage permissions if required by your specific implementation.
 
 
-###  Advanced Filtering
-
+##  Advanced Filtering
 The search menu for each column supports conditional operators, allowing for more precise data filtering based on the column's data type.
 
 **Supported Data Types & Operators:**
@@ -71,12 +83,10 @@ The search menu for each column supports conditional operators, allowing for mor
 | Boolean | ✅ | ✅ | ✅ | 
 | Char | ✅ | ✅ | ✅ |
 
+
 ##  Installation
-
 ### Step 1: Set up the Repository
-
-Add the GitHub Packages repository to your project's **`settings.gradle.kts`** file to download the library.
-
+**Add the GitHub Packages repository to your project's **`settings.gradle.kts`** file to download the library.**
 ```kotlin
 // settings.gradle.kts
 dependencyResolutionManagement {
@@ -105,12 +115,9 @@ dependencyResolutionManagement {
 > ```
 
 ### Step 2: Add the Dependency
+**Add the dependency to the `build.gradle.kts` file of the module where you will use the library (e.g., `composeApp`).**
 
-Add the dependency to the `build.gradle.kts` file of the module where you will use the library (e.g., `composeApp`).
-
-
-### The package version has been readjusted.
-
+**The package version has been readjusted.**
 ```kotlin
 // composeApp/build.gradle.kts
 kotlin {
@@ -124,9 +131,7 @@ kotlin {
 ```
 
 ##  Usage
-
-Using `Un7KCMPDataGrid` is very simple. Just provide the data as a `Map`. You can also provide an optional `config` object to customize its behavior.
-
+**Using `Un7KCMPDataGrid` is very simple. Just provide the data as a `Map`. You can also provide an optional `config` object to customize its behavior.**
 ```kotlin
 
 @Composable
@@ -144,6 +149,7 @@ fun MyDataScreen() {
 
     // Configure optional grid features
     val gridConfig = Un7KCMPDataGridConfig(
+        isUsableTooltips = true,
         isVisibilityRowNumber = true,
         rowNumberColumnName = "No.",
         pageSizeList = listOf("10", "25", "50", "100"),
@@ -163,14 +169,12 @@ fun MyDataScreen() {
 }
 ```
 
-Exporting Data
-- You can trigger the CSV export through the built-in menu in the Un7KCMPDataGrid. The library will automatically:
-  - Generates a CSV format string from the initially loaded data.
-  - Call the platform's native file-saving dialog.
+### Exporting Data
+**You can trigger the CSV export through the built-in menu in the Un7KCMPDataGrid. The library will automatically:**
+- Generates a CSV format string from the initially loaded data.
+- Call the platform's native file-saving dialog.
 
-
-Special Note for Android Users
-
+**Special Note for Android Users**
 ```kotlin
 class MainActivity : ComponentActivity() {
     //------------
@@ -241,12 +245,11 @@ class MainActivity : ComponentActivity() {
     }
     //------------
 }
-
-
 ```
 
 ##  API
 
+### `Un7KCMPDataGrid` API
 | Parameter | Type | Description | Default |
 | --- | --- | --- | --- |
 | `modifier` | `Modifier` | The standard `Modifier` to apply to the composable. | `Modifier` |
@@ -256,20 +259,23 @@ class MainActivity : ComponentActivity() {
 
 ### `Un7KCMPDataGridConfig` API
 
-This data class allows you to configure various aspects of the data grid.
+**This data class allows you to configure various aspects of the data grid.**
 
-| Parameter | Type | Description | Default                           |
-| --- | --- | --- |-----------------------------------|
-| `isVisibleRowNum` | `Boolean` | Toggles the visibility of the row number column. | `true`                            |
-| `rowNumColumnTitle` | `String` | The title for the row number column. | `"Num"`                           |
-| `pageSizeItems` | `List<String>` | The list of page size options available in the pagination menu. | `listOf("10", "20", "50", "100")` |
-| `pageSizeItemInitIndex` | `Int` | The initial selected index for the `pageSizeItems` list. | `2` (which defaults to "50")      |
-| `headerRowBackgroundColor` | `Color` | Sets the background color of the header row. | `null`               | 
-| `headerRowContentColor` | `Color` | Sets the content color (text, icons) of the header row. | `null`               | 
+| Parameter | Type | Description                                                                                     | Default                           |
+| --- | --- |-------------------------------------------------------------------------------------------------|-----------------------------------|
+| `isUsableTooltips` | `Boolean` | Toggles the usable of tooltips.         | `true`                            |
+| `isVisibleRowNum` | `Boolean` | Toggles the visibility of the row number column.                                                | `true`                            |
+| `rowNumColumnTitle` | `String` | The title for the row number column.                                                            | `"Num"`                           |
+| `pageSizeItems` | `List<String>` | The list of page size options available in the pagination menu.                                 | `listOf("10", "20", "50", "100")` |
+| `pageSizeItemInitIndex` | `Int` | The initial selected index for the `pageSizeItems` list.                                        | `2` (which defaults to "50")      |
+| `headerRowBackgroundColor` | `Color` | Sets the background color of the header row.                                                    | `null`               | 
+| `headerRowContentColor` | `Color` | Sets the content color (text, icons) of the header row.                                         | `null`               | 
 | `dataRowBackgroundColor` | `Color` | Sets the background color for all data rows. Overridden by odd/even colors if they are specified. | `null`               | 
-| `dataRowContentColor` | `Color` | Sets the content color (text) for all data rows. | `null`               |
-| `oddDataRowBackgroundColor` | `Color` | Sets the background color for odd-numbered data rows. | `null`               | 
-| `evenDataRowBackgroundColor`| `Color` | Sets the background color for even-numbered data rows. | `null`                            |
+| `dataRowContentColor` | `Color` | Sets the content color (text) for all data rows.                                                | `null`               |
+| `oddDataRowBackgroundColor` | `Color` | Sets the background color for odd-numbered data rows.                                           | `null`               | 
+| `evenDataRowBackgroundColor`| `Color` | Sets the background color for even-numbered data rows.                                          | `null`                            |
+
+
 ##  License
 
 `Un7-KCMP-DataGrid` is distributed under the [MIT License](https://opensource.org/licenses/MIT).

@@ -47,6 +47,8 @@ internal fun Un7KCMPPageSizePicker(
     selectPageSizeIndex:Int ,
     onChangePageSize:(Int)-> Unit ){
 
+    val isUsableTooltips = LocalIsUsableTooltips.current
+
     val pickerWidth = remember { 48.dp}
     val beforePage = remember { mutableStateOf(selectPageSizeIndex) }
 
@@ -101,7 +103,8 @@ internal fun Un7KCMPPageSizePicker(
         ) {page ->
 
             TooltipText(
-                tooltipText = "PageSize ${dataList[page]}",
+                isUsableTooltips = isUsableTooltips,
+                tooltipText = "change the page size by horizontal scrolling .",
                 modifier = Modifier
                     .width(pickerWidth)
                     .graphicsLayer {

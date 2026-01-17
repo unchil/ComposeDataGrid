@@ -48,6 +48,7 @@ internal fun Un7KCMPMenuPageNavControl(
 
     val platform = remember { platform() }
     val shape = RoundedCornerShape(4.dp)
+    val isUsableTooltips = LocalIsUsableTooltips.current
 
     Row (
         modifier= Modifier
@@ -63,6 +64,7 @@ internal fun Un7KCMPMenuPageNavControl(
         verticalAlignment = Alignment.CenterVertically) {
 
         TooltipIconButton(
+            isUsableTooltips = isUsableTooltips,
             tooltipText = if (isExpandMenu.value) "Collapse Menu" else "Expand Menu",
             onClick = { isExpandMenu.value = !isExpandMenu.value },
         ) {
@@ -97,6 +99,7 @@ internal fun Un7KCMPMenuPageNavControl(
 
                 if(platform != PlatformAlias.ANDROID){
                     TooltipIconButton(
+                        isUsableTooltips = isUsableTooltips,
                         tooltipText = "Export CSV",
                         onClick = onExportCSV ,
                     ) {
@@ -110,6 +113,7 @@ internal fun Un7KCMPMenuPageNavControl(
 
 
                 TooltipIconButton(
+                    isUsableTooltips = isUsableTooltips,
                     tooltipText = "Refresh",
                     onClick = { onRefresh.invoke()  },
                 ) {
@@ -122,6 +126,7 @@ internal fun Un7KCMPMenuPageNavControl(
                 if(!isOnePageNav) {
 
                     TooltipIconButton(
+                        isUsableTooltips = isUsableTooltips,
                         tooltipText = "First Page",
                         onClick = { onPageNavHandler(PageNav.First) },
                         enabled = pagerState.canScrollBackward,
@@ -133,6 +138,7 @@ internal fun Un7KCMPMenuPageNavControl(
                     }
 
                     TooltipIconButton(
+                        isUsableTooltips = isUsableTooltips,
                         tooltipText = "Previous Page",
                         onClick = { onPageNavHandler(PageNav.Prev) },
                         enabled = pagerState.canScrollBackward,
@@ -144,6 +150,7 @@ internal fun Un7KCMPMenuPageNavControl(
                     }
 
                     TooltipIconButton(
+                        isUsableTooltips = isUsableTooltips,
                         tooltipText = "Next Page",
                         onClick = { onPageNavHandler(PageNav.Next) },
                         enabled = pagerState.canScrollForward,
@@ -155,6 +162,7 @@ internal fun Un7KCMPMenuPageNavControl(
                     }
 
                     TooltipIconButton(
+                        isUsableTooltips = isUsableTooltips,
                         tooltipText = "Last Page",
                         onClick = { onPageNavHandler(PageNav.Last) },
                         enabled = pagerState.canScrollForward,

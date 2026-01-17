@@ -22,8 +22,10 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -39,7 +41,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
-
+val LocalIsUsableTooltips = compositionLocalOf{ true }
 @Composable
 fun Un7KCMPDataGrid(
     modifier:Modifier = Modifier,
@@ -196,52 +198,26 @@ fun Un7KCMPDataGrid(
         viewModel.onEvent(Un7KCMPDataGridViewModel.Event.ExportCSV{}  )
     }
 
-    Surface{
-        Box(
-            then(modifier)
-                .fillMaxSize()
-                .border(borderStrokeTransparent, shape = borderShapeOut),
-            contentAlignment = Alignment.Center,
-        ) {
-            if(isOnePageNav.value){
-                makePagingData(
-                    topRowIndex(0, pageSize),
-                    bottomRowIndex( 0, pageSize, true, dataRows.size ),
-                    columnNames,
-                    dataRows.toList()
-                ).let { pagingData ->
-                    Un7KCMPDataGridContent(
-                        pagingData,
-                        0,
-                        viewModel,
-                        isExpandMenu,
-                        onFilter,
-                        isOnePageNav,
-                        isVisibleRowNum,
-                        isVisibleHeader,
-                        config.rowNumberColumnName
-                    )
-                }//makePagingData
-            } else {
-                HorizontalPager(
-                    state = pagerState,
-                    modifier = Modifier
-                        .padding(paddingHorizontalPager)
-                        .border(borderStrokeTransparent, shape = borderShapeIn),
-                    flingBehavior = PagerDefaults.flingBehavior(
-                        state = pagerState,
-                        snapPositionalThreshold = 0.7f
-                    )
-                ) { pageIndex ->
+    CompositionLocalProvider(
+        LocalIsUsableTooltips provides config.isUsableTooltips
+    ) {
+        Surface {
+            Box(
+                then(modifier)
+                    .fillMaxSize()
+                    .border(borderStrokeTransparent, shape = borderShapeOut),
+                contentAlignment = Alignment.Center,
+            ) {
+                if (isOnePageNav.value) {
                     makePagingData(
-                        topRowIndex(pageIndex, pageSize),
-                        bottomRowIndex( pageIndex, pageSize, pageIndex == lastPageIndex,  dataRows.size),
+                        topRowIndex(0, pageSize),
+                        bottomRowIndex(0, pageSize, true, dataRows.size),
                         columnNames,
                         dataRows.toList()
                     ).let { pagingData ->
                         Un7KCMPDataGridContent(
                             pagingData,
-                            pageIndex,
+                            0,
                             viewModel,
                             isExpandMenu,
                             onFilter,
@@ -251,72 +227,106 @@ fun Un7KCMPDataGrid(
                             config.rowNumberColumnName
                         )
                     }//makePagingData
-                }//HorizontalPager
-            }
+                } else {
+                    HorizontalPager(
+                        state = pagerState,
+                        modifier = Modifier
+                            .padding(paddingHorizontalPager)
+                            .border(borderStrokeTransparent, shape = borderShapeIn),
+                        flingBehavior = PagerDefaults.flingBehavior(
+                            state = pagerState,
+                            snapPositionalThreshold = 0.7f
+                        )
+                    ) { pageIndex ->
+                        makePagingData(
+                            topRowIndex(pageIndex, pageSize),
+                            bottomRowIndex(
+                                pageIndex,
+                                pageSize,
+                                pageIndex == lastPageIndex,
+                                dataRows.size
+                            ),
+                            columnNames,
+                            dataRows.toList()
+                        ).let { pagingData ->
+                            Un7KCMPDataGridContent(
+                                pagingData,
+                                pageIndex,
+                                viewModel,
+                                isExpandMenu,
+                                onFilter,
+                                isOnePageNav,
+                                isVisibleRowNum,
+                                isVisibleHeader,
+                                config.rowNumberColumnName
+                            )
+                        }//makePagingData
+                    }//HorizontalPager
+                }
 
-            //---- Box  PageNavControl
-            Box(
-                modifier = Modifier
-                    .padding(paddingMenuPageNavControl)
-                    //  .border(borderStrokeRed, shape = borderShapeIn)
-                    .align(Alignment.BottomStart)
-            ) {
-                Un7KCMPMenuPageNavControl(
-                    onExportCSV,
-                    isExpandMenu,
-                    onChangePageSize,
-                    viewModel.selectPageSizeList,
-                    selectPageSizeIndex,
-                    onRefresh,
-                    onPageNavHandler,
-                    pagerState,
-                    isOnePageNav.value
-                )
-            }
-            //---- Box  PageNavControl
-
-            //---  Snackbar
-            SnackbarHost(
-                hostState = snackBarHostState,
-                modifier = Modifier.align(Alignment.Center)
-                    .padding(horizontal = 10.dp)
-            ) { snackBarData ->
-
-                Snackbar(
-                    shape = ShapeDefaults.ExtraSmall,
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                    action = {
-                        if(!snackBarData.visuals.actionLabel.isNullOrBlank()){
-                            TextButton(
-                                onClick = { snackBarData.performAction()}
-                            ){
-                                Text( text = snackBarData.visuals.actionLabel ?: "" )
-                            }
-                        }
-                    },
-                    dismissAction = {
-                        if (snackBarData.visuals.withDismissAction) {
-                            TextButton(
-                                onClick = {  snackBarData.dismiss()   }
-                            ){
-                                Text(  text = "Close")
-                            }
-                        }
-                    }
+                //---- Box  PageNavControl
+                Box(
+                    modifier = Modifier
+                        .padding(paddingMenuPageNavControl)
+                        //  .border(borderStrokeRed, shape = borderShapeIn)
+                        .align(Alignment.BottomStart)
                 ) {
-                    Text(
-                        modifier = Modifier.fillMaxWidth(),
-                        textAlign = TextAlign.Center,
-                        text = snackBarData.visuals.message
+                    Un7KCMPMenuPageNavControl(
+                        onExportCSV,
+                        isExpandMenu,
+                        onChangePageSize,
+                        viewModel.selectPageSizeList,
+                        selectPageSizeIndex,
+                        onRefresh,
+                        onPageNavHandler,
+                        pagerState,
+                        isOnePageNav.value
                     )
                 }
-            }
-            //---  Snackbar
+                //---- Box  PageNavControl
 
+                //---  Snackbar
+                SnackbarHost(
+                    hostState = snackBarHostState,
+                    modifier = Modifier.align(Alignment.Center)
+                        .padding(horizontal = 10.dp)
+                ) { snackBarData ->
+
+                    Snackbar(
+                        shape = ShapeDefaults.ExtraSmall,
+                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                        action = {
+                            if (!snackBarData.visuals.actionLabel.isNullOrBlank()) {
+                                TextButton(
+                                    onClick = { snackBarData.performAction() }
+                                ) {
+                                    Text(text = snackBarData.visuals.actionLabel ?: "")
+                                }
+                            }
+                        },
+                        dismissAction = {
+                            if (snackBarData.visuals.withDismissAction) {
+                                TextButton(
+                                    onClick = { snackBarData.dismiss() }
+                                ) {
+                                    Text(text = "Close")
+                                }
+                            }
+                        }
+                    ) {
+                        Text(
+                            modifier = Modifier.fillMaxWidth(),
+                            textAlign = TextAlign.Center,
+                            text = snackBarData.visuals.message
+                        )
+                    }
+                }
+                //---  Snackbar
+
+            }
         }
     }
-
 }
 
 

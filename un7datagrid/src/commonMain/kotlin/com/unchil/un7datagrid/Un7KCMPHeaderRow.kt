@@ -62,6 +62,8 @@ internal fun Un7KCMPHeaderRow(
     columnsInfo: Map<String, NewColumnInfo>,
 
 ){
+
+    val isUsableTooltips = LocalIsUsableTooltips.current
     val density = LocalDensity.current.density
 
     val borderStrokeLightGray = remember {BorderStroke(width =  gridDpSet["widthBorderStroke"] ?: 1.dp, color = Color.LightGray)}
@@ -139,15 +141,10 @@ internal fun Un7KCMPHeaderRow(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
 
-                val type = when(columnDataSortFlag[index]){
-                    0 -> "Default"
-                    1 -> "Asc"
-                    -1 -> "Desc"
-                    else -> {0}
-                }
 
                 TooltipIconButton(
-                    tooltipText = "Data Sorting ${type}",
+                    isUsableTooltips=isUsableTooltips,
+                    tooltipText = "Sort",
                     onClick = {
                         val iconFlag = when(columnDataSortFlag[index]){
                             0 -> 1

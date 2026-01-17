@@ -41,17 +41,19 @@ internal fun Un7KCMPMenuSelectColumn(
     selectedColumns: Map<String, MutableState<Boolean>>,
     onEvent: (Un7KCMPDataGridViewModel.Event) -> Unit
 ){
+
+    val isUsableTooltips = LocalIsUsableTooltips.current
+
     Box(modifier= Modifier.background(Color.Transparent)){
         val widthColumnSelectDropDownMenu = 180.dp
         val heightColumnSelectDropDownMenu = 160.dp
         var expandMenu by remember { mutableStateOf(false) }
         val scrollState = rememberScrollState()
 
-
         TooltipIconButton(
+            isUsableTooltips = isUsableTooltips,
             tooltipText = "Column Select",
             onClick = { expandMenu = !expandMenu },
-            //modifier = Modifier.clip(CircleShape),
         ) {
             Icon(
                 Icons.Default.ViewColumn,
@@ -71,7 +73,6 @@ internal fun Un7KCMPMenuSelectColumn(
                 .background( MaterialTheme.colorScheme.secondaryContainer),
         ) {
             allColumns.forEach { columnName ->
-                // HorizontalDivider()
                 DropdownMenuItem(
 
                     text = { Text(columnName) },
@@ -80,7 +81,6 @@ internal fun Un7KCMPMenuSelectColumn(
                             selectedColumns[columnName]?.let { it->
                                 it.value = !it.value
                             }
-                         //   onUpdateColumns()
                             onEvent(Un7KCMPDataGridViewModel.Event.UpdateColumns)
 
                         }) {
@@ -107,7 +107,6 @@ internal fun Un7KCMPMenuSelectColumn(
                         selectedColumns[columnName]?.let { it->
                             it.value = !it.value
                         }
-                     //   onUpdateColumns()
                         onEvent(Un7KCMPDataGridViewModel.Event.UpdateColumns)
                     }
                 )

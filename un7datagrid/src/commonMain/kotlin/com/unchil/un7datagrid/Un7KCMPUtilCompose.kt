@@ -40,22 +40,29 @@ val customPositionProvider = object : PopupPositionProvider {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TooltipIconButton(
+    isUsableTooltips:Boolean =true,
     tooltipText: String,
     onClick: () -> Unit,
     enabled: Boolean = true,
     content: @Composable () -> Unit
 ) {
-    TooltipBox(
-        positionProvider = customPositionProvider,
-        tooltip = {
-            PlainTooltip {
-                Text(tooltipText)
-            }
-        },
-        state = rememberTooltipState()
-    ) {
+
+    if(isUsableTooltips){
+        TooltipBox(
+            positionProvider = customPositionProvider,
+            tooltip = {
+                PlainTooltip {
+                    Text(tooltipText)
+                }
+            },
+            state = rememberTooltipState()
+        ) {
+            IconButton(onClick = onClick, enabled = enabled, content = content)
+        }
+    }else{
         IconButton(onClick = onClick, enabled = enabled, content = content)
     }
+
 }
 
 val customPositionProvider2 = object : PopupPositionProvider {
@@ -75,6 +82,7 @@ val customPositionProvider2 = object : PopupPositionProvider {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TooltipText(
+    isUsableTooltips:Boolean =true,
     tooltipText: String,
     modifier: Modifier,
     text: String,
@@ -83,17 +91,29 @@ fun TooltipText(
     textAlign: TextAlign,
     textDecoration :TextDecoration
 ) {
-    TooltipBox(
-        positionProvider = customPositionProvider2,
-        tooltip = {
-            PlainTooltip {
-                Text(tooltipText)
-            }
-        },
-        state = rememberTooltipState()
-    ) {
+
+    if(isUsableTooltips) {
+        TooltipBox(
+            positionProvider = customPositionProvider2,
+            tooltip = {
+                PlainTooltip {
+                    Text(tooltipText)
+                }
+            },
+            state = rememberTooltipState()
+        ) {
+            Text(
+                modifier = modifier,
+                text = text,
+                fontStyle = fontStyle,
+                fontWeight = fontWeight,
+                textAlign = textAlign,
+                textDecoration = textDecoration
+            )
+        }
+    }else{
         Text(
-            modifier=modifier,
+            modifier = modifier,
             text = text,
             fontStyle = fontStyle,
             fontWeight = fontWeight,

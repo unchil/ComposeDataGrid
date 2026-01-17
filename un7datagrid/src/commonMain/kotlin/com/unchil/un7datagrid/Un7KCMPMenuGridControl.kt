@@ -39,6 +39,7 @@ internal fun Un7KCMPMenuGridControl(
     onListNavHandler: (ListNav) -> Unit,
     isVisibleRowNum: MutableState<Boolean>
 ) {
+    val isUsableTooltips = LocalIsUsableTooltips.current
 
     val shape = RoundedCornerShape(4.dp)
 
@@ -63,6 +64,7 @@ internal fun Un7KCMPMenuGridControl(
 
             Column {
                 TooltipIconButton(
+                    isUsableTooltips = isUsableTooltips,
                     tooltipText = "First Row",
                     onClick = { onListNavHandler(ListNav.Top) },
                     enabled = lazyListState.canScrollBackward
@@ -74,6 +76,7 @@ internal fun Un7KCMPMenuGridControl(
                 }
 
                 TooltipIconButton(
+                    isUsableTooltips = isUsableTooltips,
                     tooltipText = "Last Row",
                     onClick = { onListNavHandler(ListNav.Bottom) },
                     enabled = lazyListState.canScrollForward,
@@ -85,6 +88,7 @@ internal fun Un7KCMPMenuGridControl(
                 }
 
                 TooltipIconButton(
+                    isUsableTooltips = isUsableTooltips,
                     tooltipText = if (isVisibleHeader.value) "UnVisible Header" else "Visible Header",
                     onClick = { isVisibleHeader.value = !isVisibleHeader.value },
                 ) {
@@ -108,6 +112,7 @@ internal fun Un7KCMPMenuGridControl(
 
 
                 TooltipIconButton(
+                    isUsableTooltips = isUsableTooltips,
                     tooltipText = if (isVisibleRowNum.value) "UnVisible RowNum" else "Visible RowNum",
                     onClick = { isVisibleRowNum.value = !isVisibleRowNum.value },
                 ) {

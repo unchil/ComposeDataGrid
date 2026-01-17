@@ -5,6 +5,7 @@ import androidx.compose.ui.graphics.Color
 
 
 data class Un7KCMPDataGridConfig(
+    val isUsableTooltips:Boolean = true,
     val isVisibilityRowNumber: Boolean = true,
     val rowNumberColumnName: String = "No.",
     val pageSizeList: List<String> = listOf("10", "20", "50", "100", "1000"),
