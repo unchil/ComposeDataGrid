@@ -1,6 +1,5 @@
 package com.unchil.composedatagrid
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -14,7 +13,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import java.io.BufferedWriter
 import java.io.OutputStreamWriter
 
-import com.unchil.un7datagrid.FileSaveHandler
+import com.unchil.un7datagrid.AndroidPlatformHandler
 
 class MainActivity : ComponentActivity() {
     //------------
@@ -26,9 +25,9 @@ class MainActivity : ComponentActivity() {
     ) { result ->
         if (result.resultCode == RESULT_OK) {
             val uri = result.data?.data ?: return@registerForActivityResult
-            FileSaveHandler.applicationContext?.contentResolver?.openOutputStream(uri)?.use { outputStream ->
+            AndroidPlatformHandler.applicationContext?.contentResolver?.openOutputStream(uri)?.use { outputStream ->
                 BufferedWriter(OutputStreamWriter(outputStream)).use { writer ->
-                    writer.write(FileSaveHandler.pendingContent)
+                    writer.write(AndroidPlatformHandler.pendingContent)
                 }
             }
         }
@@ -39,9 +38,9 @@ class MainActivity : ComponentActivity() {
 
         //------------
         /**
-        // 2. 최초 1회 FileSaveHandler 초기화
+        // 2. 최초 1회 AndroidPlatformHandler 초기화
         */
-        FileSaveHandler.initialize(this)
+        AndroidPlatformHandler.initialize(this)
         //------------
 
         enableEdgeToEdge()
@@ -56,7 +55,7 @@ class MainActivity : ComponentActivity() {
                         /**
                         //4. launchSaveFileIntent 호출
                         */
-                        FileSaveHandler.intent?.let { launchSaveFileIntent(it) }
+                        AndroidPlatformHandler.intent?.let { launchSaveFileIntent(it) }
                         //------------
 
                     } ) {
@@ -73,7 +72,7 @@ class MainActivity : ComponentActivity() {
     //------------
     /**
      * 3. 런처를 실행하는 함수를 노출합니다.
-     * launchSaveFileIntent(FileSaveHandler.intent)
+     * launchSaveFileIntent(AndroidPlatformHandler.intent)
      */
     fun launchSaveFileIntent(intent: Intent) {
         saveFileLauncher.launch(intent)

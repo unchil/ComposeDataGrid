@@ -73,9 +73,9 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         //------------
         /**
-        // 1. Initialize FileSaveHandler once
+        // 1. Initialize AndroidPlatformHandler once
          */
-        FileSaveHandler.initialize(this)
+        AndroidPlatformHandler.initialize(this)
         //------------
 
         enableEdgeToEdge()
@@ -218,9 +218,9 @@ class MainActivity : ComponentActivity() {
     ) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
             val uri = result.data?.data ?: return@registerForActivityResult
-            FileSaveHandler.applicationContext?.contentResolver?.openOutputStream(uri)?.use { outputStream ->
+            AndroidPlatformHandler.applicationContext?.contentResolver?.openOutputStream(uri)?.use { outputStream ->
                 BufferedWriter(OutputStreamWriter(outputStream)).use { writer ->
-                    writer.write(FileSaveHandler.pendingContent)
+                    writer.write(AndroidPlatformHandler.pendingContent)
                 }
             }
         }
@@ -231,9 +231,9 @@ class MainActivity : ComponentActivity() {
 
         //------------
         /**
-        // 2. Initialize FileSaveHandler once
+        // 2. Initialize AndroidPlatformHandler once
         */
-        FileSaveHandler.initialize(this)
+        AndroidPlatformHandler.initialize(this)
         //------------
 
         enableEdgeToEdge()
@@ -247,7 +247,7 @@ class MainActivity : ComponentActivity() {
                         /**
                         //4. Call launchSaveFileIntent
                         */
-                        FileSaveHandler.intent?.let { launchSaveFileIntent(it) }
+                        AndroidPlatformHandler.intent?.let { launchSaveFileIntent(it) }
                         //------------
 
                     } ) {
@@ -270,7 +270,7 @@ class MainActivity : ComponentActivity() {
     //------------
     /**
      * 3. Exposes a function that runs the launcher.
-     * launchSaveFileIntent(FileSaveHandler.intent)
+     * launchSaveFileIntent(AndroidPlatformHandler.intent)
      */
     fun launchSaveFileIntent(intent: Intent) {
         saveFileLauncher.launch(intent)
