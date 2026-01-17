@@ -157,7 +157,7 @@ fun DataGridWithViewModel(
                         modifier,
                         Pair(columnNames.value, data.value).toMap(),
                         Un7KCMPDataGridConfig(
-                            isUsableTooltips = false,
+                            isUsableTooltips = true,
                             dataRowBackgroundColor = MaterialTheme.colorScheme.surface ,
                             dataRowContentColor = Color.DarkGray ,
                             oddDataRowBackgroundColor = Color.White,
