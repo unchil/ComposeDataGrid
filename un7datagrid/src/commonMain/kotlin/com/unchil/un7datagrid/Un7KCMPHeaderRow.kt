@@ -139,7 +139,15 @@ internal fun Un7KCMPHeaderRow(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
 
-                IconButton(
+                val type = when(columnDataSortFlag[index]){
+                    0 -> "Default"
+                    1 -> "Asc"
+                    -1 -> "Desc"
+                    else -> {0}
+                }
+
+                TooltipIconButton(
+                    tooltipText = "Data Sorting ${type}",
                     onClick = {
                         val iconFlag = when(columnDataSortFlag[index]){
                             0 -> 1

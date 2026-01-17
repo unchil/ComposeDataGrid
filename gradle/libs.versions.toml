@@ -28,7 +28,8 @@ secrets-gradle-plugin = "2.0.1"
 
 ## Un7DataGrid
 
-un7datagrid = "0.2.0"
+un7datagrid = "0.2.2"
+
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }

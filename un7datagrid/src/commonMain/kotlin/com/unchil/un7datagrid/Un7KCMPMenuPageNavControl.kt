@@ -21,7 +21,6 @@ import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.ZoomInMap
 import androidx.compose.material.icons.filled.ZoomOutMap
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.runtime.Composable
@@ -63,7 +62,8 @@ internal fun Un7KCMPMenuPageNavControl(
             ),
         verticalAlignment = Alignment.CenterVertically) {
 
-        IconButton(
+        TooltipIconButton(
+            tooltipText = if (isExpandMenu.value) "Collapse Menu" else "Expand Menu",
             onClick = { isExpandMenu.value = !isExpandMenu.value },
         ) {
             SegmentedButtonDefaults.Icon(
@@ -96,7 +96,8 @@ internal fun Un7KCMPMenuPageNavControl(
                 )
 
                 if(platform != PlatformAlias.ANDROID){
-                    IconButton(
+                    TooltipIconButton(
+                        tooltipText = "Export CSV",
                         onClick = onExportCSV ,
                     ) {
                         Icon(
@@ -108,7 +109,8 @@ internal fun Un7KCMPMenuPageNavControl(
                 }
 
 
-                IconButton(
+                TooltipIconButton(
+                    tooltipText = "Refresh",
                     onClick = { onRefresh.invoke()  },
                 ) {
                     Icon(
@@ -119,7 +121,8 @@ internal fun Un7KCMPMenuPageNavControl(
 
                 if(!isOnePageNav) {
 
-                    IconButton(
+                    TooltipIconButton(
+                        tooltipText = "First Page",
                         onClick = { onPageNavHandler(PageNav.First) },
                         enabled = pagerState.canScrollBackward,
                     ) {
@@ -129,7 +132,8 @@ internal fun Un7KCMPMenuPageNavControl(
                         )
                     }
 
-                    IconButton(
+                    TooltipIconButton(
+                        tooltipText = "Previous Page",
                         onClick = { onPageNavHandler(PageNav.Prev) },
                         enabled = pagerState.canScrollBackward,
                     ) {
@@ -139,7 +143,8 @@ internal fun Un7KCMPMenuPageNavControl(
                         )
                     }
 
-                    IconButton(
+                    TooltipIconButton(
+                        tooltipText = "Next Page",
                         onClick = { onPageNavHandler(PageNav.Next) },
                         enabled = pagerState.canScrollForward,
                     ) {
@@ -149,7 +154,8 @@ internal fun Un7KCMPMenuPageNavControl(
                         )
                     }
 
-                    IconButton(
+                    TooltipIconButton(
+                        tooltipText = "Last Page",
                         onClick = { onPageNavHandler(PageNav.Last) },
                         enabled = pagerState.canScrollForward,
                     ) {

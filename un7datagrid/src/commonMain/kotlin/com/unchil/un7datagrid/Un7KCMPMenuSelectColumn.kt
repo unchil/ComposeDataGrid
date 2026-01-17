@@ -48,10 +48,10 @@ internal fun Un7KCMPMenuSelectColumn(
         val scrollState = rememberScrollState()
 
 
-        IconButton(
+        TooltipIconButton(
+            tooltipText = "Column Select",
             onClick = { expandMenu = !expandMenu },
-            modifier = Modifier
-                .clip(CircleShape),
+            //modifier = Modifier.clip(CircleShape),
         ) {
             Icon(
                 Icons.Default.ViewColumn,

@@ -15,6 +15,8 @@ object FileSaveHandler {
     }
     var pendingContent: String = ""
     var intent: Intent? = null
+
+
 }
 
 actual fun saveFile(fileName: String, content: String) {

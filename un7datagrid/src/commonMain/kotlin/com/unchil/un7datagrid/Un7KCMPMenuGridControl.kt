@@ -62,7 +62,8 @@ internal fun Un7KCMPMenuGridControl(
         AnimatedVisibility(visible = isExpandMenu.value) {
 
             Column {
-                IconButton(
+                TooltipIconButton(
+                    tooltipText = "First Row",
                     onClick = { onListNavHandler(ListNav.Top) },
                     enabled = lazyListState.canScrollBackward
                 ) {
@@ -72,7 +73,8 @@ internal fun Un7KCMPMenuGridControl(
                     )
                 }
 
-                IconButton(
+                TooltipIconButton(
+                    tooltipText = "Last Row",
                     onClick = { onListNavHandler(ListNav.Bottom) },
                     enabled = lazyListState.canScrollForward,
                 ) {
@@ -82,7 +84,8 @@ internal fun Un7KCMPMenuGridControl(
                     )
                 }
 
-                IconButton(
+                TooltipIconButton(
+                    tooltipText = if (isVisibleHeader.value) "UnVisible Header" else "Visible Header",
                     onClick = { isVisibleHeader.value = !isVisibleHeader.value },
                 ) {
                     SegmentedButtonDefaults.Icon(
@@ -104,7 +107,8 @@ internal fun Un7KCMPMenuGridControl(
                 }
 
 
-                IconButton(
+                TooltipIconButton(
+                    tooltipText = if (isVisibleRowNum.value) "UnVisible RowNum" else "Visible RowNum",
                     onClick = { isVisibleRowNum.value = !isVisibleRowNum.value },
                 ) {
                     SegmentedButtonDefaults.Icon(

@@ -81,7 +81,10 @@ internal fun Un7KCMPSearchMenu(
         contentAlignment = Alignment.Center,
     ){
 
-        IconButton( onClick = {  expanded = !expanded } ) {
+        TooltipIconButton(
+            tooltipText = "Filter",
+            onClick = {  expanded = !expanded }
+        ) {
             Icon(Icons.AutoMirrored.Filled.ManageSearch,
                 contentDescription = "Filter",
                 tint = headerRowContentColor?: LocalContentColor.current )
@@ -107,7 +110,10 @@ internal fun Un7KCMPSearchMenu(
                         label = {
                             Text(columnsInfo[columnName]?.dataType ?: ""  )  },
                         trailingIcon = {
-                            IconButton(onClick = { expandedOperator = !expandedOperator }){
+                            TooltipIconButton(
+                                tooltipText = "Operator",
+                                onClick = { expandedOperator = !expandedOperator }
+                            ){
                                 Icon(if(expandedOperator) Icons.Default.ArrowDropUp else Icons.Default.ArrowDropDown,
                                     contentDescription = "OperatorString"
                                 )

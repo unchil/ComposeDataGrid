@@ -100,7 +100,8 @@ internal fun Un7KCMPPageSizePicker(
             flingBehavior = flingBehavior,
         ) {page ->
 
-            Text(
+            TooltipText(
+                tooltipText = "PageSize ${dataList[page]}",
                 modifier = Modifier
                     .width(pickerWidth)
                     .graphicsLayer {
