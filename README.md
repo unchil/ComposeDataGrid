@@ -65,6 +65,22 @@ To provide a more tactile and engaging experience on mobile devices (Android & i
 - Android: Utilizes performHapticFeedback on the DecorView.
 - iOS: Uses UIImpactFeedbackGenerator.
 - Desktop/Web: Gracefully degrades (no effect) while maintaining code compatibility.
+**Special Note for Android Users**
+```kotlin
+class MainActivity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        //------------
+        /**
+        // 1. Initialize FileSaveHandler once
+         */
+        FileSaveHandler.initialize(this)
+        //------------
+
+        enableEdgeToEdge()
+        super.onCreate(savedInstanceState) 
+    }
+}
+```
 
 
 ## Platform-specific File Saving
