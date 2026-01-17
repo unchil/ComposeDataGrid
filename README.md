@@ -61,11 +61,13 @@ To provide a more tactile and engaging experience on mobile devices (Android & i
 - Sorting & Filtering: Feedback when a new sort order is applied or a search is performed.
 - Menu Interactions: Tactile response when toggling menus, selecting columns, or changing page sizes.
 - Navigation: Feedback when switching between pages.
+
 **Multiplatform Support:**
 - Android: Utilizes performHapticFeedback on the DecorView.
 - iOS: Uses UIImpactFeedbackGenerator.
 - Desktop/Web: Gracefully degrades (no effect) while maintaining code compatibility.
-**Special Note for Android Users**
+
+ **Special Note for Android Users**
 ```kotlin
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
