@@ -203,7 +203,8 @@ fun MyDataScreen() {
 - Generates a CSV format string from the initially loaded data.
 - Call the platform's native file-saving dialog.
 
-**Special Note for Android Users**
+
+ **Special Note for Android Users**
 ```kotlin
 class MainActivity : ComponentActivity() {
     //------------
