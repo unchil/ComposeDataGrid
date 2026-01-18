@@ -52,15 +52,9 @@ fun TooltipIconButton(
     if(isUsableTooltips){
         TooltipBox(
             positionProvider = customPositionProvider,
-            tooltip = {
-                PlainTooltip {
-                    Text(tooltipText)
-                }
-            },
+            tooltip = { PlainTooltip { Text(tooltipText)}},
             state = rememberTooltipState()
-        ) {
-            IconButton(onClick = onClick, enabled = enabled, content = content)
-        }
+        ) { IconButton(onClick = onClick, enabled = enabled, content = content)}
     }else{
         IconButton(onClick = onClick, enabled = enabled, content = content)
     }
