@@ -23,6 +23,7 @@ import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.ZoomInMap
 import androidx.compose.material.icons.filled.ZoomOutMap
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.runtime.Composable
@@ -69,29 +70,54 @@ internal fun Un7KCMPMenuPageNavControl(
             ),
         verticalAlignment = Alignment.CenterVertically) {
 
-        TooltipIconButton(
-            isUsableTooltips = isUsableTooltips,
-            tooltipText = if (isExpandMenu.value) "Collapse Menu" else "Expand Menu",
-            onClick = {
-                performHapticFeedback(isUsableHaptic)
-                isExpandMenu.value = !isExpandMenu.value },
-        ) {
-            SegmentedButtonDefaults.Icon(
-                active = !isExpandMenu.value,
-                activeContent = {
-                    Icon(
-                        Icons.Default.ZoomInMap,
-                        contentDescription = "OpenBox"
-                    )
-                },
-                inactiveContent = {
-                    Icon(
-                        Icons.Default.ZoomOutMap,
-                        contentDescription = "CloseBox"
-                    )
-                }
-            )
+        if(isUsableTooltips){
+            TooltipIconButton(
+                tooltipText = if (isExpandMenu.value) "Collapse Menu" else "Expand Menu",
+                onClick = {
+                    performHapticFeedback(isUsableHaptic)
+                    isExpandMenu.value = !isExpandMenu.value },
+            ) {
+                SegmentedButtonDefaults.Icon(
+                    active = !isExpandMenu.value,
+                    activeContent = {
+                        Icon(
+                            Icons.Default.ZoomInMap,
+                            contentDescription = "OpenBox"
+                        )
+                    },
+                    inactiveContent = {
+                        Icon(
+                            Icons.Default.ZoomOutMap,
+                            contentDescription = "CloseBox"
+                        )
+                    }
+                )
+            }
+        }else{
+            IconButton(
+                onClick = {
+                    performHapticFeedback(isUsableHaptic)
+                    isExpandMenu.value = !isExpandMenu.value },
+            ) {
+                SegmentedButtonDefaults.Icon(
+                    active = !isExpandMenu.value,
+                    activeContent = {
+                        Icon(
+                            Icons.Default.ZoomInMap,
+                            contentDescription = "OpenBox"
+                        )
+                    },
+                    inactiveContent = {
+                        Icon(
+                            Icons.Default.ZoomOutMap,
+                            contentDescription = "CloseBox"
+                        )
+                    }
+                )
+            }
         }
+
+
 
         AnimatedVisibility(visible = isExpandMenu.value) {
 
@@ -99,22 +125,39 @@ internal fun Un7KCMPMenuPageNavControl(
                 verticalAlignment = Alignment.CenterVertically
             ) {
 
-                TooltipIconButton(
-                    isUsableTooltips = isUsableTooltips,
-                    tooltipText = "Usable Tooltips",
-                    onClick = { onUsableTooltips(!isUsableTooltips)  },
-                ) {
-                    Icon(
-                        imageVector = if (isUsableTooltips) {
-                            Icons.AutoMirrored.Filled.Help
-                        } else {
-                            Icons.AutoMirrored.Filled.HelpOutline
-                        },
-                        contentDescription = "Usable Tooltips",
-                        tint = if (isUsableTooltips) MaterialTheme.colorScheme.primary
-                        else MaterialTheme.colorScheme.onSurfaceVariant
-                    )
+                if(isUsableTooltips){
+                    TooltipIconButton(
+                        tooltipText = "Usable Tooltips",
+                        onClick = { onUsableTooltips(!isUsableTooltips)  },
+                    ) {
+                        Icon(
+                            imageVector = if (isUsableTooltips) {
+                                Icons.AutoMirrored.Filled.Help
+                            } else {
+                                Icons.AutoMirrored.Filled.HelpOutline
+                            },
+                            contentDescription = "Usable Tooltips",
+                            tint = if (isUsableTooltips) MaterialTheme.colorScheme.primary
+                            else MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }else{
+                    IconButton(
+                        onClick = { onUsableTooltips(!isUsableTooltips)  },
+                    ) {
+                        Icon(
+                            imageVector = if (isUsableTooltips) {
+                                Icons.AutoMirrored.Filled.Help
+                            } else {
+                                Icons.AutoMirrored.Filled.HelpOutline
+                            },
+                            contentDescription = "Usable Tooltips",
+                            tint = if (isUsableTooltips) MaterialTheme.colorScheme.primary
+                            else MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
                 }
+
 
                 Un7KCMPPageSizePicker(
                     selectPageSizeList,
@@ -123,80 +166,144 @@ internal fun Un7KCMPMenuPageNavControl(
                 )
 
                 if(platform != PlatformAlias.ANDROID){
+                    if(isUsableTooltips){
+                        TooltipIconButton(
+                            tooltipText = "Export CSV",
+                            onClick = onExportCSV ,
+                        ) {
+                            Icon(
+                                Icons.Default.FileDownload,
+                                contentDescription = "Export CSV"
+                            )
+                        }
+                    }else{
+                        IconButton(
+                            onClick = onExportCSV ,
+                        ) {
+                            Icon(
+                                Icons.Default.FileDownload,
+                                contentDescription = "Export CSV"
+                            )
+                        }
+                    }
+                }
+
+                if(isUsableTooltips){
                     TooltipIconButton(
-                        isUsableTooltips = isUsableTooltips,
-                        tooltipText = "Export CSV",
-                        onClick = onExportCSV ,
+                        tooltipText = "Refresh",
+                        onClick = { onRefresh.invoke()  },
                     ) {
                         Icon(
-                            Icons.Default.FileDownload,
-                            contentDescription = "Export CSV"
+                            Icons.Default.Refresh,
+                            contentDescription = "Refresh"
                         )
                     }
-
+                }else{
+                    IconButton(
+                        onClick = { onRefresh.invoke()  },
+                    ) {
+                        Icon(
+                            Icons.Default.Refresh,
+                            contentDescription = "Refresh"
+                        )
+                    }
                 }
 
-
-                TooltipIconButton(
-                    isUsableTooltips = isUsableTooltips,
-                    tooltipText = "Refresh",
-                    onClick = { onRefresh.invoke()  },
-                ) {
-                    Icon(
-                        Icons.Default.Refresh,
-                        contentDescription = "Refresh"
-                    )
-                }
 
                 if(!isOnePageNav) {
 
-                    TooltipIconButton(
-                        isUsableTooltips = isUsableTooltips,
-                        tooltipText = "First Page",
-                        onClick = { onPageNavHandler(PageNav.First) },
-                        enabled = pagerState.canScrollBackward,
-                    ) {
-                        Icon(
-                            Icons.Default.FirstPage,
-                            contentDescription = "First Page",
-                        )
+                    if(isUsableTooltips){
+
+                        TooltipIconButton(
+
+                            tooltipText = "First Page",
+                            onClick = { onPageNavHandler(PageNav.First) },
+                            enabled = pagerState.canScrollBackward,
+                        ) {
+                            Icon(
+                                Icons.Default.FirstPage,
+                                contentDescription = "First Page",
+                            )
+                        }
+
+                        TooltipIconButton(
+
+                            tooltipText = "Previous Page",
+                            onClick = { onPageNavHandler(PageNav.Prev) },
+                            enabled = pagerState.canScrollBackward,
+                        ) {
+                            Icon(
+                                Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                                contentDescription = "Prev Page",
+                            )
+                        }
+
+                        TooltipIconButton(
+
+                            tooltipText = "Next Page",
+                            onClick = { onPageNavHandler(PageNav.Next) },
+                            enabled = pagerState.canScrollForward,
+                        ) {
+                            Icon(
+                                Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                                contentDescription = "Next Page",
+                            )
+                        }
+
+                        TooltipIconButton(
+
+                            tooltipText = "Last Page",
+                            onClick = { onPageNavHandler(PageNav.Last) },
+                            enabled = pagerState.canScrollForward,
+                        ) {
+                            Icon(
+                                Icons.AutoMirrored.Filled.LastPage,
+                                contentDescription = "Last Page",
+                            )
+                        }
+                    }else{
+
+                        IconButton(
+                            onClick = { onPageNavHandler(PageNav.First) },
+                            enabled = pagerState.canScrollBackward,
+                        ) {
+                            Icon(
+                                Icons.Default.FirstPage,
+                                contentDescription = "First Page",
+                            )
+                        }
+
+                        IconButton(
+                            onClick = { onPageNavHandler(PageNav.Prev) },
+                            enabled = pagerState.canScrollBackward,
+                        ) {
+                            Icon(
+                                Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                                contentDescription = "Prev Page",
+                            )
+                        }
+
+                        IconButton(
+                            onClick = { onPageNavHandler(PageNav.Next) },
+                            enabled = pagerState.canScrollForward,
+                        ) {
+                            Icon(
+                                Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                                contentDescription = "Next Page",
+                            )
+                        }
+
+                        IconButton(
+                            onClick = { onPageNavHandler(PageNav.Last) },
+                            enabled = pagerState.canScrollForward,
+                        ) {
+                            Icon(
+                                Icons.AutoMirrored.Filled.LastPage,
+                                contentDescription = "Last Page",
+                            )
+                        }
                     }
 
-                    TooltipIconButton(
-                        isUsableTooltips = isUsableTooltips,
-                        tooltipText = "Previous Page",
-                        onClick = { onPageNavHandler(PageNav.Prev) },
-                        enabled = pagerState.canScrollBackward,
-                    ) {
-                        Icon(
-                            Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-                            contentDescription = "Prev Page",
-                        )
-                    }
-
-                    TooltipIconButton(
-                        isUsableTooltips = isUsableTooltips,
-                        tooltipText = "Next Page",
-                        onClick = { onPageNavHandler(PageNav.Next) },
-                        enabled = pagerState.canScrollForward,
-                    ) {
-                        Icon(
-                            Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                            contentDescription = "Next Page",
-                        )
-                    }
-
-                    TooltipIconButton(
-                        isUsableTooltips = isUsableTooltips,
-                        tooltipText = "Last Page",
-                        onClick = { onPageNavHandler(PageNav.Last) },
-                        enabled = pagerState.canScrollForward,
-                    ) {
-                        Icon(
-                            Icons.AutoMirrored.Filled.LastPage,
-                            contentDescription = "Last Page",
-                        )
-                    }
 
                 }
 

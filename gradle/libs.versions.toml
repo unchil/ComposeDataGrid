@@ -28,7 +28,7 @@ secrets-gradle-plugin = "2.0.1"
 
 ## Un7DataGrid
 
-un7datagrid = "0.2.4-1"
+un7datagrid = "0.2.4-2"
 
 
 [libraries]

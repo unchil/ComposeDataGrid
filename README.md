@@ -45,6 +45,9 @@
 ## User Interface Enhancements
 ### Tooltips
 **To provide a more intuitive experience, Un7-KCMP-DataGrid now includes built-in tooltips for all major action components:**
+
+> **Note**: Tooltip-related features are implemented using Material 3's experimental APIs. You may need to add the `@OptIn(ExperimentalMaterial3Api::class)` annotation when using or customizing tooltip components.
+
 - Navigation Controls: Tooltips like "First Page", "Previous Page", "Next Page", and "Last Page".
 - Grid Actions: Descriptions for "Refresh", "Export CSV", and "Column Selector".
 - Menu Controls: Dynamic tooltips that change based on state (e.g., "Expand Menu" vs. "Collapse Menu").

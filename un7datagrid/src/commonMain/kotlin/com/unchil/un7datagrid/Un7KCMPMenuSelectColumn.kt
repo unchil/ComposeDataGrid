@@ -52,21 +52,35 @@ internal fun Un7KCMPMenuSelectColumn(
         var expandMenu by remember { mutableStateOf(false) }
         val scrollState = rememberScrollState()
 
-
-
-        TooltipIconButton(
-            isUsableTooltips = isUsableTooltips,
-            tooltipText = "Column Select",
-            onClick = {
-                performHapticFeedback(isUsableHaptic)
-                expandMenu = !expandMenu
-                      },
-        ) {
-            Icon(
-                Icons.Default.ViewColumn,
-                contentDescription = "DropDownMenu"
-            )
+        if(isUsableTooltips){
+            TooltipIconButton(
+                tooltipText = "Column Select",
+                onClick = {
+                    performHapticFeedback(isUsableHaptic)
+                    expandMenu = !expandMenu
+                },
+            ) {
+                Icon(
+                    Icons.Default.ViewColumn,
+                    contentDescription = "DropDownMenu"
+                )
+            }
+        }else{
+            IconButton(
+                onClick = {
+                    performHapticFeedback(isUsableHaptic)
+                    expandMenu = !expandMenu
+                },
+            ) {
+                Icon(
+                    Icons.Default.ViewColumn,
+                    contentDescription = "DropDownMenu"
+                )
+            }
         }
+
+
+
         DropdownMenu(
             expanded = expandMenu,
             onDismissRequest = {

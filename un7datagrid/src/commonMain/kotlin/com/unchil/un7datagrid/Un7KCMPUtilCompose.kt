@@ -42,23 +42,16 @@ val customPositionProvider = object : PopupPositionProvider {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TooltipIconButton(
-    isUsableTooltips:Boolean =true,
     tooltipText: String,
     onClick: () -> Unit,
     enabled: Boolean = true,
     content: @Composable () -> Unit
 ) {
-
-    if(isUsableTooltips){
-        TooltipBox(
-            positionProvider = customPositionProvider,
-            tooltip = { PlainTooltip { Text(tooltipText)}},
-            state = rememberTooltipState()
-        ) { IconButton(onClick = onClick, enabled = enabled, content = content)}
-    }else{
-        IconButton(onClick = onClick, enabled = enabled, content = content)
-    }
-
+    TooltipBox(
+        positionProvider = customPositionProvider,
+        tooltip = { PlainTooltip { Text(tooltipText)}},
+        state = rememberTooltipState()
+    ) { IconButton(onClick = onClick, enabled = enabled, content = content)}
 }
 
 val customPositionProvider2 = object : PopupPositionProvider {
@@ -78,7 +71,6 @@ val customPositionProvider2 = object : PopupPositionProvider {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TooltipText(
-    isUsableTooltips:Boolean =true,
     tooltipText: String,
     modifier: Modifier = Modifier,
     color: Color = Color.Unspecified,
@@ -89,25 +81,11 @@ fun TooltipText(
     textDecoration: TextDecoration? = null,
     maxLines: Int = Int.MAX_VALUE,
 ) {
-
-    if(isUsableTooltips) {
-        TooltipBox(
-            positionProvider = customPositionProvider2,
-            tooltip = { PlainTooltip { Text(tooltipText) }},
-            state = rememberTooltipState()
-        ) {
-            Text(
-                color = color,
-                text = text,
-                modifier = then(modifier),
-                fontStyle = fontStyle,
-                fontWeight = fontWeight,
-                textAlign = textAlign,
-                textDecoration = textDecoration,
-                maxLines = maxLines
-            )
-        }
-    }else{
+    TooltipBox(
+        positionProvider = customPositionProvider2,
+        tooltip = { PlainTooltip { Text(tooltipText) }},
+        state = rememberTooltipState()
+    ) {
         Text(
             color = color,
             text = text,

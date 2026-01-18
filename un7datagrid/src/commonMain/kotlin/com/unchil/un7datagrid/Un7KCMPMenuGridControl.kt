@@ -15,10 +15,15 @@ import androidx.compose.material.icons.filled.ArrowDownward
 import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.Compress
 import androidx.compose.material.icons.filled.Expand
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.Text
+import androidx.compose.material3.TooltipBox
+import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.InternalComposeApi
 import androidx.compose.runtime.MutableState
@@ -64,84 +69,97 @@ internal fun Un7KCMPMenuGridControl(
         AnimatedVisibility(visible = isExpandMenu.value) {
 
             Column {
-                TooltipIconButton(
-                    isUsableTooltips = isUsableTooltips,
-                    tooltipText = "First Row",
-                    onClick = { onListNavHandler(ListNav.Top) },
-                    enabled = lazyListState.canScrollBackward
-                ) {
-                    Icon(
-                        Icons.Default.ArrowUpward,
-                        contentDescription = "First Row"
-                    )
+
+                if(isUsableTooltips){
+                    TooltipIconButton(
+                        tooltipText = "First Row",
+                        onClick = { onListNavHandler(ListNav.Top) },
+                        enabled = lazyListState.canScrollBackward
+                    ){
+                        Icon(
+                            Icons.Default.ArrowUpward,
+                            contentDescription = "First Row"
+                        )
+                    }
+
+                    TooltipIconButton(
+                        tooltipText = "Last Row",
+                        onClick = { onListNavHandler(ListNav.Bottom) },
+                        enabled = lazyListState.canScrollForward
+                    ){
+                        Icon(
+                            Icons.Default.ArrowDownward,
+                            contentDescription = "Last Row"
+                        )
+                    }
+
+                    TooltipIconButton(
+                        tooltipText = if(isVisibleHeader.value)"UnVisible Header" else "Visible Header",
+                        onClick = { performHapticFeedback(isUsableHaptic)
+                            isVisibleHeader.value = !isVisibleHeader.value }
+                    ){
+                        Icon(
+                            if(isVisibleHeader.value)Icons.Default.Expand else Icons.Default.Compress,
+                            contentDescription = "Visible Header"
+                        )
+                    }
+
+                    TooltipIconButton(
+                        tooltipText =  if(isVisibleRowNum.value)"UnVisible RowNum" else "Visible RowNum",
+                        onClick = { performHapticFeedback(isUsableHaptic)
+                            isVisibleRowNum.value = !isVisibleRowNum.value }
+                    ){
+                        Icon(
+                            if( isVisibleRowNum.value) Icons.Default.Expand else Icons.Default.Compress,
+                            modifier = Modifier.rotate(90f),
+                            contentDescription = "Visible RowNum"
+                        )
+                    }
+
+                } else {
+                    IconButton(
+                        onClick = { onListNavHandler(ListNav.Top) },
+                        enabled = lazyListState.canScrollBackward
+                    ){
+                        Icon(
+                            Icons.Default.ArrowUpward,
+                            contentDescription = "First Row"
+                        )
+                    }
+
+                    IconButton(
+                        onClick = { onListNavHandler(ListNav.Bottom) },
+                        enabled = lazyListState.canScrollForward
+                    ){
+                        Icon(
+                            Icons.Default.ArrowDownward,
+                            contentDescription = "Last Row"
+                        )
+                    }
+
+                    IconButton(
+                        onClick = { performHapticFeedback(isUsableHaptic)
+                            isVisibleHeader.value = !isVisibleHeader.value }
+                    ){
+                        Icon(
+                            if(isVisibleHeader.value)Icons.Default.Expand else Icons.Default.Compress,
+                            contentDescription = "Visible Header"
+                        )
+                    }
+
+                    IconButton(
+                        onClick = { performHapticFeedback(isUsableHaptic)
+                            isVisibleRowNum.value = !isVisibleRowNum.value }
+                    ){
+                        Icon(
+                            if(isVisibleRowNum.value)Icons.Default.Expand else Icons.Default.Compress,
+                            modifier = Modifier.rotate(90f),
+                            contentDescription = "Visible RowNum"
+                        )
+                    }
+
                 }
 
-                TooltipIconButton(
-                    isUsableTooltips = isUsableTooltips,
-                    tooltipText = "Last Row",
-                    onClick = { onListNavHandler(ListNav.Bottom) },
-                    enabled = lazyListState.canScrollForward,
-                ) {
-                    Icon(
-                        Icons.Default.ArrowDownward,
-                        contentDescription = "Last Row",
-                    )
-                }
-
-                TooltipIconButton(
-                    isUsableTooltips = isUsableTooltips,
-                    tooltipText = if (isVisibleHeader.value) "UnVisible Header" else "Visible Header",
-                    onClick = {
-                        performHapticFeedback(isUsableHaptic)
-                        isVisibleHeader.value = !isVisibleHeader.value
-                              },
-                ) {
-                    SegmentedButtonDefaults.Icon(
-                        active = !isVisibleHeader.value,
-                        activeContent = {
-                            Icon(
-                                Icons.Default.Compress,
-                                contentDescription = ""
-                            )
-                        },
-                        inactiveContent = {
-                            Icon(
-                                Icons.Default.Expand,
-                                contentDescription = ""
-                            )
-                        }
-                    )
-
-                }
-
-
-                TooltipIconButton(
-                    isUsableTooltips = isUsableTooltips,
-                    tooltipText = if (isVisibleRowNum.value) "UnVisible RowNum" else "Visible RowNum",
-                    onClick = {
-                        performHapticFeedback(isUsableHaptic)
-                        isVisibleRowNum.value = !isVisibleRowNum.value
-                              },
-                ) {
-                    SegmentedButtonDefaults.Icon(
-                        active = !isVisibleRowNum.value,
-                        activeContent = {
-                            Icon(
-                                Icons.Default.Compress,
-                                contentDescription = "",
-                                modifier = Modifier.rotate(90f)
-                            )
-                        },
-                        inactiveContent = {
-                            Icon(
-                                Icons.Default.Expand,
-                                contentDescription = "",
-                                modifier = Modifier.rotate(90f)
-                            )
-                        }
-                    )
-
-                }
 
 
                 Un7KCMPMenuSelectColumn(

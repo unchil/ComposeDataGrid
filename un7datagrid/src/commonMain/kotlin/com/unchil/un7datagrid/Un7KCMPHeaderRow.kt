@@ -24,6 +24,7 @@ import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.ArrowDropUp
 import androidx.compose.material.icons.filled.UnfoldMore
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
@@ -148,42 +149,77 @@ internal fun Un7KCMPHeaderRow(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
 
-
-                TooltipIconButton(
-                    isUsableTooltips=isUsableTooltips,
-                    tooltipText = "Sort",
-                    onClick = {
-                        performHapticFeedback(isUsableHaptic)
-                        val iconFlag = when(columnDataSortFlag[index]){
-                            0 -> 1
-                            1 -> -1
-                            -1 -> 0
-                            else -> {0}
-                        }
-                        onEvent(Un7KCMPDataGridViewModel.Event.ColumnSort(index, iconFlag, columnName ))
-                    },
-                ){
-                    Icon(
-                        imageVector = when(columnDataSortFlag[index]){
-                            -1 ->  Icons.Default.ArrowDropDown
-                            1 ->  Icons.Default.ArrowDropUp
-                            else -> Icons.Default.UnfoldMore
+                if(isUsableTooltips){
+                    TooltipIconButton(
+                        tooltipText = "Sort",
+                        onClick = {
+                            performHapticFeedback(isUsableHaptic)
+                            val iconFlag = when(columnDataSortFlag[index]){
+                                0 -> 1
+                                1 -> -1
+                                -1 -> 0
+                                else -> {0}
+                            }
+                            onEvent(Un7KCMPDataGridViewModel.Event.ColumnSort(index, iconFlag, columnName ))
                         },
-                        contentDescription = "Sort",
-                        tint = gridColorSet["headerRowContentColor"]
-                            ?: MaterialTheme.colorScheme.onSecondaryContainer
+                    ){
+                        Icon(
+                            imageVector = when(columnDataSortFlag[index]){
+                                -1 ->  Icons.Default.ArrowDropDown
+                                1 ->  Icons.Default.ArrowDropUp
+                                else -> Icons.Default.UnfoldMore
+                            },
+                            contentDescription = "Sort",
+                            tint = gridColorSet["headerRowContentColor"]
+                                ?: MaterialTheme.colorScheme.onSecondaryContainer
+                        )
+                    }
+                }else{
+                    IconButton(
+                        onClick = {
+                            performHapticFeedback(isUsableHaptic)
+                            val iconFlag = when(columnDataSortFlag[index]){
+                                0 -> 1
+                                1 -> -1
+                                -1 -> 0
+                                else -> {0}
+                            }
+                            onEvent(Un7KCMPDataGridViewModel.Event.ColumnSort(index, iconFlag, columnName ))
+                        },
+                    ){
+                        Icon(
+                            imageVector = when(columnDataSortFlag[index]){
+                                -1 ->  Icons.Default.ArrowDropDown
+                                1 ->  Icons.Default.ArrowDropUp
+                                else -> Icons.Default.UnfoldMore
+                            },
+                            contentDescription = "Sort",
+                            tint = gridColorSet["headerRowContentColor"]
+                                ?: MaterialTheme.colorScheme.onSecondaryContainer
+                        )
+                    }
+                }
+
+
+                if(isUsableTooltips){
+                    TooltipText(
+                        tooltipText = "${columnName} [${columnsInfo[columnName]?.dataType}]",
+                        text = columnName,
+                        color= gridColorSet["headerRowContentColor"]
+                            ?: MaterialTheme.colorScheme.onSecondaryContainer,
+                        textAlign = TextAlign.Center,
+                        maxLines = 1
+                    )
+                }else{
+                    Text(
+                        text = columnName,
+                        color= gridColorSet["headerRowContentColor"]
+                            ?: MaterialTheme.colorScheme.onSecondaryContainer,
+                        textAlign = TextAlign.Center,
+                        maxLines = 1
                     )
                 }
 
-                TooltipText(
-                    isUsableTooltips=isUsableTooltips,
-                    tooltipText = "${columnName} [${columnsInfo[columnName]?.dataType}]",
-                    text = columnName,
-                    color= gridColorSet["headerRowContentColor"]
-                        ?: MaterialTheme.colorScheme.onSecondaryContainer,
-                    textAlign = TextAlign.Center,
-                    maxLines = 1
-                )
 
                 Un7KCMPSearchMenu(
                     columnName,

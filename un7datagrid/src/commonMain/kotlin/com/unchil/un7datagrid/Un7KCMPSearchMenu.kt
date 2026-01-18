@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSize
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -29,7 +28,6 @@ import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.InternalComposeApi
 import androidx.compose.runtime.getValue
@@ -86,19 +84,33 @@ internal fun Un7KCMPSearchMenu(
         contentAlignment = Alignment.Center,
     ){
 
-        TooltipIconButton(
-            isUsableTooltips=isUsableTooltips,
-            tooltipText = "Filter",
-            onClick = {
-                performHapticFeedback(isUsableHaptic)
-                expanded = !expanded
+        if(isUsableTooltips){
+            TooltipIconButton(
+                tooltipText = "Filter",
+                onClick = {
+                    performHapticFeedback(isUsableHaptic)
+                    expanded = !expanded
+                }
+            ) {
+                Icon(Icons.AutoMirrored.Filled.ManageSearch,
+                    contentDescription = "Filter",
+                    // requiredSize를 사용하면 부모가 작아져도 아이콘은 크기를 유지합니다.
+                    modifier = Modifier.requiredSize(24.dp),
+                    tint = headerRowContentColor?: LocalContentColor.current )
             }
-        ) {
-            Icon(Icons.AutoMirrored.Filled.ManageSearch,
-                contentDescription = "Filter",
-                // requiredSize를 사용하면 부모가 작아져도 아이콘은 크기를 유지합니다.
-                modifier = Modifier.requiredSize(24.dp),
-                tint = headerRowContentColor?: LocalContentColor.current )
+        }else{
+            IconButton(
+                onClick = {
+                    performHapticFeedback(isUsableHaptic)
+                    expanded = !expanded
+                }
+            ) {
+                Icon(Icons.AutoMirrored.Filled.ManageSearch,
+                    contentDescription = "Filter",
+                    // requiredSize를 사용하면 부모가 작아져도 아이콘은 크기를 유지합니다.
+                    modifier = Modifier.requiredSize(24.dp),
+                    tint = headerRowContentColor?: LocalContentColor.current )
+            }
         }
 
         DropdownMenu(
@@ -121,18 +133,33 @@ internal fun Un7KCMPSearchMenu(
                         label = {
                             Text(columnsInfo[columnName]?.dataType ?: ""  )  },
                         trailingIcon = {
-                            TooltipIconButton(
-                                isUsableTooltips=isUsableTooltips,
-                                tooltipText = "Operator",
-                                onClick = {
-                                    performHapticFeedback(isUsableHaptic)
-                                    expandedOperator = !expandedOperator
+
+                            if(isUsableTooltips){
+                                TooltipIconButton(
+                                    tooltipText = "Operator",
+                                    onClick = {
+                                        performHapticFeedback(isUsableHaptic)
+                                        expandedOperator = !expandedOperator
+                                    }
+                                ){
+                                    Icon(if(expandedOperator) Icons.Default.ArrowDropUp else Icons.Default.ArrowDropDown,
+                                        contentDescription = "OperatorString"
+                                    )
                                 }
-                            ){
-                                Icon(if(expandedOperator) Icons.Default.ArrowDropUp else Icons.Default.ArrowDropDown,
-                                    contentDescription = "OperatorString"
-                                )
+                            }else{
+                                IconButton(
+                                    onClick = {
+                                        performHapticFeedback(isUsableHaptic)
+                                        expandedOperator = !expandedOperator
+                                    }
+                                ){
+                                    Icon(if(expandedOperator) Icons.Default.ArrowDropUp else Icons.Default.ArrowDropDown,
+                                        contentDescription = "OperatorString"
+                                    )
+                                }
                             }
+
+
                         },
                         singleLine = true,
                     )

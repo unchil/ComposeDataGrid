@@ -107,43 +107,81 @@ internal fun Un7KCMPPageSizePicker(
             flingBehavior = flingBehavior,
         ) {page ->
 
-            TooltipText(
-                isUsableTooltips = isUsableTooltips,
-                tooltipText = "change the page size by horizontal scrolling .",
-                modifier = Modifier
-                    .width(pickerWidth)
-                    .graphicsLayer {
-                        // Calculate the absolute offset for the current page from the
-                        // scroll position. We use the absolute value which allows us to mirror
-                        // any effects for both directions
-                        val pageOffset = ( (pagerState.currentPage - page) + pagerState.currentPageOffsetFraction ).absoluteValue
+            if(isUsableTooltips){
+                TooltipText(
+                    tooltipText = "change the page size by horizontal scrolling .",
+                    modifier = Modifier
+                        .width(pickerWidth)
+                        .graphicsLayer {
+                            // Calculate the absolute offset for the current page from the
+                            // scroll position. We use the absolute value which allows us to mirror
+                            // any effects for both directions
+                            val pageOffset = ( (pagerState.currentPage - page) + pagerState.currentPageOffsetFraction ).absoluteValue
 
-                        alpha = lerp(
-                            start = 0.5f,
-                            stop = 1f,
-                            fraction = 1f - pageOffset.coerceIn(0f, 1f)
-                        )
+                            alpha = lerp(
+                                start = 0.5f,
+                                stop = 1f,
+                                fraction = 1f - pageOffset.coerceIn(0f, 1f)
+                            )
 
-                        scaleX = lerp(
-                            start = 0.5f,
-                            stop = 1f,
-                            fraction = 1f - pageOffset.coerceIn(0f, 1f)
-                        )
+                            scaleX = lerp(
+                                start = 0.5f,
+                                stop = 1f,
+                                fraction = 1f - pageOffset.coerceIn(0f, 1f)
+                            )
 
-                        scaleY = lerp(
-                            start = 0.5f,
-                            stop = 1f,
-                            fraction = 1f - pageOffset.coerceIn(0f, 1f)
-                        )
+                            scaleY = lerp(
+                                start = 0.5f,
+                                stop = 1f,
+                                fraction = 1f - pageOffset.coerceIn(0f, 1f)
+                            )
 
 
-                    },
-                text = dataList[page].toString(),
-                fontStyle=  FontStyle.Italic,
-                fontWeight = FontWeight.ExtraBold,
-                textAlign = TextAlign.Center,
-                textDecoration = TextDecoration.Underline
-            )
+                        },
+                    text = dataList[page].toString(),
+                    fontStyle=  FontStyle.Italic,
+                    fontWeight = FontWeight.ExtraBold,
+                    textAlign = TextAlign.Center,
+                    textDecoration = TextDecoration.Underline
+                )
+            }else{
+                Text(
+                    modifier = Modifier
+                        .width(pickerWidth)
+                        .graphicsLayer {
+                            // Calculate the absolute offset for the current page from the
+                            // scroll position. We use the absolute value which allows us to mirror
+                            // any effects for both directions
+                            val pageOffset = ( (pagerState.currentPage - page) + pagerState.currentPageOffsetFraction ).absoluteValue
+
+                            alpha = lerp(
+                                start = 0.5f,
+                                stop = 1f,
+                                fraction = 1f - pageOffset.coerceIn(0f, 1f)
+                            )
+
+                            scaleX = lerp(
+                                start = 0.5f,
+                                stop = 1f,
+                                fraction = 1f - pageOffset.coerceIn(0f, 1f)
+                            )
+
+                            scaleY = lerp(
+                                start = 0.5f,
+                                stop = 1f,
+                                fraction = 1f - pageOffset.coerceIn(0f, 1f)
+                            )
+
+
+                        },
+                    text = dataList[page].toString(),
+                    fontStyle=  FontStyle.Italic,
+                    fontWeight = FontWeight.ExtraBold,
+                    textAlign = TextAlign.Center,
+                    textDecoration = TextDecoration.Underline
+                )
+            }
+
         }
 
     }
