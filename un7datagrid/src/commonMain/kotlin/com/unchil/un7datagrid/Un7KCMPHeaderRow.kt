@@ -24,7 +24,6 @@ import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.ArrowDropUp
 import androidx.compose.material.icons.filled.UnfoldMore
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
@@ -113,7 +112,6 @@ internal fun Un7KCMPHeaderRow(
                     .background(color = gridColorSet["headerRowBackgroundColor"]
                         ?: MaterialTheme.colorScheme.secondaryContainer)
                     .width((gridDpSet["columnsAreaWidth"] ?: 0.dp) * onColumnWeightProvider(index))
-
                     .height( gridDpSet["heightColumnHeader"] ?: 0.dp)
                     .pointerInput(Unit) {
                         detectDragGestures(
@@ -146,6 +144,7 @@ internal fun Un7KCMPHeaderRow(
                     .border(
                         border = borderStrokeLightGray,
                         shape = RoundedCornerShape(2.dp)),
+                horizontalArrangement =  Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
 
@@ -180,7 +179,6 @@ internal fun Un7KCMPHeaderRow(
                     isUsableTooltips=isUsableTooltips,
                     tooltipText = "${columnName} [${columnsInfo[columnName]?.dataType}]",
                     text = columnName,
-                    modifier=Modifier.weight(1f),
                     color= gridColorSet["headerRowContentColor"]
                         ?: MaterialTheme.colorScheme.onSecondaryContainer,
                     textAlign = TextAlign.Center,

@@ -8,6 +8,7 @@ import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.Modifier.Companion.then
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -98,27 +99,25 @@ fun TooltipText(
     if(isUsableTooltips) {
         TooltipBox(
             positionProvider = customPositionProvider2,
-            tooltip = {
-                PlainTooltip {
-                    Text(tooltipText)
-                }
-            },
+            tooltip = { PlainTooltip { Text(tooltipText) }},
             state = rememberTooltipState()
         ) {
             Text(
-                modifier = modifier,
+                color = color,
                 text = text,
+                modifier = then(modifier),
                 fontStyle = fontStyle,
                 fontWeight = fontWeight,
                 textAlign = textAlign,
-                textDecoration = textDecoration
+                textDecoration = textDecoration,
+                maxLines = maxLines
             )
         }
     }else{
         Text(
-            modifier = modifier,
             color = color,
             text = text,
+            modifier = then(modifier),
             fontStyle = fontStyle,
             fontWeight = fontWeight,
             textAlign = textAlign,
