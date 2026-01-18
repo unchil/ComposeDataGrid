@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredSize
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -27,6 +29,7 @@ import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.InternalComposeApi
 import androidx.compose.runtime.getValue
@@ -93,6 +96,8 @@ internal fun Un7KCMPSearchMenu(
         ) {
             Icon(Icons.AutoMirrored.Filled.ManageSearch,
                 contentDescription = "Filter",
+                // requiredSize를 사용하면 부모가 작아져도 아이콘은 크기를 유지합니다.
+                modifier = Modifier.requiredSize(24.dp),
                 tint = headerRowContentColor?: LocalContentColor.current )
         }
 
