@@ -38,7 +38,8 @@
 - The currently supported column data types are `List<Char?>`, `List<String?>`, `List<Byte?>`, `List<Short?>`, `List<Int?>`, `List<Float?>`, `List<Double?>`, `List<Long?>`, `List<Boolean?>`, `List<Any?>`.
 - `Any` Type is casting to String type and then filtered and sorted.
 - Export to CSV: Effortlessly export your grid data to a CSV file. This feature is supported across all platforms (Android, iOS, Desktop, and Web) using platform-specific file saving mechanisms.
-- Interactive Tooltips: Descriptive tooltips now appear when hovering over control buttons (Pagination, Refresh, Export, etc.), providing immediate visual guidance and improving accessibility on Desktop and Web platforms.
+- Interactive Tooltips: Provide context-sensitive information for headers and controls.
+- Tooltip Toggle Control: Users can enable or disable tooltips globally via the navigation control to reduce visual clutter.
 - Haptic Feedback: Provides tactile feedback for critical user interactions, such as column reordering, sorting, and long-press actions, enhancing the overall mobile user experience.
 
 ## User Interface Enhancements
@@ -199,6 +200,12 @@ fun MyDataScreen() {
     )
 }
 ```
+
+### Using Tooltips
+- **Header Tooltips:** Hover over column headers to see full titles and data types.
+- **Control Tooltips:** Navigation and filtering icons include tooltips for better accessibility.
+- **How to Toggle:** Click the **Help (? icon)** in the navigation bar to turn tooltips ON/OFF.
+
 
 ### Exporting Data
 **You can trigger the CSV export through the built-in menu in the Un7KCMPDataGrid. The library will automatically:**

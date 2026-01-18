@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Help
+import androidx.compose.material.icons.automirrored.filled.HelpOutline
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.automirrored.filled.LastPage
@@ -43,13 +45,16 @@ internal fun Un7KCMPMenuPageNavControl(
     onRefresh:()->Unit,
     onPageNavHandler:(PageNav)->Unit,
     pagerState: PagerState,
-    isOnePageNav: Boolean
+    isOnePageNav: Boolean,
+    onUsableTooltips:(Boolean)->Unit
 ){
 
     val platform = remember { platform() }
     val shape = RoundedCornerShape(4.dp)
     val isUsableTooltips = LocalIsUsableTooltips.current
     val isUsableHaptic = LocalIsUsableHaptic.current
+
+
 
     Row (
         modifier= Modifier
@@ -93,6 +98,23 @@ internal fun Un7KCMPMenuPageNavControl(
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
+
+                TooltipIconButton(
+                    isUsableTooltips = isUsableTooltips,
+                    tooltipText = "Usable Tooltips",
+                    onClick = { onUsableTooltips(!isUsableTooltips)  },
+                ) {
+                    Icon(
+                        imageVector = if (isUsableTooltips) {
+                            Icons.AutoMirrored.Filled.Help
+                        } else {
+                            Icons.AutoMirrored.Filled.HelpOutline
+                        },
+                        contentDescription = "Usable Tooltips",
+                        tint = if (isUsableTooltips) MaterialTheme.colorScheme.primary
+                        else MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
 
                 Un7KCMPPageSizePicker(
                     selectPageSizeList,

@@ -122,9 +122,7 @@ internal fun Un7KCMPDataRow(
                     .background(color = backgroundColor)
                     .width(   (gridDpSet["columnsAreaWidth"] ?: 0.dp) * columnWeightProvider(index) )
                     .height( gridDpSet["heightColumnData"] ?: 0.dp)
-                    .offset{
-                        columnOffsetProvider(index)
-                    }
+                    .offset{ columnOffsetProvider(index) }
                     .graphicsLayer {
                         val offset = columnOffsetProvider(index)
                         alpha = if (offset == IntOffset.Zero) 1f else 0.5f

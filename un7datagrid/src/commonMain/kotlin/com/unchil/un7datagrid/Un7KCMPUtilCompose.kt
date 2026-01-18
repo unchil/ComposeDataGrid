@@ -8,6 +8,7 @@ import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -84,12 +85,14 @@ val customPositionProvider2 = object : PopupPositionProvider {
 fun TooltipText(
     isUsableTooltips:Boolean =true,
     tooltipText: String,
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
+    color: Color = Color.Unspecified,
     text: String,
-    fontStyle: FontStyle,
-    fontWeight:FontWeight,
-    textAlign: TextAlign,
-    textDecoration :TextDecoration
+    fontStyle: FontStyle? = null,
+    fontWeight: FontWeight? = null,
+    textAlign: TextAlign? = null,
+    textDecoration: TextDecoration? = null,
+    maxLines: Int = Int.MAX_VALUE,
 ) {
 
     if(isUsableTooltips) {
@@ -114,11 +117,13 @@ fun TooltipText(
     }else{
         Text(
             modifier = modifier,
+            color = color,
             text = text,
             fontStyle = fontStyle,
             fontWeight = fontWeight,
             textAlign = textAlign,
-            textDecoration = textDecoration
+            textDecoration = textDecoration,
+            maxLines = maxLines
         )
     }
 }

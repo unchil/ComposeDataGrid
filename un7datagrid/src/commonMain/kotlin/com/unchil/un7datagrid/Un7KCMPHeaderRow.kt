@@ -176,7 +176,10 @@ internal fun Un7KCMPHeaderRow(
                     )
                 }
 
-                Text(columnName,
+                TooltipText(
+                    isUsableTooltips=isUsableTooltips,
+                    tooltipText = "${columnName} [${columnsInfo[columnName]?.dataType}]",
+                    text = columnName,
                     modifier=Modifier.weight(1f),
                     color= gridColorSet["headerRowContentColor"]
                         ?: MaterialTheme.colorScheme.onSecondaryContainer,

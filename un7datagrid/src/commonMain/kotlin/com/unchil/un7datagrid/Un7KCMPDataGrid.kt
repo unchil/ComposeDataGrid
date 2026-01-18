@@ -49,13 +49,16 @@ fun Un7KCMPDataGrid(
     data:Map<String, List<Any?>>,
     config: Un7KCMPDataGridConfig = Un7KCMPDataGridConfig()
 ){
+    val isUsableTooltips = rememberSaveable { mutableStateOf(config.isUsableTooltips) }
+    val onUsableTooltips: (Boolean) -> Unit = { value ->
+        isUsableTooltips.value = value
+    }
+
     CompositionLocalProvider(
-        LocalIsUsableTooltips provides config.isUsableTooltips,
+        LocalIsUsableTooltips provides isUsableTooltips.value,
         LocalIsUsableHaptic provides config.isUsableHaptic
     ) {
-        val isUsableTooltips = LocalIsUsableTooltips.current
         val isUsableHaptic = LocalIsUsableHaptic.current
-
         val viewModel = remember(data) { Un7KCMPDataGridViewModel(data, config) }
         val platform = remember { platform() }
         val coroutineScope = rememberCoroutineScope()
@@ -80,12 +83,11 @@ fun Un7KCMPDataGrid(
         val isVisibleRowNum = remember { mutableStateOf(config.isVisibilityRowNumber) }
         val isVisibleHeader = remember { mutableStateOf(true) }
 
-        // For ANDROID, create FileSaveHandler.pendingContent and FileSaveHandler.intent in advance.
+        // For ANDROID, create AndroidPlatformHandler.pendingContent and AndroidPlatformHandler.intent in advance.
         when (platform) {
             PlatformAlias.ANDROID -> {
                 viewModel.onEvent(Un7KCMPDataGridViewModel.Event.ExportCSV {})
             }
-
             else -> {}
         }
 
@@ -312,7 +314,8 @@ fun Un7KCMPDataGrid(
                             onRefresh,
                             onPageNavHandler,
                             pagerState,
-                            isOnePageNav.value
+                            isOnePageNav.value,
+                            onUsableTooltips
                         )
                     }
                     //---- Box  PageNavControl
