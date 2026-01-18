@@ -156,13 +156,17 @@ fun DataGridWithViewModel(
                     Un7KCMPDataGrid(
                         modifier,
                         Pair(columnNames.value, data.value).toMap(),
+
                         Un7KCMPDataGridConfig(
-                            isUsableTooltips = true,
-                            dataRowBackgroundColor = MaterialTheme.colorScheme.surface ,
-                            dataRowContentColor = Color.DarkGray ,
-                            oddDataRowBackgroundColor = Color.White,
-                            evenDataRowBackgroundColor = Color(0xFFF5F5F5)
+                         //   headerRowBackgroundColor = MaterialTheme.colorScheme.primaryContainer,
+                         //   headerRowContentColor = MaterialTheme.colorScheme.onPrimaryContainer ,
+                            dataRowBackgroundColor = MaterialTheme.colorScheme.secondaryContainer ,
+                            dataRowContentColor = MaterialTheme.colorScheme.onSecondaryContainer ,
+                            oddDataRowBackgroundColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.2f),
+                            evenDataRowBackgroundColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.6f)
                         )
+
+
                     )
                 }
 
