@@ -5,6 +5,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Text
 import androidx.compose.material3.TooltipBox
+import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -25,20 +26,6 @@ import androidx.compose.ui.window.PopupPositionProvider
  * 툴팁이 포함된 IconButton 헬퍼 컴포저블
  */
 
-val customPositionProvider = object : PopupPositionProvider {
-    override fun calculatePosition(
-        anchorBounds: IntRect,       // 앵커(아이콘 버튼)의 위치와 크기
-        windowSize: IntSize,         // 전체 창 크기
-        layoutDirection: LayoutDirection,
-        popupContentSize: IntSize    // 툴팁 콘텐츠의 크기
-    ): IntOffset {
-        // 예: 앵커의 상단 중앙에 배치하는 로직
-        val x = anchorBounds.left + (anchorBounds.width - popupContentSize.width) / 2
-        val y = anchorBounds.top - popupContentSize.height
-        return IntOffset(x, y)
-    }
-}
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TooltipIconButton(
@@ -48,25 +35,30 @@ fun TooltipIconButton(
     content: @Composable () -> Unit
 ) {
     TooltipBox(
-        positionProvider = customPositionProvider,
-        tooltip = { PlainTooltip { Text(tooltipText)}},
+        positionProvider = object : PopupPositionProvider {
+            override fun calculatePosition(
+                anchorBounds: IntRect,       // 앵커(아이콘 버튼)의 위치와 크기
+                windowSize: IntSize,         // 전체 창 크기
+                layoutDirection: LayoutDirection,
+                popupContentSize: IntSize    // 툴팁 콘텐츠의 크기
+            ): IntOffset {
+                // 예: 앵커의 상단 중앙에 배치하는 로직
+                val x = anchorBounds.left + (anchorBounds.width - popupContentSize.width) / 2
+                val y = anchorBounds.top - popupContentSize.height
+                return IntOffset(x, y)
+            }
+        }
+        ,
+        tooltip = {
+            PlainTooltip { Text(tooltipText)}
+        },
         state = rememberTooltipState()
-    ) { IconButton(onClick = onClick, enabled = enabled, content = content)}
-}
-
-val customPositionProvider2 = object : PopupPositionProvider {
-    override fun calculatePosition(
-        anchorBounds: IntRect,       // 앵커(아이콘 버튼)의 위치와 크기
-        windowSize: IntSize,         // 전체 창 크기
-        layoutDirection: LayoutDirection,
-        popupContentSize: IntSize    // 툴팁 콘텐츠의 크기
-    ): IntOffset {
-        // 예: 앵커의 상단 중앙에 배치하는 로직
-        val x = anchorBounds.left + (anchorBounds.width - popupContentSize.width) / 2
-        val y = anchorBounds.top - popupContentSize.height - 24
-        return IntOffset(x, y)
+    ) {
+        IconButton(onClick = onClick, enabled = enabled, content = content)
     }
 }
+
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -82,8 +74,23 @@ fun TooltipText(
     maxLines: Int = Int.MAX_VALUE,
 ) {
     TooltipBox(
-        positionProvider = customPositionProvider2,
-        tooltip = { PlainTooltip { Text(tooltipText) }},
+        positionProvider = object : PopupPositionProvider {
+            override fun calculatePosition(
+                anchorBounds: IntRect,
+                windowSize: IntSize,
+                layoutDirection: LayoutDirection,
+                popupContentSize: IntSize
+            ): IntOffset {
+                val x = anchorBounds.left + (anchorBounds.width - popupContentSize.width) / 2
+                val y = anchorBounds.top - popupContentSize.height - 24
+                return IntOffset(x, y)
+            }
+        },
+        tooltip = {
+            PlainTooltip( maxWidth = TooltipDefaults.richTooltipMaxWidth) {
+                Text(tooltipText)
+            }
+        },
         state = rememberTooltipState()
     ) {
         Text(

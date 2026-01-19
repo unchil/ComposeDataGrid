@@ -127,7 +127,7 @@ internal fun Un7KCMPMenuPageNavControl(
 
                 if(isUsableTooltips){
                     TooltipIconButton(
-                        tooltipText = "Usable Tooltips",
+                        tooltipText = "Disable Tooltips",
                         onClick = { onUsableTooltips(!isUsableTooltips)  },
                     ) {
                         Icon(
@@ -136,7 +136,7 @@ internal fun Un7KCMPMenuPageNavControl(
                             } else {
                                 Icons.AutoMirrored.Filled.HelpOutline
                             },
-                            contentDescription = "Usable Tooltips",
+                            contentDescription = "Disable Tooltips",
                             tint = if (isUsableTooltips) MaterialTheme.colorScheme.primary
                             else MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -151,7 +151,7 @@ internal fun Un7KCMPMenuPageNavControl(
                             } else {
                                 Icons.AutoMirrored.Filled.HelpOutline
                             },
-                            contentDescription = "Usable Tooltips",
+                            contentDescription = "Disable Tooltips",
                             tint = if (isUsableTooltips) MaterialTheme.colorScheme.primary
                             else MaterialTheme.colorScheme.onSurfaceVariant
                         )
