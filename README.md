@@ -4,6 +4,13 @@
 
 `Un7-KCMP-DataGrid` is a comprehensive data grid solution designed to efficiently display and manipulate large datasets. Built on Compose Multiplatform, it runs on Android, iOS, Desktop (JVM), and Web (WasmJs).
 
+
+## Un7-KCMP-DataGrid ScreenShot
+|                                                        ScreenShot                                                         |
+|:-------------------------------------------------------------------------------------------------------------------------:|
+| ![ScreenShot](https://github.com/unchil/ComposeDataGrid/blob/701400ee6ff81fcf16998eec2c0da7c9749f5b8a/screenshot/allPlatforms.png) | 
+
+
 ##  Un7-KCMP-DataGrid Demo
 |                                                       Desktop                                                        |
 |:--------------------------------------------------------------------------------------------------------------------:|
