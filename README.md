@@ -6,8 +6,8 @@
 
 
 ## Un7-KCMP-DataGrid ScreenShot
-|                                                        ScreenShot                                                         |
-|:-------------------------------------------------------------------------------------------------------------------------:|
+|                       ScreenShot [ Browser(Safari,Chrome)/Desktop(macOS 26.2)/iOS(26.2)/Android(api 36.0) ]                        |
+|:----------------------------------------------------------------------------------------------------------------------------------:|
 | ![ScreenShot](https://github.com/unchil/ComposeDataGrid/blob/701400ee6ff81fcf16998eec2c0da7c9749f5b8a/screenshot/allPlatforms.png) | 
 
 
