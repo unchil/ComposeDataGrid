@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,21 +14,25 @@
         }
         .demo-card img {
             border-radius: 8px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease;
+        }
+        .demo-card img:hover {
+            transform: scale(1.01);
         }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-900 font-sans">
+<body class="bg-slate-50 text-slate-900 font-sans leading-normal">
 
 <!-- Header / Hero Section -->
-<header class="bg-white border-b border-slate-200 sticky top-0 z-50">
+<header class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
     <div class="container mx-auto px-6 py-4 flex justify-between items-center">
         <h1 class="text-2xl font-bold gradient-text">Un7-KCMP-DataGrid</h1>
         <nav class="hidden md:flex space-x-8 font-medium text-slate-600">
-            <a href="#features" class="hover:text-blue-600">Features</a>
-            <a href="#demo" class="hover:text-blue-600">Demo</a>
-            <a href="#installation" class="hover:text-blue-600">Installation</a>
-            <a href="https://github.com/unchil/ComposeDataGrid" target="_blank" class="text-slate-900 hover:opacity-75">
+            <a href="#features" class="hover:text-blue-600 transition">Features</a>
+            <a href="#demo" class="hover:text-blue-600 transition">Demo</a>
+            <a href="#installation" class="hover:text-blue-600 transition">Installation</a>
+            <a href="https://github.com/unchil/ComposeDataGrid" target="_blank" class="text-slate-900 hover:opacity-75 transition">
                 <i class="fab fa-github text-xl"></i>
             </a>
         </nav>
@@ -37,104 +41,147 @@
 
 <main>
     <!-- Hero Section -->
-    <section class="py-20 bg-gradient-to-b from-white to-slate-50">
+    <section class="py-20 bg-gradient-to-b from-white to-slate-50 border-b border-slate-100">
         <div class="container mx-auto px-6 text-center">
             <h2 class="text-5xl font-extrabold mb-6 leading-tight">
                 Powerful Data Grid for <br><span class="gradient-text">Compose Multiplatform</span>
             </h2>
-            <p class="text-xl text-slate-600 mb-10 max-w-2xl mx-auto">
-                수만 개의 데이터를 Android, iOS, Desktop, Web(Wasm)에서 매끄럽게 표시하고 제어하세요.
-                강력한 페이징, 정렬, 필터링 기능을 제공합니다.
+            <p class="text-xl text-slate-600 mb-10 max-w-3xl mx-auto">
+                A unified data grid solution spanning Android, iOS, Desktop, and Web (Wasm). <br>
+                Manage tens of thousands of data points with seamless paging, sorting, and filtering.
             </p>
             <div class="flex justify-center space-x-4">
-                <a href="#installation" class="bg-blue-600 text-white px-8 py-3 rounded-full font-bold hover:bg-blue-700 transition">Get Started</a>
+                <a href="#installation" class="bg-blue-600 text-white px-8 py-3 rounded-full font-bold hover:bg-blue-700 shadow-lg shadow-blue-200 transition">Get Started</a>
                 <a href="#demo" class="bg-white border border-slate-300 px-8 py-3 rounded-full font-bold hover:bg-slate-50 transition">View Demo</a>
             </div>
         </div>
     </section>
 
     <!-- Platform Badges -->
-    <section class="py-10">
+    <section class="py-12">
         <div class="container mx-auto px-6">
-            <div class="flex flex-wrap justify-center gap-4 text-sm font-semibold text-slate-500">
-                <span class="bg-white px-4 py-2 rounded-lg shadow-sm border border-slate-100 flex items-center"><i class="fab fa-android text-green-500 mr-2"></i> Android</span>
-                <span class="bg-white px-4 py-2 rounded-lg shadow-sm border border-slate-100 flex items-center"><i class="fab fa-apple text-slate-900 mr-2"></i> iOS</span>
-                <span class="bg-white px-4 py-2 rounded-lg shadow-sm border border-slate-100 flex items-center"><i class="fas fa-desktop text-blue-500 mr-2"></i> Desktop (JVM)</span>
-                <span class="bg-white px-4 py-2 rounded-lg shadow-sm border border-slate-100 flex items-center"><i class="fas fa-globe text-indigo-500 mr-2"></i> Web (WasmJs)</span>
-            </div>
-        </div>
-    </section>
-
-    <!-- Features Grid -->
-    <section id="features" class="py-20 border-t border-slate-200">
-        <div class="container mx-auto px-6">
-            <h3 class="text-3xl font-bold mb-12 text-center">Core Features</h3>
-            <div class="grid md:grid-cols-3 gap-8">
-                <!-- Feature 1 -->
-                <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-100">
-                    <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center mb-6 text-xl">
-                        <i class="fas fa-columns"></i>
-                    </div>
-                    <h4 class="text-xl font-bold mb-3">Dynamic Controls</h4>
-                    <p class="text-slate-600 leading-relaxed">컬럼 정렬(Sorting), 크기 조절(Resizing), 순서 변경(Reordering) 및 가시성 제어를 지원합니다.</p>
-                </div>
-                <!-- Feature 2 -->
-                <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-100">
-                    <div class="w-12 h-12 bg-purple-100 text-purple-600 rounded-xl flex items-center justify-center mb-6 text-xl">
-                        <i class="fas fa-file-export"></i>
-                    </div>
-                    <h4 class="text-xl font-bold mb-3">Advanced Filtering</h4>
-                    <p class="text-slate-600 leading-relaxed">데이터 타입별 맞춤형 연산자를 통한 정교한 필터링 및 CSV 내보내기 기능을 제공합니다.</p>
-                </div>
-                <!-- Feature 3 -->
-                <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-100">
-                    <div class="w-12 h-12 bg-green-100 text-green-600 rounded-xl flex items-center justify-center mb-6 text-xl">
-                        <i class="fas fa-bolt"></i>
-                    </div>
-                    <h4 class="text-xl font-bold mb-3">Intuitive UX</h4>
-                    <p class="text-slate-600 leading-relaxed">햅틱 피드백, 툴팁, 스티키 헤더 및 매끄러운 수평 페이징으로 최상의 사용자 경험을 제공합니다.</p>
-                </div>
+            <div class="flex flex-wrap justify-center gap-6 text-sm font-semibold text-slate-500">
+                <span class="bg-white px-5 py-2.5 rounded-xl shadow-sm border border-slate-100 flex items-center"><i class="fab fa-android text-green-500 mr-2 text-lg"></i> Android</span>
+                <span class="bg-white px-5 py-2.5 rounded-xl shadow-sm border border-slate-100 flex items-center"><i class="fab fa-apple text-slate-900 mr-2 text-lg"></i> iOS</span>
+                <span class="bg-white px-5 py-2.5 rounded-xl shadow-sm border border-slate-100 flex items-center"><i class="fas fa-desktop text-blue-500 mr-2 text-lg"></i> Desktop (JVM)</span>
+                <span class="bg-white px-5 py-2.5 rounded-xl shadow-sm border border-slate-100 flex items-center"><i class="fas fa-globe text-indigo-500 mr-2 text-lg"></i> Web (WasmJs)</span>
             </div>
         </div>
     </section>
 
     <!-- Demo Section -->
-    <section id="demo" class="py-20 bg-slate-900 text-white">
-        <div class="container mx-auto px-6 text-center">
-            <h3 class="text-3xl font-bold mb-16">Multiplatform in Action</h3>
-            <div class="grid md:grid-cols-2 gap-12">
-                <div class="demo-card space-y-4 text-left">
-                    <p class="text-indigo-400 font-bold uppercase tracking-wider text-sm">Desktop & Web</p>
+    <section id="demo" class="py-24 bg-slate-900 text-white overflow-hidden">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16">
+                <h3 class="text-4xl font-bold mb-4">Multiplatform in Action</h3>
+                <p class="text-slate-400 text-lg">Experience powerful performance across all platforms with a single codebase.</p>
+            </div>
+
+            <!-- All Platforms Overview at the top -->
+            <div class="mb-24 text-center">
+                <p class="text-slate-500 mb-8 uppercase tracking-widest text-sm font-bold">All Platforms Overview</p>
+                <img src="https://github.com/unchil/ComposeDataGrid/raw/main/screenshot/allPlatforms.png" alt="All Platforms Screenshot" class="max-w-5xl mx-auto rounded-xl shadow-2xl border border-slate-700 transition duration-500 hover:scale-[1.01]">
+            </div>
+
+            <div class="flex flex-col gap-24 max-w-5xl mx-auto">
+                <!-- Desktop -->
+                <div class="demo-card space-y-4 text-center">
+                    <div class="flex items-center justify-center space-x-2 mb-2">
+                        <i class="fas fa-laptop text-blue-400 text-xl"></i>
+                        <h4 class="text-blue-400 font-bold uppercase tracking-widest text-lg">Desktop (macOS)</h4>
+                    </div>
                     <img src="https://github.com/unchil/ComposeDataGrid/raw/main/screenshot/mac.gif" alt="MacOS Demo" class="w-full">
                 </div>
-                <div class="demo-card space-y-4 text-left">
-                    <p class="text-indigo-400 font-bold uppercase tracking-wider text-sm">Mobile (iOS & Android)</p>
-                    <img src="https://github.com/unchil/ComposeDataGrid/raw/main/screenshot/ios.gif" alt="iOS Demo" class="w-full">
+
+                <!-- Web -->
+                <div class="demo-card space-y-4 text-center">
+                    <div class="flex items-center justify-center space-x-2 mb-2">
+                        <i class="fas fa-globe text-indigo-400 text-xl"></i>
+                        <h4 class="text-indigo-400 font-bold uppercase tracking-widest text-lg">Web (WasmJs)</h4>
+                    </div>
+                    <img src="https://github.com/unchil/ComposeDataGrid/raw/main/screenshot/wasm.gif" alt="Web Demo" class="w-full">
+                </div>
+
+                <!-- Mobile Row -->
+                <div class="flex flex-col md:flex-row gap-8 justify-center items-start w-[70%] mx-auto">
+                    <!-- iOS -->
+                    <div class="demo-card space-y-4 text-center flex-1">
+                        <div class="flex items-center justify-center space-x-2 mb-2">
+                            <i class="fab fa-apple text-slate-300 text-xl"></i>
+                            <h4 class="text-slate-300 font-bold uppercase tracking-widest text-sm">Mobile (iOS)</h4>
+                        </div>
+                        <img src="https://github.com/unchil/ComposeDataGrid/raw/main/screenshot/ios.gif" alt="iOS Demo" class="w-full">
+                    </div>
+
+                    <!-- Android -->
+                    <div class="demo-card space-y-4 text-center flex-1">
+                        <div class="flex items-center justify-center space-x-2 mb-2">
+                            <i class="fab fa-android text-green-400 text-xl"></i>
+                            <h4 class="text-green-400 font-bold uppercase tracking-widest text-sm">Mobile (Android)</h4>
+                        </div>
+                        <img src="https://github.com/unchil/ComposeDataGrid/raw/main/screenshot/android.gif" alt="Android Demo" class="w-full">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Grid -->
+    <section id="features" class="py-24 bg-white">
+        <div class="container mx-auto px-6">
+            <h3 class="text-3xl font-bold mb-16 text-center">Core Features</h3>
+            <div class="grid md:grid-cols-3 gap-10">
+                <!-- Feature 1 -->
+                <div class="group p-8 rounded-3xl border border-slate-100 hover:border-blue-200 hover:shadow-xl hover:shadow-blue-50 transition duration-300">
+                    <div class="w-14 h-14 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center mb-8 text-2xl group-hover:scale-110 transition">
+                        <i class="fas fa-columns"></i>
+                    </div>
+                    <h4 class="text-xl font-bold mb-4">Dynamic Controls</h4>
+                    <p class="text-slate-600 leading-relaxed">Supports column sorting, resizing, reordering, and visibility control to provide users with an optimal viewing experience.</p>
+                </div>
+                <!-- Feature 2 -->
+                <div class="group p-8 rounded-3xl border border-slate-100 hover:border-purple-200 hover:shadow-xl hover:shadow-purple-50 transition duration-300">
+                    <div class="w-14 h-14 bg-purple-100 text-purple-600 rounded-2xl flex items-center justify-center mb-8 text-2xl group-hover:scale-110 transition">
+                        <i class="fas fa-filter"></i>
+                    </div>
+                    <h4 class="text-xl font-bold mb-4">Advanced Filtering</h4>
+                    <p class="text-slate-600 leading-relaxed">Features sophisticated filtering with custom operators per data type and one-click CSV export functionality.</p>
+                </div>
+                <!-- Feature 3 -->
+                <div class="group p-8 rounded-3xl border border-slate-100 hover:border-green-200 hover:shadow-xl hover:shadow-green-50 transition duration-300">
+                    <div class="w-14 h-14 bg-green-100 text-green-600 rounded-2xl flex items-center justify-center mb-8 text-2xl group-hover:scale-110 transition">
+                        <i class="fas fa-hand-pointer"></i>
+                    </div>
+                    <h4 class="text-xl font-bold mb-4">Intuitive UX</h4>
+                    <p class="text-slate-600 leading-relaxed">Provides a premium experience on both mobile and desktop through haptic feedback, smart tooltips, sticky headers, and smooth horizontal paging.</p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Installation Section -->
-    <section id="installation" class="py-20">
+    <section id="installation" class="py-24 bg-slate-50 border-t border-slate-200">
         <div class="container mx-auto px-6 max-w-4xl">
-            <h3 class="text-3xl font-bold mb-12 text-center">Installation</h3>
+            <h3 class="text-3xl font-bold mb-12 text-center">Get Started</h3>
 
-            <div class="space-y-8">
+            <div class="space-y-10">
                 <!-- Step 1 -->
-                <div>
-                    <h4 class="text-lg font-bold mb-4 flex items-center">
-                        <span class="bg-blue-600 text-white w-6 h-6 rounded-full inline-flex items-center justify-center mr-3 text-sm">1</span>
+                <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100">
+                    <h4 class="text-lg font-bold mb-6 flex items-center">
+                        <span class="bg-blue-600 text-white w-7 h-7 rounded-full inline-flex items-center justify-center mr-4 text-sm">1</span>
                         Add GitHub Packages Repository
                     </h4>
-                    <div class="bg-slate-800 text-slate-300 p-6 rounded-xl font-mono text-sm">
+                    <div class="bg-slate-900 text-slate-300 p-6 rounded-2xl font-mono text-sm overflow-x-auto shadow-inner">
                             <pre><code>// settings.gradle.kts
-repositories {
-    maven {
-        url = uri("https://maven.pkg.github.com/unchil/ComposeDataGrid")
-        credentials {
-            username = System.getenv("GPR_USER")
-            password = System.getenv("GPR_KEY")
+dependencyResolutionManagement {
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/unchil/ComposeDataGrid")
+            credentials {
+                username = System.getenv("GPR_USER")
+                password = System.getenv("GPR_KEY")
+            }
         }
     }
 }</code></pre>
@@ -142,14 +189,14 @@ repositories {
                 </div>
 
                 <!-- Step 2 -->
-                <div>
-                    <h4 class="text-lg font-bold mb-4 flex items-center">
-                        <span class="bg-blue-600 text-white w-6 h-6 rounded-full inline-flex items-center justify-center mr-3 text-sm">2</span>
+                <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100">
+                    <h4 class="text-lg font-bold mb-6 flex items-center">
+                        <span class="bg-blue-600 text-white w-7 h-7 rounded-full inline-flex items-center justify-center mr-4 text-sm">2</span>
                         Add Dependency
                     </h4>
-                    <div class="bg-slate-800 text-slate-300 p-6 rounded-xl font-mono text-sm">
+                    <div class="bg-slate-900 text-slate-300 p-6 rounded-2xl font-mono text-sm shadow-inner">
                             <pre><code>// build.gradle.kts (commonMain)
-implementation("com.github.unchil:un7datagrid:0.2.4")</code></pre>
+implementation("com.github.unchil:un7datagrid:0.2.4-2")</code></pre>
                     </div>
                 </div>
             </div>
@@ -158,12 +205,13 @@ implementation("com.github.unchil:un7datagrid:0.2.4")</code></pre>
 
 </main>
 
-<footer class="bg-white border-t border-slate-200 py-12">
-    <div class="container mx-auto px-6 text-center text-slate-500">
-        <p>© 2024 un7datagrid. Licensed under the MIT License.</p>
-        <div class="mt-4 flex justify-center space-x-6 text-xl">
-            <a href="https://github.com/unchil/ComposeDataGrid" target="_blank" class="hover:text-slate-900"><i class="fab fa-github"></i></a>
+<footer class="bg-white border-t border-slate-200 py-16">
+    <div class="container mx-auto px-6 text-center">
+        <div class="flex justify-center space-x-6 mb-8 text-2xl text-slate-400">
+            <a href="https://github.com/unchil/ComposeDataGrid" target="_blank" class="hover:text-slate-900 transition"><i class="fab fa-github"></i></a>
         </div>
+        <p class="text-slate-500 mb-2">© 2024 Un7-KCMP-DataGrid. All rights reserved.</p>
+        <p class="text-slate-400 text-sm">Licensed under the MIT License.</p>
     </div>
 </footer>
 
