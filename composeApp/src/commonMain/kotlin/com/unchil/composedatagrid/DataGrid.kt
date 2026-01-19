@@ -25,7 +25,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -72,7 +71,7 @@ fun DataGrid( data:Map<String, List<Any?>> ){
                 "Un7 Data Grid for Compose Multiplatform",
                 modifier = Modifier.padding(10.dp),
                 color = MaterialTheme.colorScheme.onBackground,
-                fontSize = 20.sp,
+                fontSize = 16.sp,
                 fontWeight = FontWeight.Bold
             )
             if (isVisible) {
@@ -148,8 +147,8 @@ fun DataGridWithViewModel(
                     "Un7 Data Grid for Compose Multiplatform",
                     modifier = Modifier.padding( vertical = titleVerticalPadding.value),
                     color = MaterialTheme.colorScheme.onBackground,
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
                 )
 
                 if (isVisible) {
