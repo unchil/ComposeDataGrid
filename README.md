@@ -22,7 +22,7 @@
 
 |                                                                iOS                                                                 | AOS |
 |:----------------------------------------------------------------------------------------------------------------------------------:|:---:|
-| <img src="https://github.com/unchil/ComposeDataGrid/blob/b72f7e3920291fda5ad35599a94ca4dbf2eb1e74/screenshot/ios.gif" width="420"> | <img src="https://github.com/unchil/ComposeDataGrid/blob/47cae767da5c8fb1f24d8af18c6dc17bb0507e4e/screenshot/android.gif" width="350"> |
+| <img src="https://github.com/unchil/ComposeDataGrid/blob/b72f7e3920291fda5ad35599a94ca4dbf2eb1e74/screenshot/ios.gif" width="400"> | <img src="https://github.com/unchil/ComposeDataGrid/blob/47cae767da5c8fb1f24d8af18c6dc17bb0507e4e/screenshot/android.gif" width="350"> |
 
 ##  Features
 - Multiplatform Support: Works seamlessly on Android, iOS, Desktop, and Web using Kotlin Compose Multiplatform.
