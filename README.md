@@ -11,22 +11,18 @@
 |:----------------------------------------------------------------------------------------------------------------------------------:|
 | ![ScreenShot](https://github.com/unchil/ComposeDataGrid/blob/f3c8d7628610da0d7b2429aadeba3e2d366be2d2/screenshot/allPlatforms.png) | 
 
+## Un7-KCMP-DataGrid Demo
+| Desktop |
+|:-------:|
+| <img src="https://github.com/unchil/ComposeDataGrid/blob/d8b058db62316f36101eef08e14f6aba8280a949/screenshot/mac.gif" width="800"> | 
 
-##  Un7-KCMP-DataGrid Demo
-|                                                       Desktop                                                        |
-|:--------------------------------------------------------------------------------------------------------------------:|
-| ![MacOS](https://github.com/unchil/ComposeDataGrid/blob/d8b058db62316f36101eef08e14f6aba8280a949/screenshot/mac.gif) | 
+| Web |
+|:---:|
+| <img src="https://github.com/unchil/ComposeDataGrid/blob/2a3e2607a064c6cbf8f3df718b46a8fcdd6dfc7d/screenshot/wasm.gif" width="800"> |
 
-|                                                                        Web                                                                        |
-|:-------------------------------------------------------------------------------------------------------------------------------------------------:|
-| ![Web](https://github.com/unchil/ComposeDataGrid/blob/2a3e2607a064c6cbf8f3df718b46a8fcdd6dfc7d/screenshot/wasm.gif) |
-
-
-|                       iOS                        |                                                                                 AOS                                                                                 |
-|:------------------------------------------------:|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
-| ![iOS](https://github.com/unchil/ComposeDataGrid/blob/b72f7e3920291fda5ad35599a94ca4dbf2eb1e74/screenshot/ios.gif) | ![Android](https://github.com/unchil/ComposeDataGrid/blob/47cae767da5c8fb1f24d8af18c6dc17bb0507e4e/screenshot/android.gif) |
-
-
+| iOS | AOS |
+|:---:|:---:|
+| <img src="https://github.com/unchil/ComposeDataGrid/blob/b72f7e3920291fda5ad35599a94ca4dbf2eb1e74/screenshot/ios.gif" width="350"> | <img src="https://github.com/unchil/ComposeDataGrid/blob/47cae767da5c8fb1f24d8af18c6dc17bb0507e4e/screenshot/android.gif" width="350"> |
 
 ##  Features
 - Multiplatform Support: Works seamlessly on Android, iOS, Desktop, and Web using Kotlin Compose Multiplatform.
