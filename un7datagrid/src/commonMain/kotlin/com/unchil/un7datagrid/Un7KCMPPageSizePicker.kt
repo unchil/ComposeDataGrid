@@ -109,7 +109,7 @@ internal fun Un7KCMPPageSizePicker(
 
             if(isUsableTooltips){
                 TooltipText(
-                    tooltipText = "change the page size by horizontal scrolling .",
+                    tooltipText = "change the page size by horizontal scrolling",
                     modifier = Modifier
                         .width(pickerWidth)
                         .graphicsLayer {
