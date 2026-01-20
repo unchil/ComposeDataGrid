@@ -139,7 +139,10 @@ class Un7KCMPDataGridViewModel(val data: Map<String,List<Any?>>, val config: Un7
     }
 
     val exportCSV = {closerFunc:()->Unit ->
-        saveFile("un7_data_grid.csv", data.toCsvString())
+        saveFile(
+            "un7_data_grid.csv",
+            dataFilterApplied.value.toMapData(columnNames.value).toCsvString()
+        )
         closerFunc()
     }
 

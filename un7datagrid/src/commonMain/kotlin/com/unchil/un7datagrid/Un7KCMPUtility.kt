@@ -81,6 +81,22 @@ fun Map<String,List<Any?>>.toGridList():List<List<Any?>>{
 }
 
 /**
+ * 2차원 리스트(행 중심) 데이터를 컬럼 이름을 키로 하는 맵(열 중심) 데이터로 변환합니다.
+ * @param columnNames 각 열의 키가 될 컬럼 이름 리스트
+ */
+fun List<List<Any?>>.toMapData(columnNames: List<String>): Map<String, List<Any?>> {
+    // 데이터가 비어있거나 컬럼 이름이 없는 경우 빈 맵 반환
+    if (this.isEmpty() || columnNames.isEmpty()) {
+        return columnNames.associateWith { emptyList<Any?>() }
+    }
+
+    // 결과물: "컬럼명" to ListOf(해당 컬럼의 데이터들)
+    return columnNames.mapIndexed { index, name ->
+        name to this.map { row -> row.getOrNull(index) }
+    }.toMap()
+}
+
+/**
  * Map<String, List<Any?>> 데이터를 CSV 형식의 문자열로 변환합니다.
  */
 fun Map<String, List<Any?>>.toCsvString(): String {

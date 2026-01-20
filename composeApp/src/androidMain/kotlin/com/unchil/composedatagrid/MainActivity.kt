@@ -49,6 +49,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             CompositionLocalProvider( LocalPlatform provides getPlatform() ){
                 Column{
+
                     TextButton( onClick = {
 
                         //------------
@@ -61,6 +62,8 @@ class MainActivity : ComponentActivity() {
                     } ) {
                         Text("ExportData")
                     }
+
+
 
                     DataGridWithViewModel()
                 }

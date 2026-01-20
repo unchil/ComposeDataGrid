@@ -161,7 +161,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             // Add Un7KCMPDataGrid library (change to the latest version)
-            implementation("com.github.unchil:un7datagrid:0.2.4-3")
+            implementation("com.github.unchil:un7datagrid:0.2.5")
         }
     }
 }
@@ -215,7 +215,7 @@ fun MyDataScreen() {
 
 ### Exporting Data
 **You can trigger the CSV export through the built-in menu in the Un7KCMPDataGrid. The library will automatically:**
-- Generates a CSV format string from the initially loaded data.
+- Generates a CSV format string from filtered data.
 - Call the platform's native file-saving dialog.
 
 
