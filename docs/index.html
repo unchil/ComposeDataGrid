@@ -20,6 +20,14 @@
         .demo-card img:hover {
             transform: scale(1.01);
         }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fadeIn {
+            animation: fadeIn 0.4s ease-out forwards;
+        }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-900 font-sans leading-normal">
@@ -77,49 +85,58 @@
                 <p class="text-slate-400 text-lg">Experience powerful performance across all platforms with a single codebase.</p>
             </div>
 
-            <!-- All Platforms Overview at the top -->
-            <div class="mb-24 text-center">
-                <p class="text-slate-500 mb-8 tracking-widest text-sm font-bold">All Platforms Overview</p>
-                <img src="https://github.com/unchil/ComposeDataGrid/raw/main/screenshot/allPlatforms.png" alt="All Platforms Screenshot" class="max-w-5xl mx-auto rounded-xl shadow-2xl border border-slate-700 transition duration-500 hover:scale-[1.01]">
+            <!-- Tab Navigation -->
+            <div class="flex justify-center mb-12">
+                <div class="inline-flex p-1 bg-slate-800 rounded-2xl border border-slate-700">
+                    <button onclick="switchTab('all')" id="tab-all" class="tab-btn px-6 py-2.5 rounded-xl font-bold transition duration-300 bg-blue-600 text-white">All</button>
+                    <button onclick="switchTab('desktop')" id="tab-desktop" class="tab-btn px-6 py-2.5 rounded-xl font-bold transition duration-300 text-slate-400 hover:text-white">Desktop</button>
+                    <button onclick="switchTab('web')" id="tab-web" class="tab-btn px-6 py-2.5 rounded-xl font-bold transition duration-300 text-slate-400 hover:text-white">Web</button>
+                    <button onclick="switchTab('mobile')" id="tab-mobile" class="tab-btn px-6 py-2.5 rounded-xl font-bold transition duration-300 text-slate-400 hover:text-white">Mobile</button>
+                </div>
             </div>
 
-            <div class="flex flex-col gap-24 max-w-5xl mx-auto">
-                <!-- Desktop -->
-                <div class="demo-card space-y-4 text-center">
-                    <div class="flex items-center justify-center space-x-2 mb-2">
-                        <i class="fas fa-laptop text-blue-400 text-xl"></i>
-                        <h4 class="text-blue-400 font-bold tracking-widest text-lg">Desktop (macOS)</h4>
+            <div class="max-w-5xl mx-auto">
+                <!-- All Platforms Overview -->
+                <div id="content-all" class="tab-content block animate-fadeIn">
+                    <div class="text-center">
+                        <p class="text-slate-500 mb-8 tracking-widest text-sm font-bold uppercase">Consolidated View</p>
+                        <img src="https://github.com/unchil/ComposeDataGrid/raw/main/screenshot/allPlatforms.png" alt="All Platforms" class="w-full rounded-xl shadow-2xl border border-slate-700">
                     </div>
-                    <img src="https://github.com/unchil/ComposeDataGrid/raw/main/screenshot/mac.gif" alt="MacOS Demo" class="w-full">
                 </div>
 
-                <!-- Web -->
-                <div class="demo-card space-y-4 text-center">
-                    <div class="flex items-center justify-center space-x-2 mb-2">
-                        <i class="fas fa-globe text-indigo-400 text-xl"></i>
-                        <h4 class="text-indigo-400 font-bold tracking-widest text-lg">Web (WasmJs)</h4>
+                <!-- Desktop Content -->
+                <div id="content-desktop" class="tab-content hidden animate-fadeIn">
+                    <div class="demo-card space-y-4 text-center">
+                        <div class="flex items-center justify-center space-x-2 mb-4">
+                            <i class="fas fa-laptop text-blue-400 text-2xl"></i>
+                            <h4 class="text-xl font-bold">macOS Desktop</h4>
+                        </div>
+                        <img src="https://github.com/unchil/ComposeDataGrid/raw/main/screenshot/mac.gif" alt="MacOS Demo" class="w-full rounded-xl shadow-2xl border border-slate-700">
                     </div>
-                    <img src="https://github.com/unchil/ComposeDataGrid/raw/main/screenshot/wasm.gif" alt="Web Demo" class="w-full">
                 </div>
 
-                <!-- Mobile Row -->
-                <div class="flex flex-col md:flex-row gap-8 justify-center items-start max-w-5xl mx-auto">
-                    <!-- iOS -->
-                    <div class="demo-card space-y-4 text-center flex-1">
-                        <div class="flex items-center justify-center space-x-2 mb-2">
-                            <i class="fab fa-apple text-slate-300 text-xl"></i>
-                            <h4 class="text-slate-300 font-bold tracking-widest text-sm">Mobile (iOS)</h4>
+                <!-- Web Content -->
+                <div id="content-web" class="tab-content hidden animate-fadeIn">
+                    <div class="demo-card space-y-4 text-center">
+                        <div class="flex items-center justify-center space-x-2 mb-4">
+                            <i class="fas fa-globe text-indigo-400 text-2xl"></i>
+                            <h4 class="text-xl font-bold">Web (WasmJs)</h4>
                         </div>
-                        <img src="https://github.com/unchil/ComposeDataGrid/raw/main/screenshot/ios.gif" alt="iOS Demo" class="w-[80%] mx-auto">
+                        <img src="https://github.com/unchil/ComposeDataGrid/raw/main/screenshot/wasm.gif" alt="Web Demo" class="w-full rounded-xl shadow-2xl border border-slate-700">
                     </div>
+                </div>
 
-                    <!-- Android -->
-                    <div class="demo-card space-y-4 text-center flex-1">
-                        <div class="flex items-center justify-center space-x-2 mb-2">
-                            <i class="fab fa-android text-green-400 text-xl"></i>
-                            <h4 class="text-green-400 font-bold tracking-widest text-sm">Mobile (Android)</h4>
+                <!-- Mobile Content -->
+                <div id="content-mobile" class="tab-content hidden animate-fadeIn">
+                    <div class="flex flex-col md:flex-row gap-8 justify-center items-start">
+                        <div class="text-center flex-1">
+                            <h4 class="text-slate-300 font-bold mb-4"><i class="fab fa-apple mr-2"></i>iOS</h4>
+                            <img src="https://github.com/unchil/ComposeDataGrid/raw/main/screenshot/ios.gif" alt="iOS Demo" class="w-[280px] mx-auto rounded-[3rem] border-[8px] border-slate-800 shadow-2xl">
                         </div>
-                        <img src="https://github.com/unchil/ComposeDataGrid/raw/main/screenshot/android.gif" alt="Android Demo" class="w-[80%] mx-auto">
+                        <div class="text-center flex-1">
+                            <h4 class="text-green-400 font-bold mb-4"><i class="fab fa-android mr-2"></i>Android</h4>
+                            <img src="https://github.com/unchil/ComposeDataGrid/raw/main/screenshot/android.gif" alt="Android Demo" class="w-[280px] mx-auto rounded-[3rem] border-[8px] border-slate-800 shadow-2xl">
+                        </div>
                     </div>
                 </div>
             </div>
@@ -366,6 +383,29 @@ class MainActivity : ComponentActivity() {
 
     window.onclick = function(event) {
         if (event.target == document.getElementById('featureModal')) closeModal();
+    }
+
+    function switchTab(tabId) {
+        // Hide all content
+        document.querySelectorAll('.tab-content').forEach(content => {
+            content.classList.add('hidden');
+            content.classList.remove('block');
+        });
+
+        // Reset all buttons
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.classList.remove('bg-blue-600', 'text-white');
+            btn.classList.add('text-slate-400');
+        });
+
+        // Show selected content
+        document.getElementById('content-' + tabId).classList.remove('hidden');
+        document.getElementById('content-' + tabId).classList.add('block');
+
+        // Highlight selected button
+        const activeBtn = document.getElementById('tab-' + tabId);
+        activeBtn.classList.add('bg-blue-600', 'text-white');
+        activeBtn.classList.remove('text-slate-400');
     }
 </script>
 
