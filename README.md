@@ -80,9 +80,7 @@ To provide a more tactile and engaging experience on mobile devices (Android & i
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         //------------
-        /**
-        // 1. Initialize AndroidPlatformHandler once
-         */
+        // Initialize AndroidPlatformHandler once
         AndroidPlatformHandler.initialize(this)
         //------------
 
@@ -223,9 +221,7 @@ fun MyDataScreen() {
 ```kotlin
 class MainActivity : ComponentActivity() {
     //------------
-    /**
     // 1. Pre-register ActivityResultLauncher (must be defined before onCreate)
-    */
     private val saveFileLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
@@ -243,9 +239,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
 
         //------------
-        /**
         // 2. Initialize AndroidPlatformHandler once
-        */
         AndroidPlatformHandler.initialize(this)
         //------------
 
@@ -257,9 +251,7 @@ class MainActivity : ComponentActivity() {
                 Column{
                     TextButton( onClick = {
                         //------------
-                        /**
-                        //4. Call launchSaveFileIntent
-                        */
+                        // 4. Call launchSaveFileIntent
                         AndroidPlatformHandler.intent?.let { launchSaveFileIntent(it) }
                         //------------
 
@@ -281,10 +273,8 @@ class MainActivity : ComponentActivity() {
     }
 
     //------------
-    /**
-     * 3. Exposes a function that runs the launcher.
-     * launchSaveFileIntent(AndroidPlatformHandler.intent)
-     */
+    // 3. Exposes a function that runs the launcher.
+    // launchSaveFileIntent(AndroidPlatformHandler.intent)
     fun launchSaveFileIntent(intent: Intent) {
         saveFileLauncher.launch(intent)
     }
