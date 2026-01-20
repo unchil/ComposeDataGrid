@@ -432,15 +432,15 @@ class MainActivity : ComponentActivity() {
         color: 'bg-blue-100 text-blue-600',
         content: `
             <p class="mb-4 text-sm">Using <code>Un7KCMPDataGrid</code> is very simple. Just provide the data as a <code>Map</code>.</p>
-            <pre class="bg-slate-800 text-slate-200 p-4 rounded-xl text-xs overflow-x-auto"><code>@Composable
-    fun MyDataScreen() {
-        val myData = mapOf(
-            "ID" to listOf(1, 2, 3),
-            "Product" to listOf("Keyboard", "Mouse", "Monitor"),
-            "Price" to listOf(75.5, 25.0, 150.0)
-        )
-        Un7KCMPDataGrid(data = myData)
-    }</code></pre>`
+            <pre class="bg-slate-800 text-slate-200 p-4 rounded-xl text-xs overflow-x-auto"><code>
+@Composable
+fun MyDataScreen() {
+    val myData = mapOf(
+        "ID" to listOf(1, 2, 3),
+        "Product" to listOf("Keyboard", "Mouse", "Monitor"),
+        "Price" to listOf(75.5, 25.0, 150.0))
+    Un7KCMPDataGrid(data = myData)
+}</code></pre>`
     };
 
     modalData['Android Setup'] = {
