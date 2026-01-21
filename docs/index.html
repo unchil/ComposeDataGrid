@@ -385,20 +385,22 @@ implementation("com.github.unchil:un7datagrid:0.2.5")</code></pre>
 
                     <div class="overflow-x-auto bg-slate-900 rounded-2xl p-6 shadow-inner mb-8">
                     <pre class="text-indigo-300 text-sm font-mono"><code>Un7KCMPDataGrid(
-    modifier: Modifier = Modifier,
-    data: Map&lt;String, List&lt;Any?&gt;&gt;,
-    config: Un7KCMPDataGridConfig = Un7KCMPDataGridConfig()
+    data:Map&lt;String, List&lt;Any?&gt;&gt;,
+    config:Un7KCMPDataGridConfig = Un7KCMPDataGridConfig(),
+    modifier:Modifier = Modifier,
 )</code></pre>
                     </div>
 
                     <div class="grid md:grid-cols-2 gap-6">
                         <div class="border-l-4 border-blue-500 pl-4">
                             <span class="block font-bold text-slate-800 text-sm mb-1  tracking-wider">data</span>
-                            <p class="text-slate-600 text-sm">Key-value pair where Key is column name and Value is a list of row data.</p>
+                            <p class="text-slate-600 text-sm">
+                                Accepts a <b><code>Map&lt;String, List&lt;Any?&gt;&gt;</code></b> where each <b>Key</b> represents a column identifier and its <b>Value</b> is a positional list containing the data for each row.
+                            </p>
                         </div>
                         <div class="border-l-4 border-slate-300 pl-4">
                             <span class="block font-bold text-slate-800 text-sm mb-1  tracking-wider">config</span>
-                            <p class="text-slate-600 text-sm">UI/UX behavior settings like paging, haptics, and colors.</p>
+                            <p class="text-slate-600 text-sm">An instance of <b><code>Un7KCMPDataGridConfig</code></b> used to define comprehensive UI/UX behavior settings, including pagination, haptic feedback, and thematic colors.</p>
                         </div>
                     </div>
                 </div>
@@ -413,73 +415,74 @@ implementation("com.github.unchil:un7datagrid:0.2.5")</code></pre>
                     <div class="grid gap-4 overflow-hidden">
                         <div class="overflow-x-auto">
                             <table class="w-full text-sm text-left border-collapse bg-white rounded-2xl overflow-hidden shadow-sm">
-                                <thead class="bg-slate-100 text-slate-700 uppercase font-bold text-xs tracking-wider">
-                                <tr>
-                                    <th class="px-6 py-4">Parameter</th>
-                                    <th class="px-6 py-4">Type / Default</th>
-                                    <th class="px-6 py-4">Description</th>
+                                <thead class="block bg-slate-100 text-slate-700 uppercase font-bold text-xs tracking-wider">
+                                <tr class="flex">
+                                    <th class="px-6 py-4 w-[30%]">Parameter</th>
+                                    <th class="px-6 py-4 w-[30%]">Type / Default</th>
+                                    <th class="px-6 py-4 w-[40%]">Description</th>
                                 </tr>
                                 </thead>
-                                <tbody class="divide-y divide-slate-100 text-slate-600">
-                                <tr>
-                                    <td class="px-6 py-4 font-mono font-bold text-blue-600">isUsableHaptic</td>
-                                    <td class="px-6 py-4 italic">Boolean = true</td>
-                                    <td class="px-6 py-4">Enhances user feedback by enabling subtle tactile vibrations during grid interactions.</td>
+                               <!-- <tbody class="divide-y divide-slate-100 text-slate-600">-->
+                                <tbody class="block max-h-[320px] overflow-y-auto divide-y divide-slate-100 text-slate-600">
+                                <tr class="flex">
+                                    <td class="px-6 py-4 font-mono font-bold text-blue-600 w-[30%]">isUsableHaptic</td>
+                                    <td class="px-6 py-4 italic w-[30%]">Boolean = true</td>
+                                    <td class="px-6 py-4 w-[40%]">Enhances user feedback by enabling subtle tactile vibrations during grid interactions.</td>
                                 </tr>
                                 <tr>
                                     <td class="px-6 py-4 font-mono font-bold text-blue-600">isUsableTooltips</td>
-                                    <td class="px-6 py-4 italic">Boolean = true</td>
-                                    <td class="px-6 py-4">Provides contextual help and guidance through smart tooltips (Requires ExperimentalMaterial3Api opt-in).</td>
+                                    <td class="px-6 py-4 italic w-[30%]">Boolean = true</td>
+                                    <td class="px-6 py-4 w-[40%]">Provides contextual help and guidance through smart tooltips (Requires ExperimentalMaterial3Api opt-in).</td>
                                 </tr>
                                 <tr>
                                     <td class="px-6 py-4 font-mono font-bold text-blue-600">isVisibleRowNum</td>
-                                    <td class="px-6 py-4 italic">Boolean = true</td>
-                                    <td class="px-6 py-4">Displays an automated index column on the left to help users track row positions easily.</td>
+                                    <td class="px-6 py-4 italic w-[30%]">Boolean = true</td>
+                                    <td class="px-6 py-4 w-[40%]">Displays an automated index column on the left to help users track row positions easily.</td>
                                 </tr>
                                 <tr>
                                     <td class="px-6 py-4 font-mono font-bold text-blue-600">rowNumColumnTitle</td>
-                                    <td class="px-6 py-4 italic">String = "Num"</td>
-                                    <td class="px-6 py-4">Customizes the display name of the index column header (e.g., "ID", "No", "#").</td>
+                                    <td class="px-6 py-4 italic w-[30%]">String = "Num"</td>
+                                    <td class="px-6 py-4 w-[40%]">Customizes the display name of the index column header (e.g., "ID", "No", "#").</td>
                                 </tr>
                                 <tr>
                                     <td class="px-6 py-4 font-mono font-bold text-blue-600">pageSizeItems</td>
-                                    <td class="px-6 py-4 italic">List&lt;String&gt; = ["10", "20", "50", "100"]</td>
-                                    <td class="px-6 py-4">Defines the available options for the number of rows displayed per page in the pagination menu.</td>
+                                    <td class="px-6 py-4 italic w-[30%]">List&lt;String&gt; = ["10", "20", "50", "100"]</td>
+                                    <td class="px-6 py-4 w-[40%]">Defines the available options for the number of rows displayed per page in the pagination menu.</td>
                                 </tr>
                                 <tr>
                                     <td class="px-6 py-4 font-mono font-bold text-blue-600">pageSizeItemInitIndex</td>
-                                    <td class="px-6 py-4 italic">Int = 2</td>
-                                    <td class="px-6 py-4">Specifies the default page size from the list above (Index 2 corresponds to "50" rows).</td>
+                                    <td class="px-6 py-4 italic w-[30%]">Int = 2</td>
+                                    <td class="px-6 py-4 w-[40%]">Specifies the default page size from the list above (Index 2 corresponds to "50" rows).</td>
                                 </tr>
                                 <tr>
                                     <td class="px-6 py-4 font-mono font-bold text-blue-600">headerRowBackgroundColor</td>
-                                    <td class="px-6 py-4 italic">Color = null</td>
-                                    <td class="px-6 py-4">Styles the background of the sticky header row to match your app's theme.</td>
+                                    <td class="px-6 py-4 italic w-[30%]">Color = null</td>
+                                    <td class="px-6 py-4 w-[40%]">Styles the background of the sticky header row to match your app's theme.</td>
                                 </tr>
                                 <tr>
                                     <td class="px-6 py-4 font-mono font-bold text-blue-600">headerRowContentColor</td>
-                                    <td class="px-6 py-4 italic">Color = null</td>
-                                    <td class="px-6 py-4">Adjusts the color of titles and icons within the header for optimal contrast.</td>
+                                    <td class="px-6 py-4 italic w-[30%]">Color = null</td>
+                                    <td class="px-6 py-4 w-[40%]">Adjusts the color of titles and icons within the header for optimal contrast.</td>
                                 </tr>
                                 <tr>
                                     <td class="px-6 py-4 font-mono font-bold text-blue-600">dataRowBackgroundColor</td>
-                                    <td class="px-6 py-4 italic">Color = null</td>
-                                    <td class="px-6 py-4">Sets a uniform background color for all data cells in the grid.</td>
+                                    <td class="px-6 py-4 italic w-[30%]">Color = null</td>
+                                    <td class="px-6 py-4 w-[40%]">Sets a uniform background color for all data cells in the grid.</td>
                                 </tr>
                                 <tr>
                                     <td class="px-6 py-4 font-mono font-bold text-blue-600">dataRowContentColor</td>
-                                    <td class="px-6 py-4 italic">Color = null</td>
-                                    <td class="px-6 py-4">Defines the primary text color for the data presented in each row.</td>
+                                    <td class="px-6 py-4 italic w-[30%]">Color = null</td>
+                                    <td class="px-6 py-4 w-[40%]">Defines the primary text color for the data presented in each row.</td>
                                 </tr>
                                 <tr>
                                     <td class="px-6 py-4 font-mono font-bold text-blue-600">oddDataRowBackgroundColor</td>
-                                    <td class="px-6 py-4 italic">Color = null</td>
-                                    <td class="px-6 py-4">Enables zebra-striping by applying a specific color to odd-numbered rows for better readability.</td>
+                                    <td class="px-6 py-4 italic w-[30%]">Color = null</td>
+                                    <td class="px-6 py-4 w-[40%]">Enables zebra-striping by applying a specific color to odd-numbered rows for better readability.</td>
                                 </tr>
                                 <tr>
                                     <td class="px-6 py-4 font-mono font-bold text-blue-600">evenDataRowBackgroundColor</td>
-                                    <td class="px-6 py-4 italic">Color = null</td>
-                                    <td class="px-6 py-4">Styles even-numbered rows differently to create a clear visual distinction between data entries.</td>
+                                    <td class="px-6 py-4 italic w-[30%]">Color = null</td>
+                                    <td class="px-6 py-4 w-[40%]">Styles even-numbered rows differently to create a clear visual distinction between data entries.</td>
                                 </tr>
                                 </tbody>
                             </table>
