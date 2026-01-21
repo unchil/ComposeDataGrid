@@ -70,6 +70,23 @@
 }
 .copy-button.success { color: #4ade80; border-color: #4ade80; }
 
+
+ /* 코드 설명 텍스트 스타일 */
+ .code-label {
+     display: inline-block;
+     padding: 0.25rem 0.75rem;
+     background: #1e293b;
+     color: #94a3b8;
+     font-size: 0.75rem;
+     font-weight: 600;
+     border-top-left-radius: 0.75rem;
+     border-top-right-radius: 0.75rem;
+     border: 1px solid #334155;
+     border-bottom: none;
+     font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+ }
+
+
     </style>
 </head>
 <body class="bg-slate-50 text-slate-900 font-sans leading-normal">
@@ -303,17 +320,32 @@
                 </div>
             </div>
 
+
+
             <div id="content-guide-installation" class="guide-tab-content block animate-fadeIn">
+
+
                 <h3 class="text-3xl font-bold mb-12 text-center text-slate-900">Get Started</h3>
+
+
                 <div class="space-y-10 max-w-4xl mx-auto">
+
+
                     <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100">
+
+
                         <h4 class="text-lg font-bold mb-6 flex items-center text-slate-800">
                             <span class="bg-blue-600 text-white w-7 h-7 rounded-full inline-flex items-center justify-center mr-4 text-sm">1</span>
                             Add GitHub Packages Repository
                         </h4>
-                        <div class="bg-slate-900 text-slate-300 p-6 rounded-2xl font-mono text-sm overflow-x-auto shadow-inner mb-4">
-                            <pre><code>//--> settings.gradle.kts
-dependencyResolutionManagement {
+
+
+                            <!-- 텍스트 추가 -->
+                        <span class="code-label">settings.gradle.kts</span>
+
+                        <div class="bg-slate-900 text-slate-300 p-6 rounded-2xl rounded-tl-none font-mono text-sm overflow-x-auto shadow-inner mb-4 code-wrapper border-t border-slate-700">
+                                <button class="copy-button" onclick="copyCode(this)"><i class="far fa-copy"></i></button>
+                                <pre><code>dependencyResolutionManagement {
     repositories {
         maven {
             name = "GitHubPackages"
@@ -329,19 +361,36 @@ dependencyResolutionManagement {
                         <div onclick="openModal('GitHub Credentials')" class="inline-flex items-center text-blue-600 font-semibold text-sm cursor-pointer hover:underline">
                             <i class="fas fa-key mr-2"></i> How to set GPR_USER & GPR_KEY? →
                         </div>
+
                     </div>
+
                     <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100">
+
                         <h4 class="text-lg font-bold mb-6 flex items-center text-slate-800">
                             <span class="bg-blue-600 text-white w-7 h-7 rounded-full inline-flex items-center justify-center mr-4 text-sm">2</span>
                             Add Dependency
                         </h4>
-                        <div class="bg-slate-900 text-slate-300 p-6 rounded-2xl font-mono text-sm shadow-inner">
-                            <pre><code>//--> build.gradle.kts (commonMain)
-implementation("com.github.unchil:un7datagrid:0.2.5")</code></pre>
+
+                        <!-- 텍스트 추가 -->
+                        <span class="code-label">composeApp/build.gradle.kts (commonMain)</span>
+
+                        <div class="bg-slate-900 text-slate-300 p-6 rounded-2xl rounded-tl-none font-mono text-sm shadow-inner code-wrapper border-t border-slate-700">
+                            <button class="copy-button" onclick="copyCode(this)"><i class="far fa-copy"></i></button>
+                            <pre><code>implementation("com.github.unchil:un7datagrid:0.2.5")</code></pre>
                         </div>
+
                     </div>
+
+
                 </div>
+
+
+
             </div>
+
+
+
+
 
             <div id="content-guide-usage" class="guide-tab-content hidden animate-fadeIn">
                 <h3 class="text-3xl font-bold mb-12 text-center text-slate-900">Usage Examples</h3>
