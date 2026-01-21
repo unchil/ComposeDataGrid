@@ -35,6 +35,19 @@
     /* 배경 이미지 1.5배 확대 */
     .mobile-optimized .hero-bg-img { width: 150%; height: 150%; object-fit: cover; }
 
+
+    /* 15줄 이상일 경우 세로 스크롤 적용 */
+    pre {
+        max-height: 15lh;
+        overflow-y: auto;
+    }
+    @supports not (max-height: 1lh) {
+        pre {
+            max-height: 22.5em;
+        }
+    }
+
+
     </style>
 </head>
 <body class="bg-slate-50 text-slate-900 font-sans leading-normal">
@@ -476,29 +489,167 @@
 <script>
 const modalData = {
     'Dynamic Controls': {
-        icon: 'fa-columns', color: 'bg-blue-100 text-blue-600',
-        content: '<ul class="list-disc ml-5 space-y-2"><li><b>Reordering:</b> Drag column headers.</li><li><b>Resizing:</b> Dynamic width adjustment.</li></ul>'
+        icon: 'fa-columns',
+        color: 'bg-blue-100 text-blue-600',
+        content: `
+            <p class="font-semibold">Full control over data presentation:</p>
+            <ul class="list-disc ml-5 space-y-2">
+                <li><b>Reordering:</b> Drag column headers to rearrange positions.</li>
+                <li><b>Resizing:</b> Dynamic width adjustment for each column.</li>
+                <li><b>Visibility:</b> Show or hide columns using the configuration menu.</li>
+                <li><b>Sorting:</b> Multi-directional sorting (Asc/Desc) for all supported types.</li>
+            </ul>`
     },
     'Advanced Filtering': {
-        icon: 'fa-filter', color: 'bg-purple-100 text-purple-600',
-        content: '<p>Supports sophisticated filtering with custom operators per data type.</p>'
+            icon: 'fa-filter',
+            color: 'bg-purple-100 text-purple-600',
+            content: `
+                <p class="font-semibold">Type-specific conditional filtering:</p>
+                <ul class="list-disc ml-5 space-y-2">
+                    <li><b>String:</b> Contains, Equals, Begins/Ends with, Blank check.</li>
+                    <li><b>Numeric:</b> Full comparison operators (=, !=, >, >=, <, <=).</li>
+                    <li><b>Boolean:</b> Quick toggle filtering (Is/Is Not).</li>
+                    <li><b>Export:</b> High-performance CSV export of filtered data.</li>
+                </ul>
+                <div class="mt-6 p-4 bg-amber-50 rounded-2xl border border-amber-100 text-sm">
+                    <p class="font-bold text-amber-800 mb-2"><i class="fab fa-android mr-2"></i>Android Implementation Note</p>
+                    <p>To use <code>Export CSV </code>, you must opt-in:</p>
+                    <pre class="bg-slate-800 text-slate-200 p-3 rounded-lg mt-2 overflow-x-auto"><code>
+class MainActivity : ComponentActivity() {
+    private val saveFileLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        // Handle result logic...
+    }
+    override fun onCreate(savedInstanceState: Bundle?) {
+        AndroidPlatformHandler.initialize(this)
+        super.onCreate(savedInstanceState)
+        // ... setContent
+    }
+    fun launchSaveFileIntent(intent: Intent) {
+        saveFileLauncher.launch(intent)
+    }
+}
+</code></pre></div>`
     },
-    'Intuitive UX': {
-        icon: 'fa-hand-pointer', color: 'bg-green-100 text-green-600',
-        content: '<p>Premium experience with haptic feedback and smart tooltips.</p>'
+'Intuitive UX': {
+        icon: 'fa-hand-pointer',
+        color: 'bg-green-100 text-green-600',
+        content: `
+            <p class="font-semibold">Premium Multiplatform Experience:</p>
+            <ul class="list-disc ml-5 space-y-2">
+                <li><b>Sticky Headers:</b> Maintain context during vertical scrolls.</li>
+                <li><b>Haptic Feedback:</b> Subtle tactile response for mobile interactions.</li>
+            </ul>
+            <div class="mt-6 p-4 bg-amber-50 rounded-2xl border border-amber-100 text-sm">
+                <p class="font-bold text-amber-800 mb-2"><i class="fab fa-android mr-2"></i>Android Implementation Note</p>
+                <p>This library uses <b>ExperimentalMaterial3Api</b> for tooltips. To use <code>TooltipIconButton</code> or <code>TooltipText</code>, you must opt-in:</p>
+                <pre class="bg-slate-800 text-slate-200 p-3 rounded-lg mt-2 overflow-x-auto">
+<code>class MainActivity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        //Initialize AndroidPlatformHandler once
+        AndroidPlatformHandler.initialize(this)
+        enableEdgeToEdge()
+        super.onCreate(savedInstanceState)
+        setContent {...}
+    }
+}</code></pre></div>`
     },
     'Basic Usage': {
-        icon: 'fa-code', color: 'bg-blue-100 text-blue-600',
-        content: '<pre class="bg-slate-800 text-slate-200 p-4 rounded-xl text-xs overflow-x-auto"><code>@Composable\nfun MyDataScreen() {\n  Un7KCMPDataGrid(data = mapOf("ID" to listOf(1, 2, 3)))\n}</code></pre>'
+    icon: 'fa-code',
+    color: 'bg-blue-100 text-blue-600',
+    content: `
+        <p class="mb-4 text-sm">Using <code>Un7KCMPDataGrid</code> is very simple. Just provide the data as a <code>Map</code>.</p>
+        <pre class="bg-slate-800 text-slate-200 p-4 rounded-xl text-xs overflow-x-auto"><code>
+@Composable
+fun MyDataScreen() {
+    val myData = mapOf(
+        "ID" to listOf(1, 2, 3),
+        "Product" to listOf("Keyboard", "Mouse", "Monitor"),
+        "Price" to listOf(75.5, 25.0, 150.0))
+    Un7KCMPDataGrid(data = myData)
+}
+</code></pre>`
     },
     'Android Setup': {
-        icon: 'fa-android', color: 'bg-green-100 text-green-600',
-        content: '<p>Initialize AndroidPlatformHandler in your Activity.</p>'
+    icon: 'fa-android',
+    color: 'bg-green-100 text-green-600',
+    content: `
+        <p class="mb-4 text-sm font-semibold text-red-600">Important: Scoped Storage Support</p>
+        <p class="text-sm mb-4">For Android file exports (CSV), you must pre-register an <code>ActivityResultLauncher</code> in your <code>MainActivity</code>:</p>
+        <pre class="bg-slate-800 text-slate-200 p-4 rounded-xl text-xs overflow-x-auto mb-4"><code>
+class MainActivity : ComponentActivity() {
+
+    //--> 1. Pre-register ActivityResultLauncher (must be defined before onCreate)
+    private val saveFileLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val uri = result.data?.data ?: return@registerForActivityResult
+            AndroidPlatformHandler.applicationContext?.contentResolver?.openOutputStream(uri)?.use { outputStream ->
+                BufferedWriter(OutputStreamWriter(outputStream)).use { writer ->
+                    writer.write(AndroidPlatformHandler.pendingContent)
+                }
+            }
+        }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        //--> 2. Initialize AndroidPlatformHandler once
+        AndroidPlatformHandler.initialize(this)
+        enableEdgeToEdge()
+        super.onCreate(savedInstanceState)
+        setContent {
+            ...
+            //-->
+            Column{
+                TextButton( onClick = {
+                    //--> 4. Call launchSaveFileIntent
+                    AndroidPlatformHandler.intent?.let { launchSaveFileIntent(it) }
+                }){ Text("ExportData") }
+
+                Un7KCMPDataGrid(
+                    data = mapOf("ID" to listOf<Int?>(1, 2, 3, 4, 5),
+                        "Product String" to listOf<String?>("Keyboard", "Mouse", "Monitor", "Webcam", "Speaker"),
+                        "Price Double" to listOf<Double?>(75.50, 25.00, null, 89.90, 100.0) )
+            }
+            //-->
+            ...
+        }
+    }
+    //--> 3. Exposes a function that runs the launcher
+    fun launchSaveFileIntent(intent: Intent) {
+        saveFileLauncher.launch(intent)
+    }
+}
+</code></pre>
+        <div class="p-3 bg-blue-50 border border-blue-100 rounded-lg text-xs text-blue-700">
+            <i class="fas fa-info-circle mr-1"></i> Ensure you call <code>AndroidPlatformHandler.initialize(this)</code> before <code>super.onCreate()</code>.
+        </div>`
     },
     'GitHub Credentials': {
-        icon: 'fa-key', color: 'bg-amber-100 text-amber-600',
-        content: '<p>Set GPR_USER and GPR_KEY in your environment variables.</p>'
-    }
+        icon: 'fa-key',
+        color: 'bg-amber-100 text-amber-600',
+        content: `
+            <p class="font-semibold text-slate-800">To access GitHub Packages, you need an Personal Access Token (PAT):</p>
+            <ol class="list-decimal ml-5 space-y-3 mt-4">
+                <li>Go to <b>GitHub Settings</b> > <b>Developer settings</b> > <b>Personal access tokens</b>.</li>
+                <li>Generate a new token with at least <code>read:packages</code> scope.</li>
+                <li>Set environment variables on your machine:
+                    <pre class="bg-slate-800 text-slate-200 p-3 rounded-lg mt-2 text-xs"><code>
+# In your ~/.zshrc or ~/.bash_profile
+export GPR_USER="your_github_username"
+export GPR_KEY="your_personal_access_token"
+        </code></pre>
+                </li>
+                <li>Restart your IDE (Android Studio) to apply changes.</li>
+            </ol>
+            <div class="mt-4 p-4 bg-blue-50 rounded-xl border border-blue-100 text-sm">
+                <i class="fas fa-info-circle mr-2 text-blue-600"></i>
+                <b>Tip:</b> Do not commit your token directly to git. Always use environment variables for security.
+            </div>`
+        }
+
 };
 
 function switchTab(tabId) {
@@ -547,6 +698,9 @@ function closeModal() {
     document.getElementById('modalContent').classList.replace('opacity-100', 'opacity-0');
     setTimeout(() => document.getElementById('featureModal').classList.replace('flex', 'hidden'), 300);
 }
+
+
 </script>
+
 </body>
 </html>
