@@ -12,13 +12,13 @@
 | ![ScreenShot](https://github.com/unchil/ComposeDataGrid/blob/f3c8d7628610da0d7b2429aadeba3e2d366be2d2/screenshot/allPlatforms.png) | 
 
 ## Un7-KCMP-DataGrid Demo
-| Desktop |
-|:-------:|
-| <img src="https://github.com/unchil/ComposeDataGrid/blob/d8b058db62316f36101eef08e14f6aba8280a949/screenshot/mac.gif" width="800"> | 
+|                                            Desktop                                            |
+|:---------------------------------------------------------------------------------------------:|
+| <img src="https://github.com/unchil/ComposeDataGrid/raw/main/screenshot/mac.gif" width="800"> | 
 
 | Web |
 |:---:|
-| <img src="https://github.com/unchil/ComposeDataGrid/blob/2a3e2607a064c6cbf8f3df718b46a8fcdd6dfc7d/screenshot/wasm.gif" width="800"> |
+| <img src="https://github.com/unchil/ComposeDataGrid/raw/main/screenshot/wasm.gif" width="800"> |
 
 |                                                                iOS                                                                 |                                                                  AOS                                                                   |
 |:----------------------------------------------------------------------------------------------------------------------------------:|:--------------------------------------------------------------------------------------------------------------------------------------:|
