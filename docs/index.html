@@ -85,10 +85,6 @@
      border-bottom: none;
      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 
-    /* 코드 블록과 완벽하게 밀착되도록 조정 */
-    margin-bottom: -1px;
-    position: relative;
-    z-index: 1;
  }
 
 
@@ -347,9 +343,7 @@
 
                             <!-- 텍스트 추가 -->
                         <span class="code-label">settings.gradle.kts</span>
-
                         <div class="bg-slate-900 text-slate-300 p-6 rounded-2xl rounded-tl-none font-mono text-sm overflow-x-auto shadow-inner mb-4 code-wrapper border-t border-slate-700">
-
                                 <pre><code>dependencyResolutionManagement {
     repositories {
         maven {
@@ -378,7 +372,6 @@
 
                         <!-- 텍스트 추가 -->
                         <span class="code-label">composeApp/build.gradle.kts (commonMain)</span>
-
                         <div class="bg-slate-900 text-slate-300 p-6 rounded-2xl rounded-tl-none font-mono text-sm shadow-inner code-wrapper border-t border-slate-700">
                             <pre><code>implementation("com.github.unchil:un7datagrid:0.2.5")</code></pre>
                         </div>
@@ -646,9 +639,9 @@ class MainActivity : ComponentActivity() {
     color: 'bg-blue-100 text-blue-600',
     content: `
         <p class="mb-4 text-sm">Using <code>Un7KCMPDataGrid</code> is very simple. Just provide the data as a <code>Map</code>.</p>
-        <div class="bg-slate-900 text-slate-300 p-6 rounded-2xl font-mono text-sm overflow-x-auto shadow-inner mb-4 code-wrapper">
+        <div class="bg-slate-900 text-slate-300 p-6 rounded-2xl font-mono text-sm overflow-x-auto shadow-inner mb-4 code-wrapper border-t border-slate-700">
         <button class="copy-button" onclick="copyCode(this)"><i class="far fa-copy"></i></button>
-        <pre class="bg-slate-800 text-slate-200 p-4 rounded-xl text-xs overflow-x-auto"><code>
+        <pre><code>
 @Composable
 fun MyDataScreen() {
     val myData = mapOf(
@@ -667,7 +660,7 @@ fun MyDataScreen() {
         <p class="text-sm mb-4">For Android file exports (CSV), you must pre-register an <code>ActivityResultLauncher</code> in your <code>MainActivity</code>:</p>
 
         <div class="bg-slate-900 text-slate-300 p-6 rounded-2xl font-mono text-sm overflow-x-auto shadow-inner mb-4 code-wrapper">
-        <pre class="bg-slate-800 text-slate-200 p-4 rounded-xl text-xs overflow-x-auto mb-4"><code>
+        <pre><code>
 class MainActivity : ComponentActivity() {
 
     //--> 1. Pre-register ActivityResultLauncher (must be defined before onCreate)
