@@ -32,24 +32,40 @@
 </head>
 <body class="bg-slate-50 text-slate-900 font-sans leading-normal">
 
-<!-- Header / Hero Section -->
+<!-- 상단 Top Bar: Kotlin & KMP 공식 링크 (스크롤 시 사라짐) -->
+<div class="bg-slate-900 text-white py-2.5">
+    <div class="container mx-auto px-6 flex items-center space-x-6">
+        <!-- Kotlin 공식 사이트 -->
+        <a href="https://kotlinlang.org/" target="_blank" class="flex items-center text-slate-200 hover:text-white transition group text-xs font-bold tracking-wider">
+            <span class="bg-white/10 p-1 rounded mr-2 group-hover:bg-white/20 transition">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/7/74/Kotlin_Icon.png" alt="Kotlin" class="w-3.5 h-3.5">
+            </span>
+            Kotlin
+        </a>
+
+        <!-- 구분선 -->
+        <div class="h-3 w-px bg-slate-700"></div>
+
+        <!-- KMP 공식 사이트 -->
+        <a href="https://www.jetbrains.com/kotlin-multiplatform/" target="_blank" class="flex items-center text-slate-200 hover:text-indigo-400 transition group text-xs font-bold tracking-wider">
+            <span class="bg-white/10 p-1 rounded mr-2 group-hover:bg-white/20 transition">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/7/74/Kotlin_Icon.png" alt="Kotlin" class="w-3.5 h-3.5">
+            </span>
+            Kotlin MultiPlatform
+        </a>
+    </div>
+</div>
+
+
+<!-- 메인 Header: 로고 및 내비게이션 (상단 고정) -->
 <header class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
     <div class="container mx-auto px-6 py-4 flex justify-between items-center">
         <h1 class="text-2xl font-bold gradient-text">Un7-KCMP-DataGrid</h1>
         <nav class="hidden md:flex space-x-8 font-medium text-slate-600 items-center">
-            <!-- KMP 공식 사이트 링크 추가 -->
-            <a href="https://www.jetbrains.com/kotlin-multiplatform/" target="_blank" class="flex items-center text-slate-500 hover:text-indigo-600 transition group">
-                <span class="bg-slate-100 p-1.5 rounded-lg group-hover:bg-indigo-50 mr-2 transition">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/7/74/Kotlin_Icon.png" alt="KMP" class="w-4 h-4">
-                </span>
-                KMP
-            </a>
-
             <a href="#features" class="hover:text-blue-600 transition">Features</a>
             <a href="#demo" class="hover:text-blue-600 transition">Demo</a>
             <a href="#getting-started" onclick="switchGuideTab('installation')" class="hover:text-blue-600 transition">Installation</a>
 
-            <!-- 이메일 및 깃허브 아이콘 -->
             <div class="flex items-center space-x-5 border-l border-slate-200 pl-8 ml-2">
                 <a href="mailto:unchil8872@gmail.com" class="text-slate-600 hover:text-blue-600 transition" title="Contact Email">
                     <i class="fas fa-envelope text-xl"></i>
@@ -62,7 +78,9 @@
     </div>
 </header>
 
+
 <main>
+
     <!-- Hero Section -->
     <section class="py-20 bg-gradient-to-b from-white to-slate-50 border-b border-slate-100">
         <div class="container mx-auto px-6 text-center">
@@ -115,7 +133,7 @@
                 <div id="content-all" class="tab-content block animate-fadeIn">
                     <div class="text-center">
                         <p class="text-slate-500 mb-8 tracking-widest text-sm font-bold uppercase">Consolidated View</p>
-                        <img src="https://github.com/unchil/ComposeDataGrid/raw/main/screenshot/allPlatforms.png" alt="All Platforms" class="w-full rounded-xl shadow-2xl border border-slate-700">
+                        <img src="https://github.com/unchil/ComposeDataGrid/raw/main/screenshot/allPlatforms.png" alt="All Platforms" class="w-[1040px] rounded-2xl shadow-xl border border-slate-100">
                     </div>
                 </div>
 
@@ -126,7 +144,7 @@
                             <i class="fas fa-laptop text-blue-400 text-2xl"></i>
                             <h4 class="text-xl font-bold">macOS Desktop</h4>
                         </div>
-                        <img src="https://github.com/unchil/ComposeDataGrid/raw/main/screenshot/mac.gif" alt="MacOS Demo" class="w-full rounded-xl shadow-2xl border border-slate-700">
+                        <img src="https://github.com/unchil/ComposeDataGrid/raw/main/screenshot/mac.gif" alt="MacOS Demo" class="w-[1040px] rounded-2xl shadow-xl border border-slate-100">
                     </div>
                 </div>
 
@@ -137,7 +155,7 @@
                             <i class="fas fa-globe text-indigo-400 text-2xl"></i>
                             <h4 class="text-xl font-bold">Web (WasmJs)</h4>
                         </div>
-                        <img src="https://github.com/unchil/ComposeDataGrid/raw/main/screenshot/wasm.gif" alt="Web Demo" class="w-full rounded-xl shadow-2xl border border-slate-700">
+                        <img src="https://github.com/unchil/ComposeDataGrid/raw/main/screenshot/wasm.gif" alt="Web Demo" class="w-[1040px] rounded-2xl shadow-xl border border-slate-100">
                     </div>
                 </div>
 
@@ -146,11 +164,11 @@
                     <div class="flex flex-col md:flex-row gap-8 justify-center items-start">
                         <div class="text-center flex-1">
                             <h4 class="text-slate-300 font-bold mb-4"><i class="fab fa-apple mr-2"></i>iOS</h4>
-                            <img src="https://github.com/unchil/ComposeDataGrid/raw/main/screenshot/ios.gif" alt="iOS Demo" class="w-[280px] mx-auto rounded-[3rem] border-[8px] border-slate-800 shadow-2xl">
+                            <img src="https://github.com/unchil/ComposeDataGrid/raw/main/screenshot/ios.gif" alt="iOS Demo" class="w-[260px] mx-auto rounded-[2.5rem] border border-slate-100 shadow-2xl">
                         </div>
                         <div class="text-center flex-1">
                             <h4 class="text-green-400 font-bold mb-4"><i class="fab fa-android mr-2"></i>Android</h4>
-                            <img src="https://github.com/unchil/ComposeDataGrid/raw/main/screenshot/android.gif" alt="Android Demo" class="w-[280px] mx-auto rounded-[3rem] border-[8px] border-slate-800 shadow-2xl">
+                            <img src="https://github.com/unchil/ComposeDataGrid/raw/main/screenshot/android.gif" alt="Android Demo" class="w-[260px] mx-auto rounded-[2.5rem] border border-slate-100 shadow-2xl">
                         </div>
                     </div>
                 </div>
