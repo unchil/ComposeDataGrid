@@ -71,18 +71,12 @@
             </span>
             Kotlin Notebook
         </a>
-
-
-
     </div>
 </div>
 
-
 <!-- 메인 Header: 로고 및 내비게이션 (상단 고정) -->
-<!-- 추천 설정: bg-white/80 과 backdrop-blur-md 를 조합하여 고급스러운 유리 질감 구현 -->
 <header class="bg-white/80 backdrop-blur-md border-b border-slate-200/60 sticky top-0 z-50 shadow-sm transition-all duration-300">
     <div class="container mx-auto px-6 py-4 flex justify-between items-center">
-        <!-- 로고 부분에 약간의 그림자 효과를 주어 가독성 강화 -->
         <h1 class="text-2xl font-bold gradient-text drop-shadow-[0_1px_1px_rgba(255,255,255,0.8)]">
             Un7-KCMP-DataGrid
         </h1>
@@ -91,10 +85,8 @@
             <a href="#features" class="hover:text-blue-600 transition-colors duration-200">Features</a>
             <a href="#demo" class="hover:text-blue-600 transition-colors duration-200">Demo</a>
             <a href="#getting-started" onclick="switchGuideTab('installation')" class="hover:text-blue-600 transition-colors duration-200">Installation</a>
-            <!-- API 링크 추가 -->
             <a href="#api" class="hover:text-blue-600 transition">API</a>
 
-            <!-- 구분선 및 소셜 아이콘 영역 -->
             <div class="flex items-center space-x-5 border-l border-slate-200 pl-8 ml-2">
                 <a href="mailto:unchil8872@gmail.com" class="text-slate-500 hover:text-blue-600 transition-all duration-200" title="Contact Email">
                     <i class="fas fa-envelope text-xl"></i>
@@ -108,26 +100,17 @@
 </header>
 
 <main>
-
     <!-- Hero Section -->
     <section class="relative py-20 bg-white border-b border-slate-100 overflow-hidden">
-        <!-- 1. 배경 이미지 레이어: 크기를 키우고 위치 조정 (1.5배 효과) -->
         <div class="absolute inset-0 z-0 pointer-events-none flex justify-center items-center">
             <img src="https://github.com/unchil/ComposeDataGrid/raw/main/screenshot/allPlatforms.png"
                  alt="Background Grid"
                  class="hero-bg-img w-full h-full object-cover transition-transform duration-700">
         </div>
-
-        <!-- 2. 가독성을 위한 그라데이션 오버레이 보강 -->
         <div class="absolute inset-0 z-1 bg-gradient-to-b from-white/10 via-white/90 to-white pointer-events-none"></div>
 
-
         <div class="container mx-auto px-6 text-center relative z-10">
-
-            <!-- [핵심 수정] 텍스트를 감싸는 박스에 backdrop-blur 적용 -->
             <div class="max-w-4xl mx-auto bg-white/40 backdrop-blur-md rounded-[40px] p-10 md:p-16 border border-white/20 shadow-2xl shadow-slate-200/50">
-
-                <!-- 텍스트 그림자(Shadow)를 살짝 추가하여 명확하게 표현 -->
                 <h2 class="text-5xl font-extrabold mb-6 leading-tight text-slate-900 drop-shadow-sm">
                     Powerful Data Grid for <br><span class="gradient-text">Compose Multiplatform</span>
                 </h2>
@@ -139,21 +122,26 @@
                     <a href="#getting-started" onclick="switchGuideTab('installation')" class="bg-blue-600 text-white px-8 py-3 rounded-full font-bold hover:bg-blue-700 shadow-lg shadow-blue-200 transition">Get Started</a>
                     <a href="#demo" class="bg-white border border-slate-300 px-8 py-3 rounded-full font-bold hover:bg-slate-50 transition">View Demo</a>
                 </div>
-
             </div>
-
         </div>
-
     </section>
 
     <!-- Platform Badges -->
     <section class="py-12">
         <div class="container mx-auto px-6">
             <div class="flex flex-wrap justify-center gap-6 text-sm font-semibold text-slate-500">
-                <span class="bg-white px-5 py-2.5 rounded-xl shadow-sm border border-slate-100 flex items-center"><i class="fab fa-android text-green-500 mr-2 text-lg"></i> Android</span>
-                <span class="bg-white px-5 py-2.5 rounded-xl shadow-sm border border-slate-100 flex items-center"><i class="fab fa-apple text-slate-900 mr-2 text-lg"></i> iOS</span>
-                <span class="bg-white px-5 py-2.5 rounded-xl shadow-sm border border-slate-100 flex items-center"><i class="fas fa-desktop text-blue-500 mr-2 text-lg"></i> Desktop (JVM)</span>
-                <span class="bg-white px-5 py-2.5 rounded-xl shadow-sm border border-slate-100 flex items-center"><i class="fas fa-globe text-indigo-500 mr-2 text-lg"></i> Web (WasmJs)</span>
+                <a href="#demo" onclick="switchTab('mobile')" class="bg-white px-5 py-2.5 rounded-xl shadow-sm border border-slate-100 flex items-center hover:border-blue-500 transition cursor-pointer">
+                    <i class="fab fa-android text-green-500 mr-2 text-lg"></i> Android
+                </a>
+                <a href="#demo" onclick="switchTab('mobile')" class="bg-white px-5 py-2.5 rounded-xl shadow-sm border border-slate-100 flex items-center hover:border-blue-500 transition cursor-pointer">
+                    <i class="fab fa-apple text-slate-900 mr-2 text-lg"></i> iOS
+                </a>
+                <a href="#demo" onclick="switchTab('desktop')" class="bg-white px-5 py-2.5 rounded-xl shadow-sm border border-slate-100 flex items-center hover:border-blue-500 transition cursor-pointer">
+                    <i class="fas fa-desktop text-blue-500 mr-2 text-lg"></i> Desktop (JVM)
+                </a>
+                <a href="#demo" onclick="switchTab('web')" class="bg-white px-5 py-2.5 rounded-xl shadow-sm border border-slate-100 flex items-center hover:border-blue-500 transition cursor-pointer">
+                    <i class="fas fa-globe text-indigo-500 mr-2 text-lg"></i> Web (WasmJs)
+                </a>
             </div>
         </div>
     </section>
@@ -170,9 +158,9 @@
             <div class="flex justify-center mb-12">
                 <div class="inline-flex p-1 bg-slate-800 rounded-2xl border border-slate-700">
                     <button onclick="switchTab('all')" id="tab-all" class="tab-btn px-6 py-2.5 rounded-xl font-bold transition duration-300 bg-blue-600 text-white">All</button>
-                    <button onclick="switchTab('desktop')" id="tab-desktop" class="tab-btn px-6 py-2.5 rounded-xl font-bold transition duration-300 text-slate-400 hover:text-white">Desktop</button>
-                    <button onclick="switchTab('web')" id="tab-web" class="tab-btn px-6 py-2.5 rounded-xl font-bold transition duration-300 text-slate-400 hover:text-white">Web</button>
-                    <button onclick="switchTab('mobile')" id="tab-mobile" class="tab-btn px-6 py-2.5 rounded-xl font-bold transition duration-300 text-slate-400 hover:text-white">Mobile</button>
+                    <button onclick="switchTab('desktop')" id="tab-desktop" class="tab-btn px-6 py-2.5 rounded-xl font-bold transition duration-300 text-slate-400 hover:text-white"><i class="fas fa-desktop text-blue-500 mr-2 text-lg"></i>Desktop (JVM)</button>
+                    <button onclick="switchTab('web')" id="tab-web" class="tab-btn px-6 py-2.5 rounded-xl font-bold transition duration-300 text-slate-400 hover:text-white"><i class="fas fa-globe text-indigo-500 mr-2 text-lg"></i>Web (WasmJs)</button>
+                    <button onclick="switchTab('mobile')" id="tab-mobile" class="tab-btn px-6 py-2.5 rounded-xl font-bold transition duration-300 text-slate-400 hover:text-white"><i class="fab fa-apple mr-2 text-lg active-white-icon"></i><i class="fab fa-android text-green-500 mr-2 text-lg"></i>Mobile (iOS/Android)</button>
                 </div>
             </div>
 
@@ -190,7 +178,7 @@
                     <div class="demo-card space-y-4 text-center">
                         <div class="flex items-center justify-center space-x-2 mb-4">
                             <i class="fas fa-laptop text-blue-400 text-2xl"></i>
-                            <h4 class="text-xl font-bold">macOS Desktop</h4>
+                            <h4 class="text-xl font-bold">macOS (Tahoe 26.2)</h4>
                         </div>
                         <img src="https://github.com/unchil/ComposeDataGrid/raw/main/screenshot/mac.gif" alt="MacOS Demo" class="w-full rounded-2xl shadow-xl border border-slate-100">
                     </div>
@@ -201,7 +189,7 @@
                     <div class="demo-card space-y-4 text-center">
                         <div class="flex items-center justify-center space-x-2 mb-4">
                             <i class="fas fa-globe text-indigo-400 text-2xl"></i>
-                            <h4 class="text-xl font-bold">Web (WasmJs)</h4>
+                            <h4 class="text-xl font-bold">Chrome</h4>
                         </div>
                         <img src="https://github.com/unchil/ComposeDataGrid/raw/main/screenshot/wasm.gif" alt="Web Demo" class="w-full rounded-2xl shadow-xl border border-slate-100">
                     </div>
@@ -223,42 +211,36 @@
             </div>
         </div>
     </section>
+
     <!-- Features Grid -->
     <section id="features" class="py-24 bg-white">
-        <div class="container mx-auto px-6">
-            <h3 class="text-3xl font-bold mb-16 text-center">Core Features</h3>
-
+        <div class="container mx-auto px-6 text-center">
+            <h3 class="text-3xl font-bold mb-16">Core Features</h3>
             <div class="grid md:grid-cols-3 gap-10">
-                <!-- Feature 1 -->
-                <div onclick="openModal('Dynamic Controls')" class="group p-8 rounded-3xl border border-slate-100 hover:border-blue-200 hover:shadow-xl hover:shadow-blue-50 transition duration-300 cursor-pointer">
+                <div onclick="openModal('Dynamic Controls')" class="group p-8 rounded-3xl border border-slate-100 hover:border-blue-200 hover:shadow-xl hover:shadow-blue-50 transition duration-300 cursor-pointer text-left">
                     <div class="w-14 h-14 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center mb-8 text-2xl group-hover:scale-110 transition">
                         <i class="fas fa-columns"></i>
                     </div>
                     <h4 class="text-xl font-bold mb-4">Dynamic Controls</h4>
-                    <p class="text-slate-600 leading-relaxed">Supports column sorting, resizing, reordering, and visibility control to provide users with an optimal viewing experience.</p>
+                    <p class="text-slate-600 leading-relaxed">Supports column sorting, resizing, reordering, and visibility control.</p>
                 </div>
-
-                <!-- Feature 2 -->
-                <div onclick="openModal('Advanced Filtering')" class="group p-8 rounded-3xl border border-slate-100 hover:border-purple-200 hover:shadow-xl hover:shadow-purple-50 transition duration-300 cursor-pointer">
+                <div onclick="openModal('Advanced Filtering')" class="group p-8 rounded-3xl border border-slate-100 hover:border-purple-200 hover:shadow-xl hover:shadow-purple-50 transition duration-300 cursor-pointer text-left">
                     <div class="w-14 h-14 bg-purple-100 text-purple-600 rounded-2xl flex items-center justify-center mb-8 text-2xl group-hover:scale-110 transition">
                         <i class="fas fa-filter"></i>
                     </div>
                     <h4 class="text-xl font-bold mb-4">Advanced Filtering</h4>
-                    <p class="text-slate-600 leading-relaxed">Features sophisticated filtering with custom operators per data type and one-click CSV export functionality.</p>
+                    <p class="text-slate-600 leading-relaxed">Features sophisticated filtering with custom operators per data type.</p>
                 </div>
-
-                <!-- Feature 3 -->
-                <div onclick="openModal('Intuitive UX')" class="group p-8 rounded-3xl border border-slate-100 hover:border-green-200 hover:shadow-xl hover:shadow-green-50 transition duration-300 cursor-pointer">
+                <div onclick="openModal('Intuitive UX')" class="group p-8 rounded-3xl border border-slate-100 hover:border-green-200 hover:shadow-xl hover:shadow-green-50 transition duration-300 cursor-pointer text-left">
                     <div class="w-14 h-14 bg-green-100 text-green-600 rounded-2xl flex items-center justify-center mb-8 text-2xl group-hover:scale-110 transition">
                         <i class="fas fa-hand-pointer"></i>
                     </div>
                     <h4 class="text-xl font-bold mb-4">Intuitive UX</h4>
-                    <p class="text-slate-600 leading-relaxed">Provides a premium experience with haptic feedback, smart tooltips, and platform-specific optimizations.</p>
+                    <p class="text-slate-600 leading-relaxed">Provides a premium experience with haptic feedback and smart tooltips.</p>
                 </div>
             </div>
         </div>
     </section>
-
 
     <!-- Modal Structure -->
     <div id="featureModal" class="fixed inset-0 z-[100] hidden items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
@@ -271,17 +253,14 @@
                     </button>
                 </div>
                 <h4 id="modalTitle" class="text-3xl font-bold mb-4 text-slate-900"></h4>
-                <div id="modalBody" class="text-slate-600 leading-relaxed space-y-4 overflow-y-auto max-h-[60vh]">
-                    <!-- Content injected by JS -->
-                </div>
+                <div id="modalBody" class="text-slate-600 leading-relaxed space-y-4"></div>
             </div>
         </div>
     </div>
-    <!-- Getting Started & Usage Section (Tabs) -->
+
+    <!-- Getting Started Section -->
     <section id="getting-started" class="py-24 bg-slate-50 border-t border-slate-200">
         <div class="container mx-auto px-6 max-w-5xl">
-
-            <!-- Tab Navigation -->
             <div class="flex justify-center mb-16">
                 <div class="inline-flex p-1 bg-white rounded-2xl shadow-sm border border-slate-200">
                     <button onclick="switchGuideTab('installation')" id="tab-guide-installation" class="guide-tab-btn px-8 py-3 rounded-xl font-bold transition duration-300 bg-blue-600 text-white">1. Installation</button>
@@ -289,56 +268,43 @@
                 </div>
             </div>
 
-            <!-- Installation Content -->
             <div id="content-guide-installation" class="guide-tab-content block animate-fadeIn">
                 <h3 class="text-3xl font-bold mb-12 text-center text-slate-900">Get Started</h3>
                 <div class="space-y-10 max-w-4xl mx-auto">
-                    <!-- Step 1 -->
                     <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100">
                         <h4 class="text-lg font-bold mb-6 flex items-center text-slate-800">
                             <span class="bg-blue-600 text-white w-7 h-7 rounded-full inline-flex items-center justify-center mr-4 text-sm">1</span>
                             Add GitHub Packages Repository
                         </h4>
-                        <div class="bg-slate-900 text-slate-300 p-6 rounded-2xl font-mono text-sm overflow-x-auto shadow-inner">
-                            <pre><code>// settings.gradle.kts
-dependencyResolutionManagement {
-    repositories {
-        maven {
-            name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/unchil/ComposeDataGrid")
-            credentials {
-                username = System.getenv("GPR_USER")
-                password = System.getenv("GPR_KEY")
-            }
-        }
+                        <div class="bg-slate-900 text-slate-300 p-6 rounded-2xl font-mono text-sm overflow-x-auto shadow-inner mb-4">
+                            <pre><code>maven {
+    name = "GitHubPackages"
+    url = uri("https://maven.pkg.github.com/unchil/ComposeDataGrid")
+    credentials {
+        username = System.getenv("GPR_USER")
+        password = System.getenv("GPR_KEY")
     }
 }</code></pre>
                         </div>
-                        <!-- 상세 가이드 링크 추가 -->
                         <div onclick="openModal('GitHub Credentials')" class="inline-flex items-center text-blue-600 font-semibold text-sm cursor-pointer hover:underline">
                             <i class="fas fa-key mr-2"></i> How to set GPR_USER & GPR_KEY? →
                         </div>
-
                     </div>
-                    <!-- Step 2 -->
                     <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100">
                         <h4 class="text-lg font-bold mb-6 flex items-center text-slate-800">
                             <span class="bg-blue-600 text-white w-7 h-7 rounded-full inline-flex items-center justify-center mr-4 text-sm">2</span>
                             Add Dependency
                         </h4>
                         <div class="bg-slate-900 text-slate-300 p-6 rounded-2xl font-mono text-sm shadow-inner">
-                            <pre><code>// build.gradle.kts (commonMain)
-implementation("com.github.unchil:un7datagrid:0.2.5")</code></pre>
+                            <pre><code>implementation("com.github.unchil:un7datagrid:0.2.5")</code></pre>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Usage Content -->
             <div id="content-guide-usage" class="guide-tab-content hidden animate-fadeIn">
                 <h3 class="text-3xl font-bold mb-12 text-center text-slate-900">Usage Examples</h3>
                 <div class="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-                    <!-- Basic Usage Card -->
                     <div onclick="openModal('Basic Usage')" class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 hover:shadow-md transition cursor-pointer group">
                         <div class="flex items-center mb-6">
                             <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center mr-4 group-hover:rotate-12 transition">
@@ -346,10 +312,9 @@ implementation("com.github.unchil:un7datagrid:0.2.5")</code></pre>
                             </div>
                             <h4 class="text-xl font-bold">Standard Usage</h4>
                         </div>
-                        <p class="text-slate-600 mb-4 text-sm leading-relaxed">Simple implementation with Map data and basic configuration.</p>
+                        <p class="text-slate-600 mb-4 text-sm leading-relaxed">Simple implementation with Map data.</p>
                         <span class="text-blue-600 font-semibold text-sm">View Code Example →</span>
                     </div>
-                    <!-- Android Integration Card -->
                     <div onclick="openModal('Android Setup')" class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 hover:shadow-md transition cursor-pointer group">
                         <div class="flex items-center mb-6">
                             <div class="w-12 h-12 bg-green-100 text-green-600 rounded-xl flex items-center justify-center mr-4 group-hover:rotate-12 transition">
@@ -357,14 +322,14 @@ implementation("com.github.unchil:un7datagrid:0.2.5")</code></pre>
                             </div>
                             <h4 class="text-xl font-bold">Android Setup</h4>
                         </div>
-                        <p class="text-slate-600 mb-4 text-sm leading-relaxed">Required setup for File Saving and Platform Handler in Activity.</p>
+                        <p class="text-slate-600 mb-4 text-sm leading-relaxed">Required setup for File Saving.</p>
                         <span class="text-green-600 font-semibold text-sm">View Implementation →</span>
                     </div>
                 </div>
             </div>
-
         </div>
     </section>
+
 
     <!-- API Reference Section -->
     <section id="api" class="py-24 bg-white">
@@ -422,7 +387,7 @@ implementation("com.github.unchil:un7datagrid:0.2.5")</code></pre>
                                     <th class="px-6 py-4 w-[40%]">Description</th>
                                 </tr>
                                 </thead>
-                               <!-- <tbody class="divide-y divide-slate-100 text-slate-600">-->
+                                <!-- <tbody class="divide-y divide-slate-100 text-slate-600">-->
                                 <tbody class="block max-h-[320px] overflow-y-auto divide-y divide-slate-100 text-slate-600">
                                 <tr class="flex">
                                     <td class="px-6 py-4 font-mono font-bold text-blue-600 w-[30%]">isUsableHaptic</td>
@@ -496,298 +461,92 @@ implementation("com.github.unchil:un7datagrid:0.2.5")</code></pre>
 
 
 </main>
+
+<footer class="bg-white border-t border-slate-200 py-16">
+    <div class="container mx-auto px-6 text-center text-slate-500">
+        <div class="flex justify-center space-x-6 mb-8 text-2xl text-slate-400">
+            <a href="https://github.com/unchil/ComposeDataGrid" target="_blank" class="hover:text-slate-900 transition"><i class="fab fa-github"></i></a>
+            <a href="mailto:unchil8872@gmail.com" class="hover:text-blue-600 transition"><i class="fas fa-envelope"></i></a>
+        </div>
+        <p class="mb-2">unchil8872@gmail.com</p>
+        <p>© 2024 Un7-KCMP-DataGrid. All rights reserved.</p>
+    </div>
+</footer>
+
 <script>
-
-    // 모바일 브라우저 체크 함수
-function isMobile() {
-    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-    if (isMobile()) {
-        document.body.classList.add('mobile-optimized');
-        // 모바일일 때 추가적인 UI 조정을 수행할 수 있습니다.
-    }
-});
-
 const modalData = {
     'Dynamic Controls': {
-        icon: 'fa-columns',
-        color: 'bg-blue-100 text-blue-600',
-        content: `
-            <p class="font-semibold">Full control over data presentation:</p>
-            <ul class="list-disc ml-5 space-y-2">
-                <li><b>Reordering:</b> Drag column headers to rearrange positions.</li>
-                <li><b>Resizing:</b> Dynamic width adjustment for each column.</li>
-                <li><b>Visibility:</b> Show or hide columns using the configuration menu.</li>
-                <li><b>Sorting:</b> Multi-directional sorting (Asc/Desc) for all supported types.</li>
-            </ul>`
+        icon: 'fa-columns', color: 'bg-blue-100 text-blue-600',
+        content: '<ul class="list-disc ml-5 space-y-2"><li><b>Reordering:</b> Drag column headers.</li><li><b>Resizing:</b> Dynamic width adjustment.</li></ul>'
     },
     'Advanced Filtering': {
-        icon: 'fa-filter',
-        color: 'bg-purple-100 text-purple-600',
-        content: `
-            <p class="font-semibold">Type-specific conditional filtering:</p>
-            <ul class="list-disc ml-5 space-y-2">
-                <li><b>String:</b> Contains, Equals, Begins/Ends with, Blank check.</li>
-                <li><b>Numeric:</b> Full comparison operators (=, !=, >, >=, <, <=).</li>
-                <li><b>Boolean:</b> Quick toggle filtering (Is/Is Not).</li>
-                <li><b>Export:</b> High-performance CSV export of filtered data.</li>
-            </ul>
-            <div class="mt-6 p-4 bg-amber-50 rounded-2xl border border-amber-100 text-sm">
-                <p class="font-bold text-amber-800 mb-2"><i class="fab fa-android mr-2"></i>Android Implementation Note</p>
-                <p>To use <code>Export CSV </code>, you must opt-in:</p>
-                <pre class="bg-slate-800 text-slate-200 p-3 rounded-lg mt-2 overflow-x-auto">
-                    <code>
-class MainActivity : ComponentActivity() {
-private val saveFileLauncher = registerForActivityResult(
-    ActivityResultContracts.StartActivityForResult()
-) { result ->
-    // Handle result logic...
-}
-
-override fun onCreate(savedInstanceState: Bundle?) {
-    AndroidPlatformHandler.initialize(this)
-    super.onCreate(savedInstanceState)
-    // ... setContent
-}
-
-fun launchSaveFileIntent(intent: Intent) {
-    saveFileLauncher.launch(intent)
-}
-}
-                    </code>
-                </pre>
-            </div>`
+        icon: 'fa-filter', color: 'bg-purple-100 text-purple-600',
+        content: '<p>Supports sophisticated filtering with custom operators per data type.</p>'
     },
     'Intuitive UX': {
-        icon: 'fa-hand-pointer',
-        color: 'bg-green-100 text-green-600',
-        content: `
-            <p class="font-semibold">Premium Multiplatform Experience:</p>
-            <ul class="list-disc ml-5 space-y-2">
-                <li><b>Sticky Headers:</b> Maintain context during vertical scrolls.</li>
-                <li><b>Haptic Feedback:</b> Subtle tactile response for mobile interactions.</li>
-            </ul>
-            <div class="mt-6 p-4 bg-amber-50 rounded-2xl border border-amber-100 text-sm">
-                <p class="font-bold text-amber-800 mb-2"><i class="fab fa-android mr-2"></i>Android Implementation Note</p>
-                <p>This library uses <b>ExperimentalMaterial3Api</b> for tooltips. To use <code>TooltipIconButton</code> or <code>TooltipText</code>, you must opt-in:</p>
-                <pre class="bg-slate-800 text-slate-200 p-3 rounded-lg mt-2 overflow-x-auto">
-                    <code>
-class MainActivity : ComponentActivity() {
-override fun onCreate(savedInstanceState: Bundle?) {
-    //Initialize AndroidPlatformHandler once
-    AndroidPlatformHandler.initialize(this)
-    enableEdgeToEdge()
-    super.onCreate(savedInstanceState)
-    setContent {...}
-}
-}
-                    </code>
-                </pre>
-            </div>`
+        icon: 'fa-hand-pointer', color: 'bg-green-100 text-green-600',
+        content: '<p>Premium experience with haptic feedback and smart tooltips.</p>'
+    },
+    'Basic Usage': {
+        icon: 'fa-code', color: 'bg-blue-100 text-blue-600',
+        content: '<pre class="bg-slate-800 text-slate-200 p-4 rounded-xl text-xs overflow-x-auto"><code>@Composable\nfun MyDataScreen() {\n  Un7KCMPDataGrid(data = mapOf("ID" to listOf(1, 2, 3)))\n}</code></pre>'
+    },
+    'Android Setup': {
+        icon: 'fa-android', color: 'bg-green-100 text-green-600',
+        content: '<p>Initialize AndroidPlatformHandler in your Activity.</p>'
+    },
+    'GitHub Credentials': {
+        icon: 'fa-key', color: 'bg-amber-100 text-amber-600',
+        content: '<p>Set GPR_USER and GPR_KEY in your environment variables.</p>'
     }
-
 };
+
+function switchTab(tabId) {
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.replace('block', 'hidden'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('bg-blue-600', 'text-white'));
+
+    // Reset icons in tab buttons
+    document.querySelectorAll('.tab-btn i').forEach(icon => {
+        if(icon.classList.contains('active-white-icon')) {
+             icon.style.color = ''; // Reset to default (which is usually controlled by text-slate-400 or slate-900)
+        }
+    });
+
+    const activeContent = document.getElementById('content-' + tabId);
+    activeContent.classList.replace('hidden', 'block');
+
+    const activeBtn = document.getElementById('tab-' + tabId);
+    activeBtn.classList.add('bg-blue-600', 'text-white');
+
+    // Handle white icon for mobile tab
+    const appleIcon = activeBtn.querySelector('.active-white-icon');
+    if(appleIcon) {
+        appleIcon.style.color = 'white';
+    }
+}
+
+function switchGuideTab(tabId) {
+    document.querySelectorAll('.guide-tab-content').forEach(c => c.classList.replace('block', 'hidden'));
+    document.querySelectorAll('.guide-tab-btn').forEach(b => b.classList.remove('bg-blue-600', 'text-white'));
+    document.getElementById('content-guide-' + tabId).classList.replace('hidden', 'block');
+    document.getElementById('tab-guide-' + tabId).classList.add('bg-blue-600', 'text-white');
+}
 
 function openModal(title) {
     const data = modalData[title];
     if(!data) return;
-
-    const modal = document.getElementById('featureModal');
-    const content = document.getElementById('modalContent');
-
     document.getElementById('modalTitle').innerText = title;
     document.getElementById('modalBody').innerHTML = data.content;
-
-    const iconDiv = document.getElementById('modalIcon');
-    iconDiv.className = `w-16 h-16 rounded-2xl flex items-center justify-center text-3xl ${data.color}`;
-    iconDiv.innerHTML = `<i class="fas ${data.icon}"></i>`;
-
-    modal.classList.remove('hidden');
-    modal.classList.add('flex');
-    setTimeout(() => {
-        content.classList.remove('scale-95', 'opacity-0');
-        content.classList.add('scale-100', 'opacity-100');
-    }, 10);
+    document.getElementById('modalIcon').className = `w-16 h-16 rounded-2xl flex items-center justify-center text-3xl ${data.color}`;
+    document.getElementById('modalIcon').innerHTML = `<i class="fas ${data.icon}"></i>`;
+    document.getElementById('featureModal').classList.replace('hidden', 'flex');
+    setTimeout(() => document.getElementById('modalContent').classList.replace('opacity-0', 'opacity-100'), 10);
 }
 
 function closeModal() {
-    const modal = document.getElementById('featureModal');
-    const content = document.getElementById('modalContent');
-    content.classList.remove('scale-100', 'opacity-100');
-    content.classList.add('scale-95', 'opacity-0');
-    setTimeout(() => {
-        modal.classList.remove('flex');
-        modal.classList.add('hidden');
-    }, 300);
-}
-
-window.onclick = function(event) {
-    if (event.target == document.getElementById('featureModal')) closeModal();
-}
-
-function switchTab(tabId) {
-    // Hide all content
-    document.querySelectorAll('.tab-content').forEach(content => {
-        content.classList.add('hidden');
-        content.classList.remove('block');
-    });
-
-    // Reset all buttons
-    document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.classList.remove('bg-blue-600', 'text-white');
-        btn.classList.add('text-slate-400');
-    });
-
-    // Show selected content
-    document.getElementById('content-' + tabId).classList.remove('hidden');
-    document.getElementById('content-' + tabId).classList.add('block');
-
-    // Highlight selected button
-    const activeBtn = document.getElementById('tab-' + tabId);
-    activeBtn.classList.add('bg-blue-600', 'text-white');
-    activeBtn.classList.remove('text-slate-400');
-}
-
-
-// 기존 modalData 객체에 추가
-modalData['Basic Usage'] = {
-    icon: 'fa-code',
-    color: 'bg-blue-100 text-blue-600',
-    content: `
-        <p class="mb-4 text-sm">Using <code>Un7KCMPDataGrid</code> is very simple. Just provide the data as a <code>Map</code>.</p>
-        <pre class="bg-slate-800 text-slate-200 p-4 rounded-xl text-xs overflow-x-auto"><code>
-@Composable
-fun MyDataScreen() {
-val myData = mapOf(
-    "ID" to listOf(1, 2, 3),
-    "Product" to listOf("Keyboard", "Mouse", "Monitor"),
-    "Price" to listOf(75.5, 25.0, 150.0))
-Un7KCMPDataGrid(data = myData)
-}</code></pre>`
-};
-
-modalData['Android Setup'] = {
-    icon: 'fa-android',
-    color: 'bg-green-100 text-green-600',
-    content: `
-        <p class="mb-4 text-sm font-semibold text-red-600">Important: Scoped Storage Support</p>
-        <p class="text-sm mb-4">For Android file exports (CSV), you must pre-register an <code>ActivityResultLauncher</code> in your <code>MainActivity</code>:</p>
-        <pre class="bg-slate-800 text-slate-200 p-4 rounded-xl text-xs overflow-x-auto mb-4"><code>
-class MainActivity : ComponentActivity() {
-//--> 1. Pre-register ActivityResultLauncher (must be defined before onCreate)
-private val saveFileLauncher = registerForActivityResult(
-    ActivityResultContracts.StartActivityForResult()
-) { result ->
-    if (result.resultCode == Activity.RESULT_OK) {
-        val uri = result.data?.data ?: return@registerForActivityResult
-        AndroidPlatformHandler.applicationContext?.contentResolver?.openOutputStream(uri)?.use { outputStream ->
-            BufferedWriter(OutputStreamWriter(outputStream)).use { writer ->
-                writer.write(AndroidPlatformHandler.pendingContent)
-            }
-        }
-    }
-}
-
-override fun onCreate(savedInstanceState: Bundle?) {
-    //--> 2. Initialize AndroidPlatformHandler once
-    AndroidPlatformHandler.initialize(this)
-    enableEdgeToEdge()
-    super.onCreate(savedInstanceState)
-    setContent {
-        ...
-        //-->
-        Column{
-            TextButton( onClick = {
-                //--> 4. Call launchSaveFileIntent
-                AndroidPlatformHandler.intent?.let { launchSaveFileIntent(it) }
-            }){ Text("ExportData") }
-
-            Un7KCMPDataGrid(
-                data = mapOf("ID" to listOf<Int?>(1, 2, 3, 4, 5),
-                    "Product String" to listOf<String?>("Keyboard", "Mouse", "Monitor", "Webcam", "Speaker"),
-                    "Price Double" to listOf<Double?>(75.50, 25.00, null, 89.90, 100.0) )
-        }
-        //-->
-        ...
-    }
-}
-//--> 3. Exposes a function that runs the launcher
-fun launchSaveFileIntent(intent: Intent) {
-    saveFileLauncher.launch(intent)
-}
-}</code></pre>
-        <div class="p-3 bg-blue-50 border border-blue-100 rounded-lg text-xs text-blue-700">
-            <i class="fas fa-info-circle mr-1"></i> Ensure you call <code>AndroidPlatformHandler.initialize(this)</code> before <code>super.onCreate()</code>.
-        </div>`
-};
-
-modalData['GitHub Credentials'] = {
-icon: 'fa-key',
-color: 'bg-amber-100 text-amber-600',
-content: `
-    <p class="font-semibold text-slate-800">To access GitHub Packages, you need an Personal Access Token (PAT):</p>
-    <ol class="list-decimal ml-5 space-y-3 mt-4">
-        <li>Go to <b>GitHub Settings</b> > <b>Developer settings</b> > <b>Personal access tokens</b>.</li>
-        <li>Generate a new token with at least <code>read:packages</code> scope.</li>
-        <li>Set environment variables on your machine:
-            <pre class="bg-slate-800 text-slate-200 p-3 rounded-lg mt-2 text-xs"><code># In your ~/.zshrc or ~/.bash_profile
-export GPR_USER="your_github_username"
-export GPR_KEY="your_personal_access_token"</code></pre>
-        </li>
-        <li>Restart your IDE (Android Studio) to apply changes.</li>
-    </ol>
-    <div class="mt-4 p-4 bg-blue-50 rounded-xl border border-blue-100 text-sm">
-        <i class="fas fa-info-circle mr-2 text-blue-600"></i>
-        <b>Tip:</b> Do not commit your token directly to git. Always use environment variables for security.
-    </div>`
-};
-    function switchGuideTab(tabId) {
-    // Hide all guide contents
-    document.querySelectorAll('.guide-tab-content').forEach(content => {
-        content.classList.add('hidden');
-        content.classList.remove('block');
-    });
-
-    // Reset all guide buttons
-    document.querySelectorAll('.guide-tab-btn').forEach(btn => {
-        btn.classList.remove('bg-blue-600', 'text-white');
-        btn.classList.add('text-slate-400');
-    });
-
-    // Show selected guide content
-    document.getElementById('content-guide-' + tabId).classList.remove('hidden');
-    document.getElementById('content-guide-' + tabId).classList.add('block');
-
-    // Highlight selected guide button
-    const activeBtn = document.getElementById('tab-guide-' + tabId);
-    activeBtn.classList.add('bg-blue-600', 'text-white');
-    activeBtn.classList.remove('text-slate-400');
+    document.getElementById('modalContent').classList.replace('opacity-100', 'opacity-0');
+    setTimeout(() => document.getElementById('featureModal').classList.replace('flex', 'hidden'), 300);
 }
 </script>
-
-
-<footer class="bg-white border-t border-slate-200 py-16">
-    <div class="container mx-auto px-6 text-center">
-        <div class="flex justify-center space-x-6 mb-8 text-2xl text-slate-400">
-            <!-- GitHub Link -->
-            <a href="https://github.com/unchil/ComposeDataGrid" target="_blank" class="hover:text-slate-900 transition" title="GitHub Repository">
-                <i class="fab fa-github"></i>
-            </a>
-            <!-- Email Link 추가 -->
-            <a href="mailto:unchil8872@gmail.com" class="hover:text-blue-600 transition" title="Contact Email">
-                <i class="fas fa-envelope"></i>
-            </a>
-        </div>
-        <p class="text-slate-500 mb-2 font-medium">unchil8872@gmail.com</p>
-        <p class="text-slate-500 mb-2">© 2024 Un7-KCMP-DataGrid. All rights reserved.</p>
-        <p class="text-slate-400 text-sm">Licensed under the MIT License.</p>
-    </div>
-</footer>
-
-
-
-
 </body>
 </html>
