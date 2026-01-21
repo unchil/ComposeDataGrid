@@ -72,19 +72,25 @@
 
 
 <!-- 메인 Header: 로고 및 내비게이션 (상단 고정) -->
-<header class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
+<!-- 추천 설정: bg-white/80 과 backdrop-blur-md 를 조합하여 고급스러운 유리 질감 구현 -->
+<header class="bg-white/80 backdrop-blur-md border-b border-slate-200/60 sticky top-0 z-50 shadow-sm transition-all duration-300">
     <div class="container mx-auto px-6 py-4 flex justify-between items-center">
-        <h1 class="text-2xl font-bold gradient-text">Un7-KCMP-DataGrid</h1>
-        <nav class="hidden md:flex space-x-8 font-medium text-slate-600 items-center">
-            <a href="#features" class="hover:text-blue-600 transition">Features</a>
-            <a href="#demo" class="hover:text-blue-600 transition">Demo</a>
-            <a href="#getting-started" onclick="switchGuideTab('installation')" class="hover:text-blue-600 transition">Installation</a>
+        <!-- 로고 부분에 약간의 그림자 효과를 주어 가독성 강화 -->
+        <h1 class="text-2xl font-bold gradient-text drop-shadow-[0_1px_1px_rgba(255,255,255,0.8)]">
+            Un7-KCMP-DataGrid
+        </h1>
 
+        <nav class="hidden md:flex space-x-8 font-medium text-slate-600 items-center">
+            <a href="#features" class="hover:text-blue-600 transition-colors duration-200">Features</a>
+            <a href="#demo" class="hover:text-blue-600 transition-colors duration-200">Demo</a>
+            <a href="#getting-started" onclick="switchGuideTab('installation')" class="hover:text-blue-600 transition-colors duration-200">Installation</a>
+
+            <!-- 구분선 및 소셜 아이콘 영역 -->
             <div class="flex items-center space-x-5 border-l border-slate-200 pl-8 ml-2">
-                <a href="mailto:unchil8872@gmail.com" class="text-slate-600 hover:text-blue-600 transition" title="Contact Email">
+                <a href="mailto:unchil8872@gmail.com" class="text-slate-500 hover:text-blue-600 transition-all duration-200" title="Contact Email">
                     <i class="fas fa-envelope text-xl"></i>
                 </a>
-                <a href="https://github.com/unchil/ComposeDataGrid" target="_blank" class="text-slate-900 hover:opacity-75 transition" title="GitHub">
+                <a href="https://github.com/unchil/ComposeDataGrid" target="_blank" class="text-slate-700 hover:text-slate-900 transition-all duration-200" title="GitHub">
                     <i class="fab fa-github text-xl"></i>
                 </a>
             </div>
@@ -92,34 +98,38 @@
     </div>
 </header>
 
-
 <main>
 
     <!-- Hero Section -->
     <section class="relative py-20 bg-white border-b border-slate-100 overflow-hidden">
-        <!-- 배경 이미지 레이어 (Alpha 0.15 효과) -->
-        <div class="absolute inset-0 z-0 pointer-events-none">
+        <!-- 1. 배경 이미지 레이어: 크기를 키우고 위치 조정 (1.5배 효과) -->
+        <div class="absolute inset-0 z-0 pointer-events-none flex justify-center items-center">
             <img src="https://github.com/unchil/ComposeDataGrid/raw/main/screenshot/allPlatforms.png"
                  alt="Background Grid"
-                 class="w-full h-full object-cover">
+                 class="w-full h-full  object-cover">
         </div>
 
-        <!-- 배경 그라데이션 오버레이 (이미지와 텍스트 사이의 대비를 높여줌) -->
-        <div class="absolute inset-0 z-1 bg-gradient-to-b from-white/20 via-white/60 to-white pointer-events-none"></div>
 
         <div class="container mx-auto px-6 text-center relative z-10">
-            <!-- 텍스트 그림자(Shadow)를 살짝 추가하여 명확하게 표현 -->
-            <h2 class="text-5xl font-extrabold mb-6 leading-tight text-slate-900 drop-shadow-sm">
-                Powerful Data Grid for <br><span class="gradient-text">Compose Multiplatform</span>
-            </h2>
-            <p class="text-xl text-slate-700  mb-10 max-w-3xl mx-auto font-medium drop-shadow-sm">
-                A unified data grid solution spanning Android, iOS, Desktop, and Web (Wasm). <br>
-                Manage tens of thousands of data points with seamless paging, sorting, and filtering.
-            </p>
-            <div class="flex justify-center space-x-4">
-                <a href="#getting-started" onclick="switchGuideTab('installation')" class="bg-blue-600 text-white px-8 py-3 rounded-full font-bold hover:bg-blue-700 shadow-lg shadow-blue-200 transition">Get Started</a>
-                <a href="#demo" class="bg-white border border-slate-300 px-8 py-3 rounded-full font-bold hover:bg-slate-50 transition">View Demo</a>
+
+            <!-- [핵심 수정] 텍스트를 감싸는 박스에 backdrop-blur 적용 -->
+            <div class="max-w-4xl mx-auto bg-white/40 backdrop-blur-md rounded-[40px] p-10 md:p-16 border border-white/20 shadow-2xl shadow-slate-200/50">
+
+                <!-- 텍스트 그림자(Shadow)를 살짝 추가하여 명확하게 표현 -->
+                <h2 class="text-5xl font-extrabold mb-6 leading-tight text-slate-900 drop-shadow-sm">
+                    Powerful Data Grid for <br><span class="gradient-text">Compose Multiplatform</span>
+                </h2>
+                <p class="text-xl text-slate-700  mb-10 max-w-3xl mx-auto font-medium drop-shadow-sm">
+                    A unified data grid solution spanning Android, iOS, Desktop, and Web (Wasm). <br>
+                    Manage tens of thousands of data points with seamless paging, sorting, and filtering.
+                </p>
+                <div class="flex justify-center space-x-4">
+                    <a href="#getting-started" onclick="switchGuideTab('installation')" class="bg-blue-600 text-white px-8 py-3 rounded-full font-bold hover:bg-blue-700 shadow-lg shadow-blue-200 transition">Get Started</a>
+                    <a href="#demo" class="bg-white border border-slate-300 px-8 py-3 rounded-full font-bold hover:bg-slate-50 transition">View Demo</a>
+                </div>
+
             </div>
+
         </div>
 
     </section>
