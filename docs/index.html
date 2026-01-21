@@ -120,16 +120,16 @@
         <div class="container mx-auto px-6 text-center relative z-10">
 
             <!-- [핵심 수정] 텍스트를 감싸는 박스에 backdrop-blur 적용 -->
-            <div class="hero-box max-w-4xl mx-auto bg-white/60 backdrop-blur-lg rounded-[32px] md:rounded-[40px] p-8 md:p-16 border border-white/40 shadow-2xl shadow-slate-200/50">
+            <div class="max-w-4xl mx-auto bg-white/40 backdrop-blur-md rounded-[40px] p-10 md:p-16 border border-white/20 shadow-2xl shadow-slate-200/50">
 
-            <!-- 텍스트 그림자(Shadow)를 살짝 추가하여 명확하게 표현 -->
-                <h2 class="hero-title text-3xl md:text-5xl font-extrabold mb-6 leading-tight text-slate-900">
+                <!-- 텍스트 그림자(Shadow)를 살짝 추가하여 명확하게 표현 -->
+                <h2 class="text-5xl font-extrabold mb-6 leading-tight text-slate-900 drop-shadow-sm">
                     Powerful Data Grid for <br><span class="gradient-text">Compose Multiplatform</span>
                 </h2>
-                <p class="text-lg md:text-xl text-slate-700 mb-8 md:text-xl max-w-2xl mx-auto font-medium leading-relaxed">
-                    A unified data grid solution spanning <span class="text-blue-600">Android, iOS, Desktop, and Web.</span>
+                <p class="text-xl text-slate-700  mb-10 max-w-3xl mx-auto font-medium drop-shadow-sm">
+                    A unified data grid solution spanning Android, iOS, Desktop, and Web (Wasm). <br>
+                    Manage tens of thousands of data points with seamless paging, sorting, and filtering.
                 </p>
-
                 <div class="flex justify-center space-x-4">
                     <a href="#getting-started" onclick="switchGuideTab('installation')" class="bg-blue-600 text-white px-8 py-3 rounded-full font-bold hover:bg-blue-700 shadow-lg shadow-blue-200 transition">Get Started</a>
                     <a href="#demo" class="bg-white border border-slate-300 px-8 py-3 rounded-full font-bold hover:bg-slate-50 transition">View Demo</a>
@@ -154,20 +154,20 @@
     </section>
 
     <!-- Demo Section -->
-    <section id="demo" class="py-20 bg-white overflow-hidden">
+    <section id="demo" class="py-24 bg-slate-900 text-white overflow-hidden">
         <div class="container mx-auto px-6">
-            <div class="text-center mb-12">            <h3 class="text-3xl font-bold mb-4 text-slate-900">Multiplatform in Action</h3>
-                <p class="text-slate-500">Check out the seamless UI across all targets.</p>
+            <div class="text-center mb-16">
+                <h3 class="text-4xl font-bold mb-4">Multiplatform in Action</h3>
+                <p class="text-slate-400 text-lg">Experience powerful performance across all platforms with a single codebase.</p>
             </div>
 
-
-            <!-- Tab Navigation (Mobile Friendly) -->
-            <div class="flex justify-center mb-10">
-                <div class="inline-flex p-1.5 bg-slate-100 rounded-2xl border border-slate-200 overflow-x-auto max-w-full">
-                    <button onclick="switchTab('all')" id="tab-all" class="tab-btn whitespace-nowrap px-5 py-2 rounded-xl font-bold transition duration-300 bg-blue-600 text-white shadow-sm">All</button>
-                    <button onclick="switchTab('desktop')" id="tab-desktop" class="tab-btn whitespace-nowrap px-5 py-2 rounded-xl font-bold transition duration-300 text-slate-500 hover:text-slate-800">Desktop</button>
-                    <button onclick="switchTab('web')" id="tab-web" class="tab-btn whitespace-nowrap px-5 py-2 rounded-xl font-bold transition duration-300 text-slate-500 hover:text-slate-800">Web</button>
-                    <button onclick="switchTab('mobile')" id="tab-mobile" class="tab-btn whitespace-nowrap px-5 py-2 rounded-xl font-bold transition duration-300 text-slate-500 hover:text-slate-800">Mobile</button>
+            <!-- Tab Navigation -->
+            <div class="flex justify-center mb-12">
+                <div class="inline-flex p-1 bg-slate-800 rounded-2xl border border-slate-700">
+                    <button onclick="switchTab('all')" id="tab-all" class="tab-btn px-6 py-2.5 rounded-xl font-bold transition duration-300 bg-blue-600 text-white">All</button>
+                    <button onclick="switchTab('desktop')" id="tab-desktop" class="tab-btn px-6 py-2.5 rounded-xl font-bold transition duration-300 text-slate-400 hover:text-white">Desktop</button>
+                    <button onclick="switchTab('web')" id="tab-web" class="tab-btn px-6 py-2.5 rounded-xl font-bold transition duration-300 text-slate-400 hover:text-white">Web</button>
+                    <button onclick="switchTab('mobile')" id="tab-mobile" class="tab-btn px-6 py-2.5 rounded-xl font-bold transition duration-300 text-slate-400 hover:text-white">Mobile</button>
                 </div>
             </div>
 
