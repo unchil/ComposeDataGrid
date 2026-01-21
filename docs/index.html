@@ -84,6 +84,11 @@
      border: 1px solid #334155;
      border-bottom: none;
      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+
+    /* 코드 블록과 완벽하게 밀착되도록 조정 */
+    margin-bottom: -1px;
+    position: relative;
+    z-index: 1;
  }
 
 
@@ -724,13 +729,14 @@ class MainActivity : ComponentActivity() {
             <ol class="list-decimal ml-5 space-y-3 mt-4">
                 <li>Go to <b>GitHub Settings</b> > <b>Developer settings</b> > <b>Personal access tokens</b>.</li>
                 <li>Generate a new token with at least <code>read:packages</code> scope.</li>
-                <li>Set environment variables on your machine:
-                    <pre class="bg-slate-800 text-slate-200 p-3 rounded-lg mt-2 text-xs"><code>
-# In your ~/.zshrc or ~/.bash_profile
+                <li>Set environment variables on your machine:</li>
+<div class="code-wrapper mt-4">
+    <span class="code-label">~/.zshrc or ~/.bash_profile</span>
+    <pre class="bg-slate-800 text-slate-200 p-4 rounded-xl rounded-tl-none text-xs overflow-x-auto m-0"><code>
 export GPR_USER="your_github_username"
 export GPR_KEY="your_personal_access_token"
-        </code></pre>
-                </li>
+    </code></pre>
+</div>
                 <li>Restart your IDE (Android Studio) to apply changes.</li>
             </ol>
             <div class="mt-4 p-4 bg-blue-50 rounded-xl border border-blue-100 text-sm">
