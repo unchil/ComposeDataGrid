@@ -7,27 +7,34 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        .gradient-text {
-            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .demo-card img {
-            border-radius: 8px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
-            transition: transform 0.3s ease;
-        }
-        .demo-card img:hover {
-            transform: scale(1.01);
-        }
+    .gradient-text {
+        background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    .demo-card img {
+        border-radius: 8px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+        transition: transform 0.3s ease;
+    }
+    .demo-card img:hover {
+        transform: scale(1.01);
+    }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-fadeIn {
-            animation: fadeIn 0.4s ease-out forwards;
-        }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fadeIn {
+        animation: fadeIn 0.4s ease-out forwards;
+    }
+
+    /* 모바일 전용 스타일 */
+    .mobile-optimized .hero-title { font-size: 2.25rem; line-height: 2.5rem; }
+    .mobile-optimized .hero-box { padding: 1.5rem; border-radius: 24px; }
+    /* 배경 이미지 1.5배 확대 */
+    .mobile-optimized .hero-bg-img { width: 150%; height: 150%; object-fit: cover; }
+
     </style>
 </head>
 <body class="bg-slate-50 text-slate-900 font-sans leading-normal">
@@ -106,23 +113,23 @@
         <div class="absolute inset-0 z-0 pointer-events-none flex justify-center items-center">
             <img src="https://github.com/unchil/ComposeDataGrid/raw/main/screenshot/allPlatforms.png"
                  alt="Background Grid"
-                 class="w-full h-full  object-cover">
+                 class="hero-bg-img w-full h-full object-cover transition-transform duration-700">
         </div>
 
 
         <div class="container mx-auto px-6 text-center relative z-10">
 
             <!-- [핵심 수정] 텍스트를 감싸는 박스에 backdrop-blur 적용 -->
-            <div class="max-w-4xl mx-auto bg-white/40 backdrop-blur-md rounded-[40px] p-10 md:p-16 border border-white/20 shadow-2xl shadow-slate-200/50">
+            <div class="hero-box max-w-4xl mx-auto bg-white/60 backdrop-blur-lg rounded-[32px] md:rounded-[40px] p-8 md:p-16 border border-white/40 shadow-2xl shadow-slate-200/50">
 
-                <!-- 텍스트 그림자(Shadow)를 살짝 추가하여 명확하게 표현 -->
-                <h2 class="text-5xl font-extrabold mb-6 leading-tight text-slate-900 drop-shadow-sm">
+            <!-- 텍스트 그림자(Shadow)를 살짝 추가하여 명확하게 표현 -->
+                <h2 class="hero-title text-3xl md:text-5xl font-extrabold mb-6 leading-tight text-slate-900">
                     Powerful Data Grid for <br><span class="gradient-text">Compose Multiplatform</span>
                 </h2>
-                <p class="text-xl text-slate-700  mb-10 max-w-3xl mx-auto font-medium drop-shadow-sm">
-                    A unified data grid solution spanning Android, iOS, Desktop, and Web (Wasm). <br>
-                    Manage tens of thousands of data points with seamless paging, sorting, and filtering.
+                <p class="text-lg md:text-xl text-slate-700 mb-8 md:text-xl max-w-2xl mx-auto font-medium leading-relaxed">
+                    A unified data grid solution spanning <span class="text-blue-600">Android, iOS, Desktop, and Web.</span>
                 </p>
+
                 <div class="flex justify-center space-x-4">
                     <a href="#getting-started" onclick="switchGuideTab('installation')" class="bg-blue-600 text-white px-8 py-3 rounded-full font-bold hover:bg-blue-700 shadow-lg shadow-blue-200 transition">Get Started</a>
                     <a href="#demo" class="bg-white border border-slate-300 px-8 py-3 rounded-full font-bold hover:bg-slate-50 transition">View Demo</a>
@@ -147,20 +154,20 @@
     </section>
 
     <!-- Demo Section -->
-    <section id="demo" class="py-24 bg-slate-900 text-white overflow-hidden">
+    <section id="demo" class="py-20 bg-white overflow-hidden">
         <div class="container mx-auto px-6">
-            <div class="text-center mb-16">
-                <h3 class="text-4xl font-bold mb-4">Multiplatform in Action</h3>
-                <p class="text-slate-400 text-lg">Experience powerful performance across all platforms with a single codebase.</p>
+            <div class="text-center mb-12">            <h3 class="text-3xl font-bold mb-4 text-slate-900">Multiplatform in Action</h3>
+                <p class="text-slate-500">Check out the seamless UI across all targets.</p>
             </div>
 
-            <!-- Tab Navigation -->
-            <div class="flex justify-center mb-12">
-                <div class="inline-flex p-1 bg-slate-800 rounded-2xl border border-slate-700">
-                    <button onclick="switchTab('all')" id="tab-all" class="tab-btn px-6 py-2.5 rounded-xl font-bold transition duration-300 bg-blue-600 text-white">All</button>
-                    <button onclick="switchTab('desktop')" id="tab-desktop" class="tab-btn px-6 py-2.5 rounded-xl font-bold transition duration-300 text-slate-400 hover:text-white">Desktop</button>
-                    <button onclick="switchTab('web')" id="tab-web" class="tab-btn px-6 py-2.5 rounded-xl font-bold transition duration-300 text-slate-400 hover:text-white">Web</button>
-                    <button onclick="switchTab('mobile')" id="tab-mobile" class="tab-btn px-6 py-2.5 rounded-xl font-bold transition duration-300 text-slate-400 hover:text-white">Mobile</button>
+
+            <!-- Tab Navigation (Mobile Friendly) -->
+            <div class="flex justify-center mb-10">
+                <div class="inline-flex p-1.5 bg-slate-100 rounded-2xl border border-slate-200 overflow-x-auto max-w-full">
+                    <button onclick="switchTab('all')" id="tab-all" class="tab-btn whitespace-nowrap px-5 py-2 rounded-xl font-bold transition duration-300 bg-blue-600 text-white shadow-sm">All</button>
+                    <button onclick="switchTab('desktop')" id="tab-desktop" class="tab-btn whitespace-nowrap px-5 py-2 rounded-xl font-bold transition duration-300 text-slate-500 hover:text-slate-800">Desktop</button>
+                    <button onclick="switchTab('web')" id="tab-web" class="tab-btn whitespace-nowrap px-5 py-2 rounded-xl font-bold transition duration-300 text-slate-500 hover:text-slate-800">Web</button>
+                    <button onclick="switchTab('mobile')" id="tab-mobile" class="tab-btn whitespace-nowrap px-5 py-2 rounded-xl font-bold transition duration-300 text-slate-500 hover:text-slate-800">Mobile</button>
                 </div>
             </div>
 
@@ -358,261 +365,274 @@ implementation("com.github.unchil:un7datagrid:0.2.5")</code></pre>
 
 </main>
 <script>
-    const modalData = {
-        'Dynamic Controls': {
-            icon: 'fa-columns',
-            color: 'bg-blue-100 text-blue-600',
-            content: `
-                <p class="font-semibold">Full control over data presentation:</p>
-                <ul class="list-disc ml-5 space-y-2">
-                    <li><b>Reordering:</b> Drag column headers to rearrange positions.</li>
-                    <li><b>Resizing:</b> Dynamic width adjustment for each column.</li>
-                    <li><b>Visibility:</b> Show or hide columns using the configuration menu.</li>
-                    <li><b>Sorting:</b> Multi-directional sorting (Asc/Desc) for all supported types.</li>
-                </ul>`
-        },
-        'Advanced Filtering': {
-            icon: 'fa-filter',
-            color: 'bg-purple-100 text-purple-600',
-            content: `
-                <p class="font-semibold">Type-specific conditional filtering:</p>
-                <ul class="list-disc ml-5 space-y-2">
-                    <li><b>String:</b> Contains, Equals, Begins/Ends with, Blank check.</li>
-                    <li><b>Numeric:</b> Full comparison operators (=, !=, >, >=, <, <=).</li>
-                    <li><b>Boolean:</b> Quick toggle filtering (Is/Is Not).</li>
-                    <li><b>Export:</b> High-performance CSV export of filtered data.</li>
-                </ul>
-                <div class="mt-6 p-4 bg-amber-50 rounded-2xl border border-amber-100 text-sm">
-                    <p class="font-bold text-amber-800 mb-2"><i class="fab fa-android mr-2"></i>Android Implementation Note</p>
-                    <p>To use <code>Export CSV </code>, you must opt-in:</p>
-                    <pre class="bg-slate-800 text-slate-200 p-3 rounded-lg mt-2 overflow-x-auto">
-                        <code>
-class MainActivity : ComponentActivity() {
-    private val saveFileLauncher = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-        // Handle result logic...
-    }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        AndroidPlatformHandler.initialize(this)
-        super.onCreate(savedInstanceState)
-        // ... setContent
-    }
-
-    fun launchSaveFileIntent(intent: Intent) {
-        saveFileLauncher.launch(intent)
-    }
+    // 모바일 브라우저 체크 함수
+function isMobile() {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 }
-                        </code>
-                    </pre>
-                </div>`
-        },
-        'Intuitive UX': {
-            icon: 'fa-hand-pointer',
-            color: 'bg-green-100 text-green-600',
-            content: `
-                <p class="font-semibold">Premium Multiplatform Experience:</p>
-                <ul class="list-disc ml-5 space-y-2">
-                    <li><b>Sticky Headers:</b> Maintain context during vertical scrolls.</li>
-                    <li><b>Haptic Feedback:</b> Subtle tactile response for mobile interactions.</li>
-                </ul>
-                <div class="mt-6 p-4 bg-amber-50 rounded-2xl border border-amber-100 text-sm">
-                    <p class="font-bold text-amber-800 mb-2"><i class="fab fa-android mr-2"></i>Android Implementation Note</p>
-                    <p>This library uses <b>ExperimentalMaterial3Api</b> for tooltips. To use <code>TooltipIconButton</code> or <code>TooltipText</code>, you must opt-in:</p>
-                    <pre class="bg-slate-800 text-slate-200 p-3 rounded-lg mt-2 overflow-x-auto">
-                        <code>
-class MainActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        //Initialize AndroidPlatformHandler once
-        AndroidPlatformHandler.initialize(this)
-        enableEdgeToEdge()
-        super.onCreate(savedInstanceState)
-        setContent {...}
+
+document.addEventListener('DOMContentLoaded', () => {
+    if (isMobile()) {
+        document.body.classList.add('mobile-optimized');
+        // 모바일일 때 추가적인 UI 조정을 수행할 수 있습니다.
     }
-}
-                        </code>
-                    </pre>
-                </div>`
-        }
+});
 
-    };
-
-    function openModal(title) {
-        const data = modalData[title];
-        if(!data) return;
-
-        const modal = document.getElementById('featureModal');
-        const content = document.getElementById('modalContent');
-
-        document.getElementById('modalTitle').innerText = title;
-        document.getElementById('modalBody').innerHTML = data.content;
-
-        const iconDiv = document.getElementById('modalIcon');
-        iconDiv.className = `w-16 h-16 rounded-2xl flex items-center justify-center text-3xl ${data.color}`;
-        iconDiv.innerHTML = `<i class="fas ${data.icon}"></i>`;
-
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
-        setTimeout(() => {
-            content.classList.remove('scale-95', 'opacity-0');
-            content.classList.add('scale-100', 'opacity-100');
-        }, 10);
-    }
-
-    function closeModal() {
-        const modal = document.getElementById('featureModal');
-        const content = document.getElementById('modalContent');
-        content.classList.remove('scale-100', 'opacity-100');
-        content.classList.add('scale-95', 'opacity-0');
-        setTimeout(() => {
-            modal.classList.remove('flex');
-            modal.classList.add('hidden');
-        }, 300);
-    }
-
-    window.onclick = function(event) {
-        if (event.target == document.getElementById('featureModal')) closeModal();
-    }
-
-    function switchTab(tabId) {
-        // Hide all content
-        document.querySelectorAll('.tab-content').forEach(content => {
-            content.classList.add('hidden');
-            content.classList.remove('block');
-        });
-
-        // Reset all buttons
-        document.querySelectorAll('.tab-btn').forEach(btn => {
-            btn.classList.remove('bg-blue-600', 'text-white');
-            btn.classList.add('text-slate-400');
-        });
-
-        // Show selected content
-        document.getElementById('content-' + tabId).classList.remove('hidden');
-        document.getElementById('content-' + tabId).classList.add('block');
-
-        // Highlight selected button
-        const activeBtn = document.getElementById('tab-' + tabId);
-        activeBtn.classList.add('bg-blue-600', 'text-white');
-        activeBtn.classList.remove('text-slate-400');
-    }
-
-
-    // 기존 modalData 객체에 추가
-    modalData['Basic Usage'] = {
-        icon: 'fa-code',
+const modalData = {
+    'Dynamic Controls': {
+        icon: 'fa-columns',
         color: 'bg-blue-100 text-blue-600',
         content: `
-            <p class="mb-4 text-sm">Using <code>Un7KCMPDataGrid</code> is very simple. Just provide the data as a <code>Map</code>.</p>
-            <pre class="bg-slate-800 text-slate-200 p-4 rounded-xl text-xs overflow-x-auto"><code>
-@Composable
-fun MyDataScreen() {
-    val myData = mapOf(
-        "ID" to listOf(1, 2, 3),
-        "Product" to listOf("Keyboard", "Mouse", "Monitor"),
-        "Price" to listOf(75.5, 25.0, 150.0))
-    Un7KCMPDataGrid(data = myData)
-}</code></pre>`
-    };
+            <p class="font-semibold">Full control over data presentation:</p>
+            <ul class="list-disc ml-5 space-y-2">
+                <li><b>Reordering:</b> Drag column headers to rearrange positions.</li>
+                <li><b>Resizing:</b> Dynamic width adjustment for each column.</li>
+                <li><b>Visibility:</b> Show or hide columns using the configuration menu.</li>
+                <li><b>Sorting:</b> Multi-directional sorting (Asc/Desc) for all supported types.</li>
+            </ul>`
+    },
+    'Advanced Filtering': {
+        icon: 'fa-filter',
+        color: 'bg-purple-100 text-purple-600',
+        content: `
+            <p class="font-semibold">Type-specific conditional filtering:</p>
+            <ul class="list-disc ml-5 space-y-2">
+                <li><b>String:</b> Contains, Equals, Begins/Ends with, Blank check.</li>
+                <li><b>Numeric:</b> Full comparison operators (=, !=, >, >=, <, <=).</li>
+                <li><b>Boolean:</b> Quick toggle filtering (Is/Is Not).</li>
+                <li><b>Export:</b> High-performance CSV export of filtered data.</li>
+            </ul>
+            <div class="mt-6 p-4 bg-amber-50 rounded-2xl border border-amber-100 text-sm">
+                <p class="font-bold text-amber-800 mb-2"><i class="fab fa-android mr-2"></i>Android Implementation Note</p>
+                <p>To use <code>Export CSV </code>, you must opt-in:</p>
+                <pre class="bg-slate-800 text-slate-200 p-3 rounded-lg mt-2 overflow-x-auto">
+                    <code>
+class MainActivity : ComponentActivity() {
+private val saveFileLauncher = registerForActivityResult(
+    ActivityResultContracts.StartActivityForResult()
+) { result ->
+    // Handle result logic...
+}
 
-    modalData['Android Setup'] = {
-        icon: 'fa-android',
+override fun onCreate(savedInstanceState: Bundle?) {
+    AndroidPlatformHandler.initialize(this)
+    super.onCreate(savedInstanceState)
+    // ... setContent
+}
+
+fun launchSaveFileIntent(intent: Intent) {
+    saveFileLauncher.launch(intent)
+}
+}
+                    </code>
+                </pre>
+            </div>`
+    },
+    'Intuitive UX': {
+        icon: 'fa-hand-pointer',
         color: 'bg-green-100 text-green-600',
         content: `
-            <p class="mb-4 text-sm font-semibold text-red-600">Important: Scoped Storage Support</p>
-            <p class="text-sm mb-4">For Android file exports (CSV), you must pre-register an <code>ActivityResultLauncher</code> in your <code>MainActivity</code>:</p>
-            <pre class="bg-slate-800 text-slate-200 p-4 rounded-xl text-xs overflow-x-auto mb-4"><code>
+            <p class="font-semibold">Premium Multiplatform Experience:</p>
+            <ul class="list-disc ml-5 space-y-2">
+                <li><b>Sticky Headers:</b> Maintain context during vertical scrolls.</li>
+                <li><b>Haptic Feedback:</b> Subtle tactile response for mobile interactions.</li>
+            </ul>
+            <div class="mt-6 p-4 bg-amber-50 rounded-2xl border border-amber-100 text-sm">
+                <p class="font-bold text-amber-800 mb-2"><i class="fab fa-android mr-2"></i>Android Implementation Note</p>
+                <p>This library uses <b>ExperimentalMaterial3Api</b> for tooltips. To use <code>TooltipIconButton</code> or <code>TooltipText</code>, you must opt-in:</p>
+                <pre class="bg-slate-800 text-slate-200 p-3 rounded-lg mt-2 overflow-x-auto">
+                    <code>
 class MainActivity : ComponentActivity() {
-    //--> 1. Pre-register ActivityResultLauncher (must be defined before onCreate)
-    private val saveFileLauncher = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            val uri = result.data?.data ?: return@registerForActivityResult
-            AndroidPlatformHandler.applicationContext?.contentResolver?.openOutputStream(uri)?.use { outputStream ->
-                BufferedWriter(OutputStreamWriter(outputStream)).use { writer ->
-                    writer.write(AndroidPlatformHandler.pendingContent)
-                }
-            }
-        }
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        //--> 2. Initialize AndroidPlatformHandler once
-        AndroidPlatformHandler.initialize(this)
-        enableEdgeToEdge()
-        super.onCreate(savedInstanceState)
-        setContent {
-            ...
-            //-->
-            Column{
-                TextButton( onClick = {
-                    //--> 4. Call launchSaveFileIntent
-                    AndroidPlatformHandler.intent?.let { launchSaveFileIntent(it) }
-                }){ Text("ExportData") }
-
-                Un7KCMPDataGrid(
-                    data = mapOf("ID" to listOf<Int?>(1, 2, 3, 4, 5),
-                        "Product String" to listOf<String?>("Keyboard", "Mouse", "Monitor", "Webcam", "Speaker"),
-                        "Price Double" to listOf<Double?>(75.50, 25.00, null, 89.90, 100.0) )
-            }
-            //-->
-            ...
-        }
-    }
-    //--> 3. Exposes a function that runs the launcher
-    fun launchSaveFileIntent(intent: Intent) {
-        saveFileLauncher.launch(intent)
-    }
-}</code></pre>
-            <div class="p-3 bg-blue-50 border border-blue-100 rounded-lg text-xs text-blue-700">
-                <i class="fas fa-info-circle mr-1"></i> Ensure you call <code>AndroidPlatformHandler.initialize(this)</code> before <code>super.onCreate()</code>.
+override fun onCreate(savedInstanceState: Bundle?) {
+    //Initialize AndroidPlatformHandler once
+    AndroidPlatformHandler.initialize(this)
+    enableEdgeToEdge()
+    super.onCreate(savedInstanceState)
+    setContent {...}
+}
+}
+                    </code>
+                </pre>
             </div>`
-    };
+    }
 
-modalData['GitHub Credentials'] = {
-    icon: 'fa-key',
-    color: 'bg-amber-100 text-amber-600',
+};
+
+function openModal(title) {
+    const data = modalData[title];
+    if(!data) return;
+
+    const modal = document.getElementById('featureModal');
+    const content = document.getElementById('modalContent');
+
+    document.getElementById('modalTitle').innerText = title;
+    document.getElementById('modalBody').innerHTML = data.content;
+
+    const iconDiv = document.getElementById('modalIcon');
+    iconDiv.className = `w-16 h-16 rounded-2xl flex items-center justify-center text-3xl ${data.color}`;
+    iconDiv.innerHTML = `<i class="fas ${data.icon}"></i>`;
+
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    setTimeout(() => {
+        content.classList.remove('scale-95', 'opacity-0');
+        content.classList.add('scale-100', 'opacity-100');
+    }, 10);
+}
+
+function closeModal() {
+    const modal = document.getElementById('featureModal');
+    const content = document.getElementById('modalContent');
+    content.classList.remove('scale-100', 'opacity-100');
+    content.classList.add('scale-95', 'opacity-0');
+    setTimeout(() => {
+        modal.classList.remove('flex');
+        modal.classList.add('hidden');
+    }, 300);
+}
+
+window.onclick = function(event) {
+    if (event.target == document.getElementById('featureModal')) closeModal();
+}
+
+function switchTab(tabId) {
+    // Hide all content
+    document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.add('hidden');
+        content.classList.remove('block');
+    });
+
+    // Reset all buttons
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('bg-blue-600', 'text-white');
+        btn.classList.add('text-slate-400');
+    });
+
+    // Show selected content
+    document.getElementById('content-' + tabId).classList.remove('hidden');
+    document.getElementById('content-' + tabId).classList.add('block');
+
+    // Highlight selected button
+    const activeBtn = document.getElementById('tab-' + tabId);
+    activeBtn.classList.add('bg-blue-600', 'text-white');
+    activeBtn.classList.remove('text-slate-400');
+}
+
+
+// 기존 modalData 객체에 추가
+modalData['Basic Usage'] = {
+    icon: 'fa-code',
+    color: 'bg-blue-100 text-blue-600',
     content: `
-        <p class="font-semibold text-slate-800">To access GitHub Packages, you need an Personal Access Token (PAT):</p>
-        <ol class="list-decimal ml-5 space-y-3 mt-4">
-            <li>Go to <b>GitHub Settings</b> > <b>Developer settings</b> > <b>Personal access tokens</b>.</li>
-            <li>Generate a new token with at least <code>read:packages</code> scope.</li>
-            <li>Set environment variables on your machine:
-                <pre class="bg-slate-800 text-slate-200 p-3 rounded-lg mt-2 text-xs"><code># In your ~/.zshrc or ~/.bash_profile
-export GPR_USER="your_github_username"
-export GPR_KEY="your_personal_access_token"</code></pre>
-            </li>
-            <li>Restart your IDE (Android Studio) to apply changes.</li>
-        </ol>
-        <div class="mt-4 p-4 bg-blue-50 rounded-xl border border-blue-100 text-sm">
-            <i class="fas fa-info-circle mr-2 text-blue-600"></i>
-            <b>Tip:</b> Do not commit your token directly to git. Always use environment variables for security.
+        <p class="mb-4 text-sm">Using <code>Un7KCMPDataGrid</code> is very simple. Just provide the data as a <code>Map</code>.</p>
+        <pre class="bg-slate-800 text-slate-200 p-4 rounded-xl text-xs overflow-x-auto"><code>
+@Composable
+fun MyDataScreen() {
+val myData = mapOf(
+    "ID" to listOf(1, 2, 3),
+    "Product" to listOf("Keyboard", "Mouse", "Monitor"),
+    "Price" to listOf(75.5, 25.0, 150.0))
+Un7KCMPDataGrid(data = myData)
+}</code></pre>`
+};
+
+modalData['Android Setup'] = {
+    icon: 'fa-android',
+    color: 'bg-green-100 text-green-600',
+    content: `
+        <p class="mb-4 text-sm font-semibold text-red-600">Important: Scoped Storage Support</p>
+        <p class="text-sm mb-4">For Android file exports (CSV), you must pre-register an <code>ActivityResultLauncher</code> in your <code>MainActivity</code>:</p>
+        <pre class="bg-slate-800 text-slate-200 p-4 rounded-xl text-xs overflow-x-auto mb-4"><code>
+class MainActivity : ComponentActivity() {
+//--> 1. Pre-register ActivityResultLauncher (must be defined before onCreate)
+private val saveFileLauncher = registerForActivityResult(
+    ActivityResultContracts.StartActivityForResult()
+) { result ->
+    if (result.resultCode == Activity.RESULT_OK) {
+        val uri = result.data?.data ?: return@registerForActivityResult
+        AndroidPlatformHandler.applicationContext?.contentResolver?.openOutputStream(uri)?.use { outputStream ->
+            BufferedWriter(OutputStreamWriter(outputStream)).use { writer ->
+                writer.write(AndroidPlatformHandler.pendingContent)
+            }
+        }
+    }
+}
+
+override fun onCreate(savedInstanceState: Bundle?) {
+    //--> 2. Initialize AndroidPlatformHandler once
+    AndroidPlatformHandler.initialize(this)
+    enableEdgeToEdge()
+    super.onCreate(savedInstanceState)
+    setContent {
+        ...
+        //-->
+        Column{
+            TextButton( onClick = {
+                //--> 4. Call launchSaveFileIntent
+                AndroidPlatformHandler.intent?.let { launchSaveFileIntent(it) }
+            }){ Text("ExportData") }
+
+            Un7KCMPDataGrid(
+                data = mapOf("ID" to listOf<Int?>(1, 2, 3, 4, 5),
+                    "Product String" to listOf<String?>("Keyboard", "Mouse", "Monitor", "Webcam", "Speaker"),
+                    "Price Double" to listOf<Double?>(75.50, 25.00, null, 89.90, 100.0) )
+        }
+        //-->
+        ...
+    }
+}
+//--> 3. Exposes a function that runs the launcher
+fun launchSaveFileIntent(intent: Intent) {
+    saveFileLauncher.launch(intent)
+}
+}</code></pre>
+        <div class="p-3 bg-blue-50 border border-blue-100 rounded-lg text-xs text-blue-700">
+            <i class="fas fa-info-circle mr-1"></i> Ensure you call <code>AndroidPlatformHandler.initialize(this)</code> before <code>super.onCreate()</code>.
         </div>`
 };
-        function switchGuideTab(tabId) {
-        // Hide all guide contents
-        document.querySelectorAll('.guide-tab-content').forEach(content => {
-            content.classList.add('hidden');
-            content.classList.remove('block');
-        });
 
-        // Reset all guide buttons
-        document.querySelectorAll('.guide-tab-btn').forEach(btn => {
-            btn.classList.remove('bg-blue-600', 'text-white');
-            btn.classList.add('text-slate-400');
-        });
+modalData['GitHub Credentials'] = {
+icon: 'fa-key',
+color: 'bg-amber-100 text-amber-600',
+content: `
+    <p class="font-semibold text-slate-800">To access GitHub Packages, you need an Personal Access Token (PAT):</p>
+    <ol class="list-decimal ml-5 space-y-3 mt-4">
+        <li>Go to <b>GitHub Settings</b> > <b>Developer settings</b> > <b>Personal access tokens</b>.</li>
+        <li>Generate a new token with at least <code>read:packages</code> scope.</li>
+        <li>Set environment variables on your machine:
+            <pre class="bg-slate-800 text-slate-200 p-3 rounded-lg mt-2 text-xs"><code># In your ~/.zshrc or ~/.bash_profile
+export GPR_USER="your_github_username"
+export GPR_KEY="your_personal_access_token"</code></pre>
+        </li>
+        <li>Restart your IDE (Android Studio) to apply changes.</li>
+    </ol>
+    <div class="mt-4 p-4 bg-blue-50 rounded-xl border border-blue-100 text-sm">
+        <i class="fas fa-info-circle mr-2 text-blue-600"></i>
+        <b>Tip:</b> Do not commit your token directly to git. Always use environment variables for security.
+    </div>`
+};
+    function switchGuideTab(tabId) {
+    // Hide all guide contents
+    document.querySelectorAll('.guide-tab-content').forEach(content => {
+        content.classList.add('hidden');
+        content.classList.remove('block');
+    });
 
-        // Show selected guide content
-        document.getElementById('content-guide-' + tabId).classList.remove('hidden');
-        document.getElementById('content-guide-' + tabId).classList.add('block');
+    // Reset all guide buttons
+    document.querySelectorAll('.guide-tab-btn').forEach(btn => {
+        btn.classList.remove('bg-blue-600', 'text-white');
+        btn.classList.add('text-slate-400');
+    });
 
-        // Highlight selected guide button
-        const activeBtn = document.getElementById('tab-guide-' + tabId);
-        activeBtn.classList.add('bg-blue-600', 'text-white');
-        activeBtn.classList.remove('text-slate-400');
-    }
+    // Show selected guide content
+    document.getElementById('content-guide-' + tabId).classList.remove('hidden');
+    document.getElementById('content-guide-' + tabId).classList.add('block');
+
+    // Highlight selected guide button
+    const activeBtn = document.getElementById('tab-guide-' + tabId);
+    activeBtn.classList.add('bg-blue-600', 'text-white');
+    activeBtn.classList.remove('text-slate-400');
+}
 </script>
 
 
