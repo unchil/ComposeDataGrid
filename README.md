@@ -195,36 +195,12 @@ kotlin {
 
 @Composable
 fun MyDataScreen() {
-    // Column-oriented data map
-    val myData: Map<String, List<Any?>> = mapOf(
-        "ID" to listOf<Int?>(1, 2, 3, 4, 5, 6, 7, 8),
-        "Product Any" to listOf<Any?>( 1234, 1234.0, 1234.0f, '1', true, 1234567890L, null, "1234"),
-        "Product Char" to listOf<Char?>('K', null, 'M', 'W', 'S', 'T', 'L', 'a'),
-        "Product String" to listOf<String?>("Keyboard", "Mouse", "Monitor", "Webcam", "Speaker", "Trackpad", "Luck7", ""),
-        "Price Double" to listOf<Double?>(75.50, 25.00, null, 89.90, 100.0, 100.0, 100.0, 0.0 ),
-        "Price Float" to listOf<Float?>(75.50f, 25.00f, null, 89.90f, 100.0f, 100.0f, 100.0f, 0.0f ),
-        "In Stock" to listOf<Boolean?>(true, false, true, true, true, true, true,true)
-    )
-
-    // Configure optional grid features
-    val gridConfig = Un7KCMPDataGridConfig(
-        isUsableHaptic = true,
-        isUsableTooltips = true,
-        isVisibilityRowNumber = true,
-        rowNumberColumnName = "No.",
-        pageSizeList = listOf("10", "25", "50", "100"),
-        defaultPageSizeListIndex = 2, // Initial page size will be "50"
-        headerRowBackgroundColor = Color(0xFFE0E0E0),
-        headerRowContentColor = Color.DarkGray,
-        dataRowBackgroundColor = Color.White,
-        dataRowContentColor = Color.DarkGray,
-        oddDataRowBackgroundColor = Color.White,
-        evenDataRowBackgroundColor = Color(0xFFF5F5F5)
-    )
-
     Un7KCMPDataGrid(
-        data = myData,
-        config = gridConfig
+        data = mapOf(
+            "ID" to listOf<Int?>(1, 2, 3, 4, 5, 6, 7, 8),
+            "Product String" to listOf<String?>("Keyboard", "Mouse", "Monitor", "Webcam", "Speaker", "Trackpad", "Luck7", ""),
+            "Price Double" to listOf<Double?>(75.50, 25.00, null, 89.90, 100.0, 100.0, 100.0, 0.0 )
+        )
     )
 }
 ```
