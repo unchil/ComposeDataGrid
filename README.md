@@ -78,7 +78,7 @@ To provide a more tactile and engaging experience on mobile devices (Android & i
 - Navigation: Feedback when switching between pages.
 
 **Multiplatform Support:**
-- Android: Utilizes performHapticFeedback on the DecorView.
+- Android: Uses VibratorManager.
 - iOS: Uses UIImpactFeedbackGenerator.
 - Desktop/Web: Gracefully degrades (no effect) while maintaining code compatibility.
 
