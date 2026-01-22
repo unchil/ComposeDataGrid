@@ -2,7 +2,7 @@
 
 <p>
   <img src="https://img.shields.io/badge/Platform-Android-3DDC84?style=for-the-badge&logo=android&logoColor=white" alt="Android">
-  <img src="https://img.shields.io/badge/Platform-iOS-000000?style=for-the-badge&logo=apple&logoColor=white" alt="iOS">
+  <img src="https://img.shields.io/badge/Platform-iOS-D3D3D3?style=for-the-badge&logo=apple&logoColor=white" alt="iOS">
   <img src="https://img.shields.io/badge/Platform-Desktop-007ACC?style=for-the-badge&logo=kotlin&logoColor=white" alt="Desktop">
   <img src="https://img.shields.io/badge/Platform-Web_Wasm-654FF0?style=for-the-badge&logo=webassembly&logoColor=white" alt="Web">
 </p>
