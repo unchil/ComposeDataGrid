@@ -1,10 +1,10 @@
 # Un7-KCMP-DataGrid
 
-<p>
-  <img src="https://img.shields.io/badge/Platform-Android-3DDC84?style=for-the-badge&logo=android&logoColor=white" alt="Android">
-  <img src="https://img.shields.io/badge/Platform-iOS-D3D3D3?style=for-the-badge&logo=apple&logoColor=white" alt="iOS">
-  <img src="https://img.shields.io/badge/Platform-Desktop-007ACC?style=for-the-badge&logo=kotlin&logoColor=white" alt="Desktop">
-  <img src="https://img.shields.io/badge/Platform-Web_Wasm-654FF0?style=for-the-badge&logo=webassembly&logoColor=white" alt="Web">
+<p >
+  <img src="https://img.shields.io/badge/-Android-3DDC84?style=flat&logo=android&logoColor=white" alt="Android">
+  <img src="https://img.shields.io/badge/-iOS-D3D3D3?style=flat&logo=apple&logoColor=white" alt="iOS">
+  <img src="https://img.shields.io/badge/-Desktop-007ACC?style=flat&logo=kotlin&logoColor=white" alt="Desktop">
+  <img src="https://img.shields.io/badge/-Web_Wasm-654FF0?style=flat&logo=webassembly&logoColor=white" alt="Web">
 </p>
 
 **A powerful, feature-rich, and customizable Data Grid component for Kotlin Compose Multiplatform.**
