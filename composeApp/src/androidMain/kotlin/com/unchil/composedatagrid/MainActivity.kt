@@ -7,13 +7,10 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Column
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.CompositionLocalProvider
+import com.unchil.un7datagrid.AndroidPlatformHandler
 import java.io.BufferedWriter
 import java.io.OutputStreamWriter
-
-import com.unchil.un7datagrid.AndroidPlatformHandler
 
 class MainActivity : ComponentActivity() {
     //------------
@@ -41,6 +38,7 @@ class MainActivity : ComponentActivity() {
         // 2. 최초 1회 AndroidPlatformHandler 초기화
         */
         AndroidPlatformHandler.initialize(this)
+
         //------------
 
         enableEdgeToEdge()
@@ -49,19 +47,18 @@ class MainActivity : ComponentActivity() {
         setContent {
             CompositionLocalProvider( LocalPlatform provides getPlatform() ){
                 Column{
-
+/*
                     TextButton( onClick = {
-
                         //------------
-                        /**
                         //4. launchSaveFileIntent 호출
-                        */
                         AndroidPlatformHandler.intent?.let { launchSaveFileIntent(it) }
                         //------------
 
                     } ) {
                         Text("ExportData")
                     }
+
+ */
 
 
 

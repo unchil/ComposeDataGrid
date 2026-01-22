@@ -1,8 +1,13 @@
 package com.unchil.un7datagrid
 
+import android.Manifest
 import android.content.Context
 import android.content.Intent
-import android.view.HapticFeedbackConstants
+import android.os.Build
+import android.os.VibrationEffect
+import android.os.Vibrator
+import android.os.VibratorManager
+import androidx.annotation.RequiresPermission
 
 
 actual fun platform() = PlatformAlias.ANDROID
@@ -31,12 +36,26 @@ actual fun saveFile(fileName: String, content: String) {
 
 }
 
-actual fun performHapticFeedback(isUsableHaptic: Boolean) {
-    if(isUsableHaptic) {
-        val activity = AndroidPlatformHandler.applicationContext as? android.app.Activity
-        // 뷰를 통해 시스템 햅틱 피드백 수행
-        activity?.window?.decorView?.performHapticFeedback(
-            HapticFeedbackConstants.LONG_PRESS // 또는 CONFIRM, CONTEXT_CLICK 등
-        )
+@RequiresPermission(Manifest.permission.VIBRATE)
+actual fun performHapticFeedback(isUsableHaptic: Boolean)  {
+    if (!isUsableHaptic) return
+
+    val context = AndroidPlatformHandler.applicationContext ?: return
+
+    // Vibrator 서비스 획득
+    val vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        val vibratorManager = context.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
+        vibratorManager.defaultVibrator
+    } else {
+        @Suppress("DEPRECATION")
+        context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+    }
+
+    // 진동 실행 (단발성 짧은 진동 예시)
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        vibrator.vibrate(VibrationEffect.createOneShot(50, VibrationEffect.DEFAULT_AMPLITUDE))
+    } else {
+        @Suppress("DEPRECATION")
+        vibrator.vibrate(50)
     }
 }

@@ -82,7 +82,18 @@ To provide a more tactile and engaging experience on mobile devices (Android & i
 - iOS: Uses UIImpactFeedbackGenerator.
 - Desktop/Web: Gracefully degrades (no effect) while maintaining code compatibility.
 
- **Special Note for Android Users**
+
+### **Special Note for Android Users**
+
+To ensure all features (especially File Saving and Haptic Feedback) work correctly on Android, please follow these steps:
+
+**1. Add Permissions**
+Add the following permission to your `AndroidManifest.xml`. This is required for the Haptic Feedback (vibration) to function.
+```xml
+<uses-permission android:name="android.permission.VIBRATE" />
+```
+**2. Initialize Handler in MainActivity**
+The `AndroidPlatformHandler` must be initialized once in your `MainActivity` to bridge the Compose Multiplatform logic with Android system services.
 ```kotlin
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -96,6 +107,12 @@ class MainActivity : ComponentActivity() {
     }
 }
 ```
+
+**3. Check System Vibration Settings**
+If Haptic Feedback is still not working after the above steps, please check the following Android system settings:
+- **Settings > Sound & vibration > Vibration and haptics**: Ensure that **"Use vibration and haptics"** and **"Touch feedback"** are both turned **ON**.
+- If the device is in **Battery Saver** mode, the system may automatically disable haptic feedback to save power.
+
 
 
 ## Platform-specific File Saving

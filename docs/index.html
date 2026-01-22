@@ -84,7 +84,10 @@
      border: 1px solid #334155;
      border-bottom: none;
      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-
+ /* 코드 블록과 겹치는 부분 미세 조정 */
+    margin-bottom: -1px;
+    position: relative;
+    z-index: 1;
  }
 
 
@@ -635,11 +638,21 @@ fun MyDataScreen() {
     icon: 'fa-android',
     color: 'bg-green-100 text-green-600',
     content: `
-        <p class="mb-4 text-sm font-semibold text-red-600">Important: Scoped Storage Support</p>
-        <p class="text-sm mb-4">For Android file exports (CSV), you must pre-register an <code>ActivityResultLauncher</code> in your <code>MainActivity</code>:</p>
+        <div>
+            <p class="font-bold text-slate-800 mb-2">1. Required Permissions</p>
+            <p class="text-sm mb-2">Add this to your <code>AndroidManifest.xml</code> for Haptic Feedback:</p>
+            <span class="code-label">AndroidManifest.xml</span>
+            <div class="bg-slate-900 text-slate-300 p-6 rounded-2xl rounded-tl-none font-mono text-sm overflow-x-auto shadow-inner mb-4 code-wrapper border-t border-slate-700">
+            <button class="copy-button" onclick="copyCode(this)"><i class="far fa-copy"></i></button>
+            <pre><code>&lt;uses-permission android:name="android.permission.VIBRATE" /&gt;</code></pre>
+            </div>
+        </div>
 
-        <div class="bg-slate-900 text-slate-300 p-6 rounded-2xl font-mono text-sm overflow-x-auto shadow-inner mb-4 code-wrapper">
-        <pre><code>
+        <div >
+          <p class="font-bold text-slate-800 mb-2">2. Register File Launcher</p>
+          <p class="text-sm mb-2">In your <code>MainActivity</code>, register the launcher for CSV export:</p>
+          <span class="code-label">MainActivity</span>
+         <pre class="bg-slate-800 text-slate-200 p-3 rounded-lg rounded-tl-none text-xs"><code>
 class MainActivity : ComponentActivity() {
 
     //--> 1. Pre-register ActivityResultLauncher (must be defined before onCreate)
@@ -685,7 +698,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 </code></pre></div>
-        <div class="p-3 bg-blue-50 border border-blue-100 rounded-lg text-xs text-blue-700">
+        <div class="p-3 bg-blue-50 border border-blue-100 rounded-lg text-xs text-red-700">
             <i class="fas fa-info-circle mr-1"></i> Ensure you call <code>AndroidPlatformHandler.initialize(this)</code> before <code>super.onCreate()</code>.
         </div>`
     },
