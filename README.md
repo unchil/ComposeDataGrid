@@ -1,5 +1,12 @@
 # Un7-KCMP-DataGrid
 
+<p align="center">
+  <img src="https://img.shields.io/badge/Platform-Android-3DDC84?style=for-the-badge&logo=android&logoColor=white" alt="Android">
+  <img src="https://img.shields.io/badge/Platform-iOS-000000?style=for-the-badge&logo=apple&logoColor=white" alt="iOS">
+  <img src="https://img.shields.io/badge/Platform-Desktop-007ACC?style=for-the-badge&logo=kotlin&logoColor=white" alt="Desktop">
+  <img src="https://img.shields.io/badge/Platform-Web_Wasm-654FF0?style=for-the-badge&logo=webassembly&logoColor=white" alt="Web">
+</p>
+
 **A powerful, feature-rich, and customizable Data Grid component for Kotlin Compose Multiplatform.**
 
 `Un7-KCMP-DataGrid` is a comprehensive data grid solution designed to efficiently display and manipulate large datasets. Built on Compose Multiplatform, it runs on Android, iOS, Desktop (JVM), and Web (WasmJs).
