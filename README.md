@@ -296,20 +296,20 @@ class MainActivity : ComponentActivity() {
 
 **This data class allows you to configure various aspects of the data grid.**
 
-| Parameter | Type | Description                                                                                       | Default                           |
-| --- | --- |---------------------------------------------------------------------------------------------------|-----------------------------------|
-| `isUsableHaptic` | `Boolean` | Toggles the usable of haptic feedback.                                                                          | `true`                            |
-| `isUsableTooltips` | `Boolean` | Toggles the usable of tooltips.                                                                   | `true`                            |
-| `isVisibleRowNum` | `Boolean` | Toggles the visibility of the row number column.                                                  | `true`                            |
-| `rowNumColumnTitle` | `String` | The title for the row number column.                                                              | `"Num"`                           |
-| `pageSizeItems` | `List<String>` | The list of page size options available in the pagination menu.                                   | `listOf("10", "20", "50", "100")` |
-| `pageSizeItemInitIndex` | `Int` | The initial selected index for the `pageSizeItems` list.                                          | `2` (which defaults to "50")      |
-| `headerRowBackgroundColor` | `Color` | Sets the background color of the header row.                                                      | `null`               | 
-| `headerRowContentColor` | `Color` | Sets the content color (text, icons) of the header row.                                           | `null`               | 
-| `dataRowBackgroundColor` | `Color` | Sets the background color for all data rows. Overridden by odd/even colors if they are specified. | `null`               | 
-| `dataRowContentColor` | `Color` | Sets the content color (text) for all data rows.                                                  | `null`               |
-| `oddDataRowBackgroundColor` | `Color` | Sets the background color for odd-numbered data rows.                                             | `null`               | 
-| `evenDataRowBackgroundColor`| `Color` | Sets the background color for even-numbered data rows.                                            | `null`                            |
+| Parameter | Type | Description                                                                                       | Default                                              |
+| --- | --- |---------------------------------------------------------------------------------------------------|------------------------------------------------------|
+| `isUsableHaptic` | `Boolean` | Toggles the usable of haptic feedback.                                                                          | `true`                                               |
+| `isUsableTooltips` | `Boolean` | Toggles the usable of tooltips.                                                                   | `true`                                               |
+| `isVisibleRowNum` | `Boolean` | Toggles the visibility of the row number column.                                                  | `true`                                               |
+| `rowNumColumnTitle` | `String` | The title for the row number column.                                                              | `"No."`                                              |
+| `pageSizeItems` | `List<String>` | The list of page size options available in the pagination menu.                                   | `listOf("10", "20", "50", "100", "1000")`            |
+| `pageSizeItemInitIndex` | `Int` | The initial selected index for the `pageSizeItems` list.                                          | `pageSizeItems.lastIndex` (which defaults to "1000") |
+| `headerRowBackgroundColor` | `Color` | Sets the background color of the header row.                                                      | `null`                                               | 
+| `headerRowContentColor` | `Color` | Sets the content color (text, icons) of the header row.                                           | `null`                                               | 
+| `dataRowBackgroundColor` | `Color` | Sets the background color for all data rows. Overridden by odd/even colors if they are specified. | `null`                                               | 
+| `dataRowContentColor` | `Color` | Sets the content color (text) for all data rows.                                                  | `null`                                               |
+| `oddDataRowBackgroundColor` | `Color` | Sets the background color for odd-numbered data rows.                                             | `null`                                               | 
+| `evenDataRowBackgroundColor`| `Color` | Sets the background color for even-numbered data rows.                                            | `null`                                               |
 
 
 ##  License

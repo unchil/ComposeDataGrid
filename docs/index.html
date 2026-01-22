@@ -476,18 +476,18 @@
                                 </tr>
                                 <tr>
                                     <td class="px-6 py-4 font-mono font-bold text-blue-600">rowNumColumnTitle</td>
-                                    <td class="px-6 py-4 italic w-[30%]">String = "Num"</td>
+                                    <td class="px-6 py-4 italic w-[30%]">String = "No."</td>
                                     <td class="px-6 py-4 w-[40%]">Customizes the display name of the index column header (e.g., "ID", "No", "#").</td>
                                 </tr>
                                 <tr>
                                     <td class="px-6 py-4 font-mono font-bold text-blue-600">pageSizeItems</td>
-                                    <td class="px-6 py-4 italic w-[30%]">List&lt;String&gt; = ["10", "20", "50", "100"]</td>
+                                    <td class="px-6 py-4 italic w-[30%]">List&lt;String&gt; = ["10", "20", "50", "100", "1000"]</td>
                                     <td class="px-6 py-4 w-[40%]">Defines the available options for the number of rows displayed per page in the pagination menu.</td>
                                 </tr>
                                 <tr>
                                     <td class="px-6 py-4 font-mono font-bold text-blue-600">pageSizeItemInitIndex</td>
-                                    <td class="px-6 py-4 italic w-[30%]">Int = 2</td>
-                                    <td class="px-6 py-4 w-[40%]">Specifies the default page size from the list above (Index 2 corresponds to "50" rows).</td>
+                                    <td class="px-6 py-4 italic w-[30%]">Int = pageSizeItems.lastIndex</td>
+                                    <td class="px-6 py-4 w-[40%]">Specify the default page size from the list above (the lastIndex corresponds to row "1000").</td>
                                 </tr>
                                 <tr>
                                     <td class="px-6 py-4 font-mono font-bold text-blue-600">headerRowBackgroundColor</td>
