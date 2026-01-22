@@ -211,10 +211,10 @@
             <!-- Tab Navigation -->
             <div class="flex justify-center mb-12">
                 <div class="inline-flex p-1 bg-slate-800 rounded-2xl border border-slate-700">
-                    <button onclick="switchTab('all')" id="tab-all" class="tab-btn px-6 py-2.5 rounded-xl font-bold transition duration-300 bg-blue-600 text-white">All</button>
+                    <button onclick="switchTab('all')" id="tab-all" class="tab-btn px-6 py-2.5 rounded-xl font-bold transition duration-300 text-slate-400 hover:text-white">All</button>
                     <button onclick="switchTab('desktop')" id="tab-desktop" class="tab-btn px-6 py-2.5 rounded-xl font-bold transition duration-300 text-slate-400 hover:text-white"><i class="fas fa-desktop text-blue-500 mr-2 text-lg"></i>Desktop (JVM)</button>
                     <button onclick="switchTab('web')" id="tab-web" class="tab-btn px-6 py-2.5 rounded-xl font-bold transition duration-300 text-slate-400 hover:text-white"><i class="fas fa-globe text-indigo-500 mr-2 text-lg"></i>Web (WasmJs)</button>
-                    <button onclick="switchTab('mobile')" id="tab-mobile" class="tab-btn px-6 py-2.5 rounded-xl font-bold transition duration-300 text-slate-400 hover:text-white"><i class="fab fa-apple mr-2 text-lg active-white-icon"></i><i class="fab fa-android text-green-500 mr-2 text-lg"></i>Mobile (iOS/Android)</button>
+                    <button onclick="switchTab('mobile')" id="tab-mobile" class="tab-btn px-6 py-2.5 rounded-xl font-bold transition duration-300 text-slate-400 hover:text-white"><i class="fab fa-apple text-gray-500 mr-2 text-lg "></i><i class="fab fa-android text-green-500 mr-2 text-lg"></i>Mobile (iOS/Android)</button>
                 </div>
             </div>
 
@@ -719,24 +719,13 @@ function switchTab(tabId) {
     document.querySelectorAll('.tab-content').forEach(c => c.classList.replace('block', 'hidden'));
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('bg-blue-600', 'text-white'));
 
-    // Reset icons in tab buttons
-    document.querySelectorAll('.tab-btn i').forEach(icon => {
-        if(icon.classList.contains('active-white-icon')) {
-             icon.style.color = ''; // Reset to default (which is usually controlled by text-slate-400 or slate-900)
-        }
-    });
-
     const activeContent = document.getElementById('content-' + tabId);
     activeContent.classList.replace('hidden', 'block');
 
     const activeBtn = document.getElementById('tab-' + tabId);
     activeBtn.classList.add('bg-blue-600', 'text-white');
 
-    // Handle white icon for mobile tab
-    const appleIcon = activeBtn.querySelector('.active-white-icon');
-    if(appleIcon) {
-        appleIcon.style.color = 'white';
-    }
+
 }
 
 function switchGuideTab(tabId) {
