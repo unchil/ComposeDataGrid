@@ -1,6 +1,6 @@
 # Un7-KCMP-DataGrid
 
-<p align="center">
+<p>
   <img src="https://img.shields.io/badge/Platform-Android-3DDC84?style=for-the-badge&logo=android&logoColor=white" alt="Android">
   <img src="https://img.shields.io/badge/Platform-iOS-000000?style=for-the-badge&logo=apple&logoColor=white" alt="iOS">
   <img src="https://img.shields.io/badge/Platform-Desktop-007ACC?style=for-the-badge&logo=kotlin&logoColor=white" alt="Desktop">
