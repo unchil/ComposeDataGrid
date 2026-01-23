@@ -7,7 +7,8 @@
   <img src="https://img.shields.io/badge/-iOS-D3D3D3?style=flat&logo=apple&logoColor=white" alt="iOS">
   <img src="https://img.shields.io/badge/-Desktop-007ACC?style=flat&logo=kotlin&logoColor=white" alt="Desktop">
   <img src="https://img.shields.io/badge/-Web_Wasm-654FF0?style=flat&logo=webassembly&logoColor=white" alt="Web">
-
+</p>
+<p >
   <img src="https://img.shields.io/badge/un7datagrid-0.2.6-FFA500?style=flat" alt="Version">
   <img src="https://img.shields.io/badge/License-MIT-green?style=flat" alt="License">
 </p>
