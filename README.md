@@ -9,7 +9,7 @@
   <img src="https://img.shields.io/badge/-Web_Wasm-654FF0?style=flat&logo=webassembly&logoColor=white" alt="Web">
 </p>
 <p >
-  <img src="https://img.shields.io/badge/un7datagrid-0.2.7_1-FFA500?style=flat" alt="Version">
+  <img src="https://img.shields.io/badge/un7datagrid-0.2.7-FFA500?style=flat" alt="Version">
   <img src="https://img.shields.io/badge/License-MIT-green?style=flat" alt="License">
 </p>
 
