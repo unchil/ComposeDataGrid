@@ -5,6 +5,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -57,7 +58,8 @@ fun Un7KCMPDataGridContent (
     isOnePageNav:MutableState<Boolean>,
     isVisibleRowNum:MutableState<Boolean>,
     isVisibleHeader:MutableState<Boolean>,
-    rowNumColumnName:String
+    rowNumColumnName:String,
+    onRowClick:( (Pair<Int, List<Any?>>)->Unit )?
 ) {
     val platform = remember { platform() }
     val coroutineScopeDataGridContent = rememberCoroutineScope()
@@ -93,6 +95,14 @@ fun Un7KCMPDataGridContent (
     val lazyListState = rememberLazyListState(initialFirstVisibleItemIndex = 0)
     val isUsableHaptic = LocalIsUsableHaptic.current
 
+    val onRowClickHandler:(Int)->Unit ={ index ->
+        performHapticFeedback(isUsableHaptic)
+        val rowData = mutableListOf<Any?>()
+        pagingData.keys.forEach { columnName ->
+            rowData.add(pagingData[columnName]?.get(index))
+        }
+        onRowClick?.invoke(Pair(getRowNumber(pageIndex, pageSize, index),rowData))
+    }
     val currentDp:(Int)->Dp = { index ->
         // 드래그 시작 지점의 절대 위치(offset) 계산
         var currentOffset = 0.dp
@@ -248,6 +258,9 @@ fun Un7KCMPDataGridContent (
         "onDividerHoverExit" to onDividerHoverExit
     )
 
+
+
+
     LaunchedEffect( isVisibleRowNum.value, maxWidthInDp.value){
         columnsAreaWidth = if ( isVisibleRowNum.value) {
             maxWidthInDp.value - widthRowNumColumn - (widthDividerThickness * (columnNames.size ))
@@ -327,6 +340,7 @@ fun Un7KCMPDataGridContent (
                         pagingData,
                         onColumnWeightProvider,
                         onColumnOffsetProvider,
+                        modifier = Modifier.clickable{ onRowClickHandler(dataIndex) },
                     )
                 }
 

@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -75,7 +77,7 @@ fun DataGrid( data:Map<String, List<Any?>> ){
                 fontWeight = FontWeight.Bold
             )
             if (isVisible) {
-                Un7KCMPDataGrid(modifier, data)
+                Un7KCMPDataGrid(data)
             }
         }
     }
@@ -88,11 +90,15 @@ fun DataGridWithViewModel(
 ){
     val platform = LocalPlatform.current
 
+
+
     LaunchedEffect(key1 = viewModel){
         viewModel.onEvent(MofSeaWaterInfoViewModel.Event.Refresh)
     }
 
     val coroutineScope = rememberCoroutineScope()
+    val snackbarHostState = remember { SnackbarHostState() }
+
     val reloadData :()->Unit = {
         coroutineScope.launch{
             viewModel.onEvent(MofSeaWaterInfoViewModel.Event.Refresh)
@@ -153,23 +159,34 @@ fun DataGridWithViewModel(
 
                 if (isVisible) {
                     Un7KCMPDataGrid(
-                        modifier,
                         Pair(columnNames.value, data.value).toMap(),
-
                         Un7KCMPDataGridConfig(
-                         //   headerRowBackgroundColor = MaterialTheme.colorScheme.primaryContainer,
-                         //   headerRowContentColor = MaterialTheme.colorScheme.onPrimaryContainer ,
                             dataRowBackgroundColor = MaterialTheme.colorScheme.secondaryContainer ,
                             dataRowContentColor = MaterialTheme.colorScheme.onSecondaryContainer ,
                             oddDataRowBackgroundColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.2f),
                             evenDataRowBackgroundColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.6f)
-                        )
-
+                        ),
+                        modifier,
+                        onRowClick = {
+                            rowData ->
+                            coroutineScope.launch {
+                                snackbarHostState.showSnackbar(
+                                    message = "Clicked Row No.${rowData.first}: ${rowData.second}"
+                                )
+                            }
+                        }
 
                     )
                 }
 
             } //--- Column
+
+            SnackbarHost(
+                hostState = snackbarHostState,
+                modifier = Modifier.align(Alignment.BottomCenter)
+            )
+
+
         } //--- BoxWithConstraints
     }
 

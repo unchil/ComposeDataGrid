@@ -45,9 +45,10 @@ val LocalIsUsableHaptic = compositionLocalOf{ true }
 val LocalIsUsableTooltips = compositionLocalOf{ true }
 @Composable
 fun Un7KCMPDataGrid(
-    modifier:Modifier = Modifier,
     data:Map<String, List<Any?>>,
-    config: Un7KCMPDataGridConfig = Un7KCMPDataGridConfig()
+    config: Un7KCMPDataGridConfig=Un7KCMPDataGridConfig(),
+    modifier:Modifier=Modifier,
+    onRowClick:((Pair<Int, List<Any?>>)->Unit)?=null
 ){
     val isUsableTooltips = rememberSaveable { mutableStateOf(config.isUsableTooltips) }
     val onUsableTooltips: (Boolean) -> Unit = { value ->
@@ -265,7 +266,8 @@ fun Un7KCMPDataGrid(
                             isOnePageNav,
                             isVisibleRowNum,
                             isVisibleHeader,
-                            config.rowNumberColumnName
+                            config.rowNumberColumnName,
+                            onRowClick
                         )
                     }//makePagingData
                 } else {
@@ -299,7 +301,8 @@ fun Un7KCMPDataGrid(
                                 isOnePageNav,
                                 isVisibleRowNum,
                                 isVisibleHeader,
-                                config.rowNumberColumnName
+                                config.rowNumberColumnName,
+                                onRowClick
                             )
                         }//makePagingData
                     }//HorizontalPager

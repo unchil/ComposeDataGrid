@@ -29,6 +29,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.Modifier.Companion.then
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
@@ -51,6 +52,7 @@ internal fun Un7KCMPDataRow(
     pagingData: MutableMap<String, List<Any?>>,
     columnWeightProvider:(Int)->Float,
     columnOffsetProvider:(Int)->IntOffset,
+    modifier:Modifier?
 ){
     val density = LocalDensity.current.density
     val paddingDataRow = remember { PaddingValues(top = 2.dp) }
@@ -69,7 +71,7 @@ internal fun Un7KCMPDataRow(
     }
 
     Row(
-        modifier = Modifier.padding(paddingDataRow),
+        modifier = (modifier ?: Modifier).padding(paddingDataRow),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,
     ) {

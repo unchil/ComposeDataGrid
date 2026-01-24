@@ -365,7 +365,7 @@
                         <!-- 텍스트 추가 -->
                         <span class="code-label">composeApp/build.gradle.kts (commonMain)</span>
                         <div class="bg-slate-900 text-slate-300 p-6 rounded-2xl rounded-tl-none font-mono text-sm shadow-inner code-wrapper border-t border-slate-700">
-                            <pre><code>implementation("com.github.unchil:un7datagrid:0.2.6")</code></pre>
+                            <pre><code>implementation("com.github.unchil:un7datagrid:0.2.7")</code></pre>
                         </div>
 
                     </div>
@@ -423,21 +423,32 @@
     data:Map&lt;String, List&lt;Any?&gt;&gt;,
     config:Un7KCMPDataGridConfig = Un7KCMPDataGridConfig(),
     modifier:Modifier = Modifier,
+    onRowClick: ((Pair&lt;Int, List&lt;Any?&gt;&gt;) -&gt; Unit)? = null
 )</code></pre>
                     </div>
 
-                    <div class="grid md:grid-cols-2 gap-6">
+
                         <div class="border-l-4 border-blue-500 pl-4">
                             <span class="block font-bold text-slate-800 text-sm mb-1  tracking-wider">data</span>
                             <p class="text-slate-600 text-sm">
                                 Accepts a <b><code>Map&lt;String, List&lt;Any?&gt;&gt;</code></b> where each <b>Key</b> represents a column identifier and its <b>Value</b> is a positional list containing the data for each row.
                             </p>
                         </div>
-                        <div class="border-l-4 border-slate-300 pl-4">
+
+                        <div class="border-l-4 border-slate-300 pl-4 mt-2">
                             <span class="block font-bold text-slate-800 text-sm mb-1  tracking-wider">config</span>
-                            <p class="text-slate-600 text-sm">An instance of <b><code>Un7KCMPDataGridConfig</code></b> used to define comprehensive UI/UX behavior settings, including pagination, haptic feedback, and thematic colors.</p>
+                            <p class="text-slate-600 text-sm">
+                                An instance of <b><code>Un7KCMPDataGridConfig</code></b> used to define comprehensive UI/UX behavior settings, including pagination, haptic feedback, and thematic colors.
+                            </p>
                         </div>
-                    </div>
+
+                        <div class="border-l-4 border-emerald-500 pl-4 mt-2 ">
+                            <span class="block font-bold text-slate-800 text-sm mb-1 tracking-wider">onRowClick</span>
+                            <p class="text-slate-600 text-sm">
+                                An optional lambda triggered when a row is clicked. Returns a <code>Pair</code> containing the <b>Row Number</b> and the <b>Full Row Data</b>.
+                            </p>
+                        </div>
+
                 </div>
 
                 <!-- 2. Configuration Class -->
@@ -626,11 +637,18 @@ class MainActivity : ComponentActivity() {
         <pre><code>
 @Composable
 fun MyDataScreen() {
+
     val myData = mapOf(
         "ID" to listOf(1, 2, 3),
         "Product" to listOf("Keyboard", "Mouse", "Monitor"),
         "Price" to listOf(75.5, 25.0, 150.0))
-    Un7KCMPDataGrid(data = myData)
+
+    Un7KCMPDataGrid(
+        data = myData,
+        onRowClick = { (index, data) ->
+            // Handle row click (e.g., show Toast or Navigate)
+            println("Clicked row $index")
+    )
 }
 </code></pre></div>`
     },

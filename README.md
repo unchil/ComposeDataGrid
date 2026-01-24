@@ -9,7 +9,7 @@
   <img src="https://img.shields.io/badge/-Web_Wasm-654FF0?style=flat&logo=webassembly&logoColor=white" alt="Web">
 </p>
 <p >
-  <img src="https://img.shields.io/badge/un7datagrid-0.2.6-FFA500?style=flat" alt="Version">
+  <img src="https://img.shields.io/badge/un7datagrid-0.2.7-FFA500?style=flat" alt="Version">
   <img src="https://img.shields.io/badge/License-MIT-green?style=flat" alt="License">
 </p>
 
@@ -189,7 +189,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             // Add Un7KCMPDataGrid library (change to the latest version)
-            implementation("com.github.unchil:un7datagrid:0.2.6")
+            implementation("com.github.unchil:un7datagrid:0.2.7")
         }
     }
 }
@@ -288,15 +288,33 @@ class MainActivity : ComponentActivity() {
 }
 ```
 
+### Handling Row Click Events
+**You can now define the behavior when a row in the grid is clicked. This allows you to retrieve the row number and the entire data, making it ideal for navigating to detailed pages or modifying data.**
+- Interactive Rows: The onRowClick callback allows you to use the data grid as an interactive UI component, not just a simple query.
+- Contextual Data: Upon clicking, all data for that row is immediately provided in the form of a List<Any?>, along with the row index, eliminating the need for separate data retrieval.
+- Haptic Integration: When a row is clicked, haptic feedback is automatically provided based on the setting (isUsableHaptic), providing an improved UX.
+
+```kotlin
+Un7KCMPDataGrid(
+    data = myData,
+    config = myConfig,
+    onRowClick = { (rowNumber, rowData) ->
+        println("Clicked Row Number: $rowNumber")
+        println("Row Data: $rowData")
+    }
+)
+```
+
+
 ##  API
 
 ### `Un7KCMPDataGrid` API
 | Parameter | Type | Description | Default |
 | --- | --- | --- | --- |
-| `modifier` | `Modifier` | The standard `Modifier` to apply to the composable. | `Modifier` |
 | `data` | `Map<String, List<Any?>>` | The column-oriented data to display in the grid. | (Required) |
 | `config` | `Un7KCMPDataGridConfig` | An optional configuration object to customize the grid's behavior and UI. | `Un7KCMPDataGridConfig()` |
-
+| `modifier` | `Modifier` | The standard `Modifier` to apply to the composable. | `Modifier` |
+| `onRowClick` | `((Pair<Int, List<Any?>>) -> Unit)?` | This is an event callback that fires when a click occurs. It returns the Row Number of the clicked row (Int) and the entire data list (List<Any?>). |`null` |
 
 ### `Un7KCMPDataGridConfig` API
 
