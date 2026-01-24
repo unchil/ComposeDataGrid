@@ -5,7 +5,6 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
@@ -13,7 +12,6 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -26,7 +24,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Height
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.InternalComposeApi
 import androidx.compose.runtime.LaunchedEffect
@@ -41,14 +38,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.input.key.type
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.isCtrlPressed
 import androidx.compose.ui.input.pointer.isMetaPressed
 import androidx.compose.ui.input.pointer.isShiftPressed
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -376,22 +376,27 @@ fun Un7KCMPDataGridContent (
                                     alpha = 0.3f
                                 ) else backgroundColor
                             )
+                            .onKeyEvent { keyEvent ->
+                                if (keyEvent.type == KeyEventType.KeyDown && keyEvent.key == Key.Escape) {
+                                    onDoubleClickHandler()
+                                    true
+                                } else {
+                                    false
+                                }
+                            }
                             .pointerInput(rowNumber) {
                                 when (platform) {
                                     PlatformAlias.JVM, PlatformAlias.WASM -> {
                                         awaitPointerEventScope {
                                             while (true) {
                                                 val event = awaitPointerEvent()
-                                                // Press 이벤트(클릭 시작) 시점에 키보드 상태 확인
+
                                                 if (event.type == PointerEventType.Press) {
                                                     val modifiers = event.keyboardModifiers
-
-                                                    // Modifier 정보 추출
                                                     val isShiftPressed = modifiers.isShiftPressed
                                                     val isCtrlPressed =
                                                         modifiers.isCtrlPressed || modifiers.isMetaPressed // Meta는 Mac의 Cmd
 
-                                                    // 앞서 정의한 핸들러 호출
                                                     onClickHandler(
                                                         rowNumber,
                                                         isShiftPressed,
@@ -413,13 +418,20 @@ fun Un7KCMPDataGridContent (
                                         }
                                         else -> {}
                                     }
+                                },
+                                onDoubleClick = {
+                                    when (platform) {
+                                        PlatformAlias.ANDROID, PlatformAlias.IOS -> {
+                                            onDoubleClickHandler()
+                                        }
+                                        else -> {}
+                                    }
 
                                 },
-                                onDoubleClick = onDoubleClickHandler,
                                 onClick = {
                                     when (platform) {
                                         PlatformAlias.ANDROID, PlatformAlias.IOS -> {
-                                            onClickHandler(rowNumber, false, false)
+                                            onClickHandler(rowNumber, false, true)
                                         }
                                         else -> {}
                                     }

@@ -163,25 +163,21 @@ fun DataGridWithViewModel(
                         modifier = modifier,
                         onClick = {
                                 rowsData->
-                            /*
                             coroutineScope.launch {
                                 snackbarHostState.showSnackbar(
                                     message = "Selected Rows : ${rowsData}"
                                 )
                             }
 
-                             */
+
                         },
                         onLongClick = {
                             rowsData->
-                            /*
                             coroutineScope.launch {
                                 snackbarHostState.showSnackbar(
                                     message = "Selected Rows : ${rowsData}"
                                 )
                             }
-
-                             */
                         }
 
                     )
