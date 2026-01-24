@@ -6,6 +6,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -42,6 +43,12 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.PointerEventType
+import androidx.compose.ui.input.pointer.isCtrlPressed
+import androidx.compose.ui.input.pointer.isMetaPressed
+import androidx.compose.ui.input.pointer.isShiftPressed
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -59,7 +66,8 @@ fun Un7KCMPDataGridContent (
     isVisibleRowNum:MutableState<Boolean>,
     isVisibleHeader:MutableState<Boolean>,
     rowNumColumnName:String,
-    onRowClick:( (Pair<Int, List<Any?>>)->Unit )?
+    onClick: ((Int, Boolean, Boolean) -> Unit)?,
+    onLongClick:((Int )->Unit )?
 ) {
     val platform = remember { platform() }
     val coroutineScopeDataGridContent = rememberCoroutineScope()
@@ -94,15 +102,21 @@ fun Un7KCMPDataGridContent (
     val borderShapeIn = remember{RoundedCornerShape(2.dp)}
     val lazyListState = rememberLazyListState(initialFirstVisibleItemIndex = 0)
     val isUsableHaptic = LocalIsUsableHaptic.current
+    val selectedRows by viewModel.selectedRows.collectAsState()
 
-    val onRowClickHandler:(Int)->Unit ={ index ->
+    val onClickHandler: (Int, Boolean, Boolean) -> Unit = { rowNumber, isShift, isCtrl ->
         performHapticFeedback(isUsableHaptic)
-        val rowData = mutableListOf<Any?>()
-        pagingData.keys.forEach { columnName ->
-            rowData.add(pagingData[columnName]?.get(index))
-        }
-        onRowClick?.invoke(Pair(getRowNumber(pageIndex, pageSize, index),rowData))
+        onClick?.invoke(rowNumber, isShift, isCtrl )
     }
+    val onLongClickHandler:(Int)->Unit = {rowNumber ->
+        performHapticFeedback(isUsableHaptic)
+        onLongClick?.invoke(rowNumber)
+    }
+    val onDoubleClickHandler:()->Unit = {
+        performHapticFeedback(isUsableHaptic)
+        viewModel.onEvent(Un7KCMPDataGridViewModel.Event.ClearSelection)
+    }
+
     val currentDp:(Int)->Dp = { index ->
         // 드래그 시작 지점의 절대 위치(offset) 계산
         var currentOffset = 0.dp
@@ -137,6 +151,7 @@ fun Un7KCMPDataGridContent (
 
         currentOffsetY
     }
+    /*
     val heightVerticalDivider:(Int)->Dp = { count ->
         if(isVisibleHeader.value){
             ((heightColumnData + (widthBorderStroke * 2) ) * count) + heightColumnHeader
@@ -144,6 +159,8 @@ fun Un7KCMPDataGridContent (
             (heightColumnData + (widthBorderStroke * 2) ) * count
         }
     }
+
+     */
     val onListNavHandler: (ListNav) -> Unit = { listNav ->
         performHapticFeedback(isUsableHaptic)
         when (listNav) {
@@ -259,8 +276,6 @@ fun Un7KCMPDataGridContent (
     )
 
 
-
-
     LaunchedEffect( isVisibleRowNum.value, maxWidthInDp.value){
         columnsAreaWidth = if ( isVisibleRowNum.value) {
             maxWidthInDp.value - widthRowNumColumn - (widthDividerThickness * (columnNames.size ))
@@ -329,6 +344,21 @@ fun Un7KCMPDataGridContent (
                         getRowNumber(pageIndex, pageSize, index)
                     }
                 ) { dataIndex ->
+
+                    val rowNumber = getRowNumber(pageIndex, pageSize, dataIndex)
+
+                    val isSelected = selectedRows.contains(rowNumber)
+
+                    val backgroundColor = if(dataIndex%2 == 0){
+                        gridColorSet["evenDataRowBackgroundColor"]
+                            ?: gridColorSet["dataRowBackgroundColor"]
+                            ?: MaterialTheme.colorScheme.secondaryContainer
+                    } else {
+                        gridColorSet["oddDataRowBackgroundColor"]
+                            ?: gridColorSet["dataRowBackgroundColor"]
+                            ?: MaterialTheme.colorScheme.secondaryContainer
+                    }
+
                     Un7KCMPDataRow(
                         isVisibleRowNum.value,
                         gridDpSet,
@@ -340,7 +370,61 @@ fun Un7KCMPDataGridContent (
                         pagingData,
                         onColumnWeightProvider,
                         onColumnOffsetProvider,
-                        modifier = Modifier.clickable{ onRowClickHandler(dataIndex) },
+                        modifier = Modifier
+                            .background(
+                                if (isSelected) MaterialTheme.colorScheme.primaryContainer.copy(
+                                    alpha = 0.3f
+                                ) else backgroundColor
+                            )
+                            .pointerInput(rowNumber) {
+                                when (platform) {
+                                    PlatformAlias.JVM, PlatformAlias.WASM -> {
+                                        awaitPointerEventScope {
+                                            while (true) {
+                                                val event = awaitPointerEvent()
+                                                // Press 이벤트(클릭 시작) 시점에 키보드 상태 확인
+                                                if (event.type == PointerEventType.Press) {
+                                                    val modifiers = event.keyboardModifiers
+
+                                                    // Modifier 정보 추출
+                                                    val isShiftPressed = modifiers.isShiftPressed
+                                                    val isCtrlPressed =
+                                                        modifiers.isCtrlPressed || modifiers.isMetaPressed // Meta는 Mac의 Cmd
+
+                                                    // 앞서 정의한 핸들러 호출
+                                                    onClickHandler(
+                                                        rowNumber,
+                                                        isShiftPressed,
+                                                        isCtrlPressed
+                                                    )
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    else -> {}
+                                }
+                            }
+                            .combinedClickable(
+                                onLongClick = {
+                                    when (platform) {
+                                        PlatformAlias.ANDROID, PlatformAlias.IOS -> {
+                                            onLongClickHandler(rowNumber)
+                                        }
+                                        else -> {}
+                                    }
+
+                                },
+                                onDoubleClick = onDoubleClickHandler,
+                                onClick = {
+                                    when (platform) {
+                                        PlatformAlias.ANDROID, PlatformAlias.IOS -> {
+                                            onClickHandler(rowNumber, false, false)
+                                        }
+                                        else -> {}
+                                    }
+                                }
+                            ),
                     )
                 }
 
@@ -354,6 +438,7 @@ fun Un7KCMPDataGridContent (
                 val rowCount: Int = if( pagingData.values.first().size  < pageSize) pagingData.values.first().size else pageSize
 
                 // Android/iOS do not support (Hover) events.
+                /*
                 if(isCurrentHovered.value && listOf(PlatformAlias.JVM, PlatformAlias.WASM).contains(platform)){
                     VerticalDivider(
                         modifier = Modifier
@@ -364,6 +449,7 @@ fun Un7KCMPDataGridContent (
                         thickness = widthDividerThickness
                     )
                 }
+                 */
 
                 val scaleValue = if(isResizing.value) 1.0f else 1.1f
                 val bgColor = if(isResizing.value) Color.Transparent else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)

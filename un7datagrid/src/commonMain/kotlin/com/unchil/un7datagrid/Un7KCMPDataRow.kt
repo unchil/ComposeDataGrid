@@ -55,20 +55,11 @@ internal fun Un7KCMPDataRow(
     modifier:Modifier?
 ){
     val density = LocalDensity.current.density
-    val paddingDataRow = remember { PaddingValues(top = 2.dp) }
+    val paddingDataRow = remember { PaddingValues(top = 0.dp) }
     val borderStrokeLightGray = remember {BorderStroke(width =  gridDpSet["widthBorderStroke"] ?: 1.dp, color = Color.LightGray)}
     val borderShapeIn = remember{RoundedCornerShape(0.dp)}
 
 
-    val backgroundColor = if(dataIndex%2 == 0){
-        gridColorSet["evenDataRowBackgroundColor"]
-            ?: gridColorSet["dataRowBackgroundColor"]
-            ?: MaterialTheme.colorScheme.secondaryContainer
-    } else {
-        gridColorSet["oddDataRowBackgroundColor"]
-            ?: gridColorSet["dataRowBackgroundColor"]
-            ?: MaterialTheme.colorScheme.secondaryContainer
-    }
 
     Row(
         modifier = (modifier ?: Modifier).padding(paddingDataRow),
@@ -79,7 +70,8 @@ internal fun Un7KCMPDataRow(
         AnimatedVisibility(isVisibleRowNum){
 
             Row(
-                modifier = Modifier.background(color = backgroundColor)
+                modifier = Modifier
+                    //.background(color = backgroundColor)
                     .width( gridDpSet["widthRowNumColumn"] ?: 0.dp).height( gridDpSet["heightColumnData"] ?: 0.dp)
                     .border(borderStrokeLightGray, shape = borderShapeIn),
                 horizontalArrangement = Arrangement.Center,
@@ -121,7 +113,7 @@ internal fun Un7KCMPDataRow(
             Row(
                 modifier = Modifier
                     .zIndex( if ( columnOffsetProvider(index) == IntOffset.Zero) 0f else 1f)
-                    .background(color = backgroundColor)
+                 //   .background(color = backgroundColor)
                     .width(   (gridDpSet["columnsAreaWidth"] ?: 0.dp) * columnWeightProvider(index) )
                     .height( gridDpSet["heightColumnData"] ?: 0.dp)
                     .offset{ columnOffsetProvider(index) }

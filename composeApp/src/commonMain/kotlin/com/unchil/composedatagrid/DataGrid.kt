@@ -34,9 +34,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.unchil.composedatagrid.theme.AppTheme
 import com.unchil.composedatagrid.viewmodel.MofSeaWaterInfoViewModel
 import com.unchil.un7datagrid.Un7KCMPDataGrid
-import com.unchil.un7datagrid.Un7KCMPDataGridConfig
 import com.unchil.un7datagrid.toMap
 import kotlinx.coroutines.launch
+
 
 val LocalPlatform = compositionLocalOf<Platform> { error("No Platform found!") }
 
@@ -160,20 +160,28 @@ fun DataGridWithViewModel(
                 if (isVisible) {
                     Un7KCMPDataGrid(
                         Pair(columnNames.value, data.value).toMap(),
-                        Un7KCMPDataGridConfig(
-                            dataRowBackgroundColor = MaterialTheme.colorScheme.secondaryContainer ,
-                            dataRowContentColor = MaterialTheme.colorScheme.onSecondaryContainer ,
-                            oddDataRowBackgroundColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.2f),
-                            evenDataRowBackgroundColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.6f)
-                        ),
-                        modifier,
-                        onRowClick = {
-                            rowData ->
+                        modifier = modifier,
+                        onClick = {
+                                rowsData->
+                            /*
                             coroutineScope.launch {
                                 snackbarHostState.showSnackbar(
-                                    message = "Clicked Row No.${rowData.first}: ${rowData.second}"
+                                    message = "Selected Rows : ${rowsData}"
                                 )
                             }
+
+                             */
+                        },
+                        onLongClick = {
+                            rowsData->
+                            /*
+                            coroutineScope.launch {
+                                snackbarHostState.showSnackbar(
+                                    message = "Selected Rows : ${rowsData}"
+                                )
+                            }
+
+                             */
                         }
 
                     )
@@ -185,6 +193,8 @@ fun DataGridWithViewModel(
                 hostState = snackbarHostState,
                 modifier = Modifier.align(Alignment.BottomCenter)
             )
+
+
 
 
         } //--- BoxWithConstraints

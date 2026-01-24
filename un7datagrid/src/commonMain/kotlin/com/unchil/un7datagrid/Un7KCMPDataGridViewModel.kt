@@ -9,6 +9,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 class Un7KCMPDataGridViewModel(val data: Map<String,List<Any?>>, val config: Un7KCMPDataGridConfig) {
 
@@ -58,6 +59,9 @@ class Un7KCMPDataGridViewModel(val data: Map<String,List<Any?>>, val config: Un7
     val selectPageSizeIndex: MutableStateFlow<Int>
         = MutableStateFlow(0)
 
+    private val _selectedRows = MutableStateFlow<Set<Int>>(emptySet())
+    val selectedRows = _selectedRows.asStateFlow()
+    private var lastSelectedRowNumber: Int? = null
     init{
 
         columnsInfo.value = newMakeColInfo(data)
@@ -135,10 +139,49 @@ class Un7KCMPDataGridViewModel(val data: Map<String,List<Any?>>, val config: Un7
                     event.closerFunc
                 )
             }
+
+            is Event.SelectSingle -> {
+                _selectedRows.value = setOf(event.rowNumber)
+                lastSelectedRowNumber = event.rowNumber
+
+
+                event.closerFunc(getSelectedData())
+            }
+
+            is Event.ToggleSelection -> {
+                val current = _selectedRows.value
+                _selectedRows.value = if (current.contains(event.rowNumber))
+                    current - event.rowNumber else current + event.rowNumber
+                lastSelectedRowNumber = event.rowNumber
+
+                event.closerFunc(getSelectedData())
+            }
+
+            is Event.SelectRange -> {
+                val start = lastSelectedRowNumber ?: event.rowNumber
+                val end = event.rowNumber
+                val range = if (start < end) start..end else end..start
+                _selectedRows.value = _selectedRows.value + range.toSet()
+
+                event.closerFunc(getSelectedData())
+                // lastSelectedRowNumber는 업데이트하지 않음 (기준점 유지)
+            }
+
+            is Event.ClearSelection -> _selectedRows.value = emptySet()
         }
     }
 
-    val exportCSV = {closerFunc:()->Unit ->
+    val getSelectedData = {
+        val selectedRowsData = mutableListOf<Pair<Int, List<Any?>>>()
+        selectedRows.value.forEach { i ->
+            dataFilterApplied.value.getOrNull(i-1)?.let {
+                selectedRowsData.add(  Pair(i, it )  )
+            }
+        }
+        selectedRowsData
+    }
+
+    val exportCSV = { closerFunc:()->Unit ->
         saveFile(
             "un7_data_grid.csv",
             dataFilterApplied.value.toMapData(columnNames.value).toCsvString()
@@ -799,6 +842,12 @@ class Un7KCMPDataGridViewModel(val data: Map<String,List<Any?>>, val config: Un7
             val index:Int,
             val offset: IntOffset
         ):Event()
+
+        data class SelectSingle(val rowNumber: Int, val closerFunc:( List<Pair<Int, List<Any?>>>)->Unit) : Event()     // 일반 클릭 (기존 선택 해제 후 하나만 선택)
+        data class SelectRange(val rowNumber: Int, val closerFunc:( List<Pair<Int, List<Any?>>>)->Unit) : Event()      // Shift + 클릭 (범위 선택)
+        data class ToggleSelection(val rowNumber: Int, val closerFunc:( List<Pair<Int, List<Any?>>>)->Unit) : Event()
+        object ClearSelection : Event()
+
     }
 
 

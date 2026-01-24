@@ -290,17 +290,22 @@ class MainActivity : ComponentActivity() {
 
 ### Handling Row Click Events
 **You can now define the behavior when a row in the grid is clicked. This allows you to retrieve the row number and the entire data, making it ideal for navigating to detailed pages or modifying data.**
-- Interactive Rows: The onRowClick callback allows you to use the data grid as an interactive UI component, not just a simple query.
-- Contextual Data: Upon clicking, all data for that row is immediately provided in the form of a List<Any?>, along with the row index, eliminating the need for separate data retrieval.
+- Interactive Rows: The onClick, onLongClick callback allows you to use the data grid as an interactive UI component, not just a simple query.
+- Context data: When clicked, all data for that row is immediately provided in the form of List<Pair<Int,List<Any?>>, so no separate data retrieval is required.
 - Haptic Integration: When a row is clicked, haptic feedback is automatically provided based on the setting (isUsableHaptic), providing an improved UX.
 
 ```kotlin
 Un7KCMPDataGrid(
     data = myData,
-    config = myConfig,
-    onRowClick = { (rowNumber, rowData) ->
-        println("Clicked Row Number: $rowNumber")
-        println("Row Data: $rowData")
+    onClick = { selectedItems ->
+        // selectedItems: List<Pair<Int, List<Any?>>>
+        println("Selected Count: ${selectedItems.size}")
+        selectedItems.forEach { (index, data) ->
+            println("Row $index: $data")
+        }
+    },
+    onLongClick = { selectedItems ->
+        println("Long Pressed! Total selected: ${selectedItems.size}")
     }
 )
 ```
@@ -309,12 +314,13 @@ Un7KCMPDataGrid(
 ##  API
 
 ### `Un7KCMPDataGrid` API
-| Parameter | Type | Description | Default |
-| --- | --- | --- | --- |
-| `data` | `Map<String, List<Any?>>` | The column-oriented data to display in the grid. | (Required) |
-| `config` | `Un7KCMPDataGridConfig` | An optional configuration object to customize the grid's behavior and UI. | `Un7KCMPDataGridConfig()` |
-| `modifier` | `Modifier` | The standard `Modifier` to apply to the composable. | `Modifier` |
-| `onRowClick` | `((Pair<Int, List<Any?>>) -> Unit)?` | This is an event callback that fires when a click occurs. It returns the Row Number of the clicked row (Int) and the entire data list (List<Any?>). |`null` |
+| Parameter | Type | Default  | Description                                                                                                                                      |
+| --- | --- |---|--------------------------------------------------------------------------------------------------------------------------------------------------|
+| `data` | `Map<String, List<Any?>>` | (Required) | The column-oriented data to display in the grid. | 
+| `config` | `Un7KCMPDataGridConfig` | `Un7KCMPDataGridConfig()` | An optional configuration object to customize the grid's behavior and UI. | 
+| `modifier` | `Modifier` | `Modifier` | The standard `Modifier` to apply to the composable. | 
+| `onClick` | `((List<Pair<Int, List<Any?>>>) -> Unit)? ` | `null` | Called when a row is clicked. On JVM and WASM platforms, returns the index and data list of all rows selected by the shortcut key (Shift/Ctrl). | 
+| `onLongClick` | `((List<Pair<Int, List<Any?>>>) -> Unit)? ` | `null` | Called when a row is long-pressed on iOS or Android platforms. Returns all selection data, including the currently selected range. | 
 
 ### `Un7KCMPDataGridConfig` API
 

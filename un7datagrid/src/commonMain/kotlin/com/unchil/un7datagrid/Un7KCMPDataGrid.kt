@@ -48,7 +48,8 @@ fun Un7KCMPDataGrid(
     data:Map<String, List<Any?>>,
     config: Un7KCMPDataGridConfig=Un7KCMPDataGridConfig(),
     modifier:Modifier=Modifier,
-    onRowClick:((Pair<Int, List<Any?>>)->Unit)?=null
+    onClick:(( List<Pair<Int, List<Any?>>> )->Unit)?=null,
+    onLongClick:(( List<Pair<Int, List<Any?>>> )->Unit)?=null,
 ){
     val isUsableTooltips = rememberSaveable { mutableStateOf(config.isUsableTooltips) }
     val onUsableTooltips: (Boolean) -> Unit = { value ->
@@ -83,6 +84,7 @@ fun Un7KCMPDataGrid(
             remember { PaddingValues(start = 12.dp, end = 10.dp, top = 10.dp, bottom = 10.dp) }
         val isVisibleRowNum = remember { mutableStateOf(config.isVisibilityRowNumber) }
         val isVisibleHeader = remember { mutableStateOf(true) }
+
 
         // For ANDROID, create AndroidPlatformHandler.pendingContent and AndroidPlatformHandler.intent in advance.
         when (platform) {
@@ -237,6 +239,29 @@ fun Un7KCMPDataGrid(
             viewModel.onEvent(Un7KCMPDataGridViewModel.Event.ExportCSV {})
         }
 
+        val onLongClick:(Int)->Unit = {rowNumber->
+            viewModel.onEvent(Un7KCMPDataGridViewModel.Event.SelectRange(rowNumber){ result ->
+                onLongClick?.invoke(result)
+            })
+        }
+
+        val onClickHandler: (Int, Boolean, Boolean) -> Unit = {
+                rowNumber, isShift, isCtrl ->
+            if (isShift) {
+                viewModel.onEvent(Un7KCMPDataGridViewModel.Event.SelectRange(rowNumber){ result ->
+                    onClick?.invoke(result)
+                })
+            } else if (isCtrl) {
+                viewModel.onEvent(Un7KCMPDataGridViewModel.Event.ToggleSelection(rowNumber){result ->
+                    onClick?.invoke(result)
+                })
+            } else {
+                viewModel.onEvent(Un7KCMPDataGridViewModel.Event.SelectSingle(rowNumber){result ->
+                    onClick?.invoke(result)
+                })
+            }
+        }
+
         LaunchedEffect(pagerState.isScrollInProgress){
             if(pagerState.isScrollInProgress){
                 performHapticFeedback(isUsableHaptic)
@@ -267,7 +292,8 @@ fun Un7KCMPDataGrid(
                             isVisibleRowNum,
                             isVisibleHeader,
                             config.rowNumberColumnName,
-                            onRowClick
+                            onClickHandler,
+                            onLongClick
                         )
                     }//makePagingData
                 } else {
@@ -302,7 +328,8 @@ fun Un7KCMPDataGrid(
                                 isVisibleRowNum,
                                 isVisibleHeader,
                                 config.rowNumberColumnName,
-                                onRowClick
+                                onClickHandler,
+                                onLongClick
                             )
                         }//makePagingData
                     }//HorizontalPager
