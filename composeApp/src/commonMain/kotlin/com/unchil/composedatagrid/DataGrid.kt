@@ -36,6 +36,7 @@ import com.unchil.composedatagrid.viewmodel.MofSeaWaterInfoViewModel
 import com.unchil.un7datagrid.Un7KCMPDataGrid
 import com.unchil.un7datagrid.toMap
 import kotlinx.coroutines.launch
+import kotlin.collections.mutableMapOf
 
 
 val LocalPlatform = compositionLocalOf<Platform> { error("No Platform found!") }
@@ -90,8 +91,6 @@ fun DataGridWithViewModel(
 ){
     val platform = LocalPlatform.current
 
-
-
     LaunchedEffect(key1 = viewModel){
         viewModel.onEvent(MofSeaWaterInfoViewModel.Event.Refresh)
     }
@@ -108,6 +107,7 @@ fun DataGridWithViewModel(
     var isVisible by remember { mutableStateOf(false) }
     val columnNames = remember { mutableStateOf(emptyList<String>() ) }
     val data = remember { mutableStateOf(emptyList<List<Any?>>()) }
+    val gridData = remember { mutableStateOf(mutableMapOf<String, List<Any?>>() ) }
 
     LaunchedEffect(seaWaterInfo.value){
         isVisible = seaWaterInfo.value.isNotEmpty()
@@ -116,8 +116,12 @@ fun DataGridWithViewModel(
             data.value = seaWaterInfo.value.map {
                 it.toGridData()
             }
+
+            gridData.value = Pair(columnNames.value, data.value).toMap()
         }
     }
+
+
 
 
     AppTheme(enableDarkMode=false){
@@ -159,7 +163,7 @@ fun DataGridWithViewModel(
 
                 if (isVisible) {
                     Un7KCMPDataGrid(
-                        Pair(columnNames.value, data.value).toMap(),
+                        gridData.value,
                         modifier = modifier,
                         onClick = {
                                 rowsData->
@@ -178,7 +182,8 @@ fun DataGridWithViewModel(
                                     message = "Selected Rows : ${rowsData}"
                                 )
                             }
-                        }
+                        },
+                        reloadData = reloadData
 
                     )
                 }

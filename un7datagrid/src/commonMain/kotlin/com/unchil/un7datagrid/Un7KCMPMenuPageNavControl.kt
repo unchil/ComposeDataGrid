@@ -61,7 +61,7 @@ internal fun Un7KCMPMenuPageNavControl(
         modifier= Modifier
             .shadow(elevation = 2.dp, shape = shape)
             .background(
-                color = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.9f),
+                color = MaterialTheme.colorScheme.secondaryContainer,
                 shape = shape
             )
             .border(
