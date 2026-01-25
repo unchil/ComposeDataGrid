@@ -183,7 +183,6 @@ fun DataGridWithViewModel(
                                 )
                             }
                         },
-                        reloadData = reloadData
 
                     )
                 }

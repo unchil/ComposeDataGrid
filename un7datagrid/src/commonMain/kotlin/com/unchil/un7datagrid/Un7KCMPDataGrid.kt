@@ -49,8 +49,7 @@ fun Un7KCMPDataGrid(
     config: Un7KCMPDataGridConfig=Un7KCMPDataGridConfig(),
     modifier:Modifier=Modifier,
     onClick:(( List<Pair<Int, List<Any?>>> )->Unit)?=null,
-    onLongClick:(( List<Pair<Int, List<Any?>>> )->Unit)?=null,
-    reloadData:(()->Unit)? = null
+    onLongClick:(( List<Pair<Int, List<Any?>>> )->Unit)?=null
 ){
     val isUsableTooltips = rememberSaveable { mutableStateOf(config.isUsableTooltips) }
     val onUsableTooltips: (Boolean) -> Unit = { value ->
@@ -196,7 +195,6 @@ fun Un7KCMPDataGrid(
         }
         val onRefresh: () -> Unit = {
             performHapticFeedback(isUsableHaptic)
-            reloadData?.invoke()
 
             viewModel.onEvent(Un7KCMPDataGridViewModel.Event.Refresh {
                 isOnePageNav.value =
