@@ -66,8 +66,8 @@ fun Un7KCMPDataGridContent (
     isVisibleRowNum:MutableState<Boolean>,
     isVisibleHeader:MutableState<Boolean>,
     rowNumColumnName:String,
-    onClick: ((Int, Boolean, Boolean) -> Unit)?,
-    onLongClick:((Int )->Unit )?
+    onClick:(( List<Pair<Int, List<Any?>>> )->Unit)?=null,
+    onLongClick:(( List<Pair<Int, List<Any?>>> )->Unit)?=null
 ) {
     val platform = remember { platform() }
     val coroutineScopeDataGridContent = rememberCoroutineScope()
@@ -106,12 +106,30 @@ fun Un7KCMPDataGridContent (
 
     val onClickHandler: (Int, Boolean, Boolean) -> Unit = { rowNumber, isShift, isCtrl ->
         performHapticFeedback(isUsableHaptic)
-        onClick?.invoke(rowNumber, isShift, isCtrl )
+
+        if (isShift) {
+            viewModel.onEvent(Un7KCMPDataGridViewModel.Event.SelectRange(rowNumber){ result ->
+                onClick?.invoke(result)
+            })
+        } else if (isCtrl) {
+            viewModel.onEvent(Un7KCMPDataGridViewModel.Event.ToggleSelection(rowNumber){result ->
+                onClick?.invoke(result)
+            })
+        } else {
+            viewModel.onEvent(Un7KCMPDataGridViewModel.Event.SelectSingle(rowNumber){result ->
+                onClick?.invoke(result)
+            })
+        }
     }
+
     val onLongClickHandler:(Int)->Unit = {rowNumber ->
         performHapticFeedback(isUsableHaptic)
-        onLongClick?.invoke(rowNumber)
+
+        viewModel.onEvent(Un7KCMPDataGridViewModel.Event.SelectRange(rowNumber){ result ->
+            onLongClick?.invoke(result)
+        })
     }
+
     val onDoubleClickHandler:()->Unit = {
         performHapticFeedback(isUsableHaptic)
         viewModel.onEvent(Un7KCMPDataGridViewModel.Event.ClearSelection)

@@ -240,29 +240,6 @@ fun Un7KCMPDataGrid(
             viewModel.onEvent(Un7KCMPDataGridViewModel.Event.ExportCSV {})
         }
 
-        val onLongClick:(Int)->Unit = {rowNumber->
-            viewModel.onEvent(Un7KCMPDataGridViewModel.Event.SelectRange(rowNumber){ result ->
-                onLongClick?.invoke(result)
-            })
-        }
-
-        val onClickHandler: (Int, Boolean, Boolean) -> Unit = {
-                rowNumber, isShift, isCtrl ->
-            if (isShift) {
-                viewModel.onEvent(Un7KCMPDataGridViewModel.Event.SelectRange(rowNumber){ result ->
-                    onClick?.invoke(result)
-                })
-            } else if (isCtrl) {
-                viewModel.onEvent(Un7KCMPDataGridViewModel.Event.ToggleSelection(rowNumber){result ->
-                    onClick?.invoke(result)
-                })
-            } else {
-                viewModel.onEvent(Un7KCMPDataGridViewModel.Event.SelectSingle(rowNumber){result ->
-                    onClick?.invoke(result)
-                })
-            }
-        }
-
         LaunchedEffect(pagerState.isScrollInProgress){
             if(pagerState.isScrollInProgress){
                 performHapticFeedback(isUsableHaptic)
@@ -293,7 +270,7 @@ fun Un7KCMPDataGrid(
                             isVisibleRowNum,
                             isVisibleHeader,
                             config.rowNumberColumnName,
-                            onClickHandler,
+                            onClick,
                             onLongClick
                         )
                     }//makePagingData
@@ -329,7 +306,7 @@ fun Un7KCMPDataGrid(
                                 isVisibleRowNum,
                                 isVisibleHeader,
                                 config.rowNumberColumnName,
-                                onClickHandler,
+                                onClick,
                                 onLongClick
                             )
                         }//makePagingData
