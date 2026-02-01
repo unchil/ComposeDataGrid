@@ -130,8 +130,8 @@ fun DataGridWithViewModel(
 
             Column(
                 modifier = Modifier.fillMaxSize()
-                    .background(MaterialTheme.colorScheme.background),
-                 //   .verticalScroll(rememberScrollState()),
+                    .background(MaterialTheme.colorScheme.background)
+                    .verticalScroll(rememberScrollState()),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
 
@@ -143,10 +143,11 @@ fun DataGridWithViewModel(
                     fontWeight = FontWeight.Bold,
                 )
 
+
                 if (isVisible) {
                     Un7KCMPDataGrid(
                         gridData.value,
-                        Un7KCMPDataGridConfig(gridHeight = 200.dp, gridWidth = 200.dp),
+                        Un7KCMPDataGridConfig(gridHeight = 200.dp),
                         onClick = {
                                 rowsData->
                             coroutineScope.launch {
@@ -167,7 +168,19 @@ fun DataGridWithViewModel(
                         },
 
                     )
+
+
+                    Text(
+                        "Un7 Data Grid for Compose Multiplatform",
+                        modifier = Modifier.padding( vertical = 20.dp),
+                        color = MaterialTheme.colorScheme.onBackground,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold,
+                    )
+
                 }
+
+
 
             } //--- Column
 

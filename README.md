@@ -189,7 +189,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             // Add Un7KCMPDataGrid library (change to the latest version)
-            implementation("com.github.unchil:un7datagrid:0.2.7-2")
+            implementation("com.github.unchil:un7datagrid:0.2.9-1")
         }
     }
 }
@@ -339,7 +339,7 @@ Un7KCMPDataGrid(
 | `dataRowContentColor` | `Color` | Sets the content color (text) for all data rows.                                                  | `null`                                               |
 | `oddDataRowBackgroundColor` | `Color` | Sets the background color for odd-numbered data rows.                                             | `null`                                               | 
 | `evenDataRowBackgroundColor`| `Color` | Sets the background color for even-numbered data rows.                                            | `null`                                               |
-| `gridHeight`| `Dp` | Sets the grid height values.                                                                      | `null`                                               |
+| `gridHeight`| `Dp` | Sets the grid height values.                                                                      | `350.Dp`                                             |
 | `gridWidth`| `Dp` | Sets the grid width values.                                                                       | `null`                                               |
 
 

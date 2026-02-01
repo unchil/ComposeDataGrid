@@ -85,6 +85,7 @@ fun Un7KCMPDataGrid(
         val borderShapeIn = remember { RoundedCornerShape(2.dp) }
         val paddingMenuPageNavControl =
             remember { PaddingValues(start = 12.dp, end = 10.dp, top = 10.dp, bottom = 10.dp) }
+        val defaultHeight = remember { 350.dp}
         val isVisibleRowNum = remember { mutableStateOf(config.isVisibilityRowNumber) }
         val isVisibleHeader = remember { mutableStateOf(true) }
 
@@ -249,14 +250,15 @@ fun Un7KCMPDataGrid(
             }
         }
 
-        BoxWithConstraints(
-            modifier = Modifier.fillMaxSize()
-        ) {
+        val modifier = if(config.gridWidth == null) {
+            Modifier.fillMaxWidth().padding(horizontal = 10.dp)
+        }else {
+            Modifier.width(config.gridWidth).padding(horizontal = 10.dp)
+        }
 
             Surface {
                 Box(
-                    modifier = Modifier.width(config.gridWidth ?: maxWidth ).height(config.gridHeight ?:  maxHeight )
-                        .fillMaxSize()
+                    modifier = modifier.height(if (config.gridHeight < defaultHeight ) defaultHeight else config.gridHeight)
                         .border(borderStrokeTransparent, shape = borderShapeOut),
                     contentAlignment = Alignment.Center,
                 ) {
@@ -389,7 +391,7 @@ fun Un7KCMPDataGrid(
 
                 }
             }
-        }
+       // }
 
 
     }
