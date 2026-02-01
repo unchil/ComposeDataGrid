@@ -34,6 +34,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.unchil.composedatagrid.theme.AppTheme
 import com.unchil.composedatagrid.viewmodel.MofSeaWaterInfoViewModel
 import com.unchil.un7datagrid.Un7KCMPDataGrid
+import com.unchil.un7datagrid.Un7KCMPDataGridConfig
 import com.unchil.un7datagrid.toMap
 import kotlinx.coroutines.launch
 import kotlin.collections.mutableMapOf
@@ -89,7 +90,7 @@ fun DataGrid( data:Map<String, List<Any?>> ){
 fun DataGridWithViewModel(
     viewModel: MofSeaWaterInfoViewModel = viewModel { MofSeaWaterInfoViewModel() }
 ){
-    val platform = LocalPlatform.current
+
 
     LaunchedEffect(key1 = viewModel){
         viewModel.onEvent(MofSeaWaterInfoViewModel.Event.Refresh)
@@ -122,29 +123,10 @@ fun DataGridWithViewModel(
     }
 
 
-
-
     AppTheme(enableDarkMode=false){
         BoxWithConstraints(
             modifier = Modifier.fillMaxSize().safeDrawingPadding() // Android/iOS의 Safe Area(상태바 등)를 자동으로 계산하여 패딩 추가
         ) {
-            val isLandscape = maxWidth > maxHeight
-            val titleVerticalPadding = remember {  mutableStateOf(10.dp) }
-            val titleAreaHeight = remember {  mutableStateOf(24.dp + titleVerticalPadding.value*2) }
-            val modifier = when(platform.alias){
-                PlatformAlias.ANDROID -> {
-                    Modifier.width(maxWidth ).height(maxHeight - titleAreaHeight.value  )
-                }
-                PlatformAlias.IOS -> {
-                    Modifier.width(maxWidth).height(maxHeight - titleAreaHeight.value  )
-                }
-                PlatformAlias.JVM -> {
-                    Modifier.fillMaxWidth(0.95f).height(700.dp ).padding(0.dp)
-                }
-                PlatformAlias.WASM -> {
-                    Modifier.fillMaxWidth(0.95f).height(700.dp ).padding(0.dp)
-                }
-            }
 
             Column(
                 modifier = Modifier.fillMaxSize()
@@ -155,7 +137,7 @@ fun DataGridWithViewModel(
 
                 Text(
                     "Un7 Data Grid for Compose Multiplatform",
-                    modifier = Modifier.padding( vertical = titleVerticalPadding.value),
+                    modifier = Modifier.padding( vertical = 20.dp),
                     color = MaterialTheme.colorScheme.onBackground,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
@@ -164,7 +146,7 @@ fun DataGridWithViewModel(
                 if (isVisible) {
                     Un7KCMPDataGrid(
                         gridData.value,
-                        modifier = modifier,
+                        Un7KCMPDataGridConfig(gridHeight = 200.dp, gridWidth = 200.dp),
                         onClick = {
                                 rowsData->
                             coroutineScope.launch {

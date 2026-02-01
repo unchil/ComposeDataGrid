@@ -365,7 +365,7 @@
                         <!-- 텍스트 추가 -->
                         <span class="code-label">composeApp/build.gradle.kts (commonMain)</span>
                         <div class="bg-slate-900 text-slate-300 p-6 rounded-2xl rounded-tl-none font-mono text-sm shadow-inner code-wrapper border-t border-slate-700">
-                            <pre><code>implementation("com.github.unchil:un7datagrid:0.2.7-3")</code></pre>
+                            <pre><code>implementation("com.github.unchil:un7datagrid:0.2.8")</code></pre>
                         </div>
 
                     </div>
@@ -422,7 +422,6 @@
                     <pre class="text-indigo-300 text-sm font-mono"><code>Un7KCMPDataGrid(
     data:Map&lt;String, List&lt;Any?&gt;&gt;,
     config:Un7KCMPDataGridConfig = Un7KCMPDataGridConfig(),
-    modifier:Modifier = Modifier,
     onClick: ((List&lt;Pair&lt;Int, List&lt;Any?&gt;&gt;&gt;) -&gt; Unit)? = null,
     onLongClick: ((List&lt;Pair&lt;Int, List&lt;Any?&gt;&gt;&gt;) -&gt; Unit)? = null
 )</code></pre>
@@ -534,6 +533,16 @@
                                     <td class="px-6 py-4 font-mono font-bold text-blue-600">evenDataRowBackgroundColor</td>
                                     <td class="px-6 py-4 italic w-[30%]">Color = null</td>
                                     <td class="px-6 py-4 w-[40%]">Styles even-numbered rows differently to create a clear visual distinction between data entries.</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 font-mono font-bold text-blue-600">gridHeight</td>
+                                    <td class="px-6 py-4 italic w-[30%]">Dp = null</td>
+                                    <td class="px-6 py-4 w-[40%]">Sets the grid height values.</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 font-mono font-bold text-blue-600">gridWidth</td>
+                                    <td class="px-6 py-4 italic w-[30%]">Dp = null</td>
+                                    <td class="px-6 py-4 w-[40%]">Sets the grid width values.</td>
                                 </tr>
                                 </tbody>
                             </table>

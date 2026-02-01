@@ -2,6 +2,7 @@ package com.unchil.un7datagrid
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.Dp
 
 
 data class Un7KCMPDataGridConfig(
@@ -16,7 +17,9 @@ data class Un7KCMPDataGridConfig(
     val dataRowBackgroundColor: Color? = null ,
     val dataRowContentColor: Color? = null ,
     val oddDataRowBackgroundColor: Color? = null,
-    val evenDataRowBackgroundColor: Color? = null
+    val evenDataRowBackgroundColor: Color? = null,
+    val gridHeight: Dp? = null,
+    val gridWidth:Dp? = null
 )
 
 

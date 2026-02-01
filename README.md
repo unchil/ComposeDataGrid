@@ -317,8 +317,7 @@ Un7KCMPDataGrid(
 | Parameter | Type | Default  | Description                                                                                                                                      |
 | --- | --- |---|--------------------------------------------------------------------------------------------------------------------------------------------------|
 | `data` | `Map<String, List<Any?>>` | (Required) | The column-oriented data to display in the grid. | 
-| `config` | `Un7KCMPDataGridConfig` | `Un7KCMPDataGridConfig()` | An optional configuration object to customize the grid's behavior and UI. | 
-| `modifier` | `Modifier` | `Modifier` | The standard `Modifier` to apply to the composable. | 
+| `config` | `Un7KCMPDataGridConfig` | `Un7KCMPDataGridConfig()` | An optional configuration object to customize the grid's behavior and UI. |
 | `onClick` | `((List<Pair<Int, List<Any?>>>) -> Unit)? ` | `null` | Called when a row is clicked. On JVM and WASM platforms, returns the index and data list of all rows selected by the shortcut key (Shift/Ctrl). | 
 | `onLongClick` | `((List<Pair<Int, List<Any?>>>) -> Unit)? ` | `null` | Called when a row is long-pressed on iOS or Android platforms. Returns all selection data, including the currently selected range. | 
 
@@ -328,7 +327,7 @@ Un7KCMPDataGrid(
 
 | Parameter | Type | Description                                                                                       | Default                                              |
 | --- | --- |---------------------------------------------------------------------------------------------------|------------------------------------------------------|
-| `isUsableHaptic` | `Boolean` | Toggles the usable of haptic feedback.                                                                          | `true`                                               |
+| `isUsableHaptic` | `Boolean` | Toggles the usable of haptic feedback.                                                            | `true`                                               |
 | `isUsableTooltips` | `Boolean` | Toggles the usable of tooltips.                                                                   | `true`                                               |
 | `isVisibleRowNum` | `Boolean` | Toggles the visibility of the row number column.                                                  | `true`                                               |
 | `rowNumColumnTitle` | `String` | The title for the row number column.                                                              | `"No."`                                              |
@@ -340,6 +339,8 @@ Un7KCMPDataGrid(
 | `dataRowContentColor` | `Color` | Sets the content color (text) for all data rows.                                                  | `null`                                               |
 | `oddDataRowBackgroundColor` | `Color` | Sets the background color for odd-numbered data rows.                                             | `null`                                               | 
 | `evenDataRowBackgroundColor`| `Color` | Sets the background color for even-numbered data rows.                                            | `null`                                               |
+| `gridHeight`| `Dp` | Sets the grid height values.                                                                      | `null`                                               |
+| `gridWidth`| `Dp` | Sets the grid width values.                                                                       | `null`                                               |
 
 
 ##  License
