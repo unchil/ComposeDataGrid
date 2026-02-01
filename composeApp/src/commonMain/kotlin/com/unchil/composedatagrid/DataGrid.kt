@@ -147,7 +147,7 @@ fun DataGridWithViewModel(
                 if (isVisible) {
                     Un7KCMPDataGrid(
                         gridData.value,
-                        Un7KCMPDataGridConfig(gridHeight = 200.dp),
+                    //    Un7KCMPDataGridConfig(gridHeight = 200.dp),
                         onClick = {
                                 rowsData->
                             coroutineScope.launch {

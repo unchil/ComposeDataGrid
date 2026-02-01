@@ -9,7 +9,7 @@
   <img src="https://img.shields.io/badge/-Web_Wasm-654FF0?style=flat&logo=webassembly&logoColor=white" alt="Web">
 </p>
 <p >
-  <img src="https://img.shields.io/badge/un7datagrid-0.2.9-FFA500?style=flat" alt="Version">
+  <img src="https://img.shields.io/badge/un7datagrid-0.2.9_2-FFA500?style=flat" alt="Version">
   <img src="https://img.shields.io/badge/License-MIT-green?style=flat" alt="License">
 </p>
 
@@ -189,7 +189,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             // Add Un7KCMPDataGrid library (change to the latest version)
-            implementation("com.github.unchil:un7datagrid:0.2.9-1")
+            implementation("com.github.unchil:un7datagrid:0.2.9-2")
         }
     }
 }
