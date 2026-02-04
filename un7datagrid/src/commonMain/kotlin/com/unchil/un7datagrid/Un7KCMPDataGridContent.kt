@@ -484,7 +484,7 @@ fun Un7KCMPDataGridContent (
                 val scaleValue = if(isResizing.value) 1.0f else 1.1f
                 val bgColor = if(isResizing.value) Color.Transparent else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
                 val offsetValueY = when (platform) {
-                    PlatformAlias.JVM, PlatformAlias.WASM -> {
+                    PlatformAlias.JVM, PlatformAlias.WASM, PlatformAlias.JS -> {
                         hoveredOffsetY.value + (iconWidth/3 )
                     }
                     PlatformAlias.ANDROID, PlatformAlias.IOS -> {

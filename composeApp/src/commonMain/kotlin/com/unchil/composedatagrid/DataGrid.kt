@@ -169,15 +169,6 @@ fun DataGridWithViewModel(
 
                     )
 
-
-                    Text(
-                        "Un7 Data Grid for Compose Multiplatform",
-                        modifier = Modifier.padding( vertical = 20.dp),
-                        color = MaterialTheme.colorScheme.onBackground,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold,
-                    )
-
                 }
 
 

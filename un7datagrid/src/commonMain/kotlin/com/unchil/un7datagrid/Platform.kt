@@ -1,7 +1,7 @@
 package com.unchil.un7datagrid
 
 enum class PlatformAlias {
-    ANDROID, IOS, JVM, WASM
+    ANDROID, IOS, JVM, WASM, JS
 }
 
 expect fun platform(): PlatformAlias

@@ -33,7 +33,7 @@ class MofSeaWaterInfoViewModel: ViewModel() {
 
     suspend fun getSeaWaterInfo(){
        // val endPoint = "http://${if( getPlatform().name.contains("Android") ) "10.0.2.2" else "localhost"}:7788"
-        val endPoint = "http://192.168.35.107:7788"
+        val endPoint = "http://localhost:7788"
         repository.getSeaWaterInfo("${endPoint}/mof/swi/mof_oneday")
     }
 
