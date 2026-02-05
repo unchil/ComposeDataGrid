@@ -45,7 +45,14 @@ import androidx.compose.ui.input.key.type
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 
-
+/**
+ * 특정 컬럼의 데이터를 필터링하기 위한 검색 및 연산자 선택 메뉴입니다.
+ * 데이터 타입(String, Numeric, Boolean 등)에 따라 적절한 비교 연산자를 제공합니다.
+ *
+ * @param columnName 필터링을 적용할 컬럼의 이름
+ * @param columnsInfo 컬럼의 데이터 타입 (예: "String", "Int", "Boolean")
+ * @param onFilter 필터 적용 및 초기화 이벤트를 처리할 뷰모델 콜백
+ */
 @Composable
 internal fun Un7KCMPSearchMenu(
     columnName:String,

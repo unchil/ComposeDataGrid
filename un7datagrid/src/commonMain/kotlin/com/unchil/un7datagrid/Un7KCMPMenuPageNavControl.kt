@@ -35,7 +35,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.unit.dp
 
-
+/**
+ * 페이지네이션을 위한 네비게이션 컨트롤러입니다.
+ * 첫 페이지, 이전, 다음, 마지막 페이지로 이동할 수 있는 버튼 세트를 제공합니다.
+ *
+ * @param onPageNavHandler 페이지 이동 이벤트를 처리할 콜백 ([PageNav] 타입 사용)
+ */
 @Composable
 internal fun Un7KCMPMenuPageNavControl(
     onExportCSV:() -> Unit,

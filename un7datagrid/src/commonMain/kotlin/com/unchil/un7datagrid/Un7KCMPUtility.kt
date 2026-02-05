@@ -1,12 +1,15 @@
+@file:OptIn(InternalComposeApi::class)
+
 package com.unchil.un7datagrid
 
+import androidx.compose.runtime.InternalComposeApi
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
-val makePagingData:(Int,Int, List<String>,List<List<Any?>>)->MutableMap<String, List<Any?>> = {
+internal val makePagingData:(Int,Int, List<String>,List<List<Any?>>)->MutableMap<String, List<Any?>> = {
     topRowIndex, bottomRowIndex, columnNames, data ->
     if(data.isEmpty()){
         mutableMapOf("" to emptyList())
@@ -16,17 +19,17 @@ val makePagingData:(Int,Int, List<String>,List<List<Any?>>)->MutableMap<String, 
 
 }
 
-val topRowIndex:(Int, Int)->Int = { currentPage, pageSize ->
+internal val topRowIndex:(Int, Int)->Int = { currentPage, pageSize ->
     currentPage * pageSize
 }
-val bottomRowIndex:(Int, Int, Boolean, Int)->Int = { currentPage, pageSize, isLastPage, lastIndex ->
+internal val bottomRowIndex:(Int, Int, Boolean, Int)->Int = { currentPage, pageSize, isLastPage, lastIndex ->
     if( isLastPage ){
         lastIndex
     } else{
         pageSize * (currentPage + 1)
     }
 }
-val getLastPageIndex:(Int, Int)-> Int = { totCnt, pageSize ->
+internal val getLastPageIndex:(Int, Int)-> Int = { totCnt, pageSize ->
     if (totCnt <= pageSize) 0
     else {
         if( totCnt % pageSize == 0 ){
@@ -37,11 +40,11 @@ val getLastPageIndex:(Int, Int)-> Int = { totCnt, pageSize ->
     }
 }
 
-val getRowNumber:(Int, Int, Int)-> Int = { pageIndex, pageSize, rowIndex->
+internal val getRowNumber:(Int, Int, Int)-> Int = { pageIndex, pageSize, rowIndex->
     (pageIndex * pageSize ) + rowIndex +1
 }
 
-fun Pair<List<String>, List<List<Any?>>>.toMap():MutableMap<String, List<Any?>>{
+internal fun Pair<List<String>, List<List<Any?>>>.toMap():MutableMap<String, List<Any?>>{
     val result = mutableMapOf<String, List<Any?>>()
      if(first.size == second.first().size) {
         first.forEachIndexed { index, string ->
@@ -53,7 +56,7 @@ fun Pair<List<String>, List<List<Any?>>>.toMap():MutableMap<String, List<Any?>>{
 
 
 
-fun Pair< Map<String,MutableState<Boolean>>, MutableMap<String,List<Any?>> >.toSelectedColumnsData():Pair<List<String>, List<List<Any?>>>{
+internal fun Pair< Map<String,MutableState<Boolean>>, MutableMap<String,List<Any?>> >.toSelectedColumnsData():Pair<List<String>, List<List<Any?>>>{
 
     val selectedColumnNames = this.first.filterValues { it.value }.keys.toList()
     val rowCount = this.second.values.firstOrNull()?.size ?: 0
@@ -70,7 +73,15 @@ fun Pair< Map<String,MutableState<Boolean>>, MutableMap<String,List<Any?>> >.toS
 }
 
 
-fun Map<String,List<Any?>>.toGridList():List<List<Any?>>{
+/**
+ * 컬럼 기반의 맵 데이터를 행 기반의 2차원 리스트로 변환합니다.
+ * 그리드 내부 렌더링을 위해 데이터를 재구조화할 때 사용합니다.
+ *
+ * @receiver 컬럼 이름(String)과 해당 컬럼의 데이터 리스트(List) 맵.
+ * @return 행 중심의 2차원 리스트 [[row1_col1, row1_col2], [row2_col1, row2_col2]].
+ */
+
+internal fun Map<String,List<Any?>>.toGridList():List<List<Any?>>{
     val rowCount = this.values.firstOrNull()?.size ?: 0
     val data = (0 until rowCount).map { rowIndex ->
         this.keys.toList().map { columnName ->
@@ -81,10 +92,13 @@ fun Map<String,List<Any?>>.toGridList():List<List<Any?>>{
 }
 
 /**
- * 2차원 리스트(행 중심) 데이터를 컬럼 이름을 키로 하는 맵(열 중심) 데이터로 변환합니다.
- * @param columnNames 각 열의 키가 될 컬럼 이름 리스트
+ * 행 중심의 2차원 리스트를 다시 컬럼 기반의 맵 데이터로 변환합니다.
+ *
+ * @receiver 행 중심 데이터 리스트.
+ * @param columnNames 맵의 키로 사용할 컬럼 이름 리스트.
+ * @return 다시 복원된 컬럼 중심의 맵 데이터.
  */
-fun List<List<Any?>>.toMapData(columnNames: List<String>): Map<String, List<Any?>> {
+internal fun List<List<Any?>>.toMapData(columnNames: List<String>): Map<String, List<Any?>> {
     // 데이터가 비어있거나 컬럼 이름이 없는 경우 빈 맵 반환
     if (this.isEmpty() || columnNames.isEmpty()) {
         return columnNames.associateWith { emptyList<Any?>() }
@@ -99,7 +113,7 @@ fun List<List<Any?>>.toMapData(columnNames: List<String>): Map<String, List<Any?
 /**
  * Map<String, List<Any?>> 데이터를 CSV 형식의 문자열로 변환합니다.
  */
-fun Map<String, List<Any?>>.toCsvString(): String {
+internal fun Map<String, List<Any?>>.toCsvString(): String {
     val columnNames = this.keys.toList()
     val rowCount = this.values.firstOrNull()?.size ?: 0
 
@@ -134,7 +148,7 @@ fun Map<String, List<Any?>>.toCsvString(): String {
 }
 
 
-val newMakeColInfo: (pagingData: Map<String, List<Any?>>) -> Map<String, NewColumnInfo> = { pagingData ->
+internal val newMakeColInfo: (pagingData: Map<String, List<Any?>>) -> Map<String, NewColumnInfo> = { pagingData ->
     pagingData.mapValues { (columnName, data) ->
         if (data.isEmpty()) {
             NewColumnInfo()
@@ -159,7 +173,7 @@ val newMakeColInfo: (pagingData: Map<String, List<Any?>>) -> Map<String, NewColu
 
 
 
-val makeColInfo: (columnNames: List<String>, data: List<List<Any?>>) -> List<ColumnInfo> = {
+internal val makeColInfo: (columnNames: List<String>, data: List<List<Any?>>) -> List<ColumnInfo> = {
         columnNames, data ->
 
     val isContainNull = columnNames.map { false }.toMutableList()
@@ -197,7 +211,7 @@ val makeColInfo: (columnNames: List<String>, data: List<List<Any?>>) -> List<Col
 }
 
 //-------------
-val findIndexFromDividerPositions: (
+internal val findIndexFromDividerPositions: (
     currentDp: Dp,
     dividerPositions: List<Dp>
 ) -> Int = { currentDp, dividerPositions ->
@@ -215,7 +229,7 @@ val findIndexFromDividerPositions: (
     }
 }
 
-val EmptyImageVector: ImageVector = ImageVector.Builder(
+internal val EmptyImageVector: ImageVector = ImageVector.Builder(
     name = "Empty",
     defaultWidth = 0.dp,
     defaultHeight = 0.dp,

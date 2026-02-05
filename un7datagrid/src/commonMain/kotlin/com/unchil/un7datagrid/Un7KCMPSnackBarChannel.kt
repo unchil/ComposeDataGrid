@@ -6,7 +6,7 @@ package com.unchil.un7datagrid
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.runtime.InternalComposeApi
 
-enum class SnackBarChannelType {
+internal enum class SnackBarChannelType {
     SEARCH_RESULT,
     RELOAD,
     MIN_SELECT_COLUMN,
@@ -16,7 +16,7 @@ enum class SnackBarChannelType {
     DOWNLOAD_COMPLETE
 }
 
-data class SnackBarChannelData(
+internal data class SnackBarChannelData(
     val channelType: SnackBarChannelType,
     val channel:Int,
     var message:String,
@@ -25,7 +25,7 @@ data class SnackBarChannelData(
     val withDismissAction:Boolean,
 )
 
-val snackBarChannelList = listOf<SnackBarChannelData>(
+internal val snackBarChannelList = listOf<SnackBarChannelData>(
 
     SnackBarChannelData(
         channelType = SnackBarChannelType.RELOAD,

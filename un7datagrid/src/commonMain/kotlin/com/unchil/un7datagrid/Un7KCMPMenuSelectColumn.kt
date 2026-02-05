@@ -31,7 +31,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
-
+/**
+ * 데이터 그리드에서 컬럼의 가시성을 선택할 수 있는 드롭다운 메뉴 컴포저블입니다.
+ *
+ * @param allColumns 그리드에 존재하는 모든 컬럼 이름 리스트
+ * @param selectedColumns 각 컬럼의 선택 상태(보여짐/숨겨짐)를 담은 맵
+ * @param onEvent 뷰모델로 이벤트를 전달하기 위한 콜백 함수
+ */
 @Composable
 internal fun Un7KCMPMenuSelectColumn(
     allColumns: List<String>,
@@ -45,6 +51,7 @@ internal fun Un7KCMPMenuSelectColumn(
     Box(modifier= Modifier.background(Color.Transparent)){
         val widthColumnSelectDropDownMenu = 180.dp
         val heightColumnSelectDropDownMenu = 160.dp
+
         var expandMenu by remember { mutableStateOf(false) }
         val scrollState = rememberScrollState()
 

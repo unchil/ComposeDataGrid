@@ -365,7 +365,7 @@
                         <!-- 텍스트 추가 -->
                         <span class="code-label">composeApp/build.gradle.kts (commonMain)</span>
                         <div class="bg-slate-900 text-slate-300 p-6 rounded-2xl rounded-tl-none font-mono text-sm shadow-inner code-wrapper border-t border-slate-700">
-                            <pre><code>implementation("com.github.unchil:un7datagrid:0.2.9-3")</code></pre>
+                            <pre><code>implementation("com.github.unchil:un7datagrid:0.2.10")</code></pre>
                         </div>
 
                     </div>
@@ -421,6 +421,7 @@
                     <div class="overflow-x-auto bg-slate-900 rounded-2xl p-6 shadow-inner mb-8">
                     <pre class="text-indigo-300 text-sm font-mono"><code>Un7KCMPDataGrid(
     data:Map&lt;String, List&lt;Any?&gt;&gt;,
+    modifier:Modifier,
     config:Un7KCMPDataGridConfig = Un7KCMPDataGridConfig(),
     onClick: ((List&lt;Pair&lt;Int, List&lt;Any?&gt;&gt;&gt;) -&gt; Unit)? = null,
     onLongClick: ((List&lt;Pair&lt;Int, List&lt;Any?&gt;&gt;&gt;) -&gt; Unit)? = null
@@ -435,7 +436,15 @@
                             </p>
                         </div>
 
-                        <div class="border-l-4 border-gray-500 pl-4 mt-2">
+                    <div class="border-l-4 border-gray-500 pl-4 mt-2">
+                        <span class="block font-bold text-slate-800 text-sm mb-1  tracking-wider">modifier</span>
+                        <p class="text-slate-600 text-sm">
+                            An instance of <b><code>Modifier</code></b> This is an essential API for decorating the size, layout, appearance, and behavior (click, etc.) of composables and adding functionality (augmentation).
+                        </p>
+                    </div>
+
+
+                    <div class="border-l-4 border-gray-500 pl-4 mt-2">
                             <span class="block font-bold text-slate-800 text-sm mb-1  tracking-wider">config</span>
                             <p class="text-slate-600 text-sm">
                                 An instance of <b><code>Un7KCMPDataGridConfig</code></b> used to define comprehensive UI/UX behavior settings, including pagination, haptic feedback, and thematic colors.
@@ -533,16 +542,6 @@
                                     <td class="px-6 py-4 font-mono font-bold text-blue-600">evenDataRowBackgroundColor</td>
                                     <td class="px-6 py-4 italic w-[30%]">Color = null</td>
                                     <td class="px-6 py-4 w-[40%]">Styles even-numbered rows differently to create a clear visual distinction between data entries.</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-4 font-mono font-bold text-blue-600">gridHeight</td>
-                                    <td class="px-6 py-4 italic w-[30%]">Dp = 350.Dp</td>
-                                    <td class="px-6 py-4 w-[40%]">Sets the grid height values.</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-6 py-4 font-mono font-bold text-blue-600">gridWidth</td>
-                                    <td class="px-6 py-4 italic w-[30%]">Dp = null</td>
-                                    <td class="px-6 py-4 w-[40%]">Sets the grid width values.</td>
                                 </tr>
                                 </tbody>
                             </table>

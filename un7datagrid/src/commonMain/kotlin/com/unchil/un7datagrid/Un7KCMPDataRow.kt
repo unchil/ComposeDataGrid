@@ -39,7 +39,15 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 
-
+/**
+ * 그리드의 개별 데이터 행을 렌더링합니다.
+ * 선택 상태에 따른 배경색 변경 및 클릭/더블클릭/롱클릭 이벤트를 처리합니다.
+ *
+ * @param isVisibleRowNum 행 번호 표시 여부
+ * @param dataIndex 현재 행의 데이터 인덱스
+ * @param pagingData 현재 페이지에 표시될 데이터 맵
+ * @param modifier 행에 적용할 수정자 (클릭 핸들러 포함)
+ */
 @Composable
 internal fun Un7KCMPDataRow(
     isVisibleRowNum: Boolean,

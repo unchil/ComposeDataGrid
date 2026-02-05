@@ -11,7 +11,12 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-class Un7KCMPDataGridViewModel(val data: Map<String,List<Any?>>, val config: Un7KCMPDataGridConfig) {
+
+/**
+ * 데이터 그리드의 내부 상태(정렬, 필터링, 선택, 페이지네이션)를 관리하는 ViewModel입니다.
+ *
+ */
+internal class Un7KCMPDataGridViewModel(val data: Map<String,List<Any?>>, val config: Un7KCMPDataGridConfig) {
 
     val columnNames: MutableStateFlow<List<String>>
         = MutableStateFlow(emptyList())

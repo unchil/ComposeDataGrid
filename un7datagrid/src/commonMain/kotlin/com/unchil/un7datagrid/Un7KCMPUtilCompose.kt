@@ -28,7 +28,7 @@ import androidx.compose.ui.window.PopupPositionProvider
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TooltipIconButton(
+internal fun TooltipIconButton(
     tooltipText: String,
     onClick: () -> Unit,
     enabled: Boolean = true,
@@ -62,7 +62,7 @@ fun TooltipIconButton(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TooltipText(
+internal fun TooltipText(
     tooltipText: String,
     modifier: Modifier = Modifier,
     color: Color = Color.Unspecified,

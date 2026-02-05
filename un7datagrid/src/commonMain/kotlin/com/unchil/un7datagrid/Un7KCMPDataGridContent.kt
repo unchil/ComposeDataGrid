@@ -54,9 +54,15 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 
-
+/**
+ * 그리드의 핵심 본문 영역으로, LazyColumn을 사용하여 대량의 데이터를 효율적으로 렌더링합니다.
+ * 스티키 헤더(Sticky Header), 페이지네이션 데이터 로드, 멀티 셀렉트 로직을 포함합니다.
+ *
+ * @param viewModel 그리드 상태를 관리하는 뷰모델
+ * @param onClick 행 클릭 시 외부로 전달될 콜백 (인덱스 및 데이터 반환)
+ */
 @Composable
-fun Un7KCMPDataGridContent (
+internal fun Un7KCMPDataGridContent (
     pagingData:MutableMap<String, List<Any?>>,
     pageIndex:Int,
     viewModel:Un7KCMPDataGridViewModel,

@@ -1,45 +1,32 @@
+@file:OptIn(InternalComposeApi::class)
+
+
 package com.unchil.un7datagrid
 
+import androidx.compose.runtime.InternalComposeApi
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 
-data class Un7KCMPDataGridConfig(
-    val isUsableHaptic:Boolean = true,
-    val isUsableTooltips:Boolean = true,
-    val isVisibilityRowNumber: Boolean = true,
-    val rowNumberColumnName: String = "No.",
-    val pageSizeList: List<String> = listOf("10", "20", "50", "100", "1000"),
-    val defaultPageSizeListIndex: Int = pageSizeList.lastIndex,
-    val headerRowBackgroundColor: Color? = null ,
-    val headerRowContentColor: Color? = null ,
-    val dataRowBackgroundColor: Color? = null ,
-    val dataRowContentColor: Color? = null ,
-    val oddDataRowBackgroundColor: Color? = null,
-    val evenDataRowBackgroundColor: Color? = null,
-    val gridHeight: Dp = 350.dp, // MinHeight
-    val gridWidth:Dp? = null
-)
 
 
-
-enum class PageNav {
+internal enum class PageNav {
     Prev, Next, First, Last
 }
 
-enum class ListNav {
+internal enum class ListNav {
     Top, Bottom
 }
 
-data class NewColumnInfo(
+internal data class NewColumnInfo(
     val dataType: String = "UNKNOWN",
     val isContainNull:Boolean = false
 )
 
 
-data class ColumnInfo(
+internal data class ColumnInfo(
     val columnName:String,
     var columnIndex:Int,          // 현재 컬럼의 index
     var beforeColumnIndex: Int, // drag 이전 컬럼 index
@@ -50,7 +37,7 @@ data class ColumnInfo(
 )
 
 
-object OperatorMenu {
+internal object OperatorMenu {
 
     enum class OperatorChar(private val symbol: String) {
         Equals("(=) Equals"),
