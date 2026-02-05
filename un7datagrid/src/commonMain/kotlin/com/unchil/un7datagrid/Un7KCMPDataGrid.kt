@@ -6,6 +6,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -49,18 +50,18 @@ val LocalIsUsableHaptic = compositionLocalOf{ true }
 val LocalIsUsableTooltips = compositionLocalOf{ true }
 
 /**
- * Compose Multiplatform을 위한 고성능 데이터 그리드 컴포저블입니다.
- * Android, iOS, Desktop, Web(Wasm) 환경을 모두 지원합니다.
+ * Compose is a high-performance data grid composable for multiplatforms.
+ * Supports Android, iOS, Desktop, and Web (Wasm) environments.
  *
- * @param data 그리드에 표시할 데이터. 컬럼 이름을 Key로, 행 데이터 리스트를 Value로 하는 Map 구조입니다.
- * @param config 그리드의 UI/UX 동작을 제어하는 설정 객체입니다.
- * @param onClick 행 클릭 시 호출되는 콜백입니다. 선택된 모든 행의 인덱스와 데이터 리스트를 Pair 형태로 반환합니다.
- * @param onLongClick 행을 길게 눌렀을 때 호출되는 콜백입니다.
+ * @param data The data to display in the grid. This is a Map structure with column names as keys and row data lists as values.
+ * @param config A configuration object that controls the grid's UI/UX behavior.
+ * @param onClick A callback invoked when a row is clicked. It returns a pair of indexes and data lists for all selected rows.
+ * @param onLongClick A callback invoked when a row is long-pressed.
  */
 @Composable
 fun Un7KCMPDataGrid(
     data:Map<String, List<Any?>>,
-    modifier: Modifier = Modifier.height(350.dp),
+    modifier: Modifier = Modifier,
     config: Un7KCMPDataGridConfig=Un7KCMPDataGridConfig(),
     onClick:(( List<Pair<Int, List<Any?>>> )->Unit)?=null,
     onLongClick:(( List<Pair<Int, List<Any?>>> )->Unit)?=null
@@ -263,7 +264,9 @@ fun Un7KCMPDataGrid(
 
 
         Box(
-            modifier = modifier.border(borderStrokeTransparent, shape = borderShapeOut),
+            modifier = modifier
+                .defaultMinSize(minHeight = 350.dp)
+                .border(borderStrokeTransparent, shape = borderShapeOut),
             contentAlignment = Alignment.Center,
         ) {
             if (isOnePageNav.value) {

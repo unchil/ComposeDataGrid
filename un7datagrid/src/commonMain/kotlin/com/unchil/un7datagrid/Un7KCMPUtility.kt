@@ -74,11 +74,11 @@ internal fun Pair< Map<String,MutableState<Boolean>>, MutableMap<String,List<Any
 
 
 /**
- * 컬럼 기반의 맵 데이터를 행 기반의 2차원 리스트로 변환합니다.
- * 그리드 내부 렌더링을 위해 데이터를 재구조화할 때 사용합니다.
+ * Converts column-based map data into a row-based two-dimensional list.
+ * Used when restructuring data for grid rendering.
  *
- * @receiver 컬럼 이름(String)과 해당 컬럼의 데이터 리스트(List) 맵.
- * @return 행 중심의 2차원 리스트 [[row1_col1, row1_col2], [row2_col1, row2_col2]].
+ * @receiver: A map of column names (String) and the corresponding column data lists (List).
+ * @return: A row-based two-dimensional list [[row1_col1, row1_col2], [row2_col1, row2_col2]].
  */
 
 internal fun Map<String,List<Any?>>.toGridList():List<List<Any?>>{
@@ -92,11 +92,11 @@ internal fun Map<String,List<Any?>>.toGridList():List<List<Any?>>{
 }
 
 /**
- * 행 중심의 2차원 리스트를 다시 컬럼 기반의 맵 데이터로 변환합니다.
+ * Converts a row-oriented two-dimensional list back into column-oriented map data.
  *
- * @receiver 행 중심 데이터 리스트.
- * @param columnNames 맵의 키로 사용할 컬럼 이름 리스트.
- * @return 다시 복원된 컬럼 중심의 맵 데이터.
+ * @receiver: A list of row-oriented data.
+ * @param columnNames: A list of column names to use as map keys.
+ * @return: The restored column-oriented map data.
  */
 internal fun List<List<Any?>>.toMapData(columnNames: List<String>): Map<String, List<Any?>> {
     // 데이터가 비어있거나 컬럼 이름이 없는 경우 빈 맵 반환
@@ -111,7 +111,7 @@ internal fun List<List<Any?>>.toMapData(columnNames: List<String>): Map<String, 
 }
 
 /**
- * Map<String, List<Any?>> 데이터를 CSV 형식의 문자열로 변환합니다.
+ * Converts Map<String, List<Any?>> data to a CSV-formatted string.
  */
 internal fun Map<String, List<Any?>>.toCsvString(): String {
     val columnNames = this.keys.toList()

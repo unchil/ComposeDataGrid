@@ -27,9 +27,9 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.unit.dp
 
 /**
- * 그리드 전체의 기능을 제어하는 상단 메뉴바 컴포저블입니다.
- * 데이터 내보내기(CSV), 검색 메뉴 토글, 페이지 네비게이션 등을 포함합니다. *
- * @param onEvent 그리드 컨트롤 이벤트를 처리할 콜백
+ * A top menu bar composable that controls the overall functionality of the grid.
+ * Includes data export (CSV), search menu toggle, page navigation, and more. *
+ * @param onEvent A callback for handling grid control events.
  */
 @Composable
 internal fun Un7KCMPMenuGridControl(

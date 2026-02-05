@@ -9,7 +9,7 @@
   <img src="https://img.shields.io/badge/-Web_Wasm-654FF0?style=flat&logo=webassembly&logoColor=white" alt="Web">
 </p>
 <p >
-  <img src="https://img.shields.io/badge/un7datagrid-0.2.10-FFA500?style=flat" alt="Version">
+  <img src="https://img.shields.io/badge/un7datagrid-0.2.10_1-FFA500?style=flat" alt="Version">
   <img src="https://img.shields.io/badge/License-MIT-green?style=flat" alt="License">
 </p>
 
@@ -189,7 +189,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             // Add Un7KCMPDataGrid library (change to the latest version)
-            implementation("com.github.unchil:un7datagrid:0.2.10")
+            implementation("com.github.unchil:un7datagrid:0.2.10-1")
         }
     }
 }
@@ -317,7 +317,7 @@ Un7KCMPDataGrid(
 | Parameter     | Type                                        | Default  | Description                                                                                                                                     |
 |---------------|---------------------------------------------|---|-------------------------------------------------------------------------------------------------------------------------------------------------|
 | `data`        | `Map<String, List<Any?>>`                   | (Required) | The column-oriented data to display in the grid.                                                                                                | 
-| `modifier`    | `Modifier`                                  | `Modifier.height(350.dp)` | Sets the grid Layout                                                                                                                            |
+| `modifier`    | `Modifier`                                  | `Modifier` | Sets the grid Layout                                                                                                                            |
 | `config`      | `Un7KCMPDataGridConfig`                     | `Un7KCMPDataGridConfig()` | An optional configuration object to customize the grid's behavior and UI.                                                                       |
 | `onClick`     | `((List<Pair<Int, List<Any?>>>) -> Unit)? ` | `null` | Called when a row is clicked. On JVM and WASM platforms, returns the index and data list of all rows selected by the shortcut key (Shift/Ctrl). | 
 | `onLongClick` | `((List<Pair<Int, List<Any?>>>) -> Unit)? ` | `null` | Called when a row is long-pressed on iOS or Android platforms. Returns all selection data, including the currently selected range.              | 

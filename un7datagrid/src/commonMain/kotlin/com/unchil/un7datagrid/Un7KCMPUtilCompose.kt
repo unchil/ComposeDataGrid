@@ -21,11 +21,9 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.window.PopupPositionProvider
 
-
 /**
- * 툴팁이 포함된 IconButton 헬퍼 컴포저블
+ * IconButton helper composable with tooltip
  */
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun TooltipIconButton(

@@ -5,20 +5,19 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 /**
- * Un7KCMPDataGrid의 시각적 스타일과 동작을 정의하는 설정 데이터 클래스입니다.
+ * This is a configuration data class that defines the visual style and behavior of Un7KCMPDataGrid.
  *
- * @property isUsableHaptic 클릭 및 정렬 시 햅틱 피드백(진동) 사용 여부.
- * @property isUsableTooltips 인터랙티브 요소에 툴팁 표시 여부 (ExperimentalMaterial3Api 필요).
- * @property isVisibilityRowNumber 가장 왼쪽에 행 번호(Index) 컬럼 표시 여부.
- * @property rowNumberColumnName 행 번호 컬럼의 헤더 타이틀 명칭 (기본값: "Num").
- * @property pageSizeList 페이지네이션 메뉴에 표시될 페이지당 행 수 옵션 리스트.
- * @property defaultPageSizeListIndex [pageSizeList]에서 처음에 선택될 기본 인덱스.
- * @property headerRowBackgroundColor 헤더 행의 배경색.
- * @property headerRowContentColor 헤더 행의 텍스트 및 아이콘 색상.
- * @property dataRowBackgroundColor 모든 데이터 행의 기본 배경색.
- * @property dataRowContentColor 데이터 행의 텍스트 색상.
- * @property oddDataRowBackgroundColor 홀수 번째 행의 배경색 (지브라 스트라이핑 효과).
- * @property evenDataRowBackgroundColor 짝수 번째 행의 배경색.
+ * @property isUsableHaptic Whether to use haptic feedback (vibration) on clicks and sorts.
+ * @property isUsableTooltips Whether to display tooltips on interactive elements (requires ExperimentalMaterial3Api).
+ * @property isVisibilityRowNumber Whether to display the leftmost row number (Index) column.
+ * @property rowNumberColumnName The header title name of the row number column (default: "Num").
+ * @property pageSizeList A list of row count options to display in the pagination menu.
+ * @property defaultPageSizeListIndex The default index to initially select in [pageSizeList].
+ * @property headerRowBackgroundColor The background color of the header row.
+ * @property headerRowContentColor The text and icon color of the header row. * @property dataRowBackgroundColor The default background color for all data rows.
+ * @property dataRowContentColor The text color for a data row.
+ * @property oddDataRowBackgroundColor The background color for odd rows (zebra striping effect).
+ * @property evenDataRowBackgroundColor The background color for even rows.
  */
 data class Un7KCMPDataGridConfig(
     val isUsableHaptic:Boolean = true,

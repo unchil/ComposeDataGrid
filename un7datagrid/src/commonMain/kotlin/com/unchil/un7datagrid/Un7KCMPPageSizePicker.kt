@@ -40,12 +40,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
 import kotlin.math.absoluteValue
 
-
-/** * 한 페이지에 표시할 행(Row)의 개수를 선택하는 드롭다운 메뉴 컴포저블입니다.
+/** * A drop-down menu composable that selects the number of rows to display on a page.
  *
- * @param dataList 선택 가능한 페이지 크기 리스트 (예: ["10", "20", "50"])
- * @param selectPageSizeIndex 초기 선택될 항목의 인덱스
- * @param onChangePageSize 페이지 크기 변경 이벤트를 처리할 콜백
+ * @param dataList A list of selectable page sizes (e.g., ["10", "20", "50"])
+ * @param selectPageSizeIndex The index of the initially selected item
+ * @param onChangePageSize A callback to handle page size change events
  */
 @Composable
 internal fun Un7KCMPPageSizePicker(

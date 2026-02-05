@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.asStateFlow
 
 
 /**
- * 데이터 그리드의 내부 상태(정렬, 필터링, 선택, 페이지네이션)를 관리하는 ViewModel입니다.
+ * A ViewModel that manages the internal state of the data grid (sorting, filtering, selection, pagination).
  *
  */
 internal class Un7KCMPDataGridViewModel(val data: Map<String,List<Any?>>, val config: Un7KCMPDataGridConfig) {

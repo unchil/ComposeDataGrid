@@ -46,15 +46,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import kotlin.math.roundToInt
 
-
 /**
- * 데이터 그리드의 최상단 헤더 행을 렌더링합니다.
- * 컬럼 이름 표시, 정렬 상태 인디케이터, 컬럼 드래그 앤 드롭 재배치 기능을 관리합니다.
+ * Renders the top header row of the data grid.
+ * Manages column name display, sort status indicator, and drag-and-drop column reordering.
  *
- * @param isVisibleRowNum 행 번호 컬럼 표시 여부
- * @param gridDpSet 그리드 치수 설정 (너비, 높이 등)
- * @param gridColorSet 그리드 색상 설정
- * @param onEvent 컬럼 정렬 및 재배치 이벤트를 처리할 콜백
+ * @param isVisibleRowNum Whether to display the row number column.
+ * @param gridDpSet Sets the grid dimensions (width, height, etc.).
+ * @param gridColorSet Sets the grid color.
+ * @param onEvent Callback to handle column sorting and reordering events.
  */
 @Composable
 internal fun Un7KCMPHeaderRow(
